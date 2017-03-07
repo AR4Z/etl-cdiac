@@ -3,6 +3,8 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\Database\DatabaseConfig;
+use App\Etl\EtlConfig;
+
 /**
  *
  */
@@ -26,13 +28,13 @@ class Database extends ExtractorBase implements ExtractorInterface
 
 
     /**
-     * Database constructor.
      * @param $etlConfig
+     * @return mixed|void
      */
-    function __construct($etlConfig)
-  {
-
-  }
+    public function setOptions(EtlConfig $etlConfig)
+    {
+        return $this;
+    }
 
     /**
      * @return mixed

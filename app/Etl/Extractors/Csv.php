@@ -2,6 +2,9 @@
 
 namespace App\Etl\Extractors;
 
+use App\Etl\EtlConfig;
+
+
 class Csv extends ExtractorBase implements ExtractorInterface
 {
   /**
@@ -12,10 +15,11 @@ class Csv extends ExtractorBase implements ExtractorInterface
     /**
      * Csv constructor.
      * @param $etlConfig
+     * @return $this|mixed
      */
-    public function __construct($etlConfig)
+    public function setOptions(EtlConfig $etlConfig)
     {
-
+        return $this;
     }
     /**
      * @return mixed

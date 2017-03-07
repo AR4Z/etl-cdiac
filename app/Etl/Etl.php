@@ -42,15 +42,26 @@ class Etl
   }
 
 
-  public function extract(String $method)
+    /**
+     * @param String $method
+     * @return $this
+     */
+
+    public function extract(String $method)
   {
-      if ($method == 'Database'){
-          $this->extract = new Extractors\Database($this->etlConfig, $method);
-      }else{
-          $this->extract = new Extractors\Csv($this->etlConfig, $method);
+      if (!empty($this->etlConfig)) {
+            //etl config not define
+      }
+      if (empty($this->extract)) {
+          // extract is define
       }
 
-    return $this;
+      $class = __NAMESPACE__ . '\\' .'Extractors'. '\\' . $method;
+      $this->extract = new $class;
+      $this->extract->setOptions($this->etlConfig);
+
+
+      return $this;
   }
 
 
