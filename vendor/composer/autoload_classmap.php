@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Console\\Commands\\EtlCommand' => $baseDir . '/app/Console/Commands/EtlCommand.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Entities\\Config\\Connection' => $baseDir . '/app/Entities/Config/Connection.php',
     'App\\Entities\\Config\\FilterState' => $baseDir . '/app/Entities/Config/FilterState.php',

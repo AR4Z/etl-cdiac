@@ -291,6 +291,7 @@ class ComposerStaticInitfa0d3ea1788dd43564c16c05bd48aeef
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\EtlCommand' => __DIR__ . '/../..' . '/app/Console/Commands/EtlCommand.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Entities\\Config\\Connection' => __DIR__ . '/../..' . '/app/Entities/Config/Connection.php',
         'App\\Entities\\Config\\FilterState' => __DIR__ . '/../..' . '/app/Entities/Config/FilterState.php',

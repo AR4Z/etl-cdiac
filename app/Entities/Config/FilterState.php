@@ -33,8 +33,8 @@ class FilterState extends Model
 
   protected $foreignStation = 'station_id';
 
-  protected $date = [
-      'current_date', 'current_time'
+  protected $dates = [
+
   ];
 
     /**

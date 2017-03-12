@@ -29,8 +29,8 @@ class OriginalState extends Model
       'id','station_id', 'current_date', 'current_time','it_update'
   ];
 
-  protected $date = [
-    'current_date', 'current_time'
+  protected $dates = [
+
   ];
 
   protected $primaryKey = 'id';
