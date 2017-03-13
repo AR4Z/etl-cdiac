@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Config;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\Config\ConnectionRequest;
 use Illuminate\Support\Facades\DB;
@@ -13,14 +14,15 @@ use App\Etl\Etl;
 
 use Facades\App\Repositories\Config\StationRepository;
 use Facades\App\Repositories\Config\ConnectionRepository;
+use Illuminate\Support\Facades\Storage;
 
 
 class ExternalConnectionController extends Controller
 {
-  public $stationRepository;
-  public $connectionRepository;
-
-  public function __construct()
+    /**
+     * ExternalConnectionController constructor.
+     */
+    public function __construct()
   {
 
   }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\EtlGeneralProcessJob;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,7 +38,7 @@ class EtlCommand extends Command
      */
     public function handle()
     {
-        Storage::put('file.txt','Hola yo estoy en un archivo y cambio cada minito desde un comando.');
+        dispatch(new EtlGeneralProcessJob());
     }
 }
 

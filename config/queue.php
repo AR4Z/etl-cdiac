@@ -35,6 +35,7 @@ return [
         ],
 
         'database' => [
+            'connection' => 'temporary_work',
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'default',

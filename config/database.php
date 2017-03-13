@@ -79,7 +79,7 @@ return [
             'sslmode'   => 'prefer',
         ],
 
-        'tempory_work' => [
+        'temporary_work' => [
             'driver'    => env('DB_DRIVER', 'pgsql'),
             'host'      => env('DB_HOST', '127.0.0.1'),
             'port'      => env('DB_PORT', '5432'),
