@@ -30,7 +30,7 @@ class VarForStation extends Model
   ];
 
   public function variable(){
-      return $this->belongsTo('App\Entities\Config\variable', 'variable_id');
+      return $this->belongsTo('App\Entities\Config\Variable', 'variable_id');
   }
 
   public function station(){

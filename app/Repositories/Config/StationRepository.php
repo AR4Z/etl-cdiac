@@ -47,5 +47,10 @@ class StationRepository extends EloquentRepository
                     ->get();
     }
 
+    public function getActive()
+    {
+      return $this->where('active', true)->get();
+    }
+
 
 }

@@ -20,6 +20,11 @@ class Variable extends Model
    */
   protected $table= 'variable';
 
+
+  protected $primaryKey = 'id';
+
+  protected $foreignConnection = 'variable_id';
+
   /**
    * The attributes that are mass assignable.
    *
@@ -29,7 +34,11 @@ class Variable extends Model
       'id','name', 'name_excel', 'name_database','name_locale'
   ];
 
-  public function stations(){
-      return $this->hasMany('App\Entities\Config\VarForStation', 'variable_id');
+  
+  public function varForStation(){
+      return $this->hasMany(
+        'App\Entities\Config\VarForStation', 
+        $this->primaryKey
+      );
   }
 }
