@@ -20,11 +20,12 @@ class DatabaseConfig
     $this->connectionRepository = $connectionRepository;
   }
 
-  /**
-   * Configuration external connection.
-   *
-   * @return Boolean
-   */
+    /**
+     * Configuration external connection.
+     *
+     * @param $connectionName
+     * @return bool
+     */
 
   public function configExternalConnection($connectionName)
   {

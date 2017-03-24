@@ -15,4 +15,9 @@ class ConnectionRepository extends EloquentRepository
 
   protected $model = Connection::class;
 
+    public function getName($connectionName)
+    {
+        return $this->where('name', $connectionName)->findFirst();
+    }
+
 }

@@ -2,8 +2,9 @@
 
 namespace App\Etl\Extractors;
 
-use App\Etl\Database\DatabaseConfig;
+use Facades\App\Etl\Database\DatabaseConfig;
 use App\Etl\EtlConfig;
+use Illuminate\Support\Facades\DB;
 
 /**
  *
@@ -40,8 +41,10 @@ class Database extends ExtractorBase implements ExtractorInterface
         $this->setSelect($etlConfig->getVarForFilter(), 'name_database', 'name_locale');
         $this->setWhere($etlConfig->getStation()->originalState);
 
-        return $this;
 
+        $this->extract($etlConfig);
+
+        return $this;
 
     }
 
@@ -79,8 +82,31 @@ class Database extends ExtractorBase implements ExtractorInterface
      * @param $station
      */
     public function setWhere($station){
-        dd($station->current_time);
+        //dd($station->current_time);
     }
+
+    public function settingConnection($name)
+    {
+        DatabaseConfig::configExternalConnection($name);
+        return $this;
+    }
+
+
+    public function extract(EtlConfig $etlConfig)
+    {
+        $this->settingConnection($etlConfig->getNet()->name);
+
+        $cantidad = DB::connection('external_connection')
+                        ->table($etlConfig->getStation()->name_table)
+                        ->count();
+        dd($cantidad);
+
+        return $this;
+    }
+
+
+
+
 
 
 }
