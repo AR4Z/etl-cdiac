@@ -4,6 +4,10 @@ namespace App\Entities\Config;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property mixed current_time
+ * @property mixed current_date
+ */
 class FilterState extends Model
 {
   /**
@@ -36,6 +40,15 @@ class FilterState extends Model
   protected $dates = [
 
   ];
+
+    /**
+     * @return static
+     */
+    public function getFullDateAttribute(){
+
+        return Carbon::parse($this->current_date. ' '. $this->current_time);
+    }
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\hasOne

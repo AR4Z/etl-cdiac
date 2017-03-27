@@ -1,8 +1,6 @@
 <?php
 namespace App\Etl;
 
-use App\Etl\Database\DatabaseConfig;
-
 class Etl
 {
   /**
@@ -27,7 +25,13 @@ class Etl
   Public $load = null;
 
 
-  public static function start(String $typeProcess, int $net, int $station)
+    /**
+     * @param String $typeProcess
+     * @param int $net
+     * @param int $station
+     * @return Etl
+     */
+    public static function start(String $typeProcess, int $net, int $station)
   {
     $etl = new Etl();
     $etl->etlConfig($etl, $typeProcess, $net, $station);

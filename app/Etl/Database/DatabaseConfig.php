@@ -2,35 +2,24 @@
 
 namespace App\Etl\Database;
 
-
-use App\Repositories\Config\ConnectionRepository;
 use Config;
 use Log;
 /**
  *
  */
-class DatabaseConfig
+trait DatabaseConfig
 {
-
-  protected $connectionRepository;
-
-
-  public function __construct(ConnectionRepository $connectionRepository)
-  {
-    $this->connectionRepository = $connectionRepository;
-  }
-
     /**
      * Configuration external connection.
      *
-     * @param $connectionName
+     * @param $connection
      * @return bool
      */
 
-  public function configExternalConnection($connectionName)
+  public function configExternalConnection($connection)
   {
     try {
-      $connection =  $this->connectionRepository->getName($connectionName);
+
       $connection->password = decrypt($connection->password);
 
       Config::set("database.connections.external_connection.driver", $connection->driver);
@@ -39,6 +28,9 @@ class DatabaseConfig
       Config::set('database.connections.external_connection.database', $connection->database);
       Config::set('database.connections.external_connection.username', $connection->username);
       Config::set('database.connections.external_connection.password', $connection->password);
+
+
+      //dd(Config::get('database.connections.external_connection'));
 
       return true;
 

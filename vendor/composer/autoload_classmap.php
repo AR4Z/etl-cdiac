@@ -13,6 +13,7 @@ return array(
     'CreateOriginStateTable' => $baseDir . '/database/migrations/2017_02_06_205145_create_origin_state_table.php',
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreateStationTable' => $baseDir . '/database/migrations/2017_02_06_171851_create_station_table.php',
+    'CreateTemporalClimaTable' => $baseDir . '/database/migrations/2017_03_27_204409_create_temporal_clima_table.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'CreateVarForStationTable' => $baseDir . '/database/migrations/2017_02_06_210815_create_var_for_station_table.php',
     'CreateVariableTable' => $baseDir . '/database/migrations/2017_02_06_210521_create_variable_table.php',

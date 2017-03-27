@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Config;
 
+
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -9,23 +10,28 @@ use App\Http\Requests\Config\ConnectionRequest;
 use Illuminate\Support\Facades\DB;
 
 
-use App\Etl\Database\DatabaseConfig;
+use Facades\App\Etl\Database\DatabaseConfig;
 use App\Etl\Etl;
 
 use Facades\App\Repositories\Config\StationRepository;
-use Facades\App\Repositories\Config\ConnectionRepository;
+use App\Repositories\Config\ConnectionRepository;
 use Illuminate\Support\Facades\Storage;
+
 
 
 class ExternalConnectionController extends Controller
 {
+
+    private $connectionRepository;
+
     /**
      * ExternalConnectionController constructor.
+     * @param ConnectionRepository $connectionRepository
      */
-    public function __construct()
-  {
-
-  }
+    function __construct(ConnectionRepository $connectionRepository)
+    {
+        $this->connectionRepository = $connectionRepository;
+    }
 
     /**
      * Display a listing of the resource.
@@ -34,21 +40,14 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
-      $jobEtl = Etl::start('Filter', 1, 1)->extract('Database')->transform()->load();
-      $jobEtl2 = Etl::start('Original', 2, 81)->extract('Csv')->transform()->load();
+        //dd($this->connectionRepository->getCacheLifetime());
 
-      dd($jobEtl, $jobEtl2);
+        //dd($this->connectionRepository->where('id', 1)->first());
+        $jobEtl = Etl::start('Filter', 1, 1)->extract('Database')->transform()->load();
+        $jobEtl2 = Etl::start('Original', 2, 81)->extract('Csv')->transform()->load();
 
-      /*
-        $response = $databaseConfig->configExternalConnection('froac_raim');
+        dd($jobEtl, $jobEtl2);
 
-        if ($response) {
-          $users = DB::connection('external_connection')->select('select * from users');
-          dd($users);
-        }else {
-          dd('detenido');
-        }
-      */
     }
 
     /**

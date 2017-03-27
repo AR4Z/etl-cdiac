@@ -18,42 +18,42 @@ class EtlConfig
    *  3 - ( Original  - Aire )
    *  4 - ( Filter    - Aire )
    */
-  protected $processId = null;
+  private $processId = null;
 
   /**
    * $typeProcess is option variable: 'Original' - 'Filter' - null
    */
-  protected $typeProcess = null;
+  private $typeProcess = null;
 
   /**
    * $typeStation is option variable: 'Clima' - 'Aire' - null
    */
-  protected $typeStation = null;
+  private $typeStation = null;
 
   /**
    * $net is dependence for: App\Repositories\Config\ConnectionRepository
    * $net indicates the station for work
    */
-  protected $net = null;
+  private $net = null;
   /**
    * $station is dependence for: App\Repositories\Config\Station
    * $station indicates the station for work
    */
-  protected $station = null;
+  private $station = null;
 
   /**
    * $tableSpaceWork is optional: 'temporal_clima' - 'temporal_aire' - null
    * $tableSpaceWork indicates the temporal space work
    */
-  protected $tableSpaceWork = null;
+  private $tableSpaceWork = null;
 
   /**
    * $tableDestination is optional: 'fact_table' - 'fact_aire' - null
    * $tableDestination indicates the temporal space work
    */
-  protected $tableDestination = null;
+  private $tableDestination = null;
 
-  protected $varForFilter = null;
+  private $varForFilter = null;
 
 
     /**
@@ -65,6 +65,7 @@ class EtlConfig
 
     function __construct(String $typeProcess, int $netId, int $stationId)
     {
+
         $this   ->setTypeProcess($typeProcess)
                 ->setNet($netId)
                 ->setStation($stationId)
@@ -83,6 +84,7 @@ class EtlConfig
     public function setStation(int $stationId)
     {
         $this->station= StationRepository::findRelationship($stationId);
+
         return $this;
     }
 

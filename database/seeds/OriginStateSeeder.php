@@ -24,9 +24,11 @@ class OriginStateSeeder extends Seeder
       foreach ($originalsActive as $originalActive) {
         DB::connection('config')->table('original_state')->insert(
           [
-            'station_id'  => $originalActive->id,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'current_date'  => '1990-01-01',
+            'current_time'  => '00:00:00',
+            'station_id'    => $originalActive->id,
+            'created_at'    => Carbon::now(),
+            'updated_at'    => Carbon::now(),
           ]
         );
       }

@@ -2,6 +2,7 @@
 
 namespace App\Entities\Config;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class OriginalState extends Model
@@ -36,6 +37,16 @@ class OriginalState extends Model
   protected $primaryKey = 'id';
 
   protected $foreignStation = 'station_id';
+
+  public $completeDate;
+
+    /**
+     * @return static
+     */
+    public function getFullDateAttribute(){
+
+      return Carbon::parse($this->current_date. ' '. $this->current_time);
+  }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne

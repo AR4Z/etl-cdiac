@@ -2,15 +2,18 @@
 
 namespace App\Etl\Extractors;
 
-use Facades\App\Etl\Database\DatabaseConfig;
+use App\Etl\Database\DatabaseConfig;
 use App\Etl\EtlConfig;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 
 /**
  *
  */
 class Database extends ExtractorBase implements ExtractorInterface
 {
+    use DatabaseConfig;
 
   /**
    * $method is the data type incoming
@@ -37,10 +40,8 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function setOptions(EtlConfig $etlConfig)
     {
-
         $this->setSelect($etlConfig->getVarForFilter(), 'name_database', 'name_locale');
         $this->setWhere($etlConfig->getStation()->originalState);
-
 
         $this->extract($etlConfig);
 
@@ -69,12 +70,18 @@ class Database extends ExtractorBase implements ExtractorInterface
      * @param $variables
      * @param $colOrigin
      * @param $colDestination
+     * @return $this
      */
     public function setSelect($variables, $colOrigin, $colDestination)
     {
+        $temporalSelect = '';
         foreach ($variables as $variable){
-            $this->select .= $variable->$colOrigin .' as '. $variable->$colDestination.' ';
+            $temporalSelect .= $variable->$colOrigin .' as '. $variable->$colDestination.', ';
         }
+        $temporalSelect[strlen($temporalSelect)-2] = ' ';
+        $this->select .= $temporalSelect;
+
+        return $this;
 
     }
 
@@ -85,28 +92,43 @@ class Database extends ExtractorBase implements ExtractorInterface
         //dd($station->current_time);
     }
 
-    public function settingConnection($name)
+    public function settingConnection($connection)
     {
-        DatabaseConfig::configExternalConnection($name);
+
+        $this->configExternalConnection($connection);
         return $this;
     }
+
 
 
     public function extract(EtlConfig $etlConfig)
     {
-        $this->settingConnection($etlConfig->getNet()->name);
+        //dd($this->select);
+        //dd($etlConfig->getStation()->originalState->full_date,Carbon::today());
+
+        $this->settingConnection($etlConfig->getNet());
 
         $cantidad = DB::connection('external_connection')
                         ->table($etlConfig->getStation()->name_table)
-                        ->count();
-        dd($cantidad);
+                        ->select(DB::raw($this->select))
+                        ->whereBetween(
+                            DB::raw("concat_ws(' ',fecha, hora)"),
+                            [
+                                $etlConfig->getStation()->originalState->full_date,
+                                Carbon::today()
+                            ]
+                        )
+                        ->orderby('fecha','hora')
+                        ->chunk(
+                            1000,
+                            function ($data){
+
+                                TemporalWeatherRepository::create([$data]);
+                            }
+                        );
+        dd("termine");
 
         return $this;
     }
-
-
-
-
-
 
 }
