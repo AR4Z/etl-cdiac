@@ -19,8 +19,8 @@ class TemporalWeatherRepository extends EloquentRepository
      * @return bool
      */
     public function insert($data){
-        foreach ($data as $row){
 
+        foreach ($data as $row){
             $this->createModel()->create($row);
             dd($row);
         }

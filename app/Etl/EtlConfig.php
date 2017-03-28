@@ -233,10 +233,13 @@ class EtlConfig
     /**
      * @param $stationId
      * @internal param null $varForFilter
+     * @return $this
      */
     public function setVarForFilter($stationId)
     {
         $this->varForFilter = StationRepository::findVarForFilter($stationId);
+
+        return $this;
     }
 
 }
