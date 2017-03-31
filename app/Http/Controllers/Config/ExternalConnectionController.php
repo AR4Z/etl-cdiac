@@ -14,6 +14,7 @@ use Facades\App\Etl\Database\DatabaseConfig;
 use App\Etl\Etl;
 
 use Facades\App\Repositories\Config\StationRepository;
+use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use App\Repositories\Config\ConnectionRepository;
 use Illuminate\Support\Facades\Storage;
 
@@ -44,9 +45,9 @@ class ExternalConnectionController extends Controller
 
         //dd($this->connectionRepository->where('id', 1)->first());
         $jobEtl = Etl::start('Filter', 1, 1)->extract('Database')->transform()->load();
-        $jobEtl2 = Etl::start('Original', 2, 81)->extract('Csv')->transform()->load();
+        //$jobEtl2 = Etl::start('Original', 2, 81)->extract('Csv')->transform()->load();
 
-        dd($jobEtl, $jobEtl2);
+        dd($jobEtl);
 
     }
 

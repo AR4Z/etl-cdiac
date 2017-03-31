@@ -98,6 +98,7 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         $this->settingConnection($etlConfig->getNet());
         $this->insertAllDataInTemporal($this->selectServerAcquisition($etlConfig));
+        $this->updateStationSk($etlConfig->getStation());
 
         return $this;
     }
@@ -119,9 +120,10 @@ class Database extends ExtractorBase implements ExtractorInterface
                 ]
             )
             ->orderby(DB::raw("concat_ws(' ',fecha, hora)"), 'asc')
-            ->limit(10000)
+            ->limit(100)//10000
             ->get()
             ->all();
+
 
         return $total;
     }
@@ -139,6 +141,10 @@ class Database extends ExtractorBase implements ExtractorInterface
             }
             DB::connection('temporary_work')->table('temporal_weather')->insert($dataSet);
         }
+
+        $this->updateDateSk();
+        $this->updateTimeSk();
+
 
         return true;
     }

@@ -33,26 +33,6 @@ return [
 
     'connections' => [
 
-        'sqlite' => [
-            'driver'    => 'sqlite',
-            'database'  => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix'    => '',
-        ],
-
-        'mysql' => [
-            'driver'    => 'mysql',
-            'host'      => env('DB_HOST', '127.0.0.1'),
-            'port'      => env('DB_PORT', '3306'),
-            'database'  => env('DB_DATABASE', 'forge'),
-            'username'  => env('DB_USERNAME', 'forge'),
-            'password'  => env('DB_PASSWORD', ''),
-            'charset'   => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix'    => '',
-            'strict'    => true,
-            'engine'    => null,
-        ],
-
         'public' => [
             'driver'    => env('DB_DRIVER', 'pgsql'),
             'host'      => env('DB_HOST', '127.0.0.1'),
@@ -92,42 +72,16 @@ return [
             'sslmode'   => 'prefer',
         ],
 
-        'original_datawarehouse' => [
+        'data_warehouse' => [
             'driver'    => env('DB_DRIVER', 'pgsql'),
             'host'      => env('DB_HOST', '127.0.0.1'),
             'port'      => env('DB_PORT', '5432'),
-            'database'  => env('DB_DATABASE', 'forge'),
+            'database'  => env('DB_DATAWAREHOUSE', 'forge'),
             'username'  => env('DB_USERNAME', 'forge'),
             'password'  => env('DB_PASSWORD', ''),
             'charset'   => 'utf8',
             'prefix'    => '',
-            'schema'    => 'original_datawarehouse',
-            'sslmode'   => 'prefer',
-        ],
-
-        'filter_datawarehouse' => [
-            'driver'    => env('DB_DRIVER', 'pgsql'),
-            'host'      => env('DB_HOST', '127.0.0.1'),
-            'port'      => env('DB_PORT', '5432'),
-            'database'  => env('DB_DATABASE', 'forge'),
-            'username'  => env('DB_USERNAME', 'forge'),
-            'password'  => env('DB_PASSWORD', ''),
-            'charset'   => 'utf8',
-            'prefix'    => '',
-            'schema'    => 'filter_datawarehouse',
-            'sslmode'   => 'prefer',
-        ],
-
-        'indicators' => [
-            'driver'    => env('DB_DRIVER', 'pgsql'),
-            'host'      => env('DB_HOST', '127.0.0.1'),
-            'port'      => env('DB_PORT', '5432'),
-            'database'  => env('DB_DATABASE', 'forge'),
-            'username'  => env('DB_USERNAME', 'forge'),
-            'password'  => env('DB_PASSWORD', ''),
-            'charset'   => 'utf8',
-            'prefix'    => '',
-            'schema'    => 'indicators',
+            'schema'    => 'public',
             'sslmode'   => 'prefer',
         ],
 
