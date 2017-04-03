@@ -134,6 +134,8 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     private function insertAllDataInTemporal($data){
 
+        $this->truncateTemporalWork();
+
         foreach ($data as $can){
             $dataSet = array();
             foreach ($can as $key => $value){

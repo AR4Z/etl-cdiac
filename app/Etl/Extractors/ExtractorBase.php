@@ -50,4 +50,11 @@ abstract class ExtractorBase
     {
         TemporalWeatherRepository::updateStationSk($station->id);
     }
+
+
+    public function truncateTemporalWork()
+    {
+        return TemporalWeatherRepository::truncate();
+
+    }
 }

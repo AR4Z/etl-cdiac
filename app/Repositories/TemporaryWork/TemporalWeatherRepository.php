@@ -62,5 +62,10 @@ class TemporalWeatherRepository extends EloquentRepository
     {
         return $this->createModel()->query()->update(['estacion_sk' => $stationId]);
     }
+    
+    public function truncate()
+    {
+        return DB::Connection('temporary_work')->table('temporal_weather')->truncate();
+    }
 
 }
