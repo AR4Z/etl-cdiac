@@ -25,7 +25,6 @@ class Etl
    */
   Public $load = null;
 
-
     /**
      * @param String $typeProcess
      * @param int $net
@@ -46,7 +45,6 @@ class Etl
     return $etl;
   }
 
-
     /**
      * @param String $method
      * @return $this
@@ -61,9 +59,9 @@ class Etl
           // extract is define
       }
 
-      //$class = __NAMESPACE__ . '\\' .'Extractors'. '\\' . $method;
-      //$this->extract = new $class;
-      //$this->extract->setOptions($this->etlConfig);
+      $class = __NAMESPACE__ . '\\' .'Extractors'. '\\' . $method;
+      $this->extract = new $class;
+      $this->extract->setOptions($this->etlConfig);
 
 
       return $this;

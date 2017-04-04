@@ -6,9 +6,8 @@ return [
     'meteorologica' => [
 
         'typeProcess' => 'Filter',
-
         'tableSpaceWork' => 'temporal_weather',
-
+        'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
          'tableDestination' => 'fact_table',
 
     ],
@@ -16,9 +15,8 @@ return [
     'hidrometeorologica' => [
 
         'typeProcess' => 'Filter',
-
         'tableSpaceWork' => 'temporal_weather',
-
+        'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
         'tableDestination' => 'fact_table',
 
     ],
@@ -26,9 +24,8 @@ return [
     'solo_precipitacion' => [
 
         'typeProcess' => 'Filter',
-
         'tableSpaceWork' => 'temporal_weather',
-
+        'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
         'tableDestination' => 'fact_table',
 
     ],
@@ -36,10 +33,9 @@ return [
     'calidad_del_aire' => [
 
         'typeProcess' => 'Filter',
-
         'tableSpaceWork' => 'temporal_weather',
-
-        'tableDestination' => 'fact_table',
+        'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalAirRepository',
+        'tableDestination'      => 'fact_aire',
 
     ],
 

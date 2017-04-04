@@ -10,7 +10,6 @@ use Config;
 /**
  *
  */
-
 class EtlConfig
 {
     use RemoveAccents;
@@ -45,6 +44,7 @@ class EtlConfig
 
   private $varForFilter = null;
 
+  private $repositorySpaceWork = null;
 
     /**
      * EtlConfig constructor.
@@ -83,7 +83,9 @@ class EtlConfig
                                         $this->removeAccents($this->station->type).''
                                     ));
 
-        $this->setTableSpaceWork($config->tableSpaceWork)->setTableDestination($config->tableDestination);
+        $this   ->setTableSpaceWork($config->tableSpaceWork)
+                ->setTableDestination($config->tableDestination)
+                ->setRepositorySpaceWork($config->repositorySpaceWork);
 
         return $this;
 
@@ -101,6 +103,7 @@ class EtlConfig
   }
 
     /**
+     * @param $destinationTable
      * @return $this
      */
   public function setTableDestination($destinationTable)
@@ -191,6 +194,22 @@ class EtlConfig
         $this->varForFilter = StationRepository::findVarForFilter($stationId);
 
         return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getRepositorySpaceWork()
+    {
+        return $this->repositorySpaceWork;
+    }
+
+    /**
+     * @param null $repositorySpaceWork
+     */
+    public function setRepositorySpaceWork($repositorySpaceWork)
+    {
+        $this->repositorySpaceWork = $repositorySpaceWork;
     }
 
 }

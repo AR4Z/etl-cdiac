@@ -5,7 +5,6 @@ namespace App\Etl\Extractors;
 
 
 use Carbon\Carbon;
-use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use App\Etl\Traits\{DateSkTrait, TimeSkTrait};
 
 
@@ -14,15 +13,15 @@ abstract class ExtractorBase
     use DateSkTrait, TimeSkTrait;
 
     /**
-     *
+     * @param $repository
      */
-    public function updateDateSk()
+    public function updateDateSk($repository)
     {
-        $dates = TemporalWeatherRepository::getDatesDistinct();
+        $dates = ($repository)::getDatesDistinct();
 
         foreach ($dates as $date)
         {
-            TemporalWeatherRepository::updateDateSk(
+            ($repository)::updateDateSk(
                 $this->calculateDateSk(
                     Carbon::parse($date->fecha)
                 ),
@@ -34,27 +33,37 @@ abstract class ExtractorBase
 
     }
 
-    public  function updateTimeSk()
+    /**
+     * @param $repository
+     */
+    public  function updateTimeSk($repository)
     {
-        $times = TemporalWeatherRepository::getTimesDistinct();
+        $times = ($repository)::getTimesDistinct();
 
         foreach ($times as $time)
         {
-            TemporalWeatherRepository::updateTimeSk($this->calculateTimeSk($time->hora),$time->hora);
+            ($repository)::updateTimeSk($this->calculateTimeSk($time->hora),$time->hora);
         }
         return;
     }
 
 
-    public function updateStationSk($station)
+    /**
+     * @param $station
+     * @param $repository
+     */
+    public function updateStationSk($station, $repository)
     {
-        TemporalWeatherRepository::updateStationSk($station->id);
+        ($repository)::updateStationSk($station->id);
     }
 
 
-    public function truncateTemporalWork()
+    /**
+     * @param $repository
+     * @return mixed
+     */
+    public function truncateTemporalWork($repository)
     {
-        return TemporalWeatherRepository::truncate();
-
+        return ($repository)::truncate();
     }
 }

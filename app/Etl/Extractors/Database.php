@@ -95,10 +95,14 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function extract(EtlConfig $etlConfig)
     {
-
         $this->settingConnection($etlConfig->getNet());
-        $this->insertAllDataInTemporal($this->selectServerAcquisition($etlConfig));
-        $this->updateStationSk($etlConfig->getStation());
+
+        $this->insertAllDataInTemporal(
+                    $this->selectServerAcquisition($etlConfig),
+                    $etlConfig->getRepositorySpaceWork()
+                );
+
+        $this->updateStationSk($etlConfig->getStation(),$etlConfig->getRepositorySpaceWork());
 
         return $this;
     }
@@ -130,11 +134,12 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     /**
      * @param $data
+     * @param $repository
      * @return bool
      */
-    private function insertAllDataInTemporal($data){
+    private function insertAllDataInTemporal($data,$repository){
 
-        $this->truncateTemporalWork();
+        $this->truncateTemporalWork($repository);
 
         foreach ($data as $can){
             $dataSet = array();
@@ -144,11 +149,11 @@ class Database extends ExtractorBase implements ExtractorInterface
             DB::connection('temporary_work')->table('temporal_weather')->insert($dataSet);
         }
 
-        $this->updateDateSk();
-        $this->updateTimeSk();
-
+        $this->updateDateSk($repository);
+        $this->updateTimeSk($repository);
 
         return true;
     }
+
 
 }
