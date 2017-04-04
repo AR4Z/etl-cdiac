@@ -47,6 +47,8 @@ class ExternalConnectionController extends Controller
         $jobEtl = Etl::start('Filter', 1, 1)->extract('Database')->transform()->load();
         //$jobEtl2 = Etl::start('Original', 2, 81)->extract('Csv')->transform()->load();
 
+        //$jobEtl = Etl::start('Filter', 1, 77)->extract('Database')->transform()->load();
+
         dd($jobEtl);
 
     }

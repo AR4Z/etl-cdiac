@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Repositories\TemporaryWork;
+namespace app\Repositories\TemporaryWork;
 
-use App\Entities\TemporaryWork\TemporalWeather;
+use App\Entities\TemporaryWork\TemporalAir;
 use Carbon\Carbon;
 use DB;
 use Rinvex\Repository\Repositories\EloquentRepository;
 
-
-class TemporalWeatherRepository extends EloquentRepository
+class TemporalAirRepository extends EloquentRepository
 {
-
     protected $repositoryId = 'rinvex.repository.uniqueid';
+    protected $model = TemporalAir::class;
 
-    protected $model = TemporalWeather::class;
 
     /**
      * @return mixed
@@ -28,11 +26,6 @@ class TemporalWeatherRepository extends EloquentRepository
         return $this->select('hora')->distinct()->get()->all();
     }
 
-    /**
-     * @param int $dateSk
-     * @param Carbon $date
-     * @return mixed
-     */
     public function updateDateSk($dateSk, $date)
     {
         return $this->createModel()->where('fecha', 'LIKE', $date)->update(['fecha_sk' => $dateSk]);
@@ -48,10 +41,10 @@ class TemporalWeatherRepository extends EloquentRepository
     {
         return $this->createModel()->query()->update(['estacion_sk' => $stationId]);
     }
-    
+
     public function truncate()
     {
-        return DB::Connection('temporary_work')->table('temporal_weather')->truncate();
+        return DB::Connection('temporary_work')->table('temporal_Air')->truncate();
     }
 
 }

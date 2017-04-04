@@ -3,6 +3,7 @@
 namespace App\Etl\Database;
 
 use Config;
+use Exception;
 use Log;
 /**
  *
@@ -29,9 +30,7 @@ trait DatabaseConfig
       Config::set('database.connections.external_connection.username', $connection->username);
       Config::set('database.connections.external_connection.password', $connection->password);
 
-
       //dd(Config::get('database.connections.external_connection'));
-
       return true;
 
     } catch (Exception $e) {
