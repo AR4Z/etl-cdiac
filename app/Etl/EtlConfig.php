@@ -2,8 +2,10 @@
 
 namespace App\Etl;
 
+use App\Etl\Traits\RemoveAccents;
 use Facades\App\Repositories\Config\StationRepository;
 use Facades\App\Repositories\Config\ConnectionRepository;
+use Config;
 
 /**
  *
@@ -11,24 +13,12 @@ use Facades\App\Repositories\Config\ConnectionRepository;
 
 class EtlConfig
 {
-  /**
-   * $typeProcess is option variable: 'Original' - 'Filter' - null
-   *  1 - ( Original  - Clima )
-   *  2 - ( Filter    - Clima )
-   *  3 - ( Original  - Aire )
-   *  4 - ( Filter    - Aire )
-   */
-  private $processId = null;
-
+    use RemoveAccents;
   /**
    * $typeProcess is option variable: 'Original' - 'Filter' - null
    */
   private $typeProcess = null;
 
-  /**
-   * $typeStation is option variable: 'Clima' - 'Aire' - null
-   */
-  private $typeStation = null;
 
   /**
    * $net is dependence for: App\Repositories\Config\ConnectionRepository
@@ -65,15 +55,11 @@ class EtlConfig
 
     function __construct(String $typeProcess, int $netId, int $stationId)
     {
-
         $this   ->setTypeProcess($typeProcess)
                 ->setNet($netId)
                 ->setStation($stationId)
-                ->setTypeStation($this->station)
-                ->setProcessId()
-                ->setTableSpaceWork()
-                ->setTableDestination()
-                ->setVarForFilter($stationId);
+                ->setVarForFilter($stationId)
+                ->config();
         //dd($this);
     }
 
@@ -84,65 +70,45 @@ class EtlConfig
     public function setStation(int $stationId)
     {
         $this->station= StationRepository::findRelationship($stationId);
-
         return $this;
     }
 
+    public function config()
+    {
+        $config = (object)Config::get(
+                                    'etl'.$this->typeProcess.'.'
+                                    .str_replace (
+                                        ' ',
+                                        '_',
+                                        $this->removeAccents($this->station->type).''
+                                    ));
 
-    /**
-     * @return $this
-     */
-    public function setProcessId()
-  {
-    if ($this->typeProcess == 'Original' and $this->typeStation == 'Clima') {
-      $this->processId = 1;
-    }elseif ($this->typeProcess == 'Filter' and $this->typeStation == 'Clima') {
-      $this->processId = 2;
-    }elseif ($this->typeProcess == 'Original' and $this->typeStation == 'Aire') {
-      $this->processId = 3;
-    }elseif ($this->typeProcess == 'Filter' and $this->typeStation == 'Aire') {
-      $this->processId = 4;
+        $this->setTableSpaceWork($config->tableSpaceWork)->setTableDestination($config->tableDestination);
+
+        return $this;
+
     }
 
+    /**
+     * @param $spaceWorkTable
+     * @return $this
+     */
+
+  public function setTableSpaceWork($spaceWorkTable)
+  {
+    $this->tableSpaceWork = $spaceWorkTable;
     return $this;
   }
 
     /**
      * @return $this
      */
-
-  public function setTableSpaceWork()
+  public function setTableDestination($destinationTable)
   {
-    $this->tableSpaceWork = 'temporal_'.strtolower($this->typeStation);
-    return $this;
+      $this->tableDestination = $destinationTable;
+      return $this;
   }
 
-    /**
-     * @return $this
-     */
-    public function setTableDestination()
-  {
-    if ($this->typeStation == 'Clima' ) {
-
-      $this->tableDestination = 'fact_table';
-
-    }elseif ($this->typeStation == 'Aire') {
-
-      $this->tableDestination = 'fact_aire';
-    }
-
-    return $this;
-  }
-
-    /**
-     * @param $station
-     * @return $this
-     */
-    public function setTypeStation($station)
-  {
-    $this->typeStation  = $station->type;
-    return $this;
-  }
 
     /**
      * @param String $typeProcess
@@ -164,14 +130,6 @@ class EtlConfig
     return $this;
   }
 
-
-    /**
-     * @return $this->processId
-     */
-    public function getProcessId()
-  {
-    return $this->processId;
-  }
 
     /**
      * @return $this->tableSpaceWork
@@ -198,13 +156,6 @@ class EtlConfig
     return $this->typeProcess;
   }
 
-    /**
-     * @return $this->typeStation
-     */
-    public function getTypeStation()
-  {
-    return $this->typeStation;
-  }
 
     /**
      * @return $this->net

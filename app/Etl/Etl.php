@@ -1,6 +1,7 @@
 <?php
 namespace App\Etl;
 
+
 class Etl
 {
   /**
@@ -60,9 +61,9 @@ class Etl
           // extract is define
       }
 
-      $class = __NAMESPACE__ . '\\' .'Extractors'. '\\' . $method;
-      $this->extract = new $class;
-      $this->extract->setOptions($this->etlConfig);
+      //$class = __NAMESPACE__ . '\\' .'Extractors'. '\\' . $method;
+      //$this->extract = new $class;
+      //$this->extract->setOptions($this->etlConfig);
 
 
       return $this;

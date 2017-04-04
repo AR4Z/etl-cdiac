@@ -21,7 +21,7 @@ class CreateStationTable extends Migration
           $table->string('name_table')->nullable();
           $table->string('typology')->nullable();
           $table->boolean('active')->default(true);
-          $table->enum('type',['Clima','Aire'])->default('Clima');
+          $table->string('type')->nullable();
           $table->integer('quantity_measurement_day')->nullable();
 
           $table->foreign('connection_id')->references('id')->on('external_connection')->onDelete('cascade');
