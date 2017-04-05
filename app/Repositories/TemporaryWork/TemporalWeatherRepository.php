@@ -2,13 +2,13 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Entities\TemporaryWork\TemporalWeather;
-use Carbon\Carbon;
-use DB;
 use Rinvex\Repository\Repositories\EloquentRepository;
+use App\Entities\TemporaryWork\TemporalWeather;
+use DB;
 
 
-class TemporalWeatherRepository extends EloquentRepository
+
+class TemporalWeatherRepository extends EloquentRepository implements TemporaryInterface
 {
 
     protected $repositoryId = 'rinvex.repository.uniqueid';
@@ -30,7 +30,7 @@ class TemporalWeatherRepository extends EloquentRepository
 
     /**
      * @param int $dateSk
-     * @param Carbon $date
+     * @param $date
      * @return mixed
      */
     public function updateDateSk($dateSk, $date)

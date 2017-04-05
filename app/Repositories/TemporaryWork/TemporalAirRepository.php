@@ -2,12 +2,12 @@
 
 namespace app\Repositories\TemporaryWork;
 
-use App\Entities\TemporaryWork\TemporalAir;
-use Carbon\Carbon;
-use DB;
 use Rinvex\Repository\Repositories\EloquentRepository;
+use App\Entities\TemporaryWork\TemporalAir;
+use DB;
 
-class TemporalAirRepository extends EloquentRepository
+
+class TemporalAirRepository extends EloquentRepository implements TemporaryInterface
 {
     protected $repositoryId = 'rinvex.repository.uniqueid';
     protected $model = TemporalAir::class;
