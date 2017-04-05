@@ -77,9 +77,12 @@ class Etl
   }
 
 
-  public function transform(string $method = 'Original')
+  public function transform(string $method = 'Original',$options = [])
   {
-    return $this;
+      $this->transform = $this->factory($method,'Transformers',$options);
+      $this->transform->transform();
+
+      return $this;
   }
 
   public function load()

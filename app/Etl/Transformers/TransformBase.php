@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Etl\Transform;
+namespace App\Etl\Transformers;
 
 
 abstract class TransformBase

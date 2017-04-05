@@ -550,6 +550,7 @@ return array(
     'SebastianBergmann\\ResourceOperations\\ResourceOperations' => $vendorDir . '/sebastian/resource-operations/src/ResourceOperations.php',
     'SebastianBergmann\\Version' => $vendorDir . '/sebastian/version/src/Version.php',
     'StationTableSeeder' => $baseDir . '/database/seeds/StationTableSeeder.php',
+    'TemporalAirTable' => $baseDir . '/database/migrations/2017_04_04_205127_temporal_air_table.php',
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'VarForStationTableSeeder' => $baseDir . '/database/seeds/VarForStationTableSeeder.php',
     'VariableSeeder' => $baseDir . '/database/seeds/VariableSeeder.php',

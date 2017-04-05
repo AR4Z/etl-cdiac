@@ -835,6 +835,7 @@ class ComposerStaticInitfa0d3ea1788dd43564c16c05bd48aeef
         'SebastianBergmann\\ResourceOperations\\ResourceOperations' => __DIR__ . '/..' . '/sebastian/resource-operations/src/ResourceOperations.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
         'StationTableSeeder' => __DIR__ . '/../..' . '/database/seeds/StationTableSeeder.php',
+        'TemporalAirTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_04_205127_temporal_air_table.php',
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
         'VarForStationTableSeeder' => __DIR__ . '/../..' . '/database/seeds/VarForStationTableSeeder.php',
         'VariableSeeder' => __DIR__ . '/../..' . '/database/seeds/VariableSeeder.php',
