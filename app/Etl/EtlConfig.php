@@ -40,26 +40,49 @@ class EtlConfig
    * $tableDestination is optional: 'fact_table' - 'fact_aire' - null
    * $tableDestination indicates the temporal space work
    */
+
   private $tableDestination = null;
 
   private $varForFilter = null;
 
   private $repositorySpaceWork = null;
 
+  private $stateTable = null;
+
+  private $sequence = null;
+
+  private $initialDate = null;
+
+  private $finalDate = null;
+
+  private $initialTime = null;
+
+  private $finalTime = null;
+
+
+
+
     /**
      * EtlConfig constructor.
      * @param String $typeProcess
      * @param int $netId
      * @param int $stationId
+     * @param bool $sequence
      */
 
-    function __construct(String $typeProcess, int $netId, int $stationId)
+    function __construct(String $typeProcess, int $netId, int $stationId,bool $sequence)
     {
         $this   ->setTypeProcess($typeProcess)
                 ->setNet($netId)
                 ->setStation($stationId)
                 ->setVarForFilter($stationId)
-                ->config();
+                ->setSequence($sequence)
+                ->config()
+                ->setInitialDate($this->station->{$this->stateTable}->current_date)
+                ->setInitialTime($this->station->{$this->stateTable}->current_time)
+                ->setFinalDate(gmdate("Y-m-d",time()))
+                ->setFinalTime('00:00:00');
+
         //dd($this);
     }
 
@@ -85,7 +108,8 @@ class EtlConfig
 
         $this   ->setTableSpaceWork($config->tableSpaceWork)
                 ->setTableDestination($config->tableDestination)
-                ->setRepositorySpaceWork($config->repositorySpaceWork);
+                ->setRepositorySpaceWork($config->repositorySpaceWork)
+                ->setStateTable($config->stateTable);
 
         return $this;
 
@@ -206,10 +230,122 @@ class EtlConfig
 
     /**
      * @param null $repositorySpaceWork
+     * @return $this
      */
     public function setRepositorySpaceWork($repositorySpaceWork)
     {
         $this->repositorySpaceWork = $repositorySpaceWork;
+
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getSequence()
+    {
+        return $this->sequence;
+    }
+
+    /**
+     * @param bool|true $sequence
+     * @return $this
+     */
+    public function setSequence(bool $sequence)
+    {
+        $this->sequence = $sequence;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getStateTable()
+    {
+        return $this->stateTable;
+    }
+
+    /**
+     * @param null $stateTable
+     * @return $this
+     */
+    public function setStateTable($stateTable)
+    {
+        $this->stateTable = $stateTable;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getInitialDate()
+    {
+        return $this->initialDate;
+    }
+
+    /**
+     * @param null $initialDate
+     * @return $this
+     */
+    public function setInitialDate($initialDate)
+    {
+        $this->initialDate = $initialDate;
+
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getFinalDate()
+    {
+        return $this->finalDate;
+    }
+
+    /**
+     * @param null $finalDate
+     * @return $this
+     */
+    public function setFinalDate($finalDate)
+    {
+        $this->finalDate = $finalDate;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getInitialTime()
+    {
+        return $this->initialTime;
+    }
+
+    /**
+     * @param null $initialTime
+     * @return $this
+     */
+    public function setInitialTime($initialTime)
+    {
+        $this->initialTime = $initialTime;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getFinalTime()
+    {
+        return $this->finalTime;
+    }
+
+    /**
+     * @param null $finalTime
+     * @return $this
+     */
+    public function setFinalTime($finalTime)
+    {
+        $this->finalTime = $finalTime;
+        return $this;
     }
 
 }

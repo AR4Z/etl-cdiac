@@ -2,6 +2,7 @@
 
 namespace App\Entities\Config;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**

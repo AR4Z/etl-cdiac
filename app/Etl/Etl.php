@@ -2,6 +2,8 @@
 namespace App\Etl;
 
 
+use PhpParser\Node\Scalar\String_;
+
 class Etl
 {
   /**
@@ -29,28 +31,38 @@ class Etl
      * @param String $typeProcess
      * @param int $net
      * @param int $station
+     * @param bool $sequence
      * @return Etl
      */
-    public static function start(String $typeProcess, int $net, int $station)
+    public static function start(String $typeProcess, int $net, int $station,bool $sequence = true)
   {
     $etl = new Etl();
-    $etl->etlConfig($etl, $typeProcess, $net, $station);
+    $etl->etlConfig($etl, $typeProcess, $net, $station, $sequence);
     return $etl;
   }
 
 
-  public function etlConfig(Etl $etl, String $typeProcess, int $net, int $station)
+    /**
+     * @param Etl $etl
+     * @param String $typeProcess
+     * @param int $net
+     * @param int $station
+     * @param bool $sequence
+     * @return Etl
+     */
+    public function etlConfig(Etl $etl, String $typeProcess, int $net, int $station, bool $sequence)
   {
-    $etl->etlConfig = new EtlConfig($typeProcess, $net, $station);
+    $etl->etlConfig = new EtlConfig($typeProcess, $net, $station,$sequence);
     return $etl;
   }
 
     /**
      * @param String $method
+     * @param array $options
      * @return $this
      */
 
-    public function extract(String $method)
+    public function extract(string $method = 'Database', $options = [])
   {
       if (!empty($this->etlConfig)) {
             //etl config not define
@@ -59,16 +71,13 @@ class Etl
           // extract is define
       }
 
-      $class = __NAMESPACE__ . '\\' .'Extractors'. '\\' . $method;
-      $this->extract = new $class;
-      $this->extract->setOptions($this->etlConfig);
-
-
+      $this->extract = $this->factory($method,'Extractors',$options);
+      $this->extract->extract();
       return $this;
   }
 
 
-  public function transform()
+  public function transform(string $method = 'Original')
   {
     return $this;
   }
@@ -78,16 +87,76 @@ class Etl
     return $this;
   }
 
+    /**
+     * @param $class
+     * @param $category
+     * @param $options
+     * @return mixed
+     */
+
   protected function factory($class, $category, $options)
-{
+  {
+
     if (! class_exists($class)) {
         if (isset($aliases[$category][$class])) {
             $class = $aliases[$category][$class];
         }
         $class = __NAMESPACE__ . '\\' . ucwords($category) . '\\' . $class;
     }
-    $instance = new $class;
-    $instance = $this->setOptions($instance, $options);
-    return $instance;
+
+    $class = new $class;
+    $class->setOptions($this->etlConfig);
+
+    if (!empty($options)){
+        $class = $this->setOptions($class, $options);
+    }
+    return $class;
+
+  }
+
+    /**
+     * @param $class
+     * @param $options
+     * @return mixed
+     */
+    protected function setOptions($class, $options)
+  {
+      $refactor = new \ReflectionClass($class);
+      $refactorConfig = new \ReflectionClass($this->etlConfig);
+      $property = null;
+
+      foreach ($options as $option => $value){
+
+          if ($refactorConfig->hasProperty($option))
+          {
+              $property = $refactorConfig->getProperty($option);
+
+              if ($property && $property->isPublic()){
+                  $this->etlConfig->$option = $value;
+              }
+              if ($property && !$property->isPublic()){
+                  $setOption = 'set'.$option;
+                  $this->etlConfig->$setOption($value);
+              }
+
+          }else{
+
+              if ($refactor->hasProperty($option)){
+                  $property = $refactor->getProperty($option);
+              }
+              if ($property && $property->isPublic()){
+                  $class->$option = $value;
+              }
+              if ($property && !$property->isPublic()){
+                  $setOption = 'set'.$option;
+                  $class->$setOption($value);
+              }
+          }
+
+      }
+
+      return $class;
+  }
+
 }
-}
+

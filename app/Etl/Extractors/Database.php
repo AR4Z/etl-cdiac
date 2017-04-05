@@ -17,11 +17,12 @@ class Database extends ExtractorBase implements ExtractorInterface
   /**
    * $method is the data type incoming
    */
+
     private $method = 'Database';
 
     private $select = 'fecha, hora, ';
 
-
+    public $etlConfig = null;
 
     /**
      * @param $etlConfig
@@ -30,12 +31,11 @@ class Database extends ExtractorBase implements ExtractorInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         // Configuration
-
+        $this->etlConfig = $etlConfig;
         $this->setSelect($etlConfig->getVarForFilter(), 'name_database', 'name_locale');
 
-        //execution
-
-        $this->extract($etlConfig);
+        //dd($etlConfig->getVarForFilter());
+        //$this->initialDate = $etlConfig->
 
         return $this;
 
@@ -90,37 +90,34 @@ class Database extends ExtractorBase implements ExtractorInterface
 
 
     /**
-     * @param EtlConfig $etlConfig
      * @return $this
+     * @internal param EtlConfig $etlConfig
      */
-    public function extract(EtlConfig $etlConfig)
+    public function extract()
     {
-        $this->settingConnection($etlConfig->getNet());
-
-        $this->insertAllDataInTemporal(
-                    $this->selectServerAcquisition($etlConfig),
-                    $etlConfig->getRepositorySpaceWork()
-                );
-
-        $this->updateStationSk($etlConfig->getStation(),$etlConfig->getRepositorySpaceWork());
+        $this->settingConnection($this->etlConfig->getNet());
+        $this->insertAllDataInTemporal($this->selectServerAcquisition());
+        $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
 
         return $this;
     }
 
     /**
-     * @param $etlConfig
      * @return mixed
+     * @internal param $etlConfig
      */
-    private function selectServerAcquisition($etlConfig){
+    private function selectServerAcquisition()
+    {
+        $stateTable = $this->etlConfig->getStateTable();
 
         $total = DB::connection('external_connection')
-            ->table($etlConfig->getStation()->name_table)
+            ->table($this->etlConfig->getStation()->name_table)
             ->select(DB::raw($this->select))
             ->whereBetween(
                 DB::raw("concat_ws(' ',fecha, hora)"),
                 [
-                    $etlConfig->getStation()->originalState->full_date,
-                    Carbon::today()
+                    Carbon::parse($this->etlConfig->getInitialDate().' '.$this->etlConfig->getInitialTime()),
+                    Carbon::parse($this->etlConfig->getFinalDate().' '.$this->etlConfig->getFinalTime()),
                 ]
             )
             ->orderby(DB::raw("concat_ws(' ',fecha, hora)"), 'asc')
@@ -134,12 +131,12 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     /**
      * @param $data
-     * @param $repository
      * @return bool
+     * @internal param $repository
      */
-    private function insertAllDataInTemporal($data,$repository){
+    private function insertAllDataInTemporal($data){
 
-        $this->truncateTemporalWork($repository);
+        $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
 
         foreach ($data as $can){
             $dataSet = array();
@@ -149,10 +146,26 @@ class Database extends ExtractorBase implements ExtractorInterface
             DB::connection('temporary_work')->table('temporal_weather')->insert($dataSet);
         }
 
-        $this->updateDateSk($repository);
-        $this->updateTimeSk($repository);
+        $this->updateDateSk($this->etlConfig->getRepositorySpaceWork());
+        $this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());
 
         return true;
+    }
+
+    /**
+     * @return null
+     */
+    public function getInitialDate()
+    {
+        return $this->initialDate;
+    }
+
+    /**
+     * @param null $initialDate
+     */
+    public function setInitialDate($initialDate)
+    {
+        $this->initialDate = $initialDate;
     }
 
 

@@ -42,12 +42,14 @@ class ExternalConnectionController extends Controller
     public function index()
     {
         //dd($this->connectionRepository->getCacheLifetime());
-
         //dd($this->connectionRepository->where('id', 1)->first());
-        $jobEtl = Etl::start('Filter', 1, 1)->extract('Database')->transform()->load();
-        //$jobEtl2 = Etl::start('Original', 2, 81)->extract('Csv')->transform()->load();
+        $jobEtl = Etl::start('Original', 1, 1,true)
+                        ->extract('Database',['initialDate' => '2017-04-01'])
+                        ->transform()
+                        ->load();
+        //$jobEtl2 = Etl::start('Original', 2, 81,false)->extract('Csv')->transform()->load();
 
-        //$jobEtl = Etl::start('Filter', 1, 77)->extract('Database')->transform()->load();
+        //$jobEtl = Etl::start('Filter', 1, 77,false)->extract('Database')->transform()->load();
 
         dd($jobEtl);
 
