@@ -8,6 +8,7 @@ return [
         'typeProcess'           => 'Filter',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactTableRepository',
         'tableDestination'      => 'fact_table',
         'stateTable'            => 'filterState',
 
@@ -18,6 +19,7 @@ return [
         'typeProcess'           => 'Filter',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactTableRepository',
         'tableDestination'      => 'fact_table',
         'stateTable'            => 'filterState',
 
@@ -28,6 +30,7 @@ return [
         'typeProcess'           => 'Filter',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactTableRepository',
         'tableDestination'      => 'fact_table',
         'stateTable'            => 'filterState',
 
@@ -38,6 +41,7 @@ return [
         'typeProcess'           => 'Filter',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalAirRepository',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactAirRepository',
         'tableDestination'      => 'fact_aire',
         'stateTable'            => 'filterState',
 

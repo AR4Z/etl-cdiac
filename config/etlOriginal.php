@@ -7,7 +7,8 @@ return [
         'typeProcess'           => 'Original',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
-        'tableDestination'      => 'Originales',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\OriginalFactTableRepository',
+        'tableDestination'      => 'original_fact_table',
         'stateTable'            => 'originalState',
 
     ],
@@ -17,7 +18,8 @@ return [
         'typeProcess'           => 'Original',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
-        'tableDestination'      => 'Originales',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\OriginalFactTableRepository',
+        'tableDestination'      => 'original_fact_table',
         'stateTable'            => 'originalState',
 
     ],
@@ -27,7 +29,8 @@ return [
         'typeProcess'           => 'Original',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
-        'tableDestination'      => 'Originales',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\OriginalFactTableRepository',
+        'tableDestination'      => 'original_fact_table',
         'stateTable'            => 'originalState',
 
     ],
@@ -37,7 +40,8 @@ return [
         'typeProcess'           => 'Original',
         'tableSpaceWork'        => 'temporal_weather',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalAirRepository',
-        'tableDestination'      => 'Originales_aire',
+        'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\OriginalFactAirRepository',
+        'tableDestination'      => 'original_fact_aire',
         'stateTable'            => 'originalState',
     ],
 

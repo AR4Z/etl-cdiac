@@ -41,9 +41,11 @@ class EtlConfig
    * $tableDestination indicates the temporal space work
    */
 
+  private $varForFilter = null;
+
   private $tableDestination = null;
 
-  private $varForFilter = null;
+  private $repositoryDestination = null;
 
   private $repositorySpaceWork = null;
 
@@ -58,9 +60,6 @@ class EtlConfig
   private $initialTime = null;
 
   private $finalTime = null;
-
-
-
 
     /**
      * EtlConfig constructor.
@@ -109,7 +108,8 @@ class EtlConfig
         $this   ->setTableSpaceWork($config->tableSpaceWork)
                 ->setTableDestination($config->tableDestination)
                 ->setRepositorySpaceWork($config->repositorySpaceWork)
-                ->setStateTable($config->stateTable);
+                ->setStateTable($config->stateTable)
+                ->setRepositoryDestination($config->repositoryDestination);
 
         return $this;
 
@@ -345,6 +345,24 @@ class EtlConfig
     public function setFinalTime($finalTime)
     {
         $this->finalTime = $finalTime;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getRepositoryDestination()
+    {
+        return $this->repositoryDestination;
+    }
+
+    /**
+     * @param null $repositoryDestination
+     * @return $this
+     */
+    public function setRepositoryDestination($repositoryDestination)
+    {
+        $this->repositoryDestination = $repositoryDestination;
         return $this;
     }
 

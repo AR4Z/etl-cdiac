@@ -12,4 +12,6 @@ interface ExtractorInterface
      * @return mixed
      */
     public function setOptions(EtlConfig $etlConfig);
+
+    public function extract();
 }

@@ -2,8 +2,6 @@
 namespace App\Etl;
 
 
-use PhpParser\Node\Scalar\String_;
-
 class Etl
 {
   /**
@@ -77,7 +75,12 @@ class Etl
   }
 
 
-  public function transform(string $method = 'Original',$options = [])
+    /**
+     * @param string $method
+     * @param array $options
+     * @return $this
+     */
+    public function transform(string $method = 'Original', $options = [])
   {
       $this->transform = $this->factory($method,'Transformers',$options);
       $this->transform->transform();
@@ -85,9 +88,17 @@ class Etl
       return $this;
   }
 
-  public function load()
+    /**
+     * @param string $method
+     * @param array $options
+     * @return $this
+     */
+    public function load(string $method = 'Load', $options = [])
   {
-    return $this;
+      $this->load = $this->factory($method, 'Loaders',$options);
+      $this->load->load();
+
+      return $this;
   }
 
     /**

@@ -4,12 +4,12 @@ namespace App\Entities\DataWareHouse;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FactTable extends Model
+class OriginalFactTable extends Model
 {
-
     protected $connection = 'data_warehouse';
 
-    protected $table = 'fact_table';
+    protected $table = 'original_fact_table';
+
 
     protected $fillable = [
         'estacion_sk','fecha_sk', 'tiempo_sk', 'precipitacion','temperatura','temperatura_max','temperatura_min', 'temperatura_med', 'brillo',

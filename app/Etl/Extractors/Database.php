@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 
 
-
 class Database extends ExtractorBase implements ExtractorInterface
 {
     use DatabaseConfig;
@@ -108,8 +107,6 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     private function selectServerAcquisition()
     {
-        $stateTable = $this->etlConfig->getStateTable();
-
         $total = DB::connection('external_connection')
             ->table($this->etlConfig->getStation()->name_table)
             ->select(DB::raw($this->select))
@@ -150,22 +147,6 @@ class Database extends ExtractorBase implements ExtractorInterface
         $this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());
 
         return true;
-    }
-
-    /**
-     * @return null
-     */
-    public function getInitialDate()
-    {
-        return $this->initialDate;
-    }
-
-    /**
-     * @param null $initialDate
-     */
-    public function setInitialDate($initialDate)
-    {
-        $this->initialDate = $initialDate;
     }
 
 
