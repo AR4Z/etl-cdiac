@@ -43,9 +43,13 @@ class EtlConfig
 
   private $tableDestination = null;
 
+  private $tableExist = null;
+
   private $repositoryDestination = null;
 
   private $repositorySpaceWork = null;
+
+  private $repositoryExist = null;
 
   private $stateTable = null;
 
@@ -100,14 +104,17 @@ class EtlConfig
                                     .str_replace (
                                         ' ',
                                         '_',
-                                        $this->removeAccents($this->station->type).''
+                                        $this->removeAccents($this->station->type)
                                     ));
 
         $this   ->setTableSpaceWork($config->tableSpaceWork)
                 ->setTableDestination($config->tableDestination)
                 ->setRepositorySpaceWork($config->repositorySpaceWork)
                 ->setStateTable($config->stateTable)
-                ->setRepositoryDestination($config->repositoryDestination);
+                ->setRepositoryDestination($config->repositoryDestination)
+                ->setRepositoryExist($config->repositoryExist)
+                ->setTableExist($config->tableExist);
+
 
         return $this;
 
@@ -361,6 +368,42 @@ class EtlConfig
     public function setRepositoryDestination($repositoryDestination)
     {
         $this->repositoryDestination = $repositoryDestination;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getRepositoryExist()
+    {
+        return $this->repositoryExist;
+    }
+
+    /**
+     * @param null $repositoryExist
+     * @return $this
+     */
+    public function setRepositoryExist($repositoryExist)
+    {
+        $this->repositoryExist = $repositoryExist;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getTableExist()
+    {
+        return $this->tableExist;
+    }
+
+    /**
+     * @param null $tableExist
+     * @return $this
+     */
+    public function setTableExist($tableExist)
+    {
+        $this->tableExist = $tableExist;
         return $this;
     }
 

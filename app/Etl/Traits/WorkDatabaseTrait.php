@@ -72,4 +72,19 @@ trait WorkDatabaseTrait
             DB::connection($connection)->table($table)->insert($dataSet);
         }
     }
+
+    public function evaluateExistence($repository,$data){
+
+        $count = ($repository)::where('fecha_sk','=',$data->fecha_sk)
+                                ->where('estacion_sk','=',$data->estacion_sk)
+                                ->where('tiempo_sk','=',$data->tiempo_sk)
+                                ->count();
+
+        return ($count != 0)? true : false;
+    }
+
+    public function insertExistTable($table,$data){
+        return DB::connection('temporary_work')->table($table)->insert($data);
+    }
+
 }

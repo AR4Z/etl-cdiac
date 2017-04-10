@@ -30,9 +30,20 @@ class Load extends LoadBase implements LoadInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function load()
     {
+        $this->redirectExisting(
+                    $this->etlConfig->getRepositorySpaceWork(),
+                    $this->etlConfig->getRepositoryDestination(),
+                    $this->etlConfig->getRepositoryExist(),
+                    $this->etlConfig->getTableExist()
+                );
+
         $this->insertAllDataInFact($this->selectTemporalTable());
+
         return $this;
     }
 
