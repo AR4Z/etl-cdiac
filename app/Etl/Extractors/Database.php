@@ -3,15 +3,14 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\Database\DatabaseConfig;
+use App\Etl\Traits\WorkDatabaseTrait;
 use App\Etl\EtlConfig;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 
 
 class Database extends ExtractorBase implements ExtractorInterface
 {
-    use DatabaseConfig;
+    use DatabaseConfig,WorkDatabaseTrait;
 
   /**
    * $method is the data type incoming
@@ -82,11 +81,9 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function settingConnection($connection)
     {
-
         $this->configExternalConnection($connection);
         return $this;
     }
-
 
     /**
      * @return $this
@@ -103,27 +100,19 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     /**
      * @return mixed
-     * @internal param $etlConfig
      */
     private function selectServerAcquisition()
     {
-        $total = DB::connection('external_connection')
-            ->table($this->etlConfig->getStation()->name_table)
-            ->select(DB::raw($this->select))
-            ->whereBetween(
-                DB::raw("concat_ws(' ',fecha, hora)"),
-                [
-                    Carbon::parse($this->etlConfig->getInitialDate().' '.$this->etlConfig->getInitialTime()),
-                    Carbon::parse($this->etlConfig->getFinalDate().' '.$this->etlConfig->getFinalTime()),
-                ]
-            )
-            ->orderby(DB::raw("concat_ws(' ',fecha, hora)"), 'asc')
-            ->limit(100)//10000
-            ->get()
-            ->all();
-
-
-        return $total;
+        return $this->getData(
+            'external_connection',
+            $this->etlConfig->getStation()->name_table,
+            $this->select,
+            $this->etlConfig->getInitialDate(),
+            $this->etlConfig->getInitialTime(),
+            $this->etlConfig->getFinalDate(),
+            $this->etlConfig->getFinalTime(),
+            100
+        );
     }
 
     /**
@@ -135,13 +124,7 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
 
-        foreach ($data as $can){
-            $dataSet = array();
-            foreach ($can as $key => $value){
-                $dataSet[$key] = $value;
-            }
-            DB::connection('temporary_work')->table('temporal_weather')->insert($dataSet);
-        }
+        $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$data);
 
         $this->updateDateSk($this->etlConfig->getRepositorySpaceWork());
         $this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());

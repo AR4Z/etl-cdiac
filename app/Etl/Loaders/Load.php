@@ -5,10 +5,13 @@ namespace App\Etl\Loaders;
 
 
 use App\Etl\EtlConfig;
-use Illuminate\Support\Facades\DB;
+use DB;
+use App\Etl\Traits\WorkDatabaseTrait;
+
 
 class Load extends LoadBase implements LoadInterface
 {
+    use WorkDatabaseTrait;
 
     private $method = 'General';
 
@@ -29,8 +32,7 @@ class Load extends LoadBase implements LoadInterface
 
     public function load()
     {
-        $consult = $this->insertData();
-        //dd($consult);
+        $this->insertAllDataInFact($this->selectTemporalTable());
         return $this;
     }
 
@@ -46,19 +48,15 @@ class Load extends LoadBase implements LoadInterface
         return $this;
     }
 
-    public function insertData()
+    public function selectTemporalTable(){
+
+        return $this->getAllData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->select);
+
+    }
+
+    public function insertAllDataInFact($data)
     {
-        $values = DB::connection('temporary_work')->table($this->etlConfig->getTableSpaceWork())->select(DB::raw($this->select))->get()->all();
-
-        foreach ($values as $value){
-            $dataSet = array();
-            foreach ($value as $key => $val){
-                $dataSet[$key] = $val;
-            }
-            DB::connection('data_warehouse')->table($this->etlConfig->getTableDestination())->insert([$dataSet]);
-        }
-
-        return $values;
+        return $this->insertData('data_warehouse',$this->etlConfig->getTableDestination(),$data);
     }
 
     /**
