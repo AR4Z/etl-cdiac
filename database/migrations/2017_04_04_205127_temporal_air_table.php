@@ -13,7 +13,7 @@ class TemporalAirTable extends Migration
      */
     public function up()
     {
-        Schema::connection('temporary_work')->create('temporary_air', function (Blueprint $table) {
+        Schema::connection('temporary_work')->create('temporal_air', function (Blueprint $table) {
 
             $table->increments('id');
             $table->integer('estacion_sk')->nullable();

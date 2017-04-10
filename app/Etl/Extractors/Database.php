@@ -32,9 +32,6 @@ class Database extends ExtractorBase implements ExtractorInterface
         $this->etlConfig = $etlConfig;
         $this->setSelect($etlConfig->getVarForFilter(), 'name_database', 'name_locale');
 
-        //dd($etlConfig->getVarForFilter());
-        //$this->initialDate = $etlConfig->
-
         return $this;
 
     }

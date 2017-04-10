@@ -38,7 +38,7 @@ return [
     'calidad_del_aire' => [
 
         'typeProcess'           => 'Original',
-        'tableSpaceWork'        => 'temporal_weather',
+        'tableSpaceWork'        => 'temporal_air',
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalAirRepository',
         'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\OriginalFactAirRepository',
         'tableDestination'      => 'original_fact_aire',

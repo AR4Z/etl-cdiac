@@ -18,7 +18,6 @@ class EtlConfig
    */
   private $typeProcess = null;
 
-
   /**
    * $net is dependence for: App\Repositories\Config\ConnectionRepository
    * $net indicates the station for work
@@ -30,18 +29,17 @@ class EtlConfig
    */
   private $station = null;
 
-  /**
+    /**
+     * $tableDestination is optional: 'fact_table' - 'fact_aire' - null
+     * $tableDestination indicates the temporal space work
+     */
+  private $varForFilter = null;
+
+    /**
    * $tableSpaceWork is optional: 'temporal_clima' - 'temporal_aire' - null
    * $tableSpaceWork indicates the temporal space work
    */
   private $tableSpaceWork = null;
-
-  /**
-   * $tableDestination is optional: 'fact_table' - 'fact_aire' - null
-   * $tableDestination indicates the temporal space work
-   */
-
-  private $varForFilter = null;
 
   private $tableDestination = null;
 
