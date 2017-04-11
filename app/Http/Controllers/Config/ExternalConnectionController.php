@@ -18,6 +18,8 @@ use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use App\Repositories\Config\ConnectionRepository;
 use Illuminate\Support\Facades\Storage;
 
+use App\Jobs\EtlStationJob;
+
 
 
 class ExternalConnectionController extends Controller
@@ -41,17 +43,24 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
+        dispatch(new EtlStationJob('Original',1,1,true));
+
         //dd($this->connectionRepository->getCacheLifetime());
         //dd($this->connectionRepository->where('id', 1)->first());
+        /*
+
         $jobEtl = Etl::start('Original', 1, 1,true)
                         ->extract('Database',['initialDate' => '2017-04-10', 'initialTime' => '23:40:35'])
                         ->transform()
                         ->load();
+
+        */
         //$jobEtl2 = Etl::start('Original', 2, 81,false)->extract('Csv')->transform()->load();
 
         //$jobEtl = Etl::start('Filter', 1, 77,false)->extract('Database')->transform()->load();
 
-        dd($jobEtl);
+        //dd(' se deben estar ejecutando los jobs');
+        //dd($jobEtl);
 
     }
 

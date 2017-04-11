@@ -108,7 +108,7 @@ class Database extends ExtractorBase implements ExtractorInterface
             $this->etlConfig->getInitialTime(),
             $this->etlConfig->getFinalDate(),
             $this->etlConfig->getFinalTime(),
-            100
+            5000
         );
     }
 

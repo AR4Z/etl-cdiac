@@ -1,6 +1,8 @@
 <?php
 namespace App\Etl;
 
+use App\Jobs\EtlStationJob;
+
 
 class Etl
 {
@@ -97,6 +99,19 @@ class Etl
   {
       $this->load = $this->factory($method, 'Loaders',$options);
       $this->load->load();
+
+
+      if ($this->etlConfig->getSequence() and $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}->it_update)
+      {
+          dispatch(
+              new EtlStationJob(
+                  $this->etlConfig->getTypeProcess,
+                  $this->etlConfig->getConnection()->id,
+                  $this->etlConfig->getStation()->id,
+                  $this->etlConfig->getSequence()
+              )
+          );
+      }
 
       return $this;
   }
