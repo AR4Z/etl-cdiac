@@ -44,7 +44,7 @@ class ExternalConnectionController extends Controller
         //dd($this->connectionRepository->getCacheLifetime());
         //dd($this->connectionRepository->where('id', 1)->first());
         $jobEtl = Etl::start('Original', 1, 1,true)
-                        ->extract('Database',['initialDate' => '2017-04-01'])
+                        ->extract('Database',['initialDate' => '2017-04-10', 'initialTime' => '23:40:35'])
                         ->transform()
                         ->load();
         //$jobEtl2 = Etl::start('Original', 2, 81,false)->extract('Csv')->transform()->load();

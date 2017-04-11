@@ -24,3 +24,5 @@ Route::get('/home', 'General\HomeController@index');
 Route::resource('external-connection', 'Config\ExternalConnectionController');
 
 Route::resource('station', 'Config\StationController');
+
+Route::get('extract-all','General\EtlController@index');

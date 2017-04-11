@@ -19,7 +19,6 @@ class CreateStationTable extends Migration
           $table->integer('connection_id');
           $table->string('name');
           $table->string('name_table')->nullable();
-          $table->string('typology')->nullable();
           $table->boolean('active')->default(true);
           $table->string('type')->nullable();
           $table->integer('quantity_measurement_day')->nullable();

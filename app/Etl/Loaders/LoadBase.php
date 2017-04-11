@@ -2,25 +2,45 @@
 namespace  App\Etl\Loaders;
 
 use App\Etl\Traits\WorkDatabaseTrait;
+use Carbon\Carbon;
 
 abstract class LoadBase
 {
     use WorkDatabaseTrait;
 
-    public function redirectExisting($repositorySpaceWork,$repositoryDestination,$repositoryExist,$table){
+    public function redirectExisting($repositorySpaceWork,$repositoryDestination,$repositoryExist,$table)
+    {
 
         $values = ($repositorySpaceWork)::all();
 
-        foreach ($values as $value){
+        foreach ($values as $value)
+        {
 
-            if ($this->evaluateExistence($repositoryDestination,$value)){
-
+            if ($this->evaluateExistence($repositoryDestination,$value))
+            {
                 $this->insertExistTable($table,$repositoryExist::fill($value->toArray())->toArray());
 
                 ($repositorySpaceWork)::delete($value->id);
             }
-
-            //insert?????
         }
+    }
+
+    public function updateDateAndTime($repositorySpaceWork,$stateTableName,$stateTableValue)
+    {
+        $values = ($repositorySpaceWork)::select('*')->orderby('id','desc')->first();
+
+        if (!empty($values))
+        {
+            $completeDate = Carbon::parse($values->fecha.' '.$values->hora);
+            $completeDate->addMinute();
+
+            $stateTableValue->current_date = $completeDate->format('Y-m-d');
+            $stateTableValue->current_time = $completeDate->format('h:i:s');
+            $stateTableValue->it_update =  ($completeDate >= Carbon::today()->addMinute(-1))?? true;
+
+            $stateTableValue->save();
+        }
+
+
     }
 }

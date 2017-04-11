@@ -71,7 +71,7 @@ class EtlConfig
      * @param bool $sequence
      */
 
-    function __construct(String $typeProcess, int $netId, int $stationId,bool $sequence)
+    function __construct(String $typeProcess, int $netId, int $stationId,bool $sequence= false)
     {
         $this   ->setTypeProcess($typeProcess)
                 ->setNet($netId)

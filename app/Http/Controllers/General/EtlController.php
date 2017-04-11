@@ -7,5 +7,8 @@ use App\Http\Controllers\Controller;
 
 class EtlController extends Controller
 {
-    //
+    public function index()
+    {
+        dd('Hola');
+    }
 }
