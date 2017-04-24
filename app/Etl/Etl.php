@@ -100,13 +100,12 @@ class Etl
       $this->load = $this->factory($method, 'Loaders',$options);
       $this->load->load();
 
-
-      if ($this->etlConfig->getSequence() and $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}->it_update)
+      if ($this->etlConfig->getSequence() and !($this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}->it_update))
       {
           dispatch(
               new EtlStationJob(
-                  $this->etlConfig->getTypeProcess,
-                  $this->etlConfig->getConnection()->id,
+                  $this->etlConfig->getTypeProcess(),
+                  $this->etlConfig->getNet()->id,
                   $this->etlConfig->getStation()->id,
                   $this->etlConfig->getSequence()
               )

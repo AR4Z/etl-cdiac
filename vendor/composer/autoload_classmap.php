@@ -8,6 +8,8 @@ $baseDir = dirname($vendorDir);
 return array(
     'ConnectionTableSeeder' => $baseDir . '/database/seeds/ConnectionTableSeeder.php',
     'CreateConnectionTable' => $baseDir . '/database/migrations/2017_02_05_202215_create_connection_table.php',
+    'CreateExistFactAire' => $baseDir . '/database/migrations/2017_04_10_222446_create_exist_fact_aire.php',
+    'CreateExistFactTable' => $baseDir . '/database/migrations/2017_04_10_222403_create_exist_fact_table.php',
     'CreateFilterStateTable' => $baseDir . '/database/migrations/2017_02_06_210109_create_filter_state_table.php',
     'CreateJobsTable' => $baseDir . '/database/migrations/2017_03_13_012738_create_jobs_table.php',
     'CreateOriginStateTable' => $baseDir . '/database/migrations/2017_02_06_205145_create_origin_state_table.php',
@@ -554,4 +556,5 @@ return array(
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'VarForStationTableSeeder' => $baseDir . '/database/seeds/VarForStationTableSeeder.php',
     'VariableSeeder' => $baseDir . '/database/seeds/VariableSeeder.php',
+    'v' => $baseDir . '/database/seeds/v.php',
 );

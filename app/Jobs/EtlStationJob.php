@@ -7,40 +7,63 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+
+
 use App\Etl\Etl;
-use Illuminate\Support\Facades\Storage;
+use Storage;
 
 class EtlStationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * Create a new job instance.
-     *
+     * @var
      */
-    public function __construct()
-    {
-        //
-    }
+    private $typeProcess;
+    /**
+     * @var
+     */
+    private $idConnection;
+    /**
+     * @var
+     */
+    private $idStation;
+    /**
+     * @var bool
+     */
+    private $sequence;
 
     /**
-     * Execute the job.
-     *
+     * Create a new job instance.
      * @param $typeProcess
      * @param $idConnection
      * @param $idStation
      * @param bool $sequence
-     * @return void
      */
-    public function handle($typeProcess,$idConnection,$idStation,$sequence = false)
-    //public function handle()
+    public function __construct($typeProcess = 'Original',$idConnection,$idStation,$sequence = false)
     {
-        Storage::put('file.txt','Hola estoy desde un EtlStationjob');
+        Storage::put('file.txt','Hola');
 
-        Etl::start($typeProcess, $idConnection, $idStation,$sequence)
-            ->extract('Database')
-            ->transform()
-            ->load();
+        $this->typeProcess = $typeProcess;
+        $this->idConnection = $idConnection;
+        $this->idStation = $idStation;
+        $this->sequence = $sequence;
+    }
+
+    /**
+     * Execute the job.
+     * @param Etl $etl
+     * @return void
+
+     */
+    public function handle()
+    {
+        Storage::put('file.txt','Hola');
+
+        $result= Etl::start($this->typeProcess, $this->idConnection, $this->idStation,$this->sequence)
+                        ->extract('Database')
+                        ->transform()
+                        ->load();
 
         Storage::put('file.txt','Hola estoy desde un EtlStationjob final');
 

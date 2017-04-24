@@ -293,6 +293,8 @@ class ComposerStaticInitfa0d3ea1788dd43564c16c05bd48aeef
     public static $classMap = array (
         'ConnectionTableSeeder' => __DIR__ . '/../..' . '/database/seeds/ConnectionTableSeeder.php',
         'CreateConnectionTable' => __DIR__ . '/../..' . '/database/migrations/2017_02_05_202215_create_connection_table.php',
+        'CreateExistFactAire' => __DIR__ . '/../..' . '/database/migrations/2017_04_10_222446_create_exist_fact_aire.php',
+        'CreateExistFactTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_10_222403_create_exist_fact_table.php',
         'CreateFilterStateTable' => __DIR__ . '/../..' . '/database/migrations/2017_02_06_210109_create_filter_state_table.php',
         'CreateJobsTable' => __DIR__ . '/../..' . '/database/migrations/2017_03_13_012738_create_jobs_table.php',
         'CreateOriginStateTable' => __DIR__ . '/../..' . '/database/migrations/2017_02_06_205145_create_origin_state_table.php',
@@ -839,6 +841,7 @@ class ComposerStaticInitfa0d3ea1788dd43564c16c05bd48aeef
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
         'VarForStationTableSeeder' => __DIR__ . '/../..' . '/database/seeds/VarForStationTableSeeder.php',
         'VariableSeeder' => __DIR__ . '/../..' . '/database/seeds/VariableSeeder.php',
+        'v' => __DIR__ . '/../..' . '/database/seeds/v.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

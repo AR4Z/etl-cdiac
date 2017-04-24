@@ -25,7 +25,7 @@ abstract class LoadBase
         }
     }
 
-    public function updateDateAndTime($repositorySpaceWork,$stateTableName,$stateTableValue)
+    public function updateDateAndTime($repositorySpaceWork,$stateTableValue)
     {
         $values = ($repositorySpaceWork)::select('*')->orderby('id','desc')->first();
 
