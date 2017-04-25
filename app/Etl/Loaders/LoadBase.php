@@ -36,11 +36,13 @@ abstract class LoadBase
 
             $stateTableValue->current_date = $completeDate->format('Y-m-d');
             $stateTableValue->current_time = $completeDate->format('h:i:s');
-            $stateTableValue->it_update =  ($completeDate >= Carbon::today()->addMinute(-1))?? true;
+            $stateTableValue->it_update =  ($completeDate >= Carbon::today()->addMinute(-10))?? true;
 
-            $stateTableValue->save();
+        }else{
+            $stateTableValue->it_update =  true;
         }
 
+        $stateTableValue->save();
 
     }
 }

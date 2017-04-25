@@ -76,7 +76,6 @@ class Etl
       return $this;
   }
 
-
     /**
      * @param string $method
      * @param array $options
@@ -100,7 +99,20 @@ class Etl
       $this->load = $this->factory($method, 'Loaders',$options);
       $this->load->load();
 
-      if ($this->etlConfig->getSequence() and !($this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}->it_update))
+      $this->reloadPrecess();
+
+      return $this;
+  }
+
+    /**
+     *
+     */
+    public function reloadPrecess()
+  {
+      if (
+          $this->etlConfig->getSequence() and
+          !($this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}->it_update)
+      )
       {
           dispatch(
               new EtlStationJob(
@@ -111,8 +123,7 @@ class Etl
               )
           );
       }
-
-      return $this;
+      return;
   }
 
     /**
