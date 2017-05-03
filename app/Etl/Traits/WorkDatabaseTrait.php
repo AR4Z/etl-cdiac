@@ -52,28 +52,36 @@ trait WorkDatabaseTrait
      * @param string $select
      * @return mixed
      */
-    public function getAllData(string $connection, string $table, string $select){
-
+    public function getAllData(string $connection, string $table, string $select)
+    {
         return DB::connection($connection)->table($table)->select(DB::raw($select))->get()->all();
     }
 
     /**
      * @param string $connection
      * @param string $table
+     * @param array $columns
      * @param array $data
      */
-    public function insertData(string $connection, string $table, $data = []){
-        foreach ($data as $can){
+    public function insertData(string $connection, string $table, $columns = [], $data = []){
+
+        $insert = "INSERT INTO ".$table." (".implode(',',$columns).") values ";
+        foreach ($data as $can)
+        {
             $dataSet = array();
-            foreach ($can as $key => $value){
+            foreach ($can as $key => $value)
+            {
                 $dataSet[$key] = $value;
             }
 
-            DB::connection($connection)->table($table)->insert($dataSet);
+            $insert .= "('".implode("' ,'",$dataSet)."'),";
         }
+        $insert[strlen($insert)-1] = ' ';
+        DB::connection($connection)->statement($insert);
     }
 
-    public function evaluateExistence($repository,$data){
+    public function evaluateExistence($repository,$data)
+    {
 
         $count = ($repository)::where('fecha_sk','=',$data->fecha_sk)
                                 ->where('estacion_sk','=',$data->estacion_sk)
@@ -83,7 +91,8 @@ trait WorkDatabaseTrait
         return ($count != 0)? true : false;
     }
 
-    public function insertExistTable($table,$data){
+    public function insertExistTable($table,$data)
+    {
         return DB::connection('temporary_work')->table($table)->insert($data);
     }
 

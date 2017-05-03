@@ -39,6 +39,10 @@ class EtlConfig
    * $tableSpaceWork is optional: 'temporal_clima' - 'temporal_aire' - null
    * $tableSpaceWork indicates the temporal space work
    */
+
+
+  private $tableTrust = null;
+
   private $tableSpaceWork = null;
 
   private $tableDestination = null;
@@ -113,7 +117,8 @@ class EtlConfig
                 ->setStateTable($config->stateTable)
                 ->setRepositoryDestination($config->repositoryDestination)
                 ->setRepositoryExist($config->repositoryExist)
-                ->setTableExist($config->tableExist);
+                ->setTableExist($config->tableExist)
+                ->setTableTrust($config->tableTrust);
 
 
         return $this;
@@ -405,6 +410,22 @@ class EtlConfig
     {
         $this->tableExist = $tableExist;
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTableTrust()
+    {
+        return $this->tableTrust;
+    }
+
+    /**
+     * @param mixed $tableTrust
+     */
+    public function setTableTrust($tableTrust)
+    {
+        $this->tableTrust = $tableTrust;
     }
 
 }

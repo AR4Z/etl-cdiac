@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('Etl:Start')->dailyAt('00:30');
+       // $schedule->command('Etl:Start')->dailyAt('00:30');
     }
 
     /**

@@ -6,11 +6,12 @@ use App\Etl\Database\DatabaseConfig;
 use App\Etl\Traits\WorkDatabaseTrait;
 use App\Etl\EtlConfig;
 use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
+use App\Etl\Traits\TrustTrait;
 
 
 class Database extends ExtractorBase implements ExtractorInterface
 {
-    use DatabaseConfig,WorkDatabaseTrait;
+    use DatabaseConfig,WorkDatabaseTrait,TrustTrait;
 
   /**
    * $method is the data type incoming
@@ -19,6 +20,8 @@ class Database extends ExtractorBase implements ExtractorInterface
     private $method = 'Database';
 
     private $select = 'fecha, hora, ';
+
+    private  $columns = array('fecha','hora');
 
     public $etlConfig = null;
 
@@ -34,6 +37,26 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         return $this;
 
+    }
+
+    /**
+     * @return $this
+     * @internal param EtlConfig $etlConfig
+     */
+    public function extract()
+    {
+        //dd($this);
+        $this->settingConnection($this->etlConfig->getNet());
+        $this->insertAllDataInTemporal($this->selectServerAcquisition());
+        $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
+
+        $this->incomingCalculation(
+                    $this->etlConfig->getTableSpaceWork(),
+                    $this->etlConfig->getTableTrust(),
+                    $this->etlConfig->getVarForFilter()->toArray()
+                );
+
+        return $this;
     }
 
     /**
@@ -62,8 +85,10 @@ class Database extends ExtractorBase implements ExtractorInterface
     public function setSelect($variables, $colOrigin, $colDestination)
     {
         $temporalSelect = '';
+
         foreach ($variables as $variable){
             $temporalSelect .= $variable->$colOrigin .' as '. $variable->$colDestination.', ';
+            array_push($this->columns,$variable->$colDestination);
         }
         $temporalSelect[strlen($temporalSelect)-2] = ' ';
         $this->select .= $temporalSelect;
@@ -82,18 +107,7 @@ class Database extends ExtractorBase implements ExtractorInterface
         return $this;
     }
 
-    /**
-     * @return $this
-     * @internal param EtlConfig $etlConfig
-     */
-    public function extract()
-    {
-        $this->settingConnection($this->etlConfig->getNet());
-        $this->insertAllDataInTemporal($this->selectServerAcquisition());
-        $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
 
-        return $this;
-    }
 
     /**
      * @return mixed
@@ -108,7 +122,7 @@ class Database extends ExtractorBase implements ExtractorInterface
             $this->etlConfig->getInitialTime(),
             $this->etlConfig->getFinalDate(),
             $this->etlConfig->getFinalTime(),
-            5000
+            10
         );
     }
 
@@ -121,7 +135,7 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
 
-        $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$data);
+        $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->columns, $data);
 
         $this->updateDateSk($this->etlConfig->getRepositorySpaceWork());
         $this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());

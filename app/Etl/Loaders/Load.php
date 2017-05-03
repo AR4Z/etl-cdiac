@@ -17,7 +17,10 @@ class Load extends LoadBase implements LoadInterface
 
     private  $etlConfig = null;
 
+
     private $select = 'estacion_sk,fecha_sk,tiempo_sk, ';
+
+    private  $columns = array('estacion_sk','fecha_sk','tiempo_sk');
 
     /**
      * @param EtlConfig $etlConfig
@@ -27,6 +30,7 @@ class Load extends LoadBase implements LoadInterface
     {
         $this->etlConfig = $etlConfig;
         $this->setSelect($etlConfig->getVarForFilter(), 'name_locale', 'name_locale');
+
         return $this;
     }
 
@@ -41,7 +45,6 @@ class Load extends LoadBase implements LoadInterface
                     $this->etlConfig->getRepositoryExist(),
                     $this->etlConfig->getTableExist()
                 );
-
 
         $this->insertAllDataInFact($this->selectTemporalTable());
 
@@ -61,6 +64,7 @@ class Load extends LoadBase implements LoadInterface
         $temporalSelect = '';
         foreach ($variables as $variable){
             $temporalSelect .= $variable->$colOrigin .' as '. $variable->$colDestination.', ';
+            array_push($this->columns,$variable->$colDestination);
         }
         $temporalSelect[strlen($temporalSelect)-2] = ' ';
         $this->select .= $temporalSelect;
@@ -68,15 +72,16 @@ class Load extends LoadBase implements LoadInterface
         return $this;
     }
 
-    public function selectTemporalTable(){
-
+    public function selectTemporalTable()
+    {
+        dd('hola');
         return $this->getAllData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->select);
 
     }
 
     public function insertAllDataInFact($data)
     {
-        return $this->insertData('data_warehouse',$this->etlConfig->getTableDestination(),$data);
+       return $this->insertData('data_warehouse',$this->etlConfig->getTableDestination(),$this->columns,$data);
     }
 
     /**

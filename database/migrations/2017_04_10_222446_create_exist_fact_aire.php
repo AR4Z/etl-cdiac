@@ -15,9 +15,9 @@ class CreateExistFactAire extends Migration
     {
         Schema::connection('temporary_work')->create('exist_fact_aire', function (Blueprint $table) {
 
-            $table->integer('estacion_sk')->nullable();
-            $table->integer('fecha_sk')->nullable();
-            $table->integer('tiempo_sk')->nullable();
+            $table->integer('estacion_sk');
+            $table->integer('fecha_sk');
+            $table->integer('tiempo_sk');
             $table->string('so2_local_ppt')->nullable();
             $table->string('so2_local_ugm3')->nullable();
             $table->string('so2_estan_ugm3')->nullable();

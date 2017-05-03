@@ -11,6 +11,7 @@ return [
         'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalWeatherRepository',
         'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactTableRepository',
         'repositoryExist'       => 'Facades\\App\\Repositories\\TemporaryWork\\ExistFactTableRepository',
+        'tableTrust'            => 'trust_weather',
         'tableDestination'      => 'fact_table',
         'stateTable'            => 'filterState',
 
@@ -25,6 +26,7 @@ return [
         'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactTableRepository',
         'repositoryExist'       => 'Facades\\App\\Repositories\\TemporaryWork\\ExistFactTableRepository',
         'tableDestination'      => 'fact_table',
+        'tableTrust'            => 'trust_weather',
         'stateTable'            => 'filterState',
 
     ],
@@ -38,6 +40,7 @@ return [
         'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactTableRepository',
         'repositoryExist'       => 'Facades\\App\\Repositories\\TemporaryWork\\ExistFactTableRepository',
         'tableDestination'      => 'fact_table',
+        'tableTrust'            => 'trust_weather',
         'stateTable'            => 'filterState',
 
     ],
@@ -51,6 +54,7 @@ return [
         'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\FactAirRepository',
         'repositoryExist'       => 'Facades\\App\\Repositories\\TemporaryWork\\ExistFactAirRepository',
         'tableDestination'      => 'fact_aire',
+        'tableTrust'            => 'trust_air',
         'stateTable'            => 'filterState',
 
     ],
