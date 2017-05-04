@@ -7,15 +7,17 @@ use DB;
 
 trait TrustTrait
 {
-    public $incoming = 'total_incoming_';
+    private $incoming = 'total_incoming_';
 
-    public $goods = 'total_good_';
+    private $goods = 'total_good_';
 
-    public $support = 'support_';
+    private $support = 'support_';
 
-    public $trust = 'trust_';
+    private $trust = 'trust_';
 
-    public $table = 'trust_';
+    private $table = 'trust_';
+
+    private $trustColumns = ['estacion_sk','fecha_sk'];
 
 
     /**
@@ -25,32 +27,48 @@ trait TrustTrait
      */
     public function incomingCalculation($temporalTable,$tableTrust,$variables)
     {
+
+        $countSelect = $this->generateSelect($variables);
+
         $values = DB::connection('temporary_work')
                     ->table($temporalTable)
-                    ->select(DB::raw('CAST(estacion_sk AS integer),CAST(fecha_sk AS integer)'))
+                    ->select(DB::raw('CAST(estacion_sk AS integer),CAST(fecha_sk AS integer),'.$countSelect))
                     ->groupby('estacion_sk','fecha_sk')
-                    ->orderby('estacion_sk','fecha_sk')
+                    ->orderby(DB::raw("estacion_sk,fecha_sk"),'asc')
                     ->get();
-
 
 
         foreach ($values as $value){
 
-            $count = DB::connection('data_warehouse')->table($tableTrust)->select(DB::raw('count(*)'))->where('estacion_sk','=',$value->estacion_sk)->where('estacion_sk','=',$value->fecha_sk)->get();
+            $actualTrust = DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
 
-            if ($count[0]->count){
+            //dd($actualTrust,$value->fecha_sk);
+            if (!$actualTrust){
+                dd('insert');
                 DB::connection('data_warehouse')->table($tableTrust)->insert(['estacion_sk'   => $value->estacion_sk,'fecha_sk' => $value->fecha_sk]);
+            }else{
+                dd('update');
             }
-
-        }
-
-        foreach ($variables as $variable)
-        {
 
         }
 
         dd($temporalTable,$variables);
 
+    }
+
+
+    private function generateSelect($variables)
+    {
+        $text = '';
+        foreach ($variables as $variable)
+        {
+            array_push($this->trustColumns,$this->incoming.''. $variable->name_locale);
+            $text .= 'COUNT(case '.$variable->name_locale.' when \'-\' then null else 1 end) AS '.$this->incoming.''. $variable->name_locale . ',';
+        }
+
+        $text[strlen($text)-1] = ' ';
+        dd($this->trustColumns);
+        return $text;
     }
 
 }
