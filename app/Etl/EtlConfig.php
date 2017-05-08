@@ -69,6 +69,8 @@ class EtlConfig
 
   private $finalTime = null;
 
+  private $trustColumns = [];
+
     /**
      * EtlConfig constructor.
      * @param String $typeProcess
@@ -448,6 +450,25 @@ class EtlConfig
     public function setTrustRepository($trustRepository)
     {
         $this->trustRepository = $trustRepository;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTrustColumns(): array
+    {
+        return $this->trustColumns;
+    }
+
+    /**
+     * @param array $trustColumns
+     * @return $this
+     */
+    public function setTrustColumns(array $trustColumns)
+    {
+        $this->trustColumns = $trustColumns;
 
         return $this;
     }

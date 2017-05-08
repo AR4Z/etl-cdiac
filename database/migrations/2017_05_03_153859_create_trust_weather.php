@@ -15,6 +15,7 @@ class CreateTrustWeather extends Migration
     {
         Schema::connection('data_warehouse')->create('trust_weather', function (Blueprint $table) {
 
+            $table->increments('id');
             $table->integer('estacion_sk');
             $table->integer('fecha_sk');
 

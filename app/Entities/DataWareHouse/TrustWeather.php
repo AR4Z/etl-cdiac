@@ -11,7 +11,7 @@ class TrustWeather extends Model
     protected $table = 'trust_weather';
 
     protected $fillable = [
-        'estacion_sk','fecha_sk',
+        'id','estacion_sk','fecha_sk',
         'total_incoming_precipitacion', 'total_good_precipitacion','support_precipitacion','trust_precipitacion',
         'total_incoming_temperatura', 'total_good_temperatura','support_temperatura','trust_temperatura',
         'total_incoming_brillo', 'total_good_brillo','support_brillo','trust_brillo',
@@ -21,7 +21,6 @@ class TrustWeather extends Model
         'total_incoming_velocidad_viento', 'total_good_velocidad_viento','support_velocidad_viento','trust_velocidad_viento',
         'total_incoming_direccion_viento', 'total_good_direccion_viento','support_direccion_viento','trust_direccion_viento',
         'total_incoming_presion_barometrica', 'total_good_presion_barometrica','support_presion_barometrica','trust_presion_barometrica',
-        'total_incoming_evapotranspiracion', 'total_good_evapotranspiracion','support_evapotranspiracion','trust_evapotranspiracion',
         'total_incoming_evapotranspiracion', 'total_good_evapotranspiracion','support_evapotranspiracion','trust_evapotranspiracion',
         'total_incoming_radiacion_solar', 'total_good_radiacion_solar','support_radiacion_solar','trust_radiacion_solar',
     ];

@@ -17,59 +17,105 @@ trait TrustTrait
 
     private $table = 'trust_';
 
-    private $trustColumns = ['estacion_sk','fecha_sk'];
-
-
     /**
      * @param $trustRepository
      * @param $temporalTable
      * @param $tableTrust
      * @param $variables
+     * @return array
      */
     public function incomingCalculation($trustRepository,$temporalTable,$tableTrust,$variables)
     {
-        dd($trustRepository);
-
-        $countSelect = $this->generateSelect($variables);
-
-        $values = DB::connection('temporary_work')
-                    ->table($temporalTable)
-                    ->select(DB::raw('CAST(estacion_sk AS integer),CAST(fecha_sk AS integer),'.$countSelect))
-                    ->groupby('estacion_sk','fecha_sk')
-                    ->orderby(DB::raw("estacion_sk,fecha_sk"),'asc')
-                    ->get();
-
+        $trustActuality = [];
+        $values = $this->consultValues($temporalTable,$this->generateSelect($variables));
 
         foreach ($values as $value){
 
-            $actualTrust = DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
+            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
 
-            dd($actualTrust,$value->fecha_sk);
             if (!$actualTrust){
-                dd('insert');
-                DB::connection('data_warehouse')->table($tableTrust)->insert(['estacion_sk'   => $value->estacion_sk,'fecha_sk' => $value->fecha_sk]);
+                $trust = $this->createModel($trustRepository,$value);
             }else{
-                dd('update');
+                $trust = $this->updateModel($trustRepository,$actualTrust,$value);
             }
-
+            array_push($trustActuality,$trust);
         }
+        return $trustActuality;
+    }
 
-        dd($temporalTable,$variables);
+    /**
+     * @param $temporalTable
+     * @param $countSelect
+     * @return mixed
+     */
+    private function consultValues($temporalTable, $countSelect)
+    {
+
+        $values = DB::connection('temporary_work')
+                        ->table($temporalTable)
+                        ->select(DB::raw('CAST(estacion_sk AS integer),CAST(fecha_sk AS integer),'.$countSelect))
+                        ->groupby('estacion_sk','fecha_sk')
+                        ->orderby(DB::raw("estacion_sk,fecha_sk"),'asc')
+                        ->get();
+
+        //return (array)$values[0];
+        return $values;
 
     }
 
 
+    /**
+     * @param $trustRepository
+     * @param $actualTrust
+     * @param $value
+     * @return array
+     */
+    private function updateModel($trustRepository, $actualTrust, $value)
+    {
+        $trustModel = ($trustRepository)::createModel()->fill($actualTrust);
+
+       foreach ($value as $key => $val)
+       {
+            $trustModel->$key += $val;
+       }
+
+       ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
+
+        return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
+    }
+
+
+    /**
+     * @param $trustRepository
+     * @param $value
+     * @return array
+     */
+    private function createModel($trustRepository, $value)
+    {
+        $trustModel = ($trustRepository)::createModel();
+        foreach ($value as $key => $val)
+        {
+            $trustModel->$key = $val;
+        }
+
+        $trustModel->save();
+
+        return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
+    }
+
+
+    /**
+     * @param $variables
+     * @return string
+     */
     private function generateSelect($variables)
     {
         $text = '';
         foreach ($variables as $variable)
         {
-            array_push($this->trustColumns,$this->incoming.''. $variable->name_locale);
             $text .= 'COUNT(case '.$variable->name_locale.' when \'-\' then null else 1 end) AS '.$this->incoming.''. $variable->name_locale . ',';
         }
-
         $text[strlen($text)-1] = ' ';
-        //dd($this->trustColumns);
         return $text;
     }
 

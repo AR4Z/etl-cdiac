@@ -45,17 +45,18 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function extract()
     {
-        //dd($this);
         $this->settingConnection($this->etlConfig->getNet());
         $this->insertAllDataInTemporal($this->selectServerAcquisition());
         $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
 
-        $this->incomingCalculation(
+        $trust = $this->incomingCalculation(
                     $this->etlConfig->getTrustRepository(),
                     $this->etlConfig->getTableSpaceWork(),
                     $this->etlConfig->getTableTrust(),
                     $this->etlConfig->getVarForFilter()->toArray()
                 );
+
+        $this->etlConfig->setTrustColumns($trust);
 
         return $this;
     }
