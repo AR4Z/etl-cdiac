@@ -301,6 +301,8 @@ class ComposerStaticInitfa0d3ea1788dd43564c16c05bd48aeef
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
         'CreateStationTable' => __DIR__ . '/../..' . '/database/migrations/2017_02_06_171851_create_station_table.php',
         'CreateTemporalClimaTable' => __DIR__ . '/../..' . '/database/migrations/2017_03_27_204708_create_temporal_clima_table.php',
+        'CreateTrustAirTable' => __DIR__ . '/../..' . '/database/migrations/2017_05_08_160011_create_trust_air_table.php',
+        'CreateTrustWeather' => __DIR__ . '/../..' . '/database/migrations/2017_05_03_153859_create_trust_weather.php',
         'CreateUsersTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_000000_create_users_table.php',
         'CreateVarForStationTable' => __DIR__ . '/../..' . '/database/migrations/2017_02_06_210815_create_var_for_station_table.php',
         'CreateVariableTable' => __DIR__ . '/../..' . '/database/migrations/2017_02_06_210521_create_variable_table.php',
@@ -841,7 +843,6 @@ class ComposerStaticInitfa0d3ea1788dd43564c16c05bd48aeef
         'Text_Template' => __DIR__ . '/..' . '/phpunit/php-text-template/src/Template.php',
         'VarForStationTableSeeder' => __DIR__ . '/../..' . '/database/seeds/VarForStationTableSeeder.php',
         'VariableSeeder' => __DIR__ . '/../..' . '/database/seeds/VariableSeeder.php',
-        'v' => __DIR__ . '/../..' . '/database/seeds/v.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

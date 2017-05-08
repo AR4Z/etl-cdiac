@@ -55,6 +55,8 @@ class EtlConfig
 
   private $repositoryExist = null;
 
+  private $trustRepository = null;
+
   private $stateTable = null;
 
   private $sequence = null;
@@ -118,8 +120,8 @@ class EtlConfig
                 ->setRepositoryDestination($config->repositoryDestination)
                 ->setRepositoryExist($config->repositoryExist)
                 ->setTableExist($config->tableExist)
-                ->setTableTrust($config->tableTrust);
-
+                ->setTableTrust($config->tableTrust)
+                ->setTrustRepository($config->trustRepository);
 
         return $this;
 
@@ -422,10 +424,32 @@ class EtlConfig
 
     /**
      * @param mixed $tableTrust
+     * @return $this
      */
     public function setTableTrust($tableTrust)
     {
         $this->tableTrust = $tableTrust;
+
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getTrustRepository()
+    {
+        return $this->trustRepository;
+    }
+
+    /**
+     * @param $trustRepository
+     * @return $this
+     */
+    public function setTrustRepository($trustRepository)
+    {
+        $this->trustRepository = $trustRepository;
+
+        return $this;
     }
 
 }

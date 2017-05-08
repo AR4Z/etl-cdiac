@@ -21,12 +21,14 @@ trait TrustTrait
 
 
     /**
+     * @param $trustRepository
      * @param $temporalTable
      * @param $tableTrust
      * @param $variables
      */
-    public function incomingCalculation($temporalTable,$tableTrust,$variables)
+    public function incomingCalculation($trustRepository,$temporalTable,$tableTrust,$variables)
     {
+        dd($trustRepository);
 
         $countSelect = $this->generateSelect($variables);
 
@@ -42,7 +44,7 @@ trait TrustTrait
 
             $actualTrust = DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
 
-            //dd($actualTrust,$value->fecha_sk);
+            dd($actualTrust,$value->fecha_sk);
             if (!$actualTrust){
                 dd('insert');
                 DB::connection('data_warehouse')->table($tableTrust)->insert(['estacion_sk'   => $value->estacion_sk,'fecha_sk' => $value->fecha_sk]);
@@ -67,7 +69,7 @@ trait TrustTrait
         }
 
         $text[strlen($text)-1] = ' ';
-        dd($this->trustColumns);
+        //dd($this->trustColumns);
         return $text;
     }
 

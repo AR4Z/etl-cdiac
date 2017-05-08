@@ -16,6 +16,8 @@ return array(
     'CreatePasswordResetsTable' => $baseDir . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
     'CreateStationTable' => $baseDir . '/database/migrations/2017_02_06_171851_create_station_table.php',
     'CreateTemporalClimaTable' => $baseDir . '/database/migrations/2017_03_27_204708_create_temporal_clima_table.php',
+    'CreateTrustAirTable' => $baseDir . '/database/migrations/2017_05_08_160011_create_trust_air_table.php',
+    'CreateTrustWeather' => $baseDir . '/database/migrations/2017_05_03_153859_create_trust_weather.php',
     'CreateUsersTable' => $baseDir . '/database/migrations/2014_10_12_000000_create_users_table.php',
     'CreateVarForStationTable' => $baseDir . '/database/migrations/2017_02_06_210815_create_var_for_station_table.php',
     'CreateVariableTable' => $baseDir . '/database/migrations/2017_02_06_210521_create_variable_table.php',
@@ -556,5 +558,4 @@ return array(
     'Text_Template' => $vendorDir . '/phpunit/php-text-template/src/Template.php',
     'VarForStationTableSeeder' => $baseDir . '/database/seeds/VarForStationTableSeeder.php',
     'VariableSeeder' => $baseDir . '/database/seeds/VariableSeeder.php',
-    'v' => $baseDir . '/database/seeds/v.php',
 );

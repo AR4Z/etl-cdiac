@@ -51,6 +51,7 @@ class Database extends ExtractorBase implements ExtractorInterface
         $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
 
         $this->incomingCalculation(
+                    $this->etlConfig->getTrustRepository(),
                     $this->etlConfig->getTableSpaceWork(),
                     $this->etlConfig->getTableTrust(),
                     $this->etlConfig->getVarForFilter()->toArray()
