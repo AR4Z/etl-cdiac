@@ -57,7 +57,6 @@ trait TrustTrait
                         ->groupby('estacion_sk','fecha_sk')
                         ->orderby(DB::raw("estacion_sk,fecha_sk"),'asc')
                         ->get();
-
         //return (array)$values[0];
         return $values;
 
@@ -73,13 +72,8 @@ trait TrustTrait
     private function updateModel($trustRepository, $actualTrust, $value)
     {
         $trustModel = ($trustRepository)::createModel()->fill($actualTrust);
-
-       foreach ($value as $key => $val)
-       {
-            $trustModel->$key += $val;
-       }
-
-       ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
+        foreach ($value as $key => $val){$trustModel->$key += $val;}
+        ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
 
         return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
     }
@@ -93,11 +87,7 @@ trait TrustTrait
     private function createModel($trustRepository, $value)
     {
         $trustModel = ($trustRepository)::createModel();
-        foreach ($value as $key => $val)
-        {
-            $trustModel->$key = $val;
-        }
-
+        foreach ($value as $key => $val){$trustModel->$key = $val;}
         $trustModel->save();
 
         return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
@@ -111,11 +101,9 @@ trait TrustTrait
     private function generateSelect($variables)
     {
         $text = '';
-        foreach ($variables as $variable)
-        {
-            $text .= 'COUNT(case '.$variable->name_locale.' when \'-\' then null else 1 end) AS '.$this->incoming.''. $variable->name_locale . ',';
-        }
+        foreach ($variables as $variable){$text .= 'COUNT(case '.$variable->name_locale.' when \'-\' then null else 1 end) AS '.$this->incoming.''. $variable->name_locale . ',';}
         $text[strlen($text)-1] = ' ';
+
         return $text;
     }
 

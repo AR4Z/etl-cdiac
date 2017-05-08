@@ -109,8 +109,6 @@ class Database extends ExtractorBase implements ExtractorInterface
         return $this;
     }
 
-
-
     /**
      * @return mixed
      */
@@ -136,9 +134,7 @@ class Database extends ExtractorBase implements ExtractorInterface
     private function insertAllDataInTemporal($data){
 
         $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
-
         $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->columns, $data);
-
         $this->updateDateSk($this->etlConfig->getRepositorySpaceWork());
         $this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());
 

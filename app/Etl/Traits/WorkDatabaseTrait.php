@@ -66,17 +66,9 @@ trait WorkDatabaseTrait
     public function insertData(string $connection, string $table, $columns = [], $data = []){
 
         $insert = "INSERT INTO ".$table." (".implode(',',$columns).") values ";
-        foreach ($data as $can)
-        {
-            $dataSet = array();
-            foreach ($can as $key => $value)
-            {
-                $dataSet[$key] = $value;
-            }
-
-            $insert .= "('".implode("' ,'",$dataSet)."'),";
-        }
+        foreach ($data as $can){$insert .= "('".implode("' ,'",(array)$can)."'),";}
         $insert[strlen($insert)-1] = ' ';
+
         DB::connection($connection)->statement($insert);
     }
 
