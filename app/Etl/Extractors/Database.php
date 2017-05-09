@@ -19,11 +19,29 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     private $method = 'Database';
 
-    private $select = 'fecha, hora, ';
+    private $select = null;
 
-    private  $columns = array('fecha','hora');
+    private $keys = 'estacion_sk,fecha_sk,tiempo_sk';
+
+    private $columns = array('estacion_sk','fecha_sk','tiempo_sk');
 
     public $etlConfig = null;
+
+    public $extractType = 'Locale';
+
+    public $extractConnection = 'data_warehouse';
+
+    public $extractTable = null;
+
+    public $colOrigin = 'name_locale';
+
+    public $colDestination = 'name_locale';
+
+    public $flagStationSk = true;
+
+    public $flagDateSk = true;
+
+    public $flagTimeSk = true;
 
     /**
      * @param $etlConfig
@@ -33,7 +51,9 @@ class Database extends ExtractorBase implements ExtractorInterface
     {
         // Configuration
         $this->etlConfig = $etlConfig;
-        $this->setSelect($etlConfig->getVarForFilter(), 'name_database', 'name_locale');
+        $this->extractTable = 'original_'.$etlConfig->getTableDestination();
+
+        $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
 
         return $this;
 
@@ -45,10 +65,23 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function extract()
     {
-        $this->settingConnection($this->etlConfig->getNet());
-        $this->insertAllDataInTemporal($this->selectServerAcquisition());
-        $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
+        if ($this->extractType == 'External'){
+            $this->settingConnection($this->etlConfig->getNet());
+            $this->extractConnection = 'external_connection';
+            $this->extractTable = $this->etlConfig->getStation()->name_table;
+            $this->colOrigin = 'name_database';
+            $this->keys = 'fecha, hora';
+            $this->columns = array('fecha','hora');
+            $this->flagStationSk = false;
+            $this->flagDateSk = false;
+            $this->flagTimeSk = false;
+        }
 
+        $this->setSelect($this->etlConfig->getVarForFilter());
+        $this->insertAllDataInTemporal($this->selectServerAcquisition());
+        if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
+
+        // trust process
         $trust = $this->incomingCalculation(
                     $this->etlConfig->getTrustRepository(),
                     $this->etlConfig->getTableSpaceWork(),
@@ -57,6 +90,8 @@ class Database extends ExtractorBase implements ExtractorInterface
                 );
 
         $this->etlConfig->setTrustColumns($trust);
+
+        dd($this);
 
         return $this;
     }
@@ -80,17 +115,15 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     /**
      * @param $variables
-     * @param $colOrigin
-     * @param $colDestination
      * @return $this
      */
-    public function setSelect($variables, $colOrigin, $colDestination)
+    public function setSelect($variables)
     {
-        $temporalSelect = '';
+        $temporalSelect = $this->keys.',';
 
         foreach ($variables as $variable){
-            $temporalSelect .= $variable->$colOrigin .' as '. $variable->$colDestination.', ';
-            array_push($this->columns,$variable->$colDestination);
+            $temporalSelect .= $variable->{$this->colOrigin} .' as '. $variable->{$this->colDestination}.', ';
+            array_push($this->columns,$variable->{$this->colDestination});
         }
         $temporalSelect[strlen($temporalSelect)-2] = ' ';
         $this->select .= $temporalSelect;
@@ -115,8 +148,9 @@ class Database extends ExtractorBase implements ExtractorInterface
     private function selectServerAcquisition()
     {
         return $this->getData(
-            'external_connection',
-            $this->etlConfig->getStation()->name_table,
+            $this->extractConnection,
+            $this->extractTable,
+            $this->keys,
             $this->select,
             $this->etlConfig->getInitialDate(),
             $this->etlConfig->getInitialTime(),
@@ -131,12 +165,12 @@ class Database extends ExtractorBase implements ExtractorInterface
      * @return bool
      * @internal param $repository
      */
-    private function insertAllDataInTemporal($data){
-
-        $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
+    private function insertAllDataInTemporal($data)
+    {
         $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->columns, $data);
-        $this->updateDateSk($this->etlConfig->getRepositorySpaceWork());
-        $this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());
+
+        if (!$this->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
+        if (!$this->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
 
         return true;
     }

@@ -14,10 +14,6 @@ trait TimeSkTrait
     {
         $completeTime = TimeDimRepository::getTimeSk($time);
 
-        if ($completeTime){
-            return $completeTime;
-        }
-
-
+        if ($completeTime){return $completeTime;}
     }
 }

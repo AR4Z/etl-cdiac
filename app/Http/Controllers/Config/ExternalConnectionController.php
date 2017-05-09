@@ -47,11 +47,18 @@ class ExternalConnectionController extends Controller
         //dd($this->connectionRepository->where('id', 1)->first());
 
         //dispatch(new EtlStationJob('Original',1,1,true));
-
+        /*
         $jobEtl = Etl::start('Original', 1, 1,true)
                         ->extract('Database')//,['initialDate' => '2017-04-10', 'initialTime' => '23:40:35'] ,['initialDate' => '1990-01-01', 'initialTime' => '00:00:00']
                         ->transform()
                         ->load();
+        */
+
+        $jobEtl = Etl::start('Filter', 1, 1,true)
+            ->extract('Database',['extractType' => 'External'])//,['initialDate' => '2017-04-10', 'initialTime' => '23:40:35'] ,['initialDate' => '1990-01-01', 'initialTime' => '00:00:00']
+            ->transform('FilterDetection')
+            ->load();
+
         dd($jobEtl);
 
 

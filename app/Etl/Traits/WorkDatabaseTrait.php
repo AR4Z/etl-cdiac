@@ -8,19 +8,21 @@ use DB;
 trait WorkDatabaseTrait
 {
     /**
-     * @param $connection
-     * @param $table
-     * @param $select
-     * @param $initialDate
-     * @param $initialTime
-     * @param $finalDate
-     * @param $finalTime
-     * @param $limit
+     * @param string $connection
+     * @param string $table
+     * @param string $keys
+     * @param string $select
+     * @param string $initialDate
+     * @param string $initialTime
+     * @param string $finalDate
+     * @param string $finalTime
+     * @param int $limit
      * @return mixed
      */
     public function getData(
         string $connection,
         string $table,
+        string $keys,
         string $select,
         string $initialDate,
         string $initialTime,
@@ -32,13 +34,13 @@ trait WorkDatabaseTrait
             ->table($table)
             ->select(DB::raw($select))
             ->whereBetween(
-                DB::raw("concat_ws(' ',fecha, hora)"),
+                DB::raw("concat_ws(' ',".$keys.")"),
                 [
                     Carbon::parse($initialDate.' '.$initialTime),
                     Carbon::parse($finalDate.' '.$finalTime),
                 ]
             )
-            ->orderby(DB::raw("concat_ws(' ',fecha, hora)"), 'asc')
+            ->orderby(DB::raw("concat_ws(' ',".$keys.")"), 'asc')
             ->limit($limit)
             ->get()
             ->all();

@@ -181,10 +181,10 @@ class EtlConfig
   }
 
     /**
-     * @return $this->tableDestination
+     * @return $this|string ->tableDestination
      */
 
-    public function getTableDestination()
+    public function getTableDestination(): string
   {
     return $this->tableDestination;
   }
