@@ -37,9 +37,11 @@ class FilterDetection extends TransformBase implements TransformInterface
 
             if (!is_null($value->minimum))
             {
-                $this->overflowMaximo($this->etlConfig->getRepositorySpaceWork(),$this->etlConfig->getTableSpaceWork(),$value->name_locale,$value->maximum);
+                $this->overflowMaximum($this->etlConfig->getRepositorySpaceWork(),$this->etlConfig->getTableSpaceWork(),$value->name_locale,$value->maximum);
             }
-            if (!is_null($value->maximum)){}
+            if (!is_null($value->maximum)){
+                $this->overflowMinimum($this->etlConfig->getRepositorySpaceWork(),$this->etlConfig->getTableSpaceWork(),$value->name_locale,$value->minimum);
+            }
             if (!is_null($value->previous_difference)){}
 
         }
