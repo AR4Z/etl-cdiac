@@ -91,8 +91,6 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         $this->etlConfig->setTrustColumns($trust);
 
-        dd($this);
-
         return $this;
     }
 

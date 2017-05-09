@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\Etl\Transformers;
+namespace App\Etl\Transformers;
 
 
 use App\Etl\EtlConfig;
@@ -29,22 +29,24 @@ class FilterDetection extends TransformBase implements TransformInterface
      */
     public function transform()
     {
+        //dd($this);
+
+        $varFilter = $this->etlConfig->getVarForFilter();
+
+        foreach ($varFilter as $value){
+
+            if (!is_null($value->minimum))
+            {
+                $this->overflowMaximo($this->etlConfig->getRepositorySpaceWork(),$this->etlConfig->getTableSpaceWork(),$value->name_locale,$value->maximum);
+            }
+            if (!is_null($value->maximum)){}
+            if (!is_null($value->previous_difference)){}
+
+        }
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getMethod(): string
-    {
-        return $this->method;
-    }
 
-    /**
-     * @param string $method
-     */
-    public function setMethod(string $method)
-    {
-        $this->method = $method;
-    }
+
 }

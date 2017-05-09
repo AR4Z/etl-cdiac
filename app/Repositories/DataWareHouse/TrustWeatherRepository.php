@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\Repositories\DataWareHouse;
+namespace App\Repositories\DataWareHouse;
 
 
 use Rinvex\Repository\Repositories\EloquentRepository;
