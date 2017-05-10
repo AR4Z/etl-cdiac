@@ -8,21 +8,53 @@ use DB;
 abstract class TransformBase
 {
     /**
-     * @param $repositorySpaceWork
      * @param $tableSpaceWork
      * @param String $variable
-     * @param float $overflowValue
+     * @param $overflowMaximum
+     * @param $overflowMinimum
+     * @param $overflowPreviousDeference
+     * @internal param $overflowMinimum
+     * @internal param float $overflowValue
      */
-    public function overflowMaximum($repositorySpaceWork, $tableSpaceWork, $variable, $overflowValue)
+    public function overflow($tableSpaceWork, $variable, $overflowMaximum = null, $overflowMinimum = null,$overflowPreviousDeference = null)
     {
-        $values = ($repositorySpaceWork)::select('id','estacion_sk','fecha_sk','tiempo_sk',$variable)->where($variable, '>', (double)$overflowValue)->get();
-        //DB::connection('temporary_work')->table($tableSpaceWork)->where($variable, '>', (float)$overflowValue)->update([$variable => '-']);
+        $overflowPreviousDeference = 0.1;
+        $values =DB::connection('temporary_work')->table($tableSpaceWork)
+                    ->select('id','estacion_sk','fecha_sk','tiempo_sk',DB::raw("CAST($variable AS double precision)"))
+                    ->whereNotNull($variable)
+                    ->orderby('id','DESC')
+                    ->get();
 
-        $val = DB::connection('temporary_work')->table($tableSpaceWork)->select(DB::raw("CAST($variable AS double precision)"))->where($variable, '>', (double)$overflowValue)->get();
-        dd($val);
-        $this->insertInCorrectionTable($values,$variable,'overflow_maximum');
+        foreach ($values as $key => $value)
+        {
+            $floatValue = (float)$value->$variable;
+            if ($floatValue > $overflowMaximum || $floatValue < $overflowMinimum){
+                $this->insertInCorrectionTable($value,$variable,'outside_rank');
+                DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '=', $value->id)->update([$variable => null]);
+                unset($values[$key]);
+            }
+        }
 
-        dd($values);
+        if(!is_null($overflowPreviousDeference)){
+            if (!is_null($values)){
+                foreach ($values as $key =>$value){
+                    $previous_id = $value->id - 1;
+                    $previous_value =DB::connection('temporary_work')->table($tableSpaceWork)->select('id',DB::raw("CAST($variable AS double precision)"))->where('id', '=' ,$previous_id)->first();
+                    if (!is_null($previous_value)){
+                        if (!is_null($previous_value->$variable)){
+                            $deference = abs($value->$variable - $previous_value->$variable);
+                            if ($deference > $overflowPreviousDeference){
+                                $this->insertInCorrectionTable($value,$variable,'outside_previous_deference');
+                                DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '=', $value->id)->update([$variable => null]);
+                                unset($values[$key]);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return $values;
     }
 
     /**
@@ -33,11 +65,7 @@ abstract class TransformBase
      */
     public function overflowMinimum($repositorySpaceWork, $tableSpaceWork, $variable, $overflowValue)
     {
-        $values = ($repositorySpaceWork)::select('id','estacion_sk','fecha_sk','tiempo_sk',$variable)->where($variable, '<', (double)$overflowValue)->get();
-        DB::connection('temporary_work')->table($tableSpaceWork)->where($variable, '<', (double)$overflowValue)->update([$variable => '-']);
-        $this->insertInCorrectionTable($values,$variable,'overflow_minimum');
 
-        dd($values);
     }
 
     /**
@@ -49,14 +77,22 @@ abstract class TransformBase
     }
 
     /**
-     * @param $values
+     * @param $tableSpaceWork
+     * @param $variable
+     */
+    public function updateForNull($tableSpaceWork, $variable)
+    {
+        DB::connection('temporary_work')->table($tableSpaceWork)->where($variable, '=','-' )->update([$variable => null]);
+    }
+
+    /**
+     * @param $value
      * @param $variable
      * @param $observation
      */
-    public function insertInCorrectionTable($values,$variable,$observation)
+    private function insertInCorrectionTable($value,$variable,$observation)
     {
-        foreach ($values as $value){
-            DB::connection('temporary_work')
+        DB::connection('temporary_work')
                 ->table('temporary_correction')
                 ->insert([
                     'temporary_id'  => $value->id,
@@ -67,7 +103,6 @@ abstract class TransformBase
                     'error_value'   => $value->$variable,
                     'observation'   => $observation,
                 ]);
-        }
     }
 
 }
