@@ -54,26 +54,7 @@ abstract class TransformBase
                 }
             }
         }
-        return $values;
-    }
-
-    /**
-     * @param $repositorySpaceWork
-     * @param $tableSpaceWork
-     * @param $variable
-     * @param $overflowValue
-     */
-    public function overflowMinimum($repositorySpaceWork, $tableSpaceWork, $variable, $overflowValue)
-    {
-
-    }
-
-    /**
-     *
-     */
-    public function overflowPreviousDeference()
-    {
-
+        return;
     }
 
     /**

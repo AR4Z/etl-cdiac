@@ -5,9 +5,11 @@ namespace App\Etl\Transformers;
 
 
 use App\Etl\EtlConfig;
+use App\Etl\Traits\TrustTrait;
 
 class FilterDetection extends TransformBase implements TransformInterface
 {
+    use TrustTrait;
 
     private $method = 'Detection';
 
@@ -37,14 +39,23 @@ class FilterDetection extends TransformBase implements TransformInterface
 
             $this->updateForNull($this->etlConfig->getTableSpaceWork(),$value->name_locale);
 
-            $correctValues= $this->overflow(
-                                $this->etlConfig->getTableSpaceWork(),
-                                $value->name_locale,
-                                $value->maximum,
-                                $value->minimum,
-                                $value->previous_difference
-                            );
-            dd($correctValues); // estos son los valores correctos deben ir a trust
+            $this->overflow(
+                    $this->etlConfig->getTableSpaceWork(),
+                    $value->name_locale,
+                    $value->maximum,
+                    $value->minimum,
+                    $value->previous_difference
+             );
+
+            // estos son los valores correctos deben ir a trust
+            $this->insertGoods(
+                    $this->etlConfig->getTrustRepository(),
+                    $this->etlConfig->getTableSpaceWork(),
+                    $this->etlConfig->getTableTrust(),
+                    $value->name_locale
+            );
+
+            dd($this);
 
         }
 

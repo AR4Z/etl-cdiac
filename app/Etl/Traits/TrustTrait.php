@@ -26,9 +26,8 @@ trait TrustTrait
      */
     public function incomingCalculation($trustRepository,$temporalTable,$tableTrust,$variables)
     {
-        $trustActuality = [];
         $values = $this->consultValues($temporalTable,$this->generateSelect($variables));
-
+        $trustActuality = [];
         foreach ($values as $value){
 
             $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
@@ -44,13 +43,36 @@ trait TrustTrait
     }
 
     /**
+     * @param $trustRepository
+     * @param $temporalTable
+     * @param $tableTrust
+     * @param $variable
+     * @return array
+     */
+    public function insertGoods($trustRepository, $temporalTable, $tableTrust, $variable)
+    {
+        $values = DB::connection('temporary_work')
+                    ->table($temporalTable)
+                    ->select(DB::raw("CAST(estacion_sk AS integer),CAST(fecha_sk AS integer),COUNT($variable) AS total_good_$variable"))
+                    ->groupby('estacion_sk','fecha_sk')
+                    ->orderby(DB::raw("estacion_sk,fecha_sk"),'asc')
+                    ->get();
+
+        foreach ($values as $value ){
+            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
+            if ($actualTrust){$this->updateModel($trustRepository, $actualTrust, $value);}
+        }
+        return;
+    }
+
+
+    /**
      * @param $temporalTable
      * @param $countSelect
      * @return mixed
      */
     private function consultValues($temporalTable, $countSelect)
     {
-
         $values = DB::connection('temporary_work')
                         ->table($temporalTable)
                         ->select(DB::raw('CAST(estacion_sk AS integer),CAST(fecha_sk AS integer),'.$countSelect))
@@ -59,7 +81,6 @@ trait TrustTrait
                         ->get();
         //return (array)$values[0];
         return $values;
-
     }
 
 
@@ -72,7 +93,10 @@ trait TrustTrait
     private function updateModel($trustRepository, $actualTrust, $value)
     {
         $trustModel = ($trustRepository)::createModel()->fill($actualTrust);
-        foreach ($value as $key => $val){$trustModel->$key += $val;}
+
+        foreach ($value as $key => $val){
+            if (!($key == 'estacion_sk' || $key == 'fecha_sk')){($trustModel->$key += $val);}
+        }
         ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
 
         return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
