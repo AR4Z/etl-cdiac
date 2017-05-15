@@ -49,14 +49,11 @@ class FilterDetection extends TransformBase implements TransformInterface
 
             // estos son los valores correctos deben ir a trust
             $this->insertGoods(
-                    $this->etlConfig->getTrustRepository(),
+                    $this->etlConfig->getRepositorySpaceWork(),
                     $this->etlConfig->getTableSpaceWork(),
                     $this->etlConfig->getTableTrust(),
                     $value->name_locale
             );
-
-            dd($this);
-
         }
 
         return $this;
