@@ -90,4 +90,9 @@ trait WorkDatabaseTrait
         return DB::connection('temporary_work')->table($table)->insert($data);
     }
 
+    public function getIncomingAmount($tableSpaceWork)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->select(DB::raw('COUNT(id) AS count'))->get()->toArray()[0]->count;
+    }
+
 }

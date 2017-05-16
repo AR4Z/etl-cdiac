@@ -89,6 +89,8 @@ class Database extends ExtractorBase implements ExtractorInterface
                     $this->etlConfig->getVarForFilter()->toArray()
                 );
 
+        $this->etlConfig->setIncomingAmount($this->getIncomingAmount($this->etlConfig->getTableSpaceWork()));
+
         $this->etlConfig->setTrustColumns($trust);
 
         return $this;
@@ -154,7 +156,7 @@ class Database extends ExtractorBase implements ExtractorInterface
             $this->etlConfig->getInitialTime(),
             $this->etlConfig->getFinalDate(),
             $this->etlConfig->getFinalTime(),
-            100
+            50
         );
     }
 

@@ -18,7 +18,6 @@ abstract class TransformBase
      */
     public function overflow($tableSpaceWork, $variable, $overflowMaximum = null, $overflowMinimum = null,$overflowPreviousDeference = null)
     {
-        $overflowPreviousDeference = 0.1;
         $values =DB::connection('temporary_work')->table($tableSpaceWork)
                     ->select('id','estacion_sk','fecha_sk','tiempo_sk',DB::raw("CAST($variable AS double precision)"))
                     ->whereNotNull($variable)
@@ -57,6 +56,8 @@ abstract class TransformBase
         return;
     }
 
+
+
     /**
      * @param $tableSpaceWork
      * @param $variable
@@ -65,7 +66,35 @@ abstract class TransformBase
     {
         DB::connection('temporary_work')->table($tableSpaceWork)->where($variable, '=','-' )->update([$variable => null]);
     }
+    public function updateHistoryCorrect($value,$variable,$correctValue,$applied_correction_type)
+    {
+        if (!$this->evaluateExistenceInHistoryCorrection($value->id,$variable)){
+            DB::connection('temporary_work')
+                ->table('temporary_correction')
+                ->insert([
+                    'temporary_id'              => $value->id,
+                    'estacion_sk'               => $value->estacion_sk,
+                    'fecha_sk'                  => $value->fecha_sk,
+                    'tiempo_sk'                 => $value->tiempo_sk,
+                    'variable'                  => $variable,
+                    'observation'               => 'not_existence',
+                    'correct_value'             => $correctValue,
+                    'applied_correction_type'   => $applied_correction_type
+                ]);
 
+        }else{
+            DB::connection('temporary_work')
+                ->table('temporary_correction')
+                ->where('temporary_id','=',$value->id)
+                ->where('variable','=',$variable)
+                ->update([
+                    'correct_value' => $correctValue,
+                    'applied_correction_type' => $applied_correction_type
+                ]);
+        }
+
+
+    }
     /**
      * @param $value
      * @param $variable
@@ -84,6 +113,17 @@ abstract class TransformBase
                     'error_value'   => $value->$variable,
                     'observation'   => $observation,
                 ]);
+    }
+
+    private function evaluateExistenceInHistoryCorrection($id,$variable){
+
+        $value=  DB::connection('temporary_work')
+                    ->table('temporary_correction')
+                    ->where('temporary_id','=',$id)
+                    ->where('variable','=',$variable)
+                    ->get()->count();
+
+        return ($value = 0) ? false : true;
     }
 
 }

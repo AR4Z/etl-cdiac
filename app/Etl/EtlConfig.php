@@ -71,6 +71,8 @@ class EtlConfig
 
   private $trustColumns = [];
 
+  private $incomingAmount = 0;
+
     /**
      * EtlConfig constructor.
      * @param String $typeProcess
@@ -470,6 +472,25 @@ class EtlConfig
     {
         $this->trustColumns = $trustColumns;
 
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIncomingAmount(): int
+    {
+        return $this->incomingAmount;
+    }
+
+    /**
+     * @param int $incomingAmount
+     * @internal param int $incomingAmount
+     * @return $this
+     */
+    public function setIncomingAmount(int $incomingAmount)
+    {
+        $this->incomingAmount = $incomingAmount;
         return $this;
     }
 

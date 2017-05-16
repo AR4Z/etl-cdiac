@@ -60,8 +60,9 @@ trait TrustTrait
 
         foreach ($values as $value ){
             $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
-            if ($actualTrust){$this->updateModel($trustRepository, $actualTrust, $value);}
+            if ($actualTrust){$this->updateModel($trustRepository, $actualTrust, $value,'insertGoods');}
         }
+
         return;
     }
 
@@ -90,13 +91,10 @@ trait TrustTrait
      * @param $value
      * @return array
      */
-    private function updateModel($trustRepository, $actualTrust, $value)
+    private function updateModel($trustRepository, $actualTrust, $value,$ban = null)
     {
         $trustModel = ($trustRepository)::createModel()->fill($actualTrust);
-
-        foreach ($value as $key => $val){
-            if (!($key == 'estacion_sk' || $key == 'fecha_sk')){($trustModel->$key += $val);}
-        }
+        foreach ($value as $key => $val){if (!($key == 'estacion_sk' || $key == 'fecha_sk')){($trustModel->$key += $val);}}
         ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
 
         return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
