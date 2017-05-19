@@ -27,8 +27,14 @@ abstract class TransformBase
         foreach ($values as $key => $value)
         {
             $floatValue = (float)$value->$variable;
-            if ($floatValue > $overflowMaximum || $floatValue < $overflowMinimum){
-                $this->insertInCorrectionTable($value,$variable,'outside_rank');
+
+            if(!is_null($overflowMaximum) and $floatValue > $overflowMaximum){
+                $this->insertInCorrectionTable($value,$variable,'outside_maximum_rank');
+                DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '=', $value->id)->update([$variable => null]);
+                unset($values[$key]);
+            }
+            if (!is_null($overflowMinimum) and $floatValue < $overflowMinimum){
+                $this->insertInCorrectionTable($value,$variable,'outside_minimum_rank');
                 DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '=', $value->id)->update([$variable => null]);
                 unset($values[$key]);
             }
@@ -123,7 +129,7 @@ abstract class TransformBase
                     ->where('variable','=',$variable)
                     ->get()->count();
 
-        return ($value = 0) ? false : true;
+        return ($value == 0) ? false : true;
     }
 
 }
