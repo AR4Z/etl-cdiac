@@ -8,7 +8,6 @@ namespace Illuminate\Support\Facades;
  */
 class DB extends Facade
 {
-
     /**
      * Get the registered name of the component.
      *
