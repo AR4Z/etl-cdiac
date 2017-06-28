@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\EtlCommand;
+use App\Console\Commands\MigrateInPath;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        EtlCommand::class
+        EtlCommand::class,
+        MigrateInPath::class
     ];
 
     /**
