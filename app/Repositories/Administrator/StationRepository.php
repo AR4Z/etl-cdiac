@@ -10,4 +10,9 @@ class StationRepository extends EloquentRepository
     protected $repositoryId = 'rinvex.repository.uniqueid';
 
     protected $model = Station::class;
+
+    public function getEtlActive()
+    {
+        return $this->where('etl_active', true)->get();
+    }
 }

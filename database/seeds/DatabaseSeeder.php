@@ -11,11 +11,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(ConnectionTableSeeder::class);
+        $this->call(ConnectionConfigSeeder::class);
         $this->call(StationTableSeeder::class);
-        $this->call(OriginStateSeeder::class);
-        $this->call(FilterStateSeeder::class);
-        $this->call(VariableSeeder::class);
+        $this->call(OriginStateConfigSeeder::class);
+        $this->call(FilterStateConfigSeeder::class);
+        $this->call(VariableTableSeeder::class);
         $this->call(VarForStationTableSeeder::class);
     }
 }

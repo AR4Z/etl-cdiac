@@ -21,7 +21,7 @@ class CreateConnectionTable extends Migration
             $table->string('port',50)->nullable();
             $table->string('database')->nullable();
             $table->string('username')->nullable();
-            $table->string('password')->nullable();
+            $table->longText('password')->nullable();
             $table->enum('connection_driver',['pgsql','mysql'])->nullable();
             $table->boolean('rt_active')->default(false);
             $table->boolean('etl_active')->default(false);

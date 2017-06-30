@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Repositories\Config\StationRepository;
 use Carbon\Carbon;
 
-class FilterStateSeeder extends Seeder
+class FilterStateConfigSeeder extends Seeder
 {
 
   protected $stationRepository;
