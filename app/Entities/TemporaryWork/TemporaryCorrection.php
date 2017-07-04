@@ -11,7 +11,7 @@ class TemporaryCorrection extends Model
     protected $table = 'temporary_correction';
 
     protected $fillable = [
-        'temporary_id','estacion_sk','fecha_sk', 'tiempo_sk','variable','error_value',
+        'temporary_id','station_id','date_sk', 'time_sk','variable','error_value',
         'observation', 'correct_value', 'applied_correction_type',
     ];
 }

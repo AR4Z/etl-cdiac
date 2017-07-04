@@ -26,8 +26,21 @@ class TemporalWeather extends Model
      * @var array
      */
     protected $fillable = [
-        'id','estacion_sk', 'fecha_sk', 'tiempo_sk','fecha','hora','precipitacion', 'temperatura',
-        'brillo', 'humedad_relativa', 'nivel', 'caudal', 'velocidad_viento', 'direccion_viento',
-        'presion_barometrica', 'evapotranspiracion', 'radiacion_solar', 'observaciones'
+        'station_sk', 'date_sk', 'time_sk','date','time',
+        'rainfall',
+        'temperature',
+        'max_temperature',
+        'min_temperature',
+        'avg_temperature',
+        'brightness',
+        'relative_humidity',
+        'water_level',
+        'flow_rate',
+        'wind_speed',
+        'wind_direction',
+        'barometric_pressure',
+        'evapotranspiration',
+        'solar_radiation',
+        'comment',
     ];
 }

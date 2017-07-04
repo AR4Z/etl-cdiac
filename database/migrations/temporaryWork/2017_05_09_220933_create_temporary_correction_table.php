@@ -17,9 +17,9 @@ class CreateTemporaryCorrectionTable extends Migration
 
             $table->increments('id');
             $table->integer('temporary_id');
-            $table->integer('estacion_sk');
-            $table->integer('fecha_sk');
-            $table->integer('tiempo_sk');
+            $table->integer('station_sk');
+            $table->integer('date_sk');
+            $table->integer('time_sk');
             $table->string('variable');
             $table->string('error_value')->nullable();
             $table->string('observation')->nullable();

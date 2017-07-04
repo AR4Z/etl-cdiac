@@ -9,10 +9,24 @@ class ExistFactTable extends Model
 
     protected $connection = 'temporary_work';
 
-    protected $table = 'exist_fact_table';
+    protected $table = 'exist_fact_weather';
 
     protected $fillable = [
-        'estacion_sk','fecha_sk', 'tiempo_sk', 'precipitacion','temperatura','temperatura_max','temperatura_min', 'temperatura_med', 'brillo',
-        'humedad_relativa','nivel', 'caudal', 'velocidad_viento','direccion_viento','presion_barometrica','evapotranspiracion', 'radiacion_solar'
+        'station_sk', 'date_sk', 'time_sk',
+        'rainfall',
+        'temperature',
+        'max_temperature',
+        'min_temperature',
+        'avg_temperature',
+        'brightness',
+        'relative_humidity',
+        'water_level',
+        'flow_rate',
+        'wind_speed',
+        'wind_direction',
+        'barometric_pressure',
+        'evapotranspiration',
+        'solar_radiation',
+        'comment',
     ];
 }

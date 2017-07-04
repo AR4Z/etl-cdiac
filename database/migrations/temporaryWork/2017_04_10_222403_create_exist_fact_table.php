@@ -13,25 +13,25 @@ class CreateExistFactTable extends Migration
      */
     public function up()
     {
-        Schema::connection('temporary_work')->create('exist_fact_table', function (Blueprint $table) {
+        Schema::connection('temporary_work')->create('exist_fact_weather', function (Blueprint $table) {
 
-            $table->integer('estacion_sk')->nullable();
-            $table->integer('fecha_sk')->nullable();
-            $table->integer('tiempo_sk')->nullable();
-            $table->string('precipitacion')->nullable();
-            $table->string('temperatura')->nullable();
-            $table->string('temperatura_max')->nullable();
-            $table->string('temperatura_min')->nullable();
-            $table->string('temperatura_med')->nullable();
-            $table->string('brillo')->nullable();
-            $table->string('humedad_relativa')->nullable();
-            $table->string('nivel')->nullable();
-            $table->string('caudal')->nullable();
-            $table->string('velocidad_viento')->nullable();
-            $table->string('direccion_viento')->nullable();
-            $table->string('presion_barometrica')->nullable();
-            $table->string('evapotranspiracion')->nullable();
-            $table->string('radiacion_solar')->nullable();
+            $table->integer('station_sk')->nullable();
+            $table->integer('date_sk')->nullable();
+            $table->integer('time_sk')->nullable();
+            $table->string('rainfall')->nullable();
+            $table->string('max_temperature')->nullable();
+            $table->string('min_temperature')->nullable();
+            $table->string('avg_temperature')->nullable();
+            $table->string('brightness')->nullable();
+            $table->string('relative_humidity')->nullable();
+            $table->string('water_level')->nullable();
+            $table->string('flow_rate')->nullable();
+            $table->string('wind_speed')->nullable();
+            $table->string('wind_direction')->nullable();
+            $table->string('barometric_pressure')->nullable();
+            $table->string('evapotranspiration')->nullable();
+            $table->string('solar_radiation')->nullable();
+            $table->string('comment')->nullable();
 
             $table->timestamps();
 
@@ -45,6 +45,6 @@ class CreateExistFactTable extends Migration
      */
     public function down()
     {
-        Schema::connection('temporary_work')->dropIfExists('exist_fact_table');
+        Schema::connection('temporary_work')->dropIfExists('exist_fact_weather');
     }
 }

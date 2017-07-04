@@ -12,7 +12,7 @@ class MigrateInPath extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:inPath {action? : action execute [ migrate | reset | refresh ]} { pre_path? : path for execute [ administrator | etl | dataWareHouse | config ] }';
+    protected $signature = 'migrate:inPath {action? : action execute [ migrate | reset | refresh ]} { pre_path? : path for execute [ administrator | etl | dataWareHouse | config | temporaryWork ] }';
 
     /**
      * The console command description.
@@ -69,8 +69,8 @@ class MigrateInPath extends Command
             return false;
         }
 
-        if ($path != 'administrator' and $path != 'etl' and $path != 'dataWareHouse' and $path != 'config'){
-            $this->error(' path is optional field [ administrator | etl | dataWareHouse |config ]');
+        if ($path != 'administrator' and $path != 'etl' and $path != 'dataWareHouse' and $path != 'config' and $path != 'temporaryWork'){
+            $this->error(' path is optional field [ administrator | etl | dataWareHouse |config | temporaryWork]');
             return false;
         }
 

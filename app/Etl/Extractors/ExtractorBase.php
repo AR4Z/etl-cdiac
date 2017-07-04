@@ -2,8 +2,6 @@
 
 namespace App\Etl\Extractors;
 
-
-
 use Carbon\Carbon;
 use App\Etl\Traits\{DateSkTrait, TimeSkTrait};
 

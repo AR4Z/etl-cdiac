@@ -20,12 +20,12 @@ class TemporalWeatherRepository extends EloquentRepository implements TemporaryI
      */
     public function getDatesDistinct()
     {
-        return $this->select('fecha')->distinct()->get()->all();
+        return $this->select('date')->distinct()->get()->all();
     }
 
     public function getTimesDistinct()
     {
-        return $this->select('hora')->distinct()->get()->all();
+        return $this->select('date')->distinct()->get()->all();
     }
 
     /**
@@ -35,18 +35,18 @@ class TemporalWeatherRepository extends EloquentRepository implements TemporaryI
      */
     public function updateDateSk($dateSk, $date)
     {
-        return $this->createModel()->where('fecha', 'LIKE', $date)->update(['fecha_sk' => $dateSk]);
+        return $this->createModel()->where('date', 'LIKE', $date)->update(['date_sk' => $dateSk]);
     }
 
     public function updateTimeSk($timeSk, $time)
     {
 
-        return $this->createModel()->where('hora', '=', $time)->update(['tiempo_sk' => $timeSk]);
+        return $this->createModel()->where('time', '=', $time)->update(['time_sk' => $timeSk]);
     }
 
     public function UpdateStationSk($stationId)
     {
-        return $this->createModel()->query()->update(['estacion_sk' => $stationId]);
+        return $this->createModel()->query()->update(['station_sk' => $stationId]);
     }
     
     public function truncate()

@@ -49,12 +49,10 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function setOptions(EtlConfig $etlConfig)
     {
-
         // Configuration
         $this->etlConfig = $etlConfig;
         $this->extractTable = $etlConfig->getTableDestination();
         $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
-
         return $this;
 
     }
@@ -65,6 +63,7 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function extract()
     {
+        dd($this);
         if ($this->extractType == 'External'){
             $this->settingConnection($this->etlConfig->getNet());
             $this->extractConnection = 'external_connection';
