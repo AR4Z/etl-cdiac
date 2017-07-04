@@ -21,7 +21,7 @@ class FilterState extends Model
     ];
 
     protected $dates = [
-        'created_at', 'updated_at','current_date','current_time'
+        'created_at', 'updated_at','current_date'
     ];
 
     /**

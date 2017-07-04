@@ -24,7 +24,7 @@ class CreateVariableStationTable extends Migration
             $table->string('correction_type')->nullable();
             $table->boolean('rt_active')->default(false);
             $table->boolean('etl_active')->default(true);
-            $table->boolean('comment',500)->nullable();
+            $table->longText('comment')->nullable();
 
             $table->timestamps();
 

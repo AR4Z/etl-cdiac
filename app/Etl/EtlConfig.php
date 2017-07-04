@@ -3,8 +3,9 @@
 namespace App\Etl;
 
 use App\Etl\Traits\RemoveAccents;
-use Facades\App\Repositories\Config\StationRepository;
-use Facades\App\Repositories\Config\ConnectionRepository;
+use Facades\App\Repositories\Administrator\NetRepository;
+use Facades\App\Repositories\Administrator\ConnectionRepository;
+use Facades\App\Repositories\Administrator\StationRepository;
 use Config;
 
 /**
@@ -23,6 +24,8 @@ class EtlConfig
    * $net indicates the station for work
    */
   private $net = null;
+
+  private $connection = null;
   /**
    * $station is dependence for: App\Repositories\Config\Station
    * $station indicates the station for work
@@ -30,16 +33,9 @@ class EtlConfig
   private $station = null;
 
     /**
-     * $tableDestination is optional: 'fact_table' - 'fact_aire' - null
-     * $tableDestination indicates the temporal space work
-     */
-  private $varForFilter = null;
-
-    /**
    * $tableSpaceWork is optional: 'temporal_clima' - 'temporal_aire' - null
    * $tableSpaceWork indicates the temporal space work
    */
-
 
   private $tableTrust = null;
 
@@ -77,24 +73,23 @@ class EtlConfig
      * EtlConfig constructor.
      * @param String $typeProcess
      * @param int $netId
+     * @param int|null $connection
      * @param int $stationId
      * @param bool $sequence
      */
 
-    function __construct(String $typeProcess, int $netId, int $stationId,bool $sequence= false)
+    function __construct(String $typeProcess, int $netId,$connection, int $stationId,bool $sequence= false)
     {
-        $this   ->setTypeProcess($typeProcess)
+        $this->setTypeProcess($typeProcess)
                 ->setNet($netId)
+                ->setConnection($connection)
                 ->setStation($stationId)
-                ->setVarForFilter($stationId)
                 ->setSequence($sequence)
                 ->config()
                 ->setInitialDate($this->station->{$this->stateTable}->current_date)
                 ->setInitialTime($this->station->{$this->stateTable}->current_time)
                 ->setFinalDate(gmdate("Y-m-d",time()))
                 ->setFinalTime('00:00:00');
-
-        //dd($this);
     }
 
     /**
@@ -107,28 +102,24 @@ class EtlConfig
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function config()
     {
-        $config = (object)Config::get(
-                                    'etl'.$this->typeProcess.'.'
-                                    .str_replace (
-                                        ' ',
-                                        '_',
-                                        $this->removeAccents($this->station->type)
-                                    ));
+        $config = (object)Config::get('etl.'.$this->typeProcess.'.'.str_replace (' ','_',$this->removeAccents($this->station->typeStation->etl_method)));
 
-        $this   ->setTableSpaceWork($config->tableSpaceWork)
-                ->setTableDestination($config->tableDestination)
-                ->setRepositorySpaceWork($config->repositorySpaceWork)
-                ->setStateTable($config->stateTable)
-                ->setRepositoryDestination($config->repositoryDestination)
-                ->setRepositoryExist($config->repositoryExist)
-                ->setTableExist($config->tableExist)
-                ->setTableTrust($config->tableTrust)
-                ->setTrustRepository($config->trustRepository);
+        $this->setTableSpaceWork($config->tableSpaceWork);
+        $this->setTableDestination($config->tableDestination);
+        $this->setRepositorySpaceWork($config->repositorySpaceWork);
+        $this->setStateTable($config->stateTable);
+        $this->setRepositoryDestination($config->repositoryDestination);
+        $this->setRepositoryExist($config->repositoryExist);
+        $this->setTableExist($config->tableExist);
+        $this->setTableTrust($config->tableTrust);
+        $this->setTrustRepository($config->trustRepository);
 
         return $this;
-
     }
 
     /**
@@ -138,8 +129,8 @@ class EtlConfig
 
   public function setTableSpaceWork($spaceWorkTable)
   {
-    $this->tableSpaceWork = $spaceWorkTable;
-    return $this;
+      $this->tableSpaceWork = $spaceWorkTable;
+      return $this;
   }
 
     /**
@@ -169,7 +160,7 @@ class EtlConfig
      */
     public function setNet(int $netId)
   {
-    $this->net = ConnectionRepository::find($netId);
+    $this->net = NetRepository::find($netId);
     return $this;
   }
 
@@ -215,26 +206,6 @@ class EtlConfig
   {
     return $this->station;
   }
-
-    /**
-     * @return null
-     */
-    public function getVarForFilter()
-    {
-        return $this->varForFilter;
-    }
-
-    /**
-     * @param $stationId
-     * @internal param null $varForFilter
-     * @return $this
-     */
-    public function setVarForFilter($stationId)
-    {
-        $this->varForFilter = StationRepository::findVarForFilter($stationId);
-
-        return $this;
-    }
 
     /**
      * @return null
@@ -305,8 +276,10 @@ class EtlConfig
      */
     public function setInitialDate($initialDate)
     {
-        $this->initialDate = $initialDate;
-
+        if (is_null($initialDate)){
+            //TODO
+        }
+        $this->initialDate = $initialDate->toDateString();
         return $this;
     }
 
@@ -342,6 +315,9 @@ class EtlConfig
      */
     public function setInitialTime($initialTime)
     {
+        if (is_null($initialTime)){
+            //TODO
+        }
         $this->initialTime = $initialTime;
         return $this;
     }
@@ -491,6 +467,25 @@ class EtlConfig
     public function setIncomingAmount(int $incomingAmount)
     {
         $this->incomingAmount = $incomingAmount;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @param null $connection
+     * @return $this
+     */
+    public function setConnection($connection)
+    {
+        $connectionId = (is_null($connection)) ?  $this->net->connection_id : $connection;
+        $this->connection = ConnectionRepository::find($connectionId);
         return $this;
     }
 

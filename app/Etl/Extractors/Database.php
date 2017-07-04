@@ -21,9 +21,9 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     private $select = null;
 
-    private $keys = 'estacion_sk,fecha_sk,tiempo_sk';
+    private $keys = 'station_sk,date_sk,time_sk';
 
-    private $columns = array('estacion_sk','fecha_sk','tiempo_sk');
+    private $columns = array('station_sk','date_sk','time_sk');
 
     public $etlConfig = null;
 
@@ -49,10 +49,10 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function setOptions(EtlConfig $etlConfig)
     {
+
         // Configuration
         $this->etlConfig = $etlConfig;
-        $this->extractTable = 'original_'.$etlConfig->getTableDestination();
-
+        $this->extractTable = $etlConfig->getTableDestination();
         $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
 
         return $this;

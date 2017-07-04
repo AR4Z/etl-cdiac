@@ -15,4 +15,14 @@ class StationRepository extends EloquentRepository
     {
         return $this->where('etl_active', true)->get();
     }
+
+    /**
+     * @param $stationId
+     * @return mixed
+     */
+
+    public function findRelationship(int $stationId)
+    {
+        return $this->createModel()->with(['originalState','filterState','variables','typeStation'])->find($stationId);
+    }
 }

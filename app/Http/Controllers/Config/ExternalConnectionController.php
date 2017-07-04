@@ -10,11 +10,11 @@ use App\Http\Requests\Config\ConnectionRequest;
 use Illuminate\Support\Facades\DB;
 
 
-use Facades\App\Etl\Database\DatabaseConfig;
+//use Facades\App\Etl\Database\DatabaseConfig;
 use App\Etl\Etl;
 
-use Facades\App\Repositories\Config\StationRepository;
-use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
+//use Facades\App\Repositories\Config\StationRepository;
+//use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use App\Repositories\Config\ConnectionRepository;
 use Illuminate\Support\Facades\Storage;
 
@@ -54,11 +54,11 @@ class ExternalConnectionController extends Controller
                         ->load();
         */
 
-        $jobEtl = Etl::start('Filter', 1, 1,true)
-                        //->extract('Database',['extractType' => 'External'])
-                        ->transform('FilterDetection')
-                        ->transform('FilterCorrection')
-                        ->load();
+        $jobEtl = Etl::start('Filter', 1, null,1,true)
+                        ->extract('Database',['extractType' => 'External']);
+                        //->transform('FilterDetection')
+                        //->transform('FilterCorrection')
+                        //->load();
         dd($jobEtl);
 
 //,['initialDate' => '2017-04-10', 'initialTime' => '23:40:35'] ,['initialDate' => '1990-01-01', 'initialTime' => '00:00:00']

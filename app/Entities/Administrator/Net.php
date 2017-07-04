@@ -13,7 +13,7 @@ class Net extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name','description','administrator_name', 'center_latitude_degrees','center_latitude_minutes','center_latitude_seconds',
+        'connection_id','name','description','administrator_name', 'center_latitude_degrees','center_latitude_minutes','center_latitude_seconds',
         'center_latitude_direction', 'center_longitude_degrees', 'center_longitude_minutes', 'center_longitude_seconds',
         'center_longitude_direction', 'rt_active', 'map_zoom', 'original_updated', 'filtered_updated'
     ];
@@ -52,7 +52,7 @@ class Net extends Model
      */
     public function connection()
     {
-        return $this->hasOne(Connection::class,'nei_id','id');
+        return $this->hasOne(Connection::class,'net_id','id');
     }
 
 }

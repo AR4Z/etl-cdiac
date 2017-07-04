@@ -30,14 +30,16 @@ class Etl
     /**
      * @param String $typeProcess
      * @param int $net
+     * @param int $connection
      * @param int $station
      * @param bool $sequence
      * @return Etl
      */
-    public static function start(String $typeProcess, int $net, int $station,bool $sequence = true)
+
+  public static function start(String $typeProcess, int $net,$connection = null, int $station,bool $sequence = true)
   {
     $etl = new Etl();
-    $etl->etlConfig($etl, $typeProcess, $net, $station, $sequence);
+    $etl->etlConfig($etl, $typeProcess, $net, $connection, $station, $sequence);
     return $etl;
   }
 
@@ -46,13 +48,15 @@ class Etl
      * @param Etl $etl
      * @param String $typeProcess
      * @param int $net
+     * @param int $connection
      * @param int $station
      * @param bool $sequence
      * @return Etl
      */
-    public function etlConfig(Etl $etl, String $typeProcess, int $net, int $station, bool $sequence)
+
+  public function etlConfig(Etl $etl, String $typeProcess, int $net,$connection, int $station, bool $sequence)
   {
-    $etl->etlConfig = new EtlConfig($typeProcess, $net, $station,$sequence);
+    $etl->etlConfig = new EtlConfig($typeProcess, $net,$connection, $station,$sequence);
     return $etl;
   }
 
@@ -62,13 +66,13 @@ class Etl
      * @return $this
      */
 
-    public function extract(string $method = 'Database', $options = [])
+  public function extract(string $method = 'Database', $options = [])
   {
       if (!empty($this->etlConfig)) {
-            //etl config not define
+            //etl config not define TODO
       }
       if (empty($this->extract)) {
-          // extract is define
+          // extract is define TODO
       }
 
       $this->extract = $this->factory($method,'Extractors',$options);

@@ -18,6 +18,7 @@ class CreateStationTypeTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('code',25);
+            $table->string('etl_method')->nullable();
             $table->string('description',500)->nullable();
             $table->string('report_name')->nullable();
 

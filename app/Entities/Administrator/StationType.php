@@ -13,7 +13,7 @@ class StationType extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'name','code','description','report_name'
+        'name','code','etl_method','description','report_name'
     ];
 
     protected $hidden = [
