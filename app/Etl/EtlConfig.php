@@ -26,6 +26,8 @@ class EtlConfig
   private $net = null;
 
   private $connection = null;
+
+  private $varForFilter = null;
   /**
    * $station is dependence for: App\Repositories\Config\Station
    * $station indicates the station for work
@@ -78,12 +80,13 @@ class EtlConfig
      * @param bool $sequence
      */
 
-    function __construct(String $typeProcess, int $netId,$connection, int $stationId,bool $sequence= false)
+    function __construct(String $typeProcess, $netId,$connection, int $stationId,bool $sequence= false)
     {
         $this->setTypeProcess($typeProcess)
+                ->setStation($stationId)
                 ->setNet($netId)
                 ->setConnection($connection)
-                ->setStation($stationId)
+                ->setVarForFilter($stationId)
                 ->setSequence($sequence)
                 ->config()
                 ->setInitialDate($this->station->{$this->stateTable}->current_date)
@@ -155,13 +158,16 @@ class EtlConfig
   }
 
     /**
-     * @param int $netId
+     * @param $net
      * @return $this
+     * @internal param int $netId
      */
-    public function setNet(int $netId)
+
+  public function setNet($net)
   {
-    $this->net = NetRepository::find($netId);
-    return $this;
+      $netId = (is_null($net)) ?  $this->station->owner_net_id : $net;
+      $this->net = NetRepository::find($netId);
+      return $this;
   }
 
 
@@ -486,6 +492,25 @@ class EtlConfig
     {
         $connectionId = (is_null($connection)) ?  $this->net->connection_id : $connection;
         $this->connection = ConnectionRepository::find($connectionId);
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getVarForFilter()
+    {
+        return $this->varForFilter;
+    }
+
+    /**
+     * @param $stationId
+     * @return $this
+     * @internal param null $varForFilter
+     */
+    public function setVarForFilter($stationId)
+    {
+        $this->varForFilter = StationRepository::findVarForFilter($stationId);
         return $this;
     }
 

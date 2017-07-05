@@ -54,7 +54,7 @@ class ExternalConnectionController extends Controller
                         ->load();
         */
 
-        $jobEtl = Etl::start('Filter', 1, null,1,true)
+        $jobEtl = Etl::start('Filter', null, null,1,true)
                         ->extract('Database',['extractType' => 'External']);
                         //->transform('FilterDetection')
                         //->transform('FilterCorrection')

@@ -21,6 +21,7 @@ class CreateTemporalClimaTable extends Migration
             $table->integer('time_sk')->nullable();
             $table->string('date')->nullable();
             $table->string('time')->nullable();
+            $table->string('temperature')->nullable();
             $table->string('rainfall')->nullable();
             $table->string('max_temperature')->nullable();
             $table->string('min_temperature')->nullable();

@@ -36,7 +36,7 @@ class Etl
      * @return Etl
      */
 
-  public static function start(String $typeProcess, int $net,$connection = null, int $station,bool $sequence = true)
+  public static function start(String $typeProcess, $net = null,$connection = null, int $station,bool $sequence = true)
   {
     $etl = new Etl();
     $etl->etlConfig($etl, $typeProcess, $net, $connection, $station, $sequence);
@@ -54,7 +54,7 @@ class Etl
      * @return Etl
      */
 
-  public function etlConfig(Etl $etl, String $typeProcess, int $net,$connection, int $station, bool $sequence)
+  public function etlConfig(Etl $etl, String $typeProcess, $net,$connection, int $station, bool $sequence)
   {
     $etl->etlConfig = new EtlConfig($typeProcess, $net,$connection, $station,$sequence);
     return $etl;

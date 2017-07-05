@@ -19,11 +19,14 @@ trait DatabaseConfig
 
   public function configExternalConnection($connection)
   {
+      if (!$connection->etl_active){
+            // TODO.. Excepcion por no estar activa la conección.
+          Log::info('Coneccion desabilidata para el proceso de etl');
+          return false;
+      }
     try {
-
       $connection->password = decrypt($connection->password);
-
-      Config::set("database.connections.external_connection.driver", $connection->driver);
+      Config::set("database.connections.external_connection.driver", $connection->connection_driver);
       Config::set('database.connections.external_connection.host', $connection->host);
       Config::set('database.connections.external_connection.port', $connection->port);
       Config::set('database.connections.external_connection.database', $connection->database);

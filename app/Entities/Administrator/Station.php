@@ -60,7 +60,7 @@ class Station extends Model
     public function variables()
     {
         return $this->belongsToMany(Variable::class,'variable_station','variable_id','station_id')
-                    ->withPivot(['id','maximum','minimum','previous_deference','correction_type','rt_active','comment'])
+                    ->withPivot(['id','maximum','minimum','previous_deference','correction_type','rt_active','etl_active','comment'])
                     ->withTimestamps();
     }
 

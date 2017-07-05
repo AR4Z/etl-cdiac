@@ -11,6 +11,7 @@ trait WorkDatabaseTrait
      * @param string $connection
      * @param string $table
      * @param string $keys
+     * @param string $keysCast
      * @param string $select
      * @param string $initialDate
      * @param string $initialTime

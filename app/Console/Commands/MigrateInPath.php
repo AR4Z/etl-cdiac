@@ -12,7 +12,7 @@ class MigrateInPath extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:inPath {action? : action execute [ migrate | reset | refresh ]} { pre_path? : path for execute [ administrator | etl | dataWareHouse | config | temporaryWork ] }';
+    protected $signature = 'migrate:inPath {action? : action execute [ migrate | reset | refresh | rollback ]} { pre_path? : path for execute [ administrator | etl | dataWareHouse | config | temporaryWork ] }';
 
     /**
      * The console command description.
@@ -55,7 +55,7 @@ class MigrateInPath extends Command
         }
 
         if ($action != 'migrate' and $action != 'reset' and $action != 'rollback' and $action != 'refresh'){
-            $this->error(' action is optional field [ migrate | reset | refresh ]');
+            $this->error(' action is optional field [ migrate | reset | refresh | rollback ]');
             return false;
         }
 

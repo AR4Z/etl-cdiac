@@ -7,6 +7,7 @@ use App\Etl\Traits\WorkDatabaseTrait;
 use App\Etl\EtlConfig;
 use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use App\Etl\Traits\TrustTrait;
+use PhpParser\Node\Stmt\Return_;
 
 
 class Database extends ExtractorBase implements ExtractorInterface
@@ -23,6 +24,8 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     private $keys = 'station_sk,date_sk,time_sk';
 
+    private $keysCast = 'station_sk,date_sk,time_sk';
+
     private $columns = array('station_sk','date_sk','time_sk');
 
     public $etlConfig = null;
@@ -33,9 +36,9 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     public $extractTable = null;
 
-    public $colOrigin = 'name_locale';
+    public $colOrigin = 'local_name';
 
-    public $colDestination = 'name_locale';
+    public $colDestination = 'local_name';
 
     public $flagStationSk = true;
 
@@ -63,14 +66,14 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function extract()
     {
-        dd($this);
         if ($this->extractType == 'External'){
-            $this->settingConnection($this->etlConfig->getNet());
+            $this->settingConnection($this->etlConfig->getConnection());
             $this->extractConnection = 'external_connection';
-            $this->extractTable = $this->etlConfig->getStation()->name_table;
-            $this->colOrigin = 'name_database';
+            $this->extractTable = $this->setExtractRemoteTable();
+            $this->colOrigin = 'database_field_name';
             $this->keys = 'fecha, hora';
-            $this->columns = array('fecha','hora');
+            $this->keysCast = 'fecha as fecha, hora as time';
+            $this->columns = array('date','time');
             $this->flagStationSk = false;
             $this->flagDateSk = false;
             $this->flagTimeSk = false;
@@ -78,6 +81,7 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         $this->setSelect($this->etlConfig->getVarForFilter());
         $this->insertAllDataInTemporal($this->selectServerAcquisition());
+        dd($this);
         if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
 
         // trust process
@@ -118,7 +122,7 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function setSelect($variables)
     {
-        $temporalSelect = $this->keys.',';
+        $temporalSelect = $this->keysCast.',';
 
         foreach ($variables as $variable){
             $temporalSelect .= $variable->{$this->colOrigin} .' as '. $variable->{$this->colDestination}.', ';
@@ -168,10 +172,23 @@ class Database extends ExtractorBase implements ExtractorInterface
     {
         $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->columns, $data);
 
+        dd($this); //TODO
+
         if (!$this->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
         if (!$this->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
 
+
         return true;
+    }
+
+    private function setExtractRemoteTable()
+    {
+        $extractTable = $this->etlConfig->getStation()->table_db_name;
+
+        if (is_null($extractTable)){
+            //TODO excepcion por no hallar tabla de extracccion...
+        }
+        return $extractTable;
     }
 
 

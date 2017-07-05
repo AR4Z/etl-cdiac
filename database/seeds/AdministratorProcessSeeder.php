@@ -24,6 +24,7 @@ class AdministratorProcessSeeder extends seeder
         $this->call(StationSeeder::class);
         $this->call(FilterStationSeeder::class);
         $this->call(OriginStateSeeder::class);
+        $this->call(VariableStationSeeder::class);
     }
 
     /**
