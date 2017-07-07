@@ -14,6 +14,8 @@ return [
             'tableDestination'      => 'weather_fact',
             'tableTrust'            => 'trust_weather',
             'stateTable'            => 'filterState',
+            'foreignKey'            => ['station_sk','date_sk','time_sk'],
+            'calculatedForeignKey'  => ['fecha' => 'date','hora'=>'time'],
         ],
         'air' => [
             'tableSpaceWork'        => 'temporal_air',
@@ -25,6 +27,8 @@ return [
             'tableDestination'      => 'air_fact',
             'tableTrust'            => 'trust_air',
             'stateTable'            => 'filterState',
+            'foreignKey'            => ['station_sk','date_sk','time_sk'],
+            'calculatedForeignKey'  => ['fecha' => 'date','hora'=>'time'],
         ],
     ],
 
@@ -39,6 +43,8 @@ return [
             'tableDestination'      => 'original_fact_weather',
             'tableTrust'            => 'trust_weather',
             'stateTable'            => 'originalState',
+            'foreignKey'            => ['station_sk','date_sk','time_sk'],
+            'calculatedForeignKey'  => ['station_sk' => 'station_sk','date_sk'=>'date_sk','time_sk'=>'time_sk'],
         ],
         'air' => [
             'tableSpaceWork'        => 'temporal_air',
@@ -50,6 +56,21 @@ return [
             'tableDestination'      => 'original_fact_air',
             'tableTrust'            => 'trust_air',
             'stateTable'            => 'originalState',
+            'foreignKey'            => ['station_sk','date_sk','time_sk'],
+            'calculatedForeignKey'  => ['station_sk' => 'station_sk','date_sk'=>'date_sk','time_sk'=>'time_sk'],
+        ],
+        'groundwater' => [
+            'tableSpaceWork'        => 'temporal_groundwater',
+            'tableExist'            => 'exist_fact_groundwater',
+            'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\...',
+            'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\GroundwaterFactRepository',
+            'repositoryExist'       => 'Facades\\App\\Repositories\\TemporaryWork\\...',
+            'trustRepository'       => 'Facades\\App\\Repositories\\DataWareHouse\\...',
+            'tableDestination'      => '...',
+            'tableTrust'            => '...',
+            'stateTable'            => '...',
+            'foreignKey'            => ['station_sk','date_sk','time_sk'],
+            'calculatedForeignKey'  => ['station_sk' => 'station_sk','date_sk'=>'date_sk','time_sk'=>'time_sk'],
         ],
     ],
 
