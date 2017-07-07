@@ -16,26 +16,30 @@ class CreateTemporalClimaTable extends Migration
         Schema::connection('temporary_work')->create('temporal_weather', function (Blueprint $table) {
 
             $table->increments('id');
-            $table->bigInteger('station_sk')->unsigned();
-            $table->bigInteger('date_sk')->unsigned();
-            $table->bigInteger('time_sk')->unsigned();
-
+            $table->integer('station_sk')->nullable();
+            $table->integer('date_sk')->nullable();
+            $table->integer('time_sk')->nullable();
             $table->string('date')->nullable();
             $table->string('time')->nullable();
-
-            $table->string('raw_air_pressure')->nullable();
-            $table->string('raw_air_temperature')->nullable();
-            $table->string('raw_water_pressure')->nullable();
-            $table->string('raw_water_temperature')->nullable();
-            $table->string('raw_water_level')->nullable();
-            $table->string('water_temperature')->nullable();
-            $table->string('groundwater_level')->nullable();
-            $table->string('hydrostatic_charge')->nullable();
-            $table->string('well_quota')->nullable();
-            $table->string('depth')->nullable();
-            $table->longText('comment')->nullable();
+            $table->string('temperature')->nullable();
+            $table->string('rainfall')->nullable();
+            $table->string('max_temperature')->nullable();
+            $table->string('min_temperature')->nullable();
+            $table->string('avg_temperature')->nullable();
+            $table->string('brightness')->nullable();
+            $table->string('relative_humidity')->nullable();
+            $table->string('water_level')->nullable();
+            $table->string('flow_rate')->nullable();
+            $table->string('wind_speed')->nullable();
+            $table->string('wind_direction')->nullable();
+            $table->string('barometric_pressure')->nullable();
+            $table->string('evapotranspiration')->nullable();
+            $table->string('solar_radiation')->nullable();
+            $table->string('comment')->nullable();
 
             $table->timestamps();
+
+
         });
     }
 

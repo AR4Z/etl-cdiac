@@ -71,6 +71,10 @@ class EtlConfig
 
   private $incomingAmount = 0;
 
+  private $foreignKey = null;
+
+  private $calculatedForeignKey = null;
+
     /**
      * EtlConfig constructor.
      * @param String $typeProcess
@@ -110,19 +114,32 @@ class EtlConfig
      */
     public function config()
     {
-        $config = (object)Config::get('etl.'.$this->typeProcess.'.'.str_replace (' ','_',$this->removeAccents($this->station->typeStation->etl_method)));
+        $config = (object)Config::get('etl');
 
-        $this->setTableSpaceWork($config->tableSpaceWork);
-        $this->setTableDestination($config->tableDestination);
-        $this->setRepositorySpaceWork($config->repositorySpaceWork);
-        $this->setStateTable($config->stateTable);
-        $this->setRepositoryDestination($config->repositoryDestination);
-        $this->setRepositoryExist($config->repositoryExist);
-        $this->setTableExist($config->tableExist);
-        $this->setTableTrust($config->tableTrust);
-        $this->setTrustRepository($config->trustRepository);
+        if (!array_key_exists($this->typeProcess,$config)){
+            //TODO exepcion por no existir el metodo buscado inserte el correcto
+            dd('exepcion por no existir el metodo buscado inserte el correcto');
+        }
+        $config = (object)$config->{$this->typeProcess};
 
-        dd($this);
+        if (!array_key_exists(str_replace (' ','_',$this->removeAccents($this->station->typeStation->etl_method)),$config)){
+            //TODO exepcion por no existir el tipo de estacion buscado inserte el correcto
+            dd('exepcion por no existir el tipo de estacion buscado inserte el correcto');
+        }
+        $config = (object)$config->{str_replace (' ','_',$this->removeAccents($this->station->typeStation->etl_method))};
+
+        $this->setTableSpaceWork((array_key_exists('tableSpaceWork',$config)) ? $config->tableSpaceWork : false);
+        $this->setTableDestination((array_key_exists('tableDestination',$config)) ? $config->tableDestination : false);
+        $this->setRepositorySpaceWork((array_key_exists('repositorySpaceWork',$config)) ? $config->repositorySpaceWork : false);
+        $this->setStateTable((array_key_exists('stateTable',$config)) ? $config->stateTable : false);
+        $this->setRepositoryDestination((array_key_exists('repositoryDestination',$config)) ? $config->repositoryDestination : false);
+        $this->setRepositoryExist((array_key_exists('repositoryExist',$config)) ? $config->repositoryExist : false);
+        $this->setTableExist((array_key_exists('tableExist',$config)) ? $config->tableExist : false);
+        $this->setTableTrust((array_key_exists('tableTrust',$config)) ? $config->tableTrust : false);
+        $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
+        $this->setForeignKey((array_key_exists('foreignKey',$config)) ? $config->foreignKey : false);
+        $this->setCalculatedForeignKey((array_key_exists('calculatedForeignKey',$config)) ? $config->calculatedForeignKey : false);
+
         return $this;
     }
 
@@ -512,6 +529,42 @@ class EtlConfig
     public function setVarForFilter($stationId)
     {
         $this->varForFilter = StationRepository::findVarForFilter($stationId);
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
+    }
+
+    /**
+     * @param null $foreignKey
+     * @return $this
+     */
+    public function setForeignKey($foreignKey)
+    {
+        $this->foreignKey = $foreignKey;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getCalculatedForeignKey()
+    {
+        return $this->calculatedForeignKey;
+    }
+
+    /**
+     * @param null $calculatedForeignKey
+     * @return $this
+     */
+    public function setCalculatedForeignKey($calculatedForeignKey)
+    {
+        $this->calculatedForeignKey = $calculatedForeignKey;
         return $this;
     }
 

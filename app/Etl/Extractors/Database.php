@@ -22,11 +22,7 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     private $select = null;
 
-    private $keys = 'station_sk,date_sk,time_sk';
-
-    private $keysCast = 'station_sk,date_sk,time_sk';
-
-    private $columns = array('station_sk','date_sk','time_sk');
+    private $columns = [];
 
     public $etlConfig = null;
 
@@ -57,7 +53,6 @@ class Database extends ExtractorBase implements ExtractorInterface
         $this->extractTable = $etlConfig->getTableDestination();
         $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
         return $this;
-
     }
 
     /**
@@ -71,9 +66,7 @@ class Database extends ExtractorBase implements ExtractorInterface
             $this->extractConnection = 'external_connection';
             $this->extractTable = $this->setExtractRemoteTable();
             $this->colOrigin = 'database_field_name';
-            $this->keys = 'fecha, hora';
-            $this->keysCast = 'fecha as fecha, hora as time';
-            $this->columns = array('date','time');
+            //$this->columns = array('date','time');
             $this->flagStationSk = false;
             $this->flagDateSk = false;
             $this->flagTimeSk = false;
@@ -81,9 +74,10 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         $this->setSelect($this->etlConfig->getVarForFilter());
         $this->insertAllDataInTemporal($this->selectServerAcquisition());
-        dd($this);
+
         if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
 
+        dd($this); //TODO
         // trust process
         $trust = $this->incomingCalculation(
                     $this->etlConfig->getTrustRepository(),
@@ -122,7 +116,9 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function setSelect($variables)
     {
-        $temporalSelect = $this->keysCast.',';
+        $temporalSelect = $this->foreignKeySearch();
+        $this->columns= array_merge($this->columns,array_values($this->etlConfig->getCalculatedForeignKey()));
+        $this->columns= array_unique($this->columns);
 
         foreach ($variables as $variable){
             $temporalSelect .= $variable->{$this->colOrigin} .' as '. $variable->{$this->colDestination}.', ';
@@ -153,7 +149,7 @@ class Database extends ExtractorBase implements ExtractorInterface
         return $this->getData(
             $this->extractConnection,
             $this->extractTable,
-            $this->keys,
+            implode(',',array_keys ($this->etlConfig->getCalculatedForeignKey())),
             $this->select,
             $this->etlConfig->getInitialDate(),
             $this->etlConfig->getInitialTime(),
@@ -172,11 +168,8 @@ class Database extends ExtractorBase implements ExtractorInterface
     {
         $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->columns, $data);
 
-        dd($this); //TODO
-
         if (!$this->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
         if (!$this->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
-
 
         return true;
     }
@@ -189,6 +182,23 @@ class Database extends ExtractorBase implements ExtractorInterface
             //TODO excepcion por no hallar tabla de extracccion...
         }
         return $extractTable;
+    }
+
+    /**
+     *
+     */
+    private function foreignKeySearch()
+    {
+        $array = $this->etlConfig->getCalculatedForeignKey();
+        $keyMerge = '';
+
+        if (!$array){
+            //TODO el array de claves foraneas no puede ser falso debe configurarse (exception)
+        }
+
+        foreach ($array as $key => $value){$keyMerge .= ' '.$key.' as '.$value.',';}
+
+        return $keyMerge;
     }
 
 

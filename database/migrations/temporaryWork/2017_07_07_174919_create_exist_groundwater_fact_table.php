@@ -15,21 +15,24 @@ class CreateExistGroundwaterFactTable extends Migration
     {
         Schema::connection('temporary_work')->create('exist_fact_groundwater', function (Blueprint $table) {
 
-            $table->integer('station_sk')->nullable();
-            $table->integer('date_sk')->nullable();
-            $table->integer('time_sk')->nullable();
+            $table->bigInteger('station_sk')->unsigned();
+            $table->bigInteger('date_sk')->unsigned();
+            $table->bigInteger('time_sk')->unsigned();
+
             $table->string('date')->nullable();
             $table->string('time')->nullable();
-            $table->string('so2_local_ppt')->nullable();
-            $table->string('so2_local_ugm3')->nullable();
-            $table->string('so2_estan_ugm3')->nullable();
-            $table->string('co_local_ppt')->nullable();
-            $table->string('co_local_ugm3')->nullable();
-            $table->string('o3_local_ppt')->nullable();
-            $table->string('o3_estan_ugm3')->nullable();
-            $table->string('pm10')->nullable();
-            $table->string('pm2_5')->nullable();
-            $table->string('comment')->nullable();
+
+            $table->string('raw_air_pressure')->nullable();
+            $table->string('raw_air_temperature')->nullable();
+            $table->string('raw_water_pressure')->nullable();
+            $table->string('raw_water_temperature')->nullable();
+            $table->string('raw_water_level')->nullable();
+            $table->string('water_temperature')->nullable();
+            $table->string('groundwater_level')->nullable();
+            $table->string('hydrostatic_charge')->nullable();
+            $table->string('well_quota')->nullable();
+            $table->string('depth')->nullable();
+            $table->longText('comment')->nullable();
 
             $table->timestamps();
 

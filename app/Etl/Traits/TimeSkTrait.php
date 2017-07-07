@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Etl\Traits;
+namespace App\Etl\Traits;
 
 use Facades\App\Repositories\DataWareHouse\TimeDimRepository;
 

@@ -25,7 +25,7 @@ class TemporalWeatherRepository extends EloquentRepository implements TemporaryI
 
     public function getTimesDistinct()
     {
-        return $this->select('date')->distinct()->get()->all();
+        return $this->select('time')->distinct()->get()->all();
     }
 
     /**
@@ -40,7 +40,6 @@ class TemporalWeatherRepository extends EloquentRepository implements TemporaryI
 
     public function updateTimeSk($timeSk, $time)
     {
-
         return $this->createModel()->where('time', '=', $time)->update(['time_sk' => $timeSk]);
     }
 

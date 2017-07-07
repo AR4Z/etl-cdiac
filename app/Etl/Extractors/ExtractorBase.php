@@ -22,7 +22,7 @@ abstract class ExtractorBase
     public function updateDateSk($repository)
     {
         $dates = ($repository)::getDatesDistinct();
-        foreach ($dates as $date){($repository)::updateDateSk($this->calculateDateSk(Carbon::parse($date->fecha)),$date->fecha);}
+        foreach ($dates as $date){($repository)::updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);}
         $this->flagDateSk = true;
     }
 
@@ -33,10 +33,9 @@ abstract class ExtractorBase
     public  function updateTimeSk($repository)
     {
         $times = ($repository)::getTimesDistinct();
-        foreach ($times as $time){($repository)::updateTimeSk($this->calculateTimeSk($time->hora),$time->hora);}
+        foreach ($times as $time){($repository)::updateTimeSk($this->calculateTimeSk($time->time),$time->time);}
         $this->flagTimeSk = true;
     }
-
 
     /**
      * @param $station
