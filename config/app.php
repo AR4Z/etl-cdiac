@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'es',
 
     /*
     |--------------------------------------------------------------------------
@@ -168,6 +168,7 @@ return [
          */
         Laravel\Tinker\TinkerServiceProvider::class,
         Rinvex\Repository\Providers\RepositoryServiceProvider::class,
+        Jenssegers\Date\DateServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -236,6 +237,7 @@ return [
          * Package  Aliases...
          */
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
+        'Date' => Jenssegers\Date\Date::class,
 
         /*
          * Personal  Aliases...

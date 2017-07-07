@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Repositories\TemporaryWork;
+namespace App\Repositories\TemporaryWork;
 
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporalAir;

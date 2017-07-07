@@ -4,7 +4,7 @@ namespace App\Entities\TemporaryWork;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ExistFactTable extends Model
+class ExistFactWeather extends Model
 {
 
     protected $connection = 'temporary_work';

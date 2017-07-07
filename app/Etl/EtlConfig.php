@@ -122,6 +122,7 @@ class EtlConfig
         $this->setTableTrust($config->tableTrust);
         $this->setTrustRepository($config->trustRepository);
 
+        dd($this);
         return $this;
     }
 
