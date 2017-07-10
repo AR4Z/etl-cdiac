@@ -5,6 +5,7 @@ namespace App\Etl\Extractors;
 use App\Etl\Database\DatabaseConfig;
 use App\Etl\Traits\WorkDatabaseTrait;
 use App\Etl\EtlConfig;
+use Carbon\Carbon;
 use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use App\Etl\Traits\TrustTrait;
 use PhpParser\Node\Stmt\Return_;
@@ -66,7 +67,6 @@ class Database extends ExtractorBase implements ExtractorInterface
             $this->extractConnection = 'external_connection';
             $this->extractTable = $this->setExtractRemoteTable();
             $this->colOrigin = 'database_field_name';
-            //$this->columns = array('date','time');
             $this->flagStationSk = false;
             $this->flagDateSk = false;
             $this->flagTimeSk = false;
@@ -77,18 +77,11 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
 
-        dd($this); //TODO
-        // trust process
-        $trust = $this->incomingCalculation(
-                    $this->etlConfig->getTrustRepository(),
-                    $this->etlConfig->getTableSpaceWork(),
-                    $this->etlConfig->getTableTrust(),
-                    $this->etlConfig->getVarForFilter()->toArray()
-                );
-
-        $this->etlConfig->setIncomingAmount($this->getIncomingAmount($this->etlConfig->getTableSpaceWork()));
+        $trust = ($this->etlConfig->isTrustProcess())? $this->incomingCalculation($this->etlConfig->getTrustRepository(),$this->etlConfig->getTableSpaceWork(), $this->etlConfig->getTableTrust(), $this->etlConfig->getVarForFilter()->toArray()) : false;
 
         $this->etlConfig->setTrustColumns($trust);
+
+        $this->etlConfig->setIncomingAmount($this->getIncomingAmount($this->etlConfig->getTableSpaceWork()));
 
         return $this;
     }
@@ -116,7 +109,8 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function setSelect($variables)
     {
-        $temporalSelect = $this->foreignKeySearch();
+        $temporalSelect = ($this->extractType == 'Locale') ? $this->foreignKeyLocaleSearch() : $this->foreignKeyExternalSearch();
+
         $this->columns= array_merge($this->columns,array_values($this->etlConfig->getCalculatedForeignKey()));
         $this->columns= array_unique($this->columns);
 
@@ -146,15 +140,29 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     private function selectServerAcquisition()
     {
-        return $this->getData(
+        if ($this->extractType == 'External'){
+            return $this->getExternalData(
+                $this->extractConnection,
+                $this->extractTable,
+                implode(',',array_keys ($this->etlConfig->getCalculatedForeignKey())),
+                $this->select,
+                $this->etlConfig->getInitialDate(),
+                $this->etlConfig->getInitialTime(),
+                $this->etlConfig->getFinalDate(),
+                $this->etlConfig->getFinalTime(),
+                50
+            );
+        }
+
+        return $this->getLocalData(
             $this->extractConnection,
             $this->extractTable,
-            implode(',',array_keys ($this->etlConfig->getCalculatedForeignKey())),
+            implode(',',array_values ($this->etlConfig->getForeignKey())),
             $this->select,
-            $this->etlConfig->getInitialDate(),
-            $this->etlConfig->getInitialTime(),
-            $this->etlConfig->getFinalDate(),
-            $this->etlConfig->getFinalTime(),
+            $this->calculateDateSk(Carbon::parse($this->etlConfig->getInitialDate())),
+            $this->calculateTimeSk($this->etlConfig->getInitialTime()),
+            $this->calculateDateSk(Carbon::parse($this->etlConfig->getFinalDate())),
+            $this->calculateTimeSk($this->etlConfig->getFinalTime()),
             50
         );
     }
@@ -184,10 +192,11 @@ class Database extends ExtractorBase implements ExtractorInterface
         return $extractTable;
     }
 
+
     /**
-     *
+     * @return string
      */
-    private function foreignKeySearch()
+    private function foreignKeyExternalSearch()
     {
         $array = $this->etlConfig->getCalculatedForeignKey();
         $keyMerge = '';
@@ -200,6 +209,21 @@ class Database extends ExtractorBase implements ExtractorInterface
 
         return $keyMerge;
     }
+
+    private function foreignKeyLocaleSearch()
+    {
+        $array = $this->etlConfig->getForeignKey();
+        $keyMerge = '';
+
+        if (!$array){
+            //TODO el array de claves foraneas no puede ser falso debe configurarse (exception)
+        }
+
+        foreach ($array as $value){$keyMerge .= ' '.$value.',';}
+
+        return $keyMerge;
+    }
+
 
 
 }

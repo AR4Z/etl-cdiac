@@ -2,20 +2,17 @@
 
 namespace app\Etl\Traits;
 
-
 use DB;
 
 trait TrustTrait
 {
-    private $incoming = 'total_incoming_';
+    private $incoming = '_total_records';
 
-    private $goods = 'total_good_';
+    private $goods = '_correct_records';
 
-    private $support = 'support_';
+    private $support = '_support';
 
-    private $trust = 'trust_';
-
-    private $table = 'trust_';
+    private $trust = '_trust';
 
     /**
      * @param $trustRepository
@@ -30,7 +27,7 @@ trait TrustTrait
         $trustActuality = [];
         foreach ($values as $value){
 
-            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
+            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('station_sk','=',$value->station_sk)->where('date_sk','=',$value->station_sk)->first();
 
             if (!$actualTrust){
                 $trust = $this->createModel($trustRepository,$value);
@@ -53,17 +50,16 @@ trait TrustTrait
     {
         $values = DB::connection('temporary_work')
                     ->table($temporalTable)
-                    ->select(DB::raw("CAST(estacion_sk AS integer),CAST(fecha_sk AS integer),COUNT($variable) AS total_good_$variable"))
-                    ->groupby('estacion_sk','fecha_sk')
-                    ->orderby(DB::raw("estacion_sk,fecha_sk"),'asc')
+                    ->select(DB::raw("CAST(station_sk AS integer),CAST(date_sk AS integer),COUNT($variable) AS ".$variable.$this->goods))
+                    ->groupby('station_sk','date_sk')
+                    ->orderby(DB::raw("station_sk,date_sk"),'asc')
                     ->get();
 
         foreach ($values as $value ){
-            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('estacion_sk','=',$value->estacion_sk)->where('fecha_sk','=',$value->fecha_sk)->first();
+            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('station_sk','=',$value->station_sk)->where('date_sk','=',$value->date_sk)->first();
             if ($actualTrust){$this->updateModel($trustRepository, $actualTrust, $value,'insertGoods');}
         }
 
-        return;
     }
 
 
@@ -76,9 +72,9 @@ trait TrustTrait
     {
         $values = DB::connection('temporary_work')
                         ->table($temporalTable)
-                        ->select(DB::raw('CAST(estacion_sk AS integer),CAST(fecha_sk AS integer),'.$countSelect))
-                        ->groupby('estacion_sk','fecha_sk')
-                        ->orderby(DB::raw("estacion_sk,fecha_sk"),'asc')
+                        ->select(DB::raw('CAST(station_sk AS integer),CAST(date_sk AS integer),'.$countSelect))
+                        ->groupby('station_sk','date_sk')
+                        ->orderby(DB::raw("station_sk,date_sk"),'asc')
                         ->get();
         //return (array)$values[0];
         return $values;
@@ -94,10 +90,10 @@ trait TrustTrait
     private function updateModel($trustRepository, $actualTrust, $value,$ban = null)
     {
         $trustModel = ($trustRepository)::createModel()->fill($actualTrust);
-        foreach ($value as $key => $val){if (!($key == 'estacion_sk' || $key == 'fecha_sk')){($trustModel->$key += $val);}}
+        foreach ($value as $key => $val){if (!($key == 'station_sk' || $key == 'date_sk')){($trustModel->$key += $val);}}
         ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
 
-        return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
+        return ['station_sk' => $value->station_sk,'date_sk' => $value->date_sk];
     }
 
 
@@ -112,7 +108,7 @@ trait TrustTrait
         foreach ($value as $key => $val){$trustModel->$key = $val;}
         $trustModel->save();
 
-        return ['estacion_sk' => $value->estacion_sk,'fecha_sk' => $value->fecha_sk];
+        return ['station_sk' => $value->station_sk,'date_sk' => $value->date_sk];
     }
 
 
@@ -123,7 +119,7 @@ trait TrustTrait
     private function generateSelect($variables)
     {
         $text = '';
-        foreach ($variables as $variable){$text .= 'COUNT(case '.$variable->name_locale.' when \'-\' then null else 1 end) AS '.$this->incoming.''. $variable->name_locale . ',';}
+        foreach ($variables as $variable){$text .= 'COUNT(case '.$variable->local_name.' when \'-\' then null else 1 end) AS '. $variable->local_name .''.$this->incoming.',';}
         $text[strlen($text)-1] = ' ';
 
         return $text;

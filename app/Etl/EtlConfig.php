@@ -75,6 +75,8 @@ class EtlConfig
 
   private $calculatedForeignKey = null;
 
+  private $trustProcess = true;
+
     /**
      * EtlConfig constructor.
      * @param String $typeProcess
@@ -565,6 +567,24 @@ class EtlConfig
     public function setCalculatedForeignKey($calculatedForeignKey)
     {
         $this->calculatedForeignKey = $calculatedForeignKey;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrustProcess(): bool
+    {
+        return $this->trustProcess;
+    }
+
+    /**
+     * @param bool $trustProcess
+     * @return $this
+     */
+    public function setTrustProcess(bool $trustProcess)
+    {
+        $this->trustProcess = $trustProcess;
         return $this;
     }
 
