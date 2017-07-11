@@ -19,29 +19,14 @@ class Database extends ExtractorBase implements ExtractorInterface
    * $method is the data type incoming
    */
 
-    private $method = 'Database';
-
-    private $select = null;
-
-    private $columns = [];
+    public $method = 'Database';
 
     public $etlConfig = null;
 
-    public $extractType = 'Locale';
+    public $extractTypeObject = null;
 
-    public $extractConnection = 'data_warehouse';
+    public $extractType = null;
 
-    public $extractTable = null;
-
-    public $colOrigin = 'local_name';
-
-    public $colDestination = 'local_name';
-
-    public $flagStationSk = true;
-
-    public $flagDateSk = true;
-
-    public $flagTimeSk = true;
 
     /**
      * @param $etlConfig
@@ -49,9 +34,7 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function setOptions(EtlConfig $etlConfig)
     {
-        // Configuration
         $this->etlConfig = $etlConfig;
-        $this->extractTable = $etlConfig->getTableDestination();
         $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
         return $this;
     }
@@ -62,76 +45,24 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function extract()
     {
-        if ($this->extractType == 'External'){
-            $this->settingConnection($this->etlConfig->getConnection());
-            $this->extractConnection = 'external_connection';
-            $this->extractTable = $this->setExtractRemoteTable();
-            $this->colOrigin = 'database_field_name';
-            $this->flagStationSk = false;
-            $this->flagDateSk = false;
-            $this->flagTimeSk = false;
-        }
+        $this->extractTypeObject = $this->createExtractType($this->extractType,$this->etlConfig);
 
-        $this->setSelect($this->etlConfig->getVarForFilter());
-        $this->insertAllDataInTemporal($this->selectServerAcquisition());
+        $this->insertAllDataInTemporal(
+            ($this->extractTypeObject)->extractData(
+                $this->etlConfig->getkeys()->mergeIncomingKeys,
+                $this->etlConfig->getInitialDate(),
+                $this->etlConfig->getInitialTime(),
+                $this->etlConfig->getFinalDate(),
+                $this->etlConfig->getFinalTime(),
+                50
+            )
+        );
 
-        if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
 
+        if (!($this->extractTypeObject)->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
         $trust = ($this->etlConfig->isTrustProcess())? $this->incomingCalculation($this->etlConfig->getTrustRepository(),$this->etlConfig->getTableSpaceWork(), $this->etlConfig->getTableTrust(), $this->etlConfig->getVarForFilter()->toArray()) : false;
-
         $this->etlConfig->setTrustColumns($trust);
-
         $this->etlConfig->setIncomingAmount($this->getIncomingAmount($this->etlConfig->getTableSpaceWork()));
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * @param mixed $method
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
-    }
-
-
-    /**
-     * @param $variables
-     * @return $this
-     */
-    public function setSelect($variables)
-    {
-        $temporalSelect = ($this->extractType == 'Locale') ? $this->foreignKeyLocaleSearch() : $this->foreignKeyExternalSearch();
-
-        $this->columns= array_merge($this->columns,array_values($this->etlConfig->getCalculatedForeignKey()));
-        $this->columns= array_unique($this->columns);
-
-        foreach ($variables as $variable){
-            $temporalSelect .= $variable->{$this->colOrigin} .' as '. $variable->{$this->colDestination}.', ';
-            array_push($this->columns,$variable->{$this->colDestination});
-        }
-        $temporalSelect[strlen($temporalSelect)-2] = ' ';
-        $this->select .= $temporalSelect;
-
-        return $this;
-
-    }
-
-    /**
-     * @param $connection
-     * @return $this
-     */
-    public function settingConnection($connection)
-    {
-        $this->configExternalConnection($connection);
         return $this;
     }
 
@@ -174,54 +105,29 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     private function insertAllDataInTemporal($data)
     {
-        $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->columns, $data);
+        $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),($this->extractTypeObject)->columns, $data);
 
-        if (!$this->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
-        if (!$this->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
+        if (!($this->extractTypeObject)->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
+        if (!($this->extractTypeObject)->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
 
         return true;
     }
 
-    private function setExtractRemoteTable()
-    {
-        $extractTable = $this->etlConfig->getStation()->table_db_name;
-
-        if (is_null($extractTable)){
-            //TODO excepcion por no hallar tabla de extracccion...
-        }
-        return $extractTable;
-    }
-
 
     /**
-     * @return string
+     * @param $extractType
+     * @param $etlConfig
+     * @return mixed|object
      */
-    private function foreignKeyExternalSearch()
+    private function createExtractType($extractType,$etlConfig)
     {
-        $array = $this->etlConfig->getCalculatedForeignKey();
-        $keyMerge = '';
-
-        if (!$array){
-            //TODO el array de claves foraneas no puede ser falso debe configurarse (exception)
+        if (! class_exists($extractType)) {
+            if (isset($aliases['ExtractType'][$extractType])) {
+                $extractType = $aliases['ExtractType'][$extractType];
+            }
+            $extractType = __NAMESPACE__ . '\\' . ucwords('ExtractType') . '\\' . $extractType;
         }
-
-        foreach ($array as $key => $value){$keyMerge .= ' '.$key.' as '.$value.',';}
-
-        return $keyMerge;
-    }
-
-    private function foreignKeyLocaleSearch()
-    {
-        $array = $this->etlConfig->getForeignKey();
-        $keyMerge = '';
-
-        if (!$array){
-            //TODO el array de claves foraneas no puede ser falso debe configurarse (exception)
-        }
-
-        foreach ($array as $value){$keyMerge .= ' '.$value.',';}
-
-        return $keyMerge;
+        return new $extractType($etlConfig);
     }
 
 

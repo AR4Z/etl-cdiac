@@ -6,7 +6,9 @@ use App\Etl\Traits\RemoveAccents;
 use Facades\App\Repositories\Administrator\NetRepository;
 use Facades\App\Repositories\Administrator\ConnectionRepository;
 use Facades\App\Repositories\Administrator\StationRepository;
+use App\Etl\Config\PrimaryKeys;
 use Config;
+use Illuminate\Support\Facades\App;
 
 /**
  *
@@ -71,11 +73,11 @@ class EtlConfig
 
   private $incomingAmount = 0;
 
-  private $foreignKey = null;
-
-  private $calculatedForeignKey = null;
+  private $keys = null;
 
   private $trustProcess = true;
+
+
 
     /**
      * EtlConfig constructor.
@@ -139,8 +141,7 @@ class EtlConfig
         $this->setTableExist((array_key_exists('tableExist',$config)) ? $config->tableExist : false);
         $this->setTableTrust((array_key_exists('tableTrust',$config)) ? $config->tableTrust : false);
         $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
-        $this->setForeignKey((array_key_exists('foreignKey',$config)) ? $config->foreignKey : false);
-        $this->setCalculatedForeignKey((array_key_exists('calculatedForeignKey',$config)) ? $config->calculatedForeignKey : false);
+        $this->setKeys((array_key_exists('keys',$config)) ? $config->keys : false);
 
         return $this;
     }
@@ -534,41 +535,6 @@ class EtlConfig
         return $this;
     }
 
-    /**
-     * @return null
-     */
-    public function getForeignKey()
-    {
-        return $this->foreignKey;
-    }
-
-    /**
-     * @param null $foreignKey
-     * @return $this
-     */
-    public function setForeignKey($foreignKey)
-    {
-        $this->foreignKey = $foreignKey;
-        return $this;
-    }
-
-    /**
-     * @return null
-     */
-    public function getCalculatedForeignKey()
-    {
-        return $this->calculatedForeignKey;
-    }
-
-    /**
-     * @param null $calculatedForeignKey
-     * @return $this
-     */
-    public function setCalculatedForeignKey($calculatedForeignKey)
-    {
-        $this->calculatedForeignKey = $calculatedForeignKey;
-        return $this;
-    }
 
     /**
      * @return bool
@@ -586,6 +552,24 @@ class EtlConfig
     {
         $this->trustProcess = $trustProcess;
         return $this;
+    }
+
+    /**
+     * @param $keys
+     * @return $this
+     */
+    public function setKeys($keys)
+    {
+        $this->keys = new PrimaryKeys($keys) ;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getKeys()
+    {
+        return $this->keys;
     }
 
 }

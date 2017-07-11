@@ -14,10 +14,10 @@ class AirReliability extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = ['station_sk', 'date_sk'];
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'station_sk', 'date_sk',
+        'id','station_sk', 'date_sk',
         'so2_total_records',
         'so2_correct_records',
         'so2_support',

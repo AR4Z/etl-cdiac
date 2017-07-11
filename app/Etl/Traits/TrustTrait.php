@@ -27,9 +27,9 @@ trait TrustTrait
         $trustActuality = [];
         foreach ($values as $value){
 
-            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('station_sk','=',$value->station_sk)->where('date_sk','=',$value->station_sk)->first();
+            $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('station_sk','=',$value->station_sk)->where('date_sk','=',$value->date_sk)->first();
 
-            if (!$actualTrust){
+            if (empty($actualTrust)){
                 $trust = $this->createModel($trustRepository,$value);
             }else{
                 $trust = $this->updateModel($trustRepository,$actualTrust,$value);
@@ -91,6 +91,7 @@ trait TrustTrait
     {
         $trustModel = ($trustRepository)::createModel()->fill($actualTrust);
         foreach ($value as $key => $val){if (!($key == 'station_sk' || $key == 'date_sk')){($trustModel->$key += $val);}}
+
         ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
 
         return ['station_sk' => $value->station_sk,'date_sk' => $value->date_sk];

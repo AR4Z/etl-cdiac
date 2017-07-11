@@ -15,6 +15,7 @@ class CreateWeatherReliabilityTable extends Migration
     {
         Schema::connection('data_warehouse')->create('weather_reliability', function (Blueprint $table) {
 
+            $table->bigIncrements('id');
             $table->bigInteger('station_sk')->unsigned();
             $table->bigInteger('date_sk')->unsigned();
 
@@ -73,7 +74,6 @@ class CreateWeatherReliabilityTable extends Migration
             $table->decimal('solar_radiation_support', 10, 4)->nullable();
             $table->decimal('solar_radiation_trust', 10, 4)->nullable();
 
-            $table->primary(['station_sk', 'date_sk'], 'weather_reliability_pk');
         });
     }
 

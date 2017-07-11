@@ -44,7 +44,6 @@ trait WorkDatabaseTrait
             ->limit($limit)
             ->get()
             ->all();
-
         return $data;
     }
 
@@ -69,7 +68,7 @@ trait WorkDatabaseTrait
             ->get()
             ->all();
 
-        //dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$data);
+        dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$data);
         return $data;
     }
 

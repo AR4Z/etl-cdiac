@@ -15,6 +15,7 @@ class CreateAirReliabilityTable extends Migration
     {
         Schema::connection('data_warehouse')->create('air_reliability', function (Blueprint $table) {
 
+            $table->bigIncrements('id');
             $table->bigInteger('station_sk')->unsigned();
             $table->bigInteger('date_sk')->unsigned();
 
@@ -43,7 +44,6 @@ class CreateAirReliabilityTable extends Migration
             $table->decimal('pm2_5_support', 10, 4)->nullable();
             $table->decimal('pm2_5_trust', 10, 4)->nullable();
 
-            $table->primary(['station_sk', 'date_sk'], 'air_reliability_pk');
 
         });
     }

@@ -12,8 +12,23 @@ return [
             'tableDestination'      => 'weather_fact',
             'tableTrust'            => 'weather_reliability',
             'stateTable'            => 'filterState',
-            'foreignKey'            => ['station_sk','date_sk','time_sk'],
-            'calculatedForeignKey'  => ['fecha' => 'date','hora'=>'time'],
+            'keys'                  => [
+                'station_sk' =>[
+                    'external_name' =>  null,
+                    'cast_name'     =>  null,
+                    'incoming'      =>  false,
+                ],
+                'date_sk'   =>   [
+                    'external_name' =>  'fecha',
+                    'cast_name'     =>  'date',
+                    'incoming'      =>  true,
+                ],
+                'time_sk'   =>  [
+                    'external_name' =>  'hora',
+                    'cast_name'     =>  'time',
+                    'incoming'      =>  true,
+                ]
+            ],
         ],
         'air' => [
             'tableSpaceWork'        => 'temporal_air',
@@ -25,8 +40,23 @@ return [
             'tableDestination'      => 'air_fact',
             'tableTrust'            => 'air_reliability',
             'stateTable'            => 'filterState',
-            'foreignKey'            => ['station_sk','date_sk','time_sk'],
-            'calculatedForeignKey'  => ['fecha' => 'date','hora'=>'time'],
+            'keys'            => [
+                'station_sk' =>[
+                    'external_name' =>  null,
+                    'cast_name'     =>  null,
+                    'incoming'      =>  false,
+                    ],
+                'date_sk'  =>   [
+                    'external_name' =>  'fecha',
+                    'cast_name'     =>  'date',
+                    'incoming'      =>  true,
+                    ],
+                'time_sk'   =>  [
+                    'external_name' =>  'hora',
+                    'cast_name'     =>  'time',
+                    'incoming'      =>  true,
+                    ]
+                ],
         ],
     ],
 
@@ -41,8 +71,23 @@ return [
             'tableDestination'      => 'original_weather_fact',
             'tableTrust'            => 'weather_reliability',
             'stateTable'            => 'originalState',
-            'foreignKey'            => ['station_sk','date_sk','time_sk'],
-            'calculatedForeignKey'  => ['station_sk' => 'station_sk','date_sk'=>'date_sk','time_sk'=>'time_sk'],
+            'keys'                  => [
+                'station_sk' =>[
+                    'external_name' =>  'station_sk',
+                    'cast_name'     =>  'station_sk',
+                    'incoming'      =>  true,
+                ],
+                'date_sk'  =>   [
+                    'external_name' =>  'date_sk',
+                    'cast_name'     =>  'date_sk',
+                    'incoming'      =>  true,
+                ],
+                'time_sk'   =>  [
+                    'external_name' =>  'time_sk',
+                    'cast_name'     =>  'time_sk',
+                    'incoming'      =>  true,
+                ]
+            ],
         ],
         'air' => [
             'tableSpaceWork'        => 'temporal_air',
@@ -54,8 +99,23 @@ return [
             'tableDestination'      => 'original_fact_air',
             'tableTrust'            => 'air_reliability',
             'stateTable'            => 'originalState',
-            'foreignKey'            => ['station_sk','date_sk','time_sk'],
-            'calculatedForeignKey'  => ['station_sk' => 'station_sk','date_sk'=>'date_sk','time_sk'=>'time_sk'],
+            'keys'                  => [
+                'station_sk' =>[
+                    'external_name' =>  'station_sk',
+                    'cast_name'     =>  'station_sk',
+                    'incoming'      =>  true,
+                ],
+                'date_sk'  =>   [
+                    'external_name' =>  'date_sk',
+                    'cast_name'     =>  'date_sk',
+                    'incoming'      =>  true,
+                ],
+                'time_sk'   =>  [
+                    'external_name' =>  'time_sk',
+                    'cast_name'     =>  'time_sk',
+                    'incoming'      =>  true,
+                ]
+            ],
         ],
         'groundwater' => [
             'tableSpaceWork'        => 'temporal_groundwater',
@@ -67,8 +127,23 @@ return [
             'tableDestination'      => 'groundwater_fact',
             'tableTrust'            => false,
             'stateTable'            => 'originalState',
-            'foreignKey'            => ['station_sk','date_sk','time_sk'],
-            'calculatedForeignKey'  => ['station_sk' => 'station_sk','date_sk'=>'date_sk','time_sk'=>'time_sk'],
+            'keys'                  => [
+                'station_sk' =>[
+                    'external_name' =>  'station_sk',
+                    'cast_name'     =>  'station_sk',
+                    'incoming'      =>  true,
+                ],
+                'date_sk'  =>   [
+                    'external_name' =>  'date_sk',
+                    'cast_name'     =>  'date_sk',
+                    'incoming'      =>  true,
+                ],
+                'time_sk'   =>  [
+                    'external_name' =>  'time_sk',
+                    'cast_name'     =>  'time_sk',
+                    'incoming'      =>  true,
+                ]
+            ],
         ],
     ],
 

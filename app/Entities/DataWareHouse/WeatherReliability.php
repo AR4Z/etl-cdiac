@@ -14,10 +14,10 @@ class WeatherReliability extends Model
 
     public $timestamps = false;
 
-    protected $primaryKey = ['station_sk', 'date_sk'];
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'station_sk', 'date_sk',
+        'id','station_sk', 'date_sk',
         'rainfall_total_records',
         'rainfall_correct_records',
         'rainfall_support',
