@@ -19,7 +19,7 @@ abstract class TransformBase
     public function overflow($tableSpaceWork, $variable, $overflowMaximum = null, $overflowMinimum = null,$overflowPreviousDeference = null)
     {
         $values =DB::connection('temporary_work')->table($tableSpaceWork)
-                    ->select('id','estacion_sk','fecha_sk','tiempo_sk',DB::raw("CAST($variable AS double precision)"))
+                    ->select('id','station_sk','date_sk','time_sk',DB::raw("CAST($variable AS double precision)"))
                     ->whereNotNull($variable)
                     ->orderby('id','DESC')
                     ->get();
@@ -79,9 +79,9 @@ abstract class TransformBase
                 ->table('temporary_correction')
                 ->insert([
                     'temporary_id'              => $value->id,
-                    'estacion_sk'               => $value->estacion_sk,
-                    'fecha_sk'                  => $value->fecha_sk,
-                    'tiempo_sk'                 => $value->tiempo_sk,
+                    'station_sk'                => $value->station_sk,
+                    'date_sk'                   => $value->date_sk,
+                    'time_sk'                   => $value->time_sk,
                     'variable'                  => $variable,
                     'observation'               => 'not_existence',
                     'correct_value'             => $correctValue,
@@ -112,9 +112,9 @@ abstract class TransformBase
                 ->table('temporary_correction')
                 ->insert([
                     'temporary_id'  => $value->id,
-                    'estacion_sk'   => $value->estacion_sk,
-                    'fecha_sk'      => $value->fecha_sk,
-                    'tiempo_sk'     => $value->tiempo_sk,
+                    'station_sk'   => $value->station_sk,
+                    'date_sk'      => $value->date_sk,
+                    'time_sk'     => $value->time_sk,
                     'variable'      => $variable,
                     'error_value'   => $value->$variable,
                     'observation'   => $observation,

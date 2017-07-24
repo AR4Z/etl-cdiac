@@ -31,20 +31,19 @@ class FilterDetection extends TransformBase implements TransformInterface
      */
     public function transform()
     {
-        //dd($this);
 
         $varFilter = $this->etlConfig->getVarForFilter();
 
         foreach ($varFilter as $value){
 
-            $this->updateForNull($this->etlConfig->getTableSpaceWork(),$value->name_locale);
+            $this->updateForNull($this->etlConfig->getTableSpaceWork(),$value->local_name);
 
             $this->overflow(
                     $this->etlConfig->getTableSpaceWork(),
-                    $value->name_locale,
+                    $value->local_name,
                     $value->maximum,
                     $value->minimum,
-                    $value->previous_difference
+                    $value->previous_deference
              );
 
             // estos son los valores correctos deben ir a trust
@@ -52,8 +51,9 @@ class FilterDetection extends TransformBase implements TransformInterface
                     $this->etlConfig->getTrustRepository(),
                     $this->etlConfig->getTableSpaceWork(),
                     $this->etlConfig->getTableTrust(),
-                    $value->name_locale
+                    $value->local_name
             );
+
         }
 
         return $this;

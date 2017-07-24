@@ -36,7 +36,6 @@ class FilterCorrection extends TransformBase implements TransformInterface
             }
         }
 
-        dd('Termine xd');
     }
 
 }

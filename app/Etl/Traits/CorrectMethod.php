@@ -10,18 +10,18 @@ trait CorrectMethod
 
     public function correctControl($spaceTable,$variable,$latestData)
     {
-        $data = $this->getDataInNull($spaceTable,$variable->name_locale,$latestData);
+        $data = $this->getDataInNull($spaceTable,$variable->local_name,$latestData);
 
         foreach ($data as $key =>$fact)
         {
-            $previousData = $this->getSpecificData($spaceTable,$variable->name_locale,($fact->id)-1);
-            $nextData = $this->getSpecificData($spaceTable,$variable->name_locale,($fact->id)+1);
+            $previousData = $this->getSpecificData($spaceTable,$variable->local_name,($fact->id)-1);
+            $nextData = $this->getSpecificData($spaceTable,$variable->local_name,($fact->id)+1);
 
             if (!is_null($previousData)){
-                if (!is_null($previousData->{$variable->name_locale})){
+                if (!is_null($previousData->{$variable->local_name})){
                     if (!is_null($nextData)){
-                        if (!is_null($nextData->{$variable->name_locale})){
-                            $this->directionCorrect($variable->correction_type,$spaceTable,$variable->name_locale,$fact,$previousData->{$variable->name_locale},$nextData->{$variable->name_locale});
+                        if (!is_null($nextData->{$variable->local_name})){
+                            $this->directionCorrect($variable->correction_type,$spaceTable,$variable->local_name,$fact,$previousData->{$variable->local_name},$nextData->{$variable->local_name});
                             unset($data[$key]);
                         }
                     }
@@ -89,7 +89,7 @@ trait CorrectMethod
 
     private function getSpecificData($spaceTable,$variable,$id)
     {
-        return DB::connection('temporary_work')->table($spaceTable)->select('id','estacion_sk','fecha_sk','tiempo_sk',$variable)->find($id);
+        return DB::connection('temporary_work')->table($spaceTable)->select('id','station_sk','date_sk','time_sk',$variable)->find($id);
     }
 
     /**
@@ -102,7 +102,7 @@ trait CorrectMethod
     {
         return DB::connection('temporary_work')
             ->table($spaceTable)
-            ->select('id','estacion_sk','fecha_sk','tiempo_sk',$variable)
+            ->select('id','station_sk','date_sk','time_sk',$variable)
             ->whereNull($variable)
             ->whereNotIn('id',[1,$latestData])
             ->orderby('id')
