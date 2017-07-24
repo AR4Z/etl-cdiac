@@ -12,23 +12,7 @@ return [
             'tableDestination'      => 'weather_fact',
             'tableTrust'            => 'weather_reliability',
             'stateTable'            => 'filterState',
-            'keys'                  => [
-                'station_sk' =>[
-                    'external_name' =>  null,
-                    'cast_name'     =>  null,
-                    'incoming'      =>  false,
-                ],
-                'date_sk'   =>   [
-                    'external_name' =>  'fecha',
-                    'cast_name'     =>  'date',
-                    'incoming'      =>  true,
-                ],
-                'time_sk'   =>  [
-                    'external_name' =>  'hora',
-                    'cast_name'     =>  'time',
-                    'incoming'      =>  true,
-                ]
-            ],
+
         ],
         'air' => [
             'tableSpaceWork'        => 'temporal_air',
@@ -40,23 +24,6 @@ return [
             'tableDestination'      => 'air_fact',
             'tableTrust'            => 'air_reliability',
             'stateTable'            => 'filterState',
-            'keys'            => [
-                'station_sk' =>[
-                    'external_name' =>  null,
-                    'cast_name'     =>  null,
-                    'incoming'      =>  false,
-                    ],
-                'date_sk'  =>   [
-                    'external_name' =>  'fecha',
-                    'cast_name'     =>  'date',
-                    'incoming'      =>  true,
-                    ],
-                'time_sk'   =>  [
-                    'external_name' =>  'hora',
-                    'cast_name'     =>  'time',
-                    'incoming'      =>  true,
-                    ]
-                ],
         ],
     ],
 
@@ -71,23 +38,6 @@ return [
             'tableDestination'      => 'original_weather_fact',
             'tableTrust'            => 'weather_reliability',
             'stateTable'            => 'originalState',
-            'keys'                  => [
-                'station_sk' =>[
-                    'external_name' =>  'station_sk',
-                    'cast_name'     =>  'station_sk',
-                    'incoming'      =>  true,
-                ],
-                'date_sk'  =>   [
-                    'external_name' =>  'date_sk',
-                    'cast_name'     =>  'date_sk',
-                    'incoming'      =>  true,
-                ],
-                'time_sk'   =>  [
-                    'external_name' =>  'time_sk',
-                    'cast_name'     =>  'time_sk',
-                    'incoming'      =>  true,
-                ]
-            ],
         ],
         'air' => [
             'tableSpaceWork'        => 'temporal_air',
@@ -99,23 +49,6 @@ return [
             'tableDestination'      => 'original_fact_air',
             'tableTrust'            => 'air_reliability',
             'stateTable'            => 'originalState',
-            'keys'                  => [
-                'station_sk' =>[
-                    'external_name' =>  'station_sk',
-                    'cast_name'     =>  'station_sk',
-                    'incoming'      =>  true,
-                ],
-                'date_sk'  =>   [
-                    'external_name' =>  'date_sk',
-                    'cast_name'     =>  'date_sk',
-                    'incoming'      =>  true,
-                ],
-                'time_sk'   =>  [
-                    'external_name' =>  'time_sk',
-                    'cast_name'     =>  'time_sk',
-                    'incoming'      =>  true,
-                ]
-            ],
         ],
         'groundwater' => [
             'tableSpaceWork'        => 'temporal_groundwater',
@@ -127,24 +60,42 @@ return [
             'tableDestination'      => 'groundwater_fact',
             'tableTrust'            => false,
             'stateTable'            => 'originalState',
-            'keys'                  => [
-                'station_sk' =>[
-                    'external_name' =>  'station_sk',
-                    'cast_name'     =>  'station_sk',
-                    'incoming'      =>  true,
-                ],
-                'date_sk'  =>   [
-                    'external_name' =>  'date_sk',
-                    'cast_name'     =>  'date_sk',
-                    'incoming'      =>  true,
-                ],
-                'time_sk'   =>  [
-                    'external_name' =>  'time_sk',
-                    'cast_name'     =>  'time_sk',
-                    'incoming'      =>  true,
-                ]
-            ],
         ],
+    ],
+
+    'extraColumns' => [
+        'station_sk' =>[
+            'local_name'        =>  'station_sk',
+            'external_name'     =>  null,
+            'cast_name'         =>  null,
+            'local_incoming'    =>  true,
+            'external_incoming' =>  false,
+            'key'               =>  true,
+        ],
+        'date_sk'   =>   [
+            'local_name'        =>  'date_sk',
+            'external_name'     =>  'fecha',
+            'cast_name'         =>  'date',
+            'local_incoming'    =>  true,
+            'external_incoming' =>  true,
+            'key'               =>  true,
+        ],
+        'time_sk'   =>  [
+            'local_name'        =>  'time_sk',
+            'external_name'     =>  'hora',
+            'cast_name'         =>  'time',
+            'local_incoming'    =>  true,
+            'external_incoming' =>  true,
+            'key'               =>  true,
+        ],
+        'comment'   =>  [
+            'local_name'        =>  'comment',
+            'external_name'     =>  'observaciones',
+            'cast_name'         =>  'comment',
+            'local_incoming'    =>  true,
+            'external_incoming' =>  true,
+            'key'               =>  false,
+        ]
     ],
 
 ];

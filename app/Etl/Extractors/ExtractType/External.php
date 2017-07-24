@@ -36,7 +36,6 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
      */
     public function __construct(EtlConfig $etlConfig)
     {
-        $this->extractTable = $etlConfig->getTableDestination();
         $this->extractTable = $this->setExtractTable($etlConfig->getStation()->table_db_name);
         $this->settingConnection($etlConfig->getConnection());
         $this->setSelect($etlConfig->getVarForFilter(),$etlConfig->getKeys());
@@ -66,7 +65,7 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
     }
 
     /**
-     * @param $keyMerge
+     * @param $keys
      * @param $initialDate
      * @param $initialTime
      * @param $finalDate
@@ -75,9 +74,19 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
      * @return mixed
      */
 
-    public function extractData($keyMerge, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
+    public function extractData($keys, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
     {
-        return $this->getExternalData($this->extractConnection,$this->extractTable,$keyMerge,$this->select,$initialDate,$initialTime,$finalDate, $finalTime, $limit);
+        return $this->getExternalData(
+                $this->extractConnection,
+                $this->extractTable,
+                $keys->mergeExternalIncomingKeys,
+                $this->select,
+                $initialDate,
+                $initialTime,
+                $finalDate,
+                $finalTime,
+                $limit
+        );
     }
 
 

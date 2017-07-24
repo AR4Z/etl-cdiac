@@ -3,10 +3,15 @@
 namespace App\Etl\Extractors\ExtractType;
 
 use App\Etl\EtlConfig;
+use App\Etl\Traits\DateSkTrait;
+use App\Etl\Traits\TimeSkTrait;
+use App\Etl\Traits\WorkDatabaseTrait;
+use Carbon\Carbon;
 
 
 class Local extends ExtractTypeBase implements ExtractTypeInterface
 {
+    use WorkDatabaseTrait,DateSkTrait,TimeSkTrait;
 
     public $extractType = 'Local';
 
@@ -16,7 +21,7 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
 
     public $columns = [];
 
-    public $extractTable = null;
+    public $extractTable = 'original_';
 
     public $colOrigin = 'database_field_name';
 
@@ -34,52 +39,53 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
      */
     public function __construct(EtlConfig $etlConfig)
     {
-
+        $this->extractTable .= $etlConfig->getTableDestination();
+        $this->setSelect($etlConfig->getVarForFilter(),$etlConfig->getKeys());
     }
 
     /**
      * @param $variables
-     * @param $foreignKey
+     * @param $keys
      * @return mixed
+     * @internal param $key
+     * @internal param $Keys
+     * @internal param $foreignKey
      */
-    public function setSelect($variables, $foreignKey)
+    public function setSelect($variables, $keys)
     {
-        // TODO: Implement setSelect() method.
-    }
+        $temporalSelect = $keys->selectKey;
 
-    /**
-     * @param $foreignKey
-     * @return mixed
-     */
-    public function foreignKeySearch($foreignKey)
-    {
-        $keyMerge = '';
+        $this->columns= array_merge($this->columns,$keys->global);
+        $this->columns= array_unique($this->columns);
 
-        if (!$foreignKey){
-            //TODO el array de claves foraneas no puede ser falso debe configurarse (exception)
+        foreach ($variables as $variable){
+            $temporalSelect .= $variable->{$this->colDestination}.', ';
+            array_push($this->columns,$variable->{$this->colDestination});
         }
+        $temporalSelect[strlen($temporalSelect)-2] = ' ';
+        $this->select .= $temporalSelect;
 
-        foreach ($foreignKey as $value){$keyMerge .= ' '.$value.',';}
-
-        return $keyMerge;
+        return $this;
     }
 
+
     /**
-     * @param $keyMerge
+     * @param $keys
      * @param $initialDate
      * @param $initialTime
      * @param $finalDate
      * @param $finalTime
      * @param $limit
      * @return mixed
+     * @internal param $keyMerge
      */
 
-    public function extractData($keyMerge, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
+    public function extractData($keys, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
     {
-        return $this->getExternalData(
+        return $this->getLocalData(
             $this->extractConnection,
                 $this->extractTable,
-                $keyMerge,
+                $keys->mergeLocalIncomingKeys,
                 $this->select,
                 $this->calculateDateSk(Carbon::parse($initialDate)), // Todo .....
                 $this->calculateTimeSk($initialTime),

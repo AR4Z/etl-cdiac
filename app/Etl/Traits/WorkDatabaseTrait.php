@@ -44,6 +44,7 @@ trait WorkDatabaseTrait
             ->limit($limit)
             ->get()
             ->all();
+
         return $data;
     }
 

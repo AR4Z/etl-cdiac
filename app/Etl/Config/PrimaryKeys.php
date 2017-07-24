@@ -7,62 +7,78 @@ class PrimaryKeys
 {
     public $globalKeys = [];
 
+    public $global  = [];
+
     public $keys = [];
 
     public $castKeys = [];
 
-    public $calculatedKeys = [];
+    public $localCalculatedKeys = [];
 
-    public $notIncomingKeys = [];
+    public $externalCalculatedKeys = [];
+
+    public $notLocalIncomingKeys = [];
+
+    public $notExternalIncomingKeys = [];
 
     public $selectCastKey = '';
 
-    public $mergeIncomingKeys = '';
+    public $selectKey = '';
+
+    public $mergeLocalIncomingKeys = '';
+
+    public $mergeExternalIncomingKeys = '';
 
 
     function __construct($keys)
     {
         $this->globalKeys = $keys;
-        $this->keys = array_keys($keys);
-        $this->mergeIncomingKeys = $this->setMergeIncomingKeys();
-        $this->selectCastKey = $this->setSelectCastKey();
+        $this->global = array_keys($keys);
+        $this->config();
     }
 
-    /**
-     *
-     */
-    private function setSelectCastKey()
+    private function config()
     {
-        $keyMerge = '';
-        if (!$this->globalKeys){
-            //TODO el array de claves foraneas no puede ser falso debe configurarse (exception)
-        }
+        $temporalSelect = ' ';
+        $temporalCastSelect = ' ';
+        $temporalLocalMerge = ' ';
+        $temporalExternalMerge = ' ';
 
-        foreach ($this->globalKeys as $key => $value)
+        foreach ($this->globalKeys  as  $key => $value)
         {
-            if ($value['incoming']){
-                $keyMerge .= ' '.$value['external_name'].' as '.$value['cast_name'].',';
-                array_push($this->calculatedKeys,$key);
-            }
-        }
-        return $keyMerge;
-    }
-
-    private function setMergeIncomingKeys()
-    {
-        $keyMerge = [];
-        foreach ($this->globalKeys as $key => $value)
-        {
-            if ($value['incoming']){
-                array_push($keyMerge,$value['external_name']);
+            if (!is_null($value['cast_name'])){
                 array_push($this->castKeys,$value['cast_name']);
+            }
+
+            if ($value['key']){
+                array_push($this->keys,$key);
+            }
+
+            if ($value['local_incoming']){
+                array_push($this->localCalculatedKeys,$key);
+                $temporalSelect .= $key.' ,';
+                if ($value['key']){
+                    $temporalLocalMerge .= $key.' ,';
+                }
             }else{
-                array_push($this->notIncomingKeys,$key);
+                array_push($this->notLocalIncomingKeys,$key);
+            }
+
+            if ($value['external_incoming']){
+                array_push($this->externalCalculatedKeys,$key);
+                $temporalCastSelect .= $value['external_name']. ' as '. $value['cast_name'].' ,';
+                if ($value['key']){
+                    $temporalExternalMerge .= $value['external_name'].' ,';
+                }
+            }else{
+                array_push($this->notExternalIncomingKeys,$key);
             }
         }
-        return  implode(',',$keyMerge);
+
+        $this->selectKey = $temporalSelect;
+        $this->selectCastKey = $temporalCastSelect;
+        $this->mergeLocalIncomingKeys = substr($temporalLocalMerge, 0, -1);
+        $this->mergeExternalIncomingKeys = substr($temporalExternalMerge, 0, -1);
     }
-
-
 
 }

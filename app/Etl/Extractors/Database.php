@@ -45,11 +45,12 @@ class Database extends ExtractorBase implements ExtractorInterface
      */
     public function extract()
     {
+
         $this->extractTypeObject = $this->createExtractType($this->extractType,$this->etlConfig);
 
         $this->insertAllDataInTemporal(
             ($this->extractTypeObject)->extractData(
-                $this->etlConfig->getkeys()->mergeIncomingKeys,
+                $this->etlConfig->getkeys(),
                 $this->etlConfig->getInitialDate(),
                 $this->etlConfig->getInitialTime(),
                 $this->etlConfig->getFinalDate(),
@@ -57,7 +58,6 @@ class Database extends ExtractorBase implements ExtractorInterface
                 50
             )
         );
-
 
         if (!($this->extractTypeObject)->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
         $trust = ($this->etlConfig->isTrustProcess())? $this->incomingCalculation($this->etlConfig->getTrustRepository(),$this->etlConfig->getTableSpaceWork(), $this->etlConfig->getTableTrust(), $this->etlConfig->getVarForFilter()->toArray()) : false;

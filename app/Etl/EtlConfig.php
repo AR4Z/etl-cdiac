@@ -120,6 +120,8 @@ class EtlConfig
     {
         $config = (object)Config::get('etl');
 
+        $this->setKeys((array_key_exists('extraColumns',$config)) ? $config->extraColumns : false);
+
         if (!array_key_exists($this->typeProcess,$config)){
             //TODO exepcion por no existir el metodo buscado inserte el correcto
             dd('exepcion por no existir el metodo buscado inserte el correcto');
@@ -141,7 +143,7 @@ class EtlConfig
         $this->setTableExist((array_key_exists('tableExist',$config)) ? $config->tableExist : false);
         $this->setTableTrust((array_key_exists('tableTrust',$config)) ? $config->tableTrust : false);
         $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
-        $this->setKeys((array_key_exists('keys',$config)) ? $config->keys : false);
+
 
         return $this;
     }
