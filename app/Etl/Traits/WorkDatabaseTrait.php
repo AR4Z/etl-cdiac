@@ -2,6 +2,7 @@
 
 namespace App\Etl\Traits;
 
+use App\Entities\DataWareHouse\WeatherFact;
 use Carbon\Carbon;
 use DB;
 
@@ -81,7 +82,7 @@ trait WorkDatabaseTrait
      */
     public function getAllData(string $connection, string $table, string $select)
     {
-        return DB::connection($connection)->table($table)->select(DB::raw($select))->get()->all();
+        return DB::connection($connection)->table($table)->select(DB::raw($select))->get()->toArray();
     }
 
     /**
@@ -98,10 +99,18 @@ trait WorkDatabaseTrait
 
         DB::connection($connection)->statement($insert);
     }
+    /**
+     * @param string $connection
+     * @param string $table
+     * @param array $data
+     */
+    public function insertDataEncode(string $connection, string $table, $data = [])
+    {
+        return DB::connection($connection)->table($table)->insert(json_decode(json_encode($data), true));
+    }
 
     public function evaluateExistence($repository,$data)
     {
-
         $count = ($repository)::where('date_sk','=',$data->date_sk)
                                 ->where('station_sk','=',$data->station_sk)
                                 ->where('time_sk','=',$data->time_sk)

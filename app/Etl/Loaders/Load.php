@@ -5,8 +5,8 @@ namespace App\Etl\Loaders;
 
 
 use App\Etl\EtlConfig;
-use DB;
 use App\Etl\Traits\WorkDatabaseTrait;
+
 
 
 class Load extends LoadBase implements LoadInterface
@@ -18,9 +18,9 @@ class Load extends LoadBase implements LoadInterface
     private  $etlConfig = null;
 
 
-    private $select = 'estacion_sk,fecha_sk,tiempo_sk, ';
+    private $select = '';
 
-    private  $columns = array('estacion_sk','fecha_sk','tiempo_sk');
+    private  $columns = [];
 
     /**
      * @param EtlConfig $etlConfig
@@ -29,7 +29,9 @@ class Load extends LoadBase implements LoadInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-        $this->setSelect($etlConfig->getVarForFilter(), 'name_locale', 'name_locale');
+        $this->select = $etlConfig->getKeys()->globalCastKey;
+        $this->columns = $etlConfig->getKeys()->global;
+        $this->setSelect($etlConfig->getVarForFilter(), 'local_name', 'local_name');
 
         return $this;
     }
@@ -48,6 +50,7 @@ class Load extends LoadBase implements LoadInterface
 
         $this->insertAllDataInFact($this->selectTemporalTable());
 
+        dd($this);
         if ($this->etlConfig->getSequence())
         {
             $this->updateDateAndTime(
@@ -63,7 +66,7 @@ class Load extends LoadBase implements LoadInterface
     {
         $temporalSelect = '';
         foreach ($variables as $variable){
-            $temporalSelect .= $variable->$colOrigin .' as '. $variable->$colDestination.', ';
+            $temporalSelect .= 'CAST('.$variable->$colOrigin.' AS float) AS '. $variable->$colDestination.', ';
             array_push($this->columns,$variable->$colDestination);
         }
         $temporalSelect[strlen($temporalSelect)-2] = ' ';
@@ -74,14 +77,12 @@ class Load extends LoadBase implements LoadInterface
 
     public function selectTemporalTable()
     {
-        dd('hola');
         return $this->getAllData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->select);
-
     }
 
     public function insertAllDataInFact($data)
     {
-       return $this->insertData('data_warehouse',$this->etlConfig->getTableDestination(),$this->columns,$data);
+       return $this->insertDataEncode('data_warehouse',$this->etlConfig->getTableDestination(),$data);
     }
 
     /**

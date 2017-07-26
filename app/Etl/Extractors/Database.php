@@ -67,38 +67,6 @@ class Database extends ExtractorBase implements ExtractorInterface
     }
 
     /**
-     * @return mixed
-     */
-    private function selectServerAcquisition()
-    {
-        if ($this->extractType == 'External'){
-            return $this->getExternalData(
-                $this->extractConnection,
-                $this->extractTable,
-                implode(',',array_keys ($this->etlConfig->getCalculatedForeignKey())),
-                $this->select,
-                $this->etlConfig->getInitialDate(),
-                $this->etlConfig->getInitialTime(),
-                $this->etlConfig->getFinalDate(),
-                $this->etlConfig->getFinalTime(),
-                50
-            );
-        }
-
-        return $this->getLocalData(
-            $this->extractConnection,
-            $this->extractTable,
-            implode(',',array_values ($this->etlConfig->getForeignKey())),
-            $this->select,
-            $this->calculateDateSk(Carbon::parse($this->etlConfig->getInitialDate())),
-            $this->calculateTimeSk($this->etlConfig->getInitialTime()),
-            $this->calculateDateSk(Carbon::parse($this->etlConfig->getFinalDate())),
-            $this->calculateTimeSk($this->etlConfig->getFinalTime()),
-            50
-        );
-    }
-
-    /**
      * @param $data
      * @return bool
      * @internal param $repository

@@ -71,6 +71,7 @@ return [
             'local_incoming'    =>  true,
             'external_incoming' =>  false,
             'key'               =>  true,
+            'type_data'         =>  'integer',
         ],
         'date_sk'   =>   [
             'local_name'        =>  'date_sk',
@@ -79,6 +80,7 @@ return [
             'local_incoming'    =>  true,
             'external_incoming' =>  true,
             'key'               =>  true,
+            'type_data'         =>  'integer',
         ],
         'time_sk'   =>  [
             'local_name'        =>  'time_sk',
@@ -87,6 +89,7 @@ return [
             'local_incoming'    =>  true,
             'external_incoming' =>  true,
             'key'               =>  true,
+            'type_data'         =>  'integer',
         ],
         'comment'   =>  [
             'local_name'        =>  'comment',
@@ -95,6 +98,7 @@ return [
             'local_incoming'    =>  true,
             'external_incoming' =>  true,
             'key'               =>  false,
+            'type_data'         =>  'varchar',
         ]
     ],
 

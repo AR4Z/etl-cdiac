@@ -21,6 +21,8 @@ class PrimaryKeys
 
     public $notExternalIncomingKeys = [];
 
+    public $globalCastKey = '';
+
     public $selectCastKey = '';
 
     public $selectKey = '';
@@ -46,6 +48,8 @@ class PrimaryKeys
 
         foreach ($this->globalKeys  as  $key => $value)
         {
+            $this->globalCastKey .= 'CAST('.$key.' AS '.$value['type_data'].') ,';
+
             if (!is_null($value['cast_name'])){
                 array_push($this->castKeys,$value['cast_name']);
             }
