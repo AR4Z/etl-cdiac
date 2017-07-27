@@ -50,14 +50,12 @@ class Load extends LoadBase implements LoadInterface
 
         $this->insertAllDataInFact($this->selectTemporalTable());
 
-        dd($this);
-        if ($this->etlConfig->getSequence())
-        {
-            $this->updateDateAndTime(
-                $this->etlConfig->getRepositorySpaceWork(),
-                $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}
-            );
-        }
+        $this->calculateSequence(
+            $this->etlConfig->geTtableSpaceWork(),
+            $this->etlConfig->getSequence(),
+            $this->etlConfig->getFinalDate(),
+            $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}
+        );
 
         return $this;
     }
@@ -100,4 +98,6 @@ class Load extends LoadBase implements LoadInterface
     {
         $this->method = $method;
     }
+
+
 }

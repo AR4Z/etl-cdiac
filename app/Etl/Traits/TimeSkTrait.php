@@ -16,4 +16,9 @@ trait TimeSkTrait
 
         if ($completeTime){return $completeTime;}
     }
+
+    public function calculateTimeFromTimeSk($timeSk)
+    {
+        return TimeDimRepository::getTime($timeSk);
+    }
 }

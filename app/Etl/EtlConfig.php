@@ -308,7 +308,12 @@ class EtlConfig
         if (is_null($initialDate)){
             //TODO
         }
-        $this->initialDate = $initialDate->toDateString();
+
+        if (!is_string($initialDate)){
+            $initialDate = $initialDate->toDateString();
+        }
+
+        $this->initialDate = $initialDate;
         return $this;
     }
 

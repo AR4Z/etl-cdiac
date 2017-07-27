@@ -14,4 +14,9 @@ Trait DateSkTrait
         return DateDimRepository::getDateSk($date);
     }
 
+    public function calculateDateFromDateSk($dateSk)
+    {
+        return DateDimRepository::getDate($dateSk);
+    }
+
 }

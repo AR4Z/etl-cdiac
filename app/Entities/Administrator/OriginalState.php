@@ -21,7 +21,7 @@ class OriginalState extends Model
     ];
 
     protected $dates = [
-        'created_at', 'updated_at','current_date'
+        'created_at', 'updated_at'
     ];
 
     /**

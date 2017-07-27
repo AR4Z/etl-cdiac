@@ -28,4 +28,12 @@ class DateDimRepository extends EloquentRepository
                     ->date_sk;
     }
 
+    public function getDate($dateSk)
+    {
+        return $this->select('date')
+                    ->where('date_sk',$dateSk)
+                    ->first()
+                    ->date;
+    }
+
 }

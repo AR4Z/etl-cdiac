@@ -1,13 +1,15 @@
 <?php
 namespace  App\Etl\Loaders;
 
+use App\Etl\Traits\DateSkTrait;
+use App\Etl\Traits\TimeSkTrait;
 use App\Etl\Traits\WorkDatabaseTrait;
 use Carbon\Carbon;
 use DB;
 
 abstract class LoadBase
 {
-    use WorkDatabaseTrait;
+    use WorkDatabaseTrait,DateSkTrait,TimeSkTrait;
 
     public function redirectExisting($repositorySpaceWork,$repositoryDestination,$repositoryExist,$table)
     {
@@ -23,24 +25,32 @@ abstract class LoadBase
         }
     }
 
-    public function updateDateAndTime($repositorySpaceWork,$stateTableValue)
+    public function updateDateAndTime($stateTableValue,$date,$time,$response)
     {
-        $values = ($repositorySpaceWork)::select('*')->orderby('id','desc')->first();
+        $completeDate = Carbon::parse($date.' '.$time);
+        $completeDate->addMinute();
 
-        if (!empty($values))
-        {
-            $completeDate = Carbon::parse($values->fecha.' '.$values->hora);
-            $completeDate->addMinute();
-
-            $stateTableValue->current_date = $completeDate->format('Y-m-d');
-            $stateTableValue->current_time = $completeDate->format('h:i:s');
-            $stateTableValue->it_update =  ($completeDate >= Carbon::today()->addMinute(-10))?? true;
-
-        }else{
-            $stateTableValue->it_update =  true;
-        }
+        $stateTableValue->current_date = $completeDate->format('Y-m-d');
+        $stateTableValue->current_time = $completeDate->format('h:i:s');
+        $stateTableValue->updated =  $response;
 
         $stateTableValue->save();
 
+    }
+
+    public function calculateSequence($tableSpaceWork,$sequence,$finalDate,$stateTable)
+    {
+        $data = $this->getLastMigrateData($tableSpaceWork);
+        if (!is_null($data))
+        {
+           $response =  ($sequence and Carbon::parse($finalDate) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
+
+            $this->updateDateAndTime(
+                $stateTable,
+                $this->calculateDateFromDateSk($data->date_sk),
+                $this->calculateTimeFromTimeSk($data->time_sk),
+                $response
+            );
+        }
     }
 }

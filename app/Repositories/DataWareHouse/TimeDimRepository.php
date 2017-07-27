@@ -23,4 +23,12 @@ class TimeDimRepository extends EloquentRepository
             ->first()
             ->time_sk;
     }
+
+    public function getTime($timeSk)
+    {
+        return $this->select('time')
+            ->where('time_sk',$timeSk)
+            ->first()
+            ->time;
+    }
 }
