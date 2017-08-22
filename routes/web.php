@@ -26,3 +26,12 @@ Route::resource('external-connection', 'Config\ExternalConnectionController');
 Route::resource('station', 'Config\StationController');
 
 Route::get('extract-all','General\EtlController@index');
+
+
+Route::group(['prefix' => 'plane-etl','name' => 'plane-etl'], function(){
+    Route::get('index', [ 'as'=>'plane-etl.index','uses'=>'Etl\PlaneEtlController@index']);
+    Route::post( 'getDifferentNetName',[ 'as'=>'plane-etl.getDifferentNetName','uses'=>'Etl\PlaneEtlController@getDifferentNetName']);
+    Route::post('getStationsForNet', [ 'as'=>'plane-etl.getStationsForNet','uses'=>'Etl\PlaneEtlController@getStationsForNet']);
+    Route::post('loadFile',[ 'as'=>'plane-etl.loadFile','uses'=>'Etl\PlaneEtlController@loadFile']);
+    //
+});

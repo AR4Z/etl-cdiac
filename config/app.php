@@ -169,6 +169,9 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Rinvex\Repository\Providers\RepositoryServiceProvider::class,
         Jenssegers\Date\DateServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+
 
         /*
          * Application Service Providers...
@@ -238,6 +241,9 @@ return [
          */
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
         'Date' => Jenssegers\Date\Date::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
         /*
          * Personal  Aliases...

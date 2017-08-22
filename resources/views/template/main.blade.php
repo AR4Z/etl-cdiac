@@ -27,6 +27,12 @@
     <meta name="robots" content="all">
 
 
+    <script>
+        window.Laravel = {!! json_encode([
+            'csrfToken' => csrf_token(),
+        ]) !!};
+    </script>
+
     <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}" media="all">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap-theme.min.css') }}" media="all">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/reset.css') }}" media="all">
@@ -37,20 +43,12 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/small.css') }}" media="all">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/printer.css') }}" media="print">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/metisMenu.css') }}" media="all">
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" media="all">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 
 
 
-    <script src="{{ asset('js/jquery.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/unal.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/sb-admin-2.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/metisMenu.js') }}" type="text/javascript"></script>
-    {{--[if lt IE 9]--}}
-    <script src="{{ asset('js/html5shiv.js') }}" type="text/javascript"></script>
-    {{--[endif]--}}
-    {{--<!--[if lt IE 9]>--}}
-    <script src="{{ asset('js/respond.js') }}" type="text/javascript"></script>
-    {{--<![endif]-->--}}
 
     <title>@yield('title', 'Inicio - Universidad Nacional de Colombia')</title>
 </head>
@@ -77,24 +75,64 @@
         </ul>
     </div>
 
-    @section('header')
-        @include('template.header')
-    @show
+    <div id="app">
 
-    @section('menu')
-        @include('template.menu')
-    @show
-        
-    
-    <main class="detalle">
-        @yield('content')
-    </main>
+        @section('header')
+            @include('template.header')
+        @show
 
-    @section('footer')
-        @include('template.footer')
-    @show
+        @section('menu')
+            @include('template.menu')
+        @show
+
+
+        <main class="detalle">
+            <div class="row">
+                <br>
+                @yield('content')
+            </div>
+
+        </main>
+
+        @section('footer')
+            @include('template.footer')
+        @show
+
+    </div>
+    <script src="{{ asset(elixir('js/app.js'))  }}"></script>
+    <script src="{{ asset('js/unal.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/sb-admin-2.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('js/metisMenu.js') }}" type="text/javascript"></script>
+    {{--[if lt IE 9]--}}
+    <script src="{{ asset('js/html5shiv.js') }}" type="text/javascript"></script>
+    {{--[endif]--}}
+    {{--<!--[if lt IE 9]>--}}
+    <script src="{{ asset('js/respond.js') }}" type="text/javascript"></script>
+    {{--<![endif]-->--}}
+    <script type="text/javascript" src="{{ asset('js/bootstrap-filestyle-1.2.3/src/bootstrap-filestyle.min.js')}}"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('select').select2({
+                allowClear: true,
+                placeholder: {
+                    id: -1,
+                    text: "Seleccione un valor"
+                },
+            });
+            $.fn.populateSelect = function (values) {
+                var options = '';
+                $.each(values, function (key, row) {
+                    options += '<option value="' + row.id + '">' + row.name + '</option>';
+                });
+                $(this).html(options);
+            }
+        })
+    </script>
+
 
     @yield('javascript')
+
 </body>
 
 </html>

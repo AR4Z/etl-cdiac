@@ -12,4 +12,15 @@ class StationDimRepository extends EloquentRepository
 
     protected $model = StationDim::class;
 
+
+    public function getDifferentNetName()
+    {
+        return $this->select('net_name as id','net_name as name')->distinct('net_name')->pluck('id','name');
+    }
+
+    public function getStationsForNet($netName)
+    {
+        return $this->select('station_sk as id','name')->where('net_name','=',$netName)->orderby('name','ASC')->get();
+    }
+
 }

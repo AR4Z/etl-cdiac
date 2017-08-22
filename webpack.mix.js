@@ -1,4 +1,4 @@
-const { mix } = require('laravel-mix');
+const mix = require('laravel-mix');
 
 /*
  |--------------------------------------------------------------------------
@@ -9,7 +9,9 @@ const { mix } = require('laravel-mix');
  | for your Laravel application. By default, we are compiling the Sass
  | file for the application as well as bundling up all the JS files.
  |
+
+ setPublicPath('/var/www/etl-cdiac')
  */
 
-mix.js('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+mix.setPublicPath('/var/www/etl-cdiac');
+mix.js('resources/assets/js/app.js', 'js');
