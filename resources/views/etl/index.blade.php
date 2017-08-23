@@ -8,7 +8,7 @@
         <h1>Etl - Archivos Planos</h1>
         <br><br>
         <div class="col-lg-10 col-lg-offset-1">
-            {!! Form::open(['route'=> 'plane-etl.loadFile','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label']) !!}
+            {!! Form::open(['route'=> 'plane-etl.loadFile','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label', 'enctype'=>'multipart/form-data']) !!}
                 <div class="form-group">
                     {{ Form::label('net_name', 'Red: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
@@ -25,7 +25,7 @@
                 <div class="form-group">
                     {{ Form::label('file', 'Archivo: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
-                        {{ Form::file('file',['class'=>'', 'data-iconName'=> '','data-placeholder'=>'Seleccione Un Archivo CSV-delimitado por comas   -->','required']) }}
+                        {{ Form::file('file',['class'=>'filestyle', 'data-iconName'=> '','data-placeholder'=>'Seleccione Un Archivo CSV-delimitado por comas   -->','required']) }}
                     </div>
 
                 </div>
