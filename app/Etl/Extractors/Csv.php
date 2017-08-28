@@ -38,5 +38,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
     }
 
 
-
+    public function run()
+    {
+        // TODO: Implement extract() method.
+    }
 }

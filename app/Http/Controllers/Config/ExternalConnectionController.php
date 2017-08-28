@@ -58,7 +58,8 @@ class ExternalConnectionController extends Controller
                         ->extract('Database',['extractType' => 'External', 'initialDate' => '2017-07-26','initialTime' => '23:40:35', 'finalDate' => '2017-07-27','finalTime' => '09:40:35'])
                         ->transform('FilterDetection')
                         ->transform('FilterCorrection')
-                        ->load();
+                        ->load()
+                        ->run();
         dd($jobEtl);
 
 //,['initialDate' => '2017-04-10', 'initialTime' => '23:40:35'] ,['initialDate' => '1990-01-01', 'initialTime' => '00:00:00']

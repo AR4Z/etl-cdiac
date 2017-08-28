@@ -33,5 +33,6 @@ Route::group(['prefix' => 'plane-etl','name' => 'plane-etl'], function(){
     Route::post( 'getDifferentNetName',[ 'as'=>'plane-etl.getDifferentNetName','uses'=>'Etl\PlaneEtlController@getDifferentNetName']);
     Route::post('getStationsForNet', [ 'as'=>'plane-etl.getStationsForNet','uses'=>'Etl\PlaneEtlController@getStationsForNet']);
     Route::post('loadFile',[ 'as'=>'plane-etl.loadFile','uses'=>'Etl\PlaneEtlController@loadFile']);
+    Route::post('loadFileErrors', [ 'as'=>'plane-etl.loadFileErrors','uses'=>'Etl\PlaneEtlController@loadFileErrors']);
     //
 });

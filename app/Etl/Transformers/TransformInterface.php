@@ -13,5 +13,5 @@ interface TransformInterface
      */
     public function setOptions(EtlConfig $etlConfig);
 
-    public function transform();
+    public function run();
 }

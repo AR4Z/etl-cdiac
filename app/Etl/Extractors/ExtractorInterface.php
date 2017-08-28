@@ -13,5 +13,5 @@ interface ExtractorInterface
      */
     public function setOptions(EtlConfig $etlConfig);
 
-    public function extract();
+    public function run();
 }

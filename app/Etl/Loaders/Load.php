@@ -17,7 +17,6 @@ class Load extends LoadBase implements LoadInterface
 
     private  $etlConfig = null;
 
-
     private $select = '';
 
     private  $columns = [];
@@ -39,7 +38,7 @@ class Load extends LoadBase implements LoadInterface
     /**
      * @return $this
      */
-    public function load()
+    public function run()
     {
         $this->redirectExisting(
                     $this->etlConfig->getRepositorySpaceWork(),

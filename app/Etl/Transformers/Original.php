@@ -20,7 +20,7 @@ class Original extends TransformBase implements TransformInterface
         return $this;
     }
 
-    public function transform()
+    public function run()
     {
         return $this;
     }

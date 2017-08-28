@@ -29,7 +29,7 @@ class FilterDetection extends TransformBase implements TransformInterface
     /**
      *
      */
-    public function transform()
+    public function run()
     {
 
         $varFilter = $this->etlConfig->getVarForFilter();

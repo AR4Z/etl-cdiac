@@ -32,15 +32,26 @@ class EtlStationJob implements ShouldQueue
      * @var bool
      */
     private $sequence;
+    /**
+     * @var null
+     */
+    private $idNet;
 
     /**
      * Create a new job instance.
-     * @param $typeProcess
+     * @param string $typeProcess
+     * @param null $idNet
      * @param $idConnection
      * @param $idStation
      * @param bool $sequence
      */
-    public function __construct($typeProcess = 'Original',$idConnection,$idStation,$sequence = false)
+    public function __construct(
+        $typeProcess = 'Original',
+        $idNet = null,
+        $idConnection = null,
+        $idStation,
+        $sequence = false
+    )
     {
         Storage::put('file.txt','Hola');
 
@@ -48,6 +59,7 @@ class EtlStationJob implements ShouldQueue
         $this->idConnection = $idConnection;
         $this->idStation = $idStation;
         $this->sequence = $sequence;
+        $this->idNet = $idNet;
     }
 
     /**

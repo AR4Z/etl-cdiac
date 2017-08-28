@@ -27,6 +27,8 @@ class Database extends ExtractorBase implements ExtractorInterface
 
     public $extractType = null;
 
+    public  $truncateTemporal = true;
+
 
     /**
      * @param $etlConfig
@@ -35,7 +37,6 @@ class Database extends ExtractorBase implements ExtractorInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-        $this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());
         return $this;
     }
 
@@ -43,8 +44,9 @@ class Database extends ExtractorBase implements ExtractorInterface
      * @return $this
      * @internal param EtlConfig $etlConfig
      */
-    public function extract()
+    public function run()
     {
+        if ($this->truncateTemporal){$this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());}
 
         $this->extractTypeObject = $this->createExtractType($this->extractType,$this->etlConfig);
 

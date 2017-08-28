@@ -14,5 +14,5 @@ interface LoadInterface
      */
     public function setOptions(EtlConfig $etlConfig);
 
-    public function load();
+    public function run();
 }

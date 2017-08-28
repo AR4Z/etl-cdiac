@@ -9,23 +9,40 @@
         <br><br>
         <div class="col-lg-10 col-lg-offset-1">
             {!! Form::open(['route'=> 'plane-etl.loadFile','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label', 'enctype'=>'multipart/form-data']) !!}
-                <div class="form-group">
+
+            <div class="form-group {{ $errors->has('net_name') ? ' has-error' : '' }}">
                     {{ Form::label('net_name', 'Red: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
                         {!! Form::select('net_name', $differentNetName , null ,['class' => 'form-control', 'id'=> 'net_name', 'required']) !!}
+                        @if ($errors->has('net_name'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('net_name') }}</strong>
+                            </span>
+                        @endif
                     </div>
-                </div>
-                <div class="form-group">
+            </div>
+                <div class="form-group {{ $errors->has('station_id') ? ' has-error' : '' }}">
                     {{ Form::label('station_id', 'Estación: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
                         {!!  Form::select('station_id', [],null,['class' => 'form-control', 'id'=> 'station_id', 'required']) !!}
+                        @if ($errors->has('station_id'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('station_id') }}</strong>
+                            </span>
+                        @endif
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group {{ $errors->has('file') ? ' has-error' : '' }}">
                     {{ Form::label('file', 'Archivo: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
                         {{ Form::file('file',['class'=>'filestyle', 'data-iconName'=> '','data-placeholder'=>'Seleccione Un Archivo CSV-delimitado por comas   -->','required']) }}
+                        @if ($errors->has('file'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('file') }}</strong>
+                            </span>
+                        @endif
+
                     </div>
 
                 </div>

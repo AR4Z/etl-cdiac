@@ -26,7 +26,7 @@ class FilterCorrection extends TransformBase implements TransformInterface
         return $this;
     }
 
-    public function transform()
+    public function run()
     {
         $varFilter = $this->etlConfig->getVarForFilter();
 

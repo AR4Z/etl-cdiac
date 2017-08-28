@@ -12,20 +12,10 @@ class Etl
    */
   Public $etlConfig = null;
 
-  /**
-   * $extract is object for: App\Etl\Extractors\*
-   */
-  Public $extract = null;
 
-  /**
-   * $extract is object for: App\Etl\Transformers\*
-   */
-  Public $transform = null;
+  Public $etlObject = [];
 
-  /**
-   * $extract is object for: App\Etl\Loaders\*
-   */
-  Public $load = null;
+  public $flagEtl = 0;
 
     /**
      * @param String $typeProcess
@@ -71,12 +61,10 @@ class Etl
       if (!empty($this->etlConfig)) {
             //etl config not define TODO
       }
-      if (empty($this->extract)) {
-          // extract is define TODO
-      }
 
-      $this->extract = $this->factory($method,'Extractors',$options);
-      $this->extract->extract();
+      array_push($this->etlObject,$this->factory($method,'Extractors',$options));
+      $this->flagEtl++;
+
       return $this;
   }
 
@@ -87,8 +75,8 @@ class Etl
      */
     public function transform(string $method = 'Original', $options = [])
   {
-      $this->transform = $this->factory($method,'Transformers',$options);
-      $this->transform->transform();
+      array_push($this->etlObject,$this->factory($method,'Transformers',$options));
+      $this->flagEtl++;
 
       return $this;
   }
@@ -98,14 +86,24 @@ class Etl
      * @param array $options
      * @return $this
      */
-    public function load(string $method = 'Load', $options = [])
-  {
-      $this->load = $this->factory($method, 'Loaders',$options);
-      $this->load->load();
 
-      $this->reloadPrecess();
+  public function load(string $method = 'Load', $options = [])
+  {
+      array_push($this->etlObject,$this->factory($method, 'Loaders',$options));
+      $this->flagEtl++;
+
+
+      //$this->reloadPrecess();
 
       return $this;
+  }
+
+  public function run(){
+        foreach ($this->etlObject as $object){
+            $object->run();
+        }
+
+        return $this;
   }
 
     /**
