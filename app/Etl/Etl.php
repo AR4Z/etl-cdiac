@@ -91,8 +91,6 @@ class Etl
   {
       array_push($this->etlObject,$this->factory($method, 'Loaders',$options));
       $this->flagEtl++;
-
-
       //$this->reloadPrecess();
 
       return $this;
@@ -102,7 +100,6 @@ class Etl
         foreach ($this->etlObject as $object){
             $object->run();
         }
-
         return $this;
   }
 

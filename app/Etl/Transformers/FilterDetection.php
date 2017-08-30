@@ -15,6 +15,7 @@ class FilterDetection extends TransformBase implements TransformInterface
 
     private $etlConfig = null;
 
+
     /**
      * @param EtlConfig $etlConfig
      * @return mixed
@@ -22,7 +23,6 @@ class FilterDetection extends TransformBase implements TransformInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-
         return $this;
     }
 
@@ -31,13 +31,14 @@ class FilterDetection extends TransformBase implements TransformInterface
      */
     public function run()
     {
-
         $varFilter = $this->etlConfig->getVarForFilter();
 
         foreach ($varFilter as $value){
 
+            // Convertir valores extraños a null
             $this->updateForNull($this->etlConfig->getTableSpaceWork(),$value->local_name);
 
+            // detectar los valores que sobrepasan los limites
             $this->overflow(
                     $this->etlConfig->getTableSpaceWork(),
                     $value->local_name,
@@ -46,7 +47,7 @@ class FilterDetection extends TransformBase implements TransformInterface
                     $value->previous_deference
              );
 
-            // estos son los valores correctos deben ir a trust
+            // insertar los valores correctos deben ir a trust
             $this->insertGoods(
                     $this->etlConfig->getTrustRepository(),
                     $this->etlConfig->getTableSpaceWork(),

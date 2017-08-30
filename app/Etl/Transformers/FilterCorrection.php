@@ -32,7 +32,11 @@ class FilterCorrection extends TransformBase implements TransformInterface
 
         foreach ($varFilter as $variable){
             if ($variable->correction_type){
-                $this->correctControl($this->etlConfig->getTableSpaceWork(),$variable,$this->etlConfig->getIncomingAmount());
+                $this->correctControl(
+                    $this->etlConfig->getTableSpaceWork(),
+                    $variable,
+                    $this->etlConfig->getIncomingAmount()
+                );
             }
         }
 

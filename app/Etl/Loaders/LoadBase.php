@@ -11,7 +11,13 @@ abstract class LoadBase
 {
     use WorkDatabaseTrait,DateSkTrait,TimeSkTrait;
 
-    public function redirectExisting($repositorySpaceWork,$repositoryDestination,$repositoryExist,$table)
+    /**
+     * @param $repositorySpaceWork
+     * @param $repositoryDestination
+     * @param $repositoryExist
+     * @param $table
+     */
+    public function redirectExisting($repositorySpaceWork, $repositoryDestination, $repositoryExist, $table)
     {
         $values = ($repositorySpaceWork)::all();
         foreach ($values as $value)
@@ -25,7 +31,13 @@ abstract class LoadBase
         }
     }
 
-    public function updateDateAndTime($stateTableValue,$date,$time,$response)
+    /**
+     * @param $stateTableValue
+     * @param $date
+     * @param $time
+     * @param $response
+     */
+    public function updateDateAndTime($stateTableValue, $date, $time, $response)
     {
         $completeDate = Carbon::parse($date.' '.$time);
         $completeDate->addMinute();
@@ -38,7 +50,13 @@ abstract class LoadBase
 
     }
 
-    public function calculateSequence($tableSpaceWork,$sequence,$finalDate,$stateTable)
+    /**
+     * @param $tableSpaceWork
+     * @param $sequence
+     * @param $finalDate
+     * @param $stateTable
+     */
+    public function calculateSequence($tableSpaceWork, $sequence, $finalDate, $stateTable)
     {
         $data = $this->getLastMigrateData($tableSpaceWork);
         if (!is_null($data))

@@ -28,9 +28,7 @@ class Load extends LoadBase implements LoadInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-        $this->select = $etlConfig->getKeys()->globalCastKey;
-        $this->columns = $etlConfig->getKeys()->global;
-        $this->setSelect($etlConfig->getVarForFilter(), 'local_name', 'local_name');
+
 
         return $this;
     }
@@ -40,6 +38,16 @@ class Load extends LoadBase implements LoadInterface
      */
     public function run()
     {
+        $this->select = $this->etlConfig->getKeys()->globalCastKey;
+        $this->columns = $this->etlConfig->getKeys()->global;
+
+        //Configuración de la consulta para extraer los datos de temporal_work
+        $this->setSelect(
+            $this->etlConfig->getVarForFilter(),
+            'local_name',
+            'local_name'
+        );
+        //Direccionar los datos existentes a la tabla de existentes
         $this->redirectExisting(
                     $this->etlConfig->getRepositorySpaceWork(),
                     $this->etlConfig->getRepositoryDestination(),
@@ -47,8 +55,10 @@ class Load extends LoadBase implements LoadInterface
                     $this->etlConfig->getTableExist()
                 );
 
+        //Insertar datos en en su respectiva fact
         $this->insertAllDataInFact($this->selectTemporalTable());
 
+        // Actualizar las fechas y horas del migrado
         $this->calculateSequence(
             $this->etlConfig->geTtableSpaceWork(),
             $this->etlConfig->getSequence(),
@@ -59,6 +69,12 @@ class Load extends LoadBase implements LoadInterface
         return $this;
     }
 
+    /**
+     * @param $variables
+     * @param $colOrigin
+     * @param $colDestination
+     * @return $this
+     */
     public function setSelect($variables, $colOrigin, $colDestination)
     {
         $temporalSelect = '';
@@ -72,11 +88,18 @@ class Load extends LoadBase implements LoadInterface
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function selectTemporalTable()
     {
         return $this->getAllData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->select);
     }
 
+    /**
+     * @param $data
+     * @return mixed
+     */
     public function insertAllDataInFact($data)
     {
        return $this->insertDataEncode('data_warehouse',$this->etlConfig->getTableDestination(),$data);
