@@ -11,9 +11,9 @@ class FilterCorrection extends TransformBase implements TransformInterface
 {
     use CorrectMethod;
 
-    private $method = 'Correction';
+    public $method = 'Correction';
 
-    private $etlConfig = null;
+    public $etlConfig = null;
 
     /**
      * @param EtlConfig $etlConfig

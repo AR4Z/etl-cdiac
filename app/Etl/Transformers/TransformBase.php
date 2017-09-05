@@ -2,11 +2,12 @@
 
 namespace App\Etl\Transformers;
 
-use App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
+use App\Etl\Traits\TrustTrait;
 use DB;
 
 abstract class TransformBase
 {
+    use TrustTrait;
     /**
      * @param $tableSpaceWork
      * @param String $variable
@@ -62,7 +63,21 @@ abstract class TransformBase
         return;
     }
 
+    /**
+     * @param $local_name
+     * @return bool
+     */
+    public function trustProcess($local_name)
+    {
+        if (!$this->etlConfig->isTrustProcess()){return false;}
 
+        $this->insertGoods(
+            $this->etlConfig->getTrustRepository(),
+            $this->etlConfig->getTableSpaceWork(),
+            $this->etlConfig->getTableTrust(),
+            $local_name
+        );
+    }
 
     /**
      * @param $tableSpaceWork
@@ -72,7 +87,14 @@ abstract class TransformBase
     {
         DB::connection('temporary_work')->table($tableSpaceWork)->where($variable, '=','-' )->update([$variable => null]);
     }
-    public function updateHistoryCorrect($value,$variable,$correctValue,$applied_correction_type)
+
+    /**
+     * @param $value
+     * @param $variable
+     * @param $correctValue
+     * @param $applied_correction_type
+     */
+    public function updateHistoryCorrect($value, $variable, $correctValue, $applied_correction_type)
     {
         if (!$this->evaluateExistenceInHistoryCorrection($value->id,$variable)){
             DB::connection('temporary_work')
@@ -131,5 +153,7 @@ abstract class TransformBase
 
         return ($value == 0) ? false : true;
     }
+
+
 
 }

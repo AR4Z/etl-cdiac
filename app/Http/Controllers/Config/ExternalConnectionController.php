@@ -55,7 +55,7 @@ class ExternalConnectionController extends Controller
         */
 
         $jobEtl = Etl::start('Filter', null, null,1,true)
-                        ->extract('Database',['extractType' => 'External', 'initialDate' => '2016-07-26','initialTime' => '23:40:35', 'finalDate' => '2017-06-27','finalTime' => '09:40:35'])
+                        ->extract('Database',['extractType' => 'External', 'initialDate' => '2016-07-01','initialTime' => '00:00:00', 'finalDate' => '2016-07-07','finalTime' => '23:59:59'])
                         ->transform('FilterDetection')
                         ->transform('FilterCorrection')
                         ->load()

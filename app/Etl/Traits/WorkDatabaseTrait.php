@@ -2,7 +2,8 @@
 
 namespace App\Etl\Traits;
 
-use App\Entities\DataWareHouse\WeatherFact;
+use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
+use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use Carbon\Carbon;
 use DB;
 
@@ -109,7 +110,12 @@ trait WorkDatabaseTrait
         return DB::connection($connection)->table($table)->insert(json_decode(json_encode($data), true));
     }
 
-    public function evaluateExistence($repository,$data)
+    /**
+     * @param $repository
+     * @param $data
+     * @return bool
+     */
+    public function evaluateExistence($repository, $data)
     {
         $count = ($repository)::where('date_sk','=',$data->date_sk)
                                 ->where('station_sk','=',$data->station_sk)
@@ -138,9 +144,31 @@ trait WorkDatabaseTrait
         return DB::connection('temporary_work')->table($tableSpaceWork)->select(DB::raw('COUNT(id) AS count'))->get()->toArray()[0]->count;
     }
 
+    /**
+     * @param $tableSpaceWork
+     * @return mixed
+     */
     public function getLastMigrateData($tableSpaceWork)
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->orderby('id','DESC')->first();
+    }
+
+    /**
+     *
+     */
+    public  function migrateHistoricCorrection()
+    {
+        $temporaryCorrection = TemporaryCorrectionRepository::all();
+        foreach ($temporaryCorrection as $valueCorrection){CorrectionHistoryRepository::create($valueCorrection->toArray());}
+        $this->truncateCorrectionTable();
+    }
+
+    /**
+     *
+     */
+    public function truncateCorrectionTable()
+    {
+        TemporaryCorrectionRepository::truncate();
     }
 
 }

@@ -3,17 +3,12 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\Database\DatabaseConfig;
-use App\Etl\Traits\WorkDatabaseTrait;
 use App\Etl\EtlConfig;
-use Carbon\Carbon;
-use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
-use App\Etl\Traits\TrustTrait;
-use PhpParser\Node\Stmt\Return_;
 
 
 class Database extends ExtractorBase implements ExtractorInterface
 {
-    use DatabaseConfig,WorkDatabaseTrait,TrustTrait;
+    use DatabaseConfig;
 
   /**
    * $method is the data type incoming
@@ -47,7 +42,7 @@ class Database extends ExtractorBase implements ExtractorInterface
     public function run()
     {
         # Truncar la tabla de trabajo
-        if ($this->truncateTemporal){$this->truncateTemporalWork($this->etlConfig->getRepositorySpaceWork());}
+        $this->configureSpaceWork();
 
         # Crear el objeto de extraccion /ExtracType
         $this->extractTypeObject = $this->createExtractType($this->extractType,$this->etlConfig);
@@ -60,7 +55,7 @@ class Database extends ExtractorBase implements ExtractorInterface
                 $this->etlConfig->getInitialTime(),
                 $this->etlConfig->getFinalDate(),
                 $this->etlConfig->getFinalTime(),
-                50
+                10000
             )
         );
 
@@ -69,27 +64,9 @@ class Database extends ExtractorBase implements ExtractorInterface
             $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
         }
         # Ejecutar el proceso de confianza y soporte de los datos
-        $this->trustProcess();
+        $trustProccess = $this->trustProcess();
 
         return $this;
-    }
-
-    /**
-     *
-     */
-    private function trustProcess(){
-        # Calcular los datos entrantes para el preceso de confianza
-        $trust = ($this->etlConfig->isTrustProcess())? $this->incomingCalculation($this->etlConfig->getTrustRepository(),$this->etlConfig->getTableSpaceWork(), $this->etlConfig->getTableTrust(), $this->etlConfig->getVarForFilter()->toArray()) : false;
-
-        # Actualizar el estado del proceso de confianza
-        $this->etlConfig->setTrustColumns($trust);
-
-        # Calcular la Cantidad de datos entrante
-        $this->etlConfig->setIncomingAmount(
-            $this->getIncomingAmount(
-                $this->etlConfig->getTableSpaceWork()
-            )
-        );
     }
 
     /**

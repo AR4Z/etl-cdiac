@@ -19,12 +19,11 @@ class CreateCorrectionHistoryTable extends Migration
             $table->bigInteger('station_sk')->unsigned();
             $table->bigInteger('date_sk')->unsigned();
             $table->bigInteger('time_sk')->unsigned();
-            $table->string('position')->nullable();
             $table->string('variable')->nullable();
             $table->string('error_value')->nullable();
-            $table->string('error_comment')->nullable();
-            $table->string('corrected_value')->nullable();
-            $table->string('correction_type_applied')->nullable();
+            $table->string('observation')->nullable();
+            $table->string('correct_value')->nullable();
+            $table->string('applied_correction_type')->nullable();
 
             $table->timestamps();
         });

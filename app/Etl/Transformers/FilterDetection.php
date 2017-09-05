@@ -3,17 +3,13 @@
 
 namespace App\Etl\Transformers;
 
-
 use App\Etl\EtlConfig;
-use App\Etl\Traits\TrustTrait;
 
 class FilterDetection extends TransformBase implements TransformInterface
 {
-    use TrustTrait;
+    public $method = 'Detection';
 
-    private $method = 'Detection';
-
-    private $etlConfig = null;
+    public $etlConfig = null;
 
 
     /**
@@ -48,13 +44,7 @@ class FilterDetection extends TransformBase implements TransformInterface
              );
 
             // insertar los valores correctos deben ir a trust
-            $this->insertGoods(
-                    $this->etlConfig->getTrustRepository(),
-                    $this->etlConfig->getTableSpaceWork(),
-                    $this->etlConfig->getTableTrust(),
-                    $value->local_name
-            );
-
+            $this->trustProcess($value->local_name);
         }
 
         return $this;

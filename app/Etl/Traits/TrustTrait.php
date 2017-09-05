@@ -62,6 +62,56 @@ trait TrustTrait
 
     }
 
+    /**
+     * @param $columns
+     * @param $variables
+     * @param $measurementsPerDay
+     */
+    public function generateTrustAndSupport($columns, $variables, $measurementsPerDay)
+    {
+        foreach ($columns as $column){
+            $value = ($this->etlConfig->getTrustRepository())::where('station_sk',$column['station_sk'])->where('date_sk' , $column['date_sk'])->first();
+
+            foreach ($variables as $variable){
+                $total_records = $value->{$variable->local_name.$this->incoming};
+                $correct_records = $value->{$variable->local_name.$this->goods};
+
+                $value->{$variable->local_name.$this->trust} = $this->calculateTrust($total_records,$correct_records);
+                $value->{$variable->local_name.$this->support} = $this->calculateSupport($correct_records,$measurementsPerDay);
+            }
+            $value->update();
+        }
+    }
+
+
+    /**
+     * @param $total_records
+     * @param $correct_records
+     * @return float|int|null
+     */
+    private function calculateTrust($total_records, $correct_records)
+    {
+        $return = null;
+        if (!is_null($total_records) and !is_null($correct_records)){
+            $return = ($total_records != 0 and $correct_records != 0 ) ? round(($correct_records / $total_records),4) : 0;
+        }
+        return $return;
+    }
+
+    /**
+     * @param $correct_records
+     * @param $measurementsPerDay
+     * @return float|int|null
+     */
+    private function calculateSupport($correct_records, $measurementsPerDay)
+    {
+        $return = null;
+        if (!is_null($correct_records) and !is_null($measurementsPerDay)){
+            $return = ($correct_records != 0 and $measurementsPerDay != 0 ) ?  round(($correct_records / $measurementsPerDay),4) : 0 ;
+        }
+        return $return;
+    }
+
 
     /**
      * @param $temporalTable
@@ -98,6 +148,9 @@ trait TrustTrait
     }
 
 
+
+
+    /**
     /**
      * @param $trustRepository
      * @param $value
@@ -112,7 +165,6 @@ trait TrustTrait
         return ['station_sk' => $value->station_sk,'date_sk' => $value->date_sk];
     }
 
-
     /**
      * @param $variables
      * @return string
@@ -125,5 +177,7 @@ trait TrustTrait
 
         return $text;
     }
+
+
 
 }

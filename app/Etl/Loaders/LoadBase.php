@@ -1,32 +1,29 @@
 <?php
 namespace  App\Etl\Loaders;
 
-use App\Etl\Traits\DateSkTrait;
-use App\Etl\Traits\TimeSkTrait;
-use App\Etl\Traits\WorkDatabaseTrait;
+use App\Etl\Traits\{DateSkTrait,TimeSkTrait,WorkDatabaseTrait,TrustTrait};
 use Carbon\Carbon;
 use DB;
 
 abstract class LoadBase
 {
-    use WorkDatabaseTrait,DateSkTrait,TimeSkTrait;
+    use WorkDatabaseTrait,DateSkTrait,TimeSkTrait,TrustTrait;
 
     /**
-     * @param $repositorySpaceWork
-     * @param $repositoryDestination
-     * @param $repositoryExist
-     * @param $table
+     *
      */
-    public function redirectExisting($repositorySpaceWork, $repositoryDestination, $repositoryExist, $table)
+    public function redirectExisting()
     {
-        $values = ($repositorySpaceWork)::all();
+        $values = ($this->etlConfig->getRepositorySpaceWork())::all();
         foreach ($values as $value)
         {
-            if ($this->evaluateExistence($repositoryDestination,$value))
+            if ($this->evaluateExistence($this->etlConfig->getRepositoryDestination(),$value))
             {
-                $this->insertExistTable($table,$repositoryExist::fill($value->toArray())->toArray());
+                $this->insertExistTable(
+                    $this->etlConfig->getTableExist(),
+                    ($this->etlConfig->getRepositoryExist())::fill($value->toArray())->toArray());
 
-                ($repositorySpaceWork)::delete($value->id);
+                ($this->etlConfig->getRepositorySpaceWork())::delete($value->id);
             }
         }
     }
@@ -51,24 +48,32 @@ abstract class LoadBase
     }
 
     /**
-     * @param $tableSpaceWork
-     * @param $sequence
-     * @param $finalDate
-     * @param $stateTable
+     *
      */
-    public function calculateSequence($tableSpaceWork, $sequence, $finalDate, $stateTable)
+    public function calculateSequence()
     {
-        $data = $this->getLastMigrateData($tableSpaceWork);
+        $data = $this->getLastMigrateData($this->etlConfig->geTtableSpaceWork());
         if (!is_null($data))
         {
-           $response =  ($sequence and Carbon::parse($finalDate) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
+           $response =  ($this->etlConfig->getSequence() and Carbon::parse($this->etlConfig->getFinalDate()) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
 
             $this->updateDateAndTime(
-                $stateTable,
+                $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()},
                 $this->calculateDateFromDateSk($data->date_sk),
                 $this->calculateTimeFromTimeSk($data->time_sk),
                 $response
             );
         }
+    }
+
+    public function trustProcess()
+    {
+        if (!$this->etlConfig->isTrustProcess()){ return false;}
+
+        $this->generateTrustAndSupport(
+            $this->etlConfig->getTrustColumns(),
+            $this->etlConfig->getVarForFilter(),
+            $this->etlConfig->getStation()->measurements_per_day
+        );
     }
 }

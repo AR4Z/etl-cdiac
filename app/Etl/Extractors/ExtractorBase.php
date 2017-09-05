@@ -2,18 +2,20 @@
 
 namespace App\Etl\Extractors;
 
+
 use Carbon\Carbon;
-use App\Etl\Traits\{DateSkTrait, TimeSkTrait};
+use App\Etl\Traits\{DateSkTrait, TimeSkTrait, WorkDatabaseTrait,TrustTrait};
 
 
 /**
  * @property bool flagTimeSk
  * @property bool flagDateSk
  * @property bool flagStationSk
+ * @property  object etlConfig
  */
 abstract class ExtractorBase
 {
-    use DateSkTrait, TimeSkTrait;
+    use DateSkTrait, TimeSkTrait,WorkDatabaseTrait, TrustTrait;
 
     /**
      * @param $repository
@@ -50,11 +52,39 @@ abstract class ExtractorBase
 
 
     /**
-     * @param $repository
-     * @return mixed
+     * @return bool
      */
-    public function truncateTemporalWork($repository)
+    public function trustProcess()
     {
-        return ($repository)::truncate();
+        if (!$this->etlConfig->isTrustProcess()){false;}
+
+        # Calcular los datos entrantes para el preceso de confianza
+
+        $trust= $this->incomingCalculation(
+                            $this->etlConfig->getTrustRepository(),
+                            $this->etlConfig->getTableSpaceWork(),
+                            $this->etlConfig->getTableTrust(),
+                            $this->etlConfig->getVarForFilter()->toArray()
+                        );
+
+        # Actualizar el estado del proceso de confianza
+        $this->etlConfig->setTrustColumns($trust);
+
+        # Calcular la Cantidad de datos entrante
+        $this->etlConfig->setIncomingAmount(
+            $this->getIncomingAmount(
+                $this->etlConfig->getTableSpaceWork()
+            )
+        );
+
+        return true;
+    }
+
+    public function configureSpaceWork()
+    {
+        if ($this->truncateTemporal){($this->etlConfig->getRepositorySpaceWork())::truncate();}
+
+        //workDatabaseTrait->truncateCorrectionTable
+        $this->truncateCorrectionTable();
     }
 }

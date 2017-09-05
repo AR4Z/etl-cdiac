@@ -15,11 +15,11 @@ class Load extends LoadBase implements LoadInterface
 
     private $method = 'General';
 
-    private  $etlConfig = null;
+    public  $etlConfig = null;
 
-    private $select = '';
+    public $select = '';
 
-    private  $columns = [];
+    public  $columns = [];
 
     /**
      * @param EtlConfig $etlConfig
@@ -42,42 +42,36 @@ class Load extends LoadBase implements LoadInterface
         $this->columns = $this->etlConfig->getKeys()->global;
 
         //Configuración de la consulta para extraer los datos de temporal_work
-        $this->setSelect(
-            $this->etlConfig->getVarForFilter(),
-            'local_name',
-            'local_name'
-        );
+        $this->setSelect('local_name','local_name');
+
         //Direccionar los datos existentes a la tabla de existentes
-        $this->redirectExisting(
-                    $this->etlConfig->getRepositorySpaceWork(),
-                    $this->etlConfig->getRepositoryDestination(),
-                    $this->etlConfig->getRepositoryExist(),
-                    $this->etlConfig->getTableExist()
-                );
+        $this->redirectExisting();
 
         //Insertar datos en en su respectiva fact
         $this->insertAllDataInFact($this->selectTemporalTable());
 
+        //calcular la confienza y el soporte
+        $this->trustProcess();
+
+        //migrar los datos de correccion a historial de correccion
+        $this->migrateHistoricCorrection();
+
         // Actualizar las fechas y horas del migrado
-        $this->calculateSequence(
-            $this->etlConfig->geTtableSpaceWork(),
-            $this->etlConfig->getSequence(),
-            $this->etlConfig->getFinalDate(),
-            $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}
-        );
+        $this->calculateSequence();
 
         return $this;
     }
 
     /**
-     * @param $variables
      * @param $colOrigin
      * @param $colDestination
      * @return $this
      */
-    public function setSelect($variables, $colOrigin, $colDestination)
+    public function setSelect($colOrigin, $colDestination)
     {
+        $variables= $this->etlConfig->getVarForFilter();
         $temporalSelect = '';
+
         foreach ($variables as $variable){
             $temporalSelect .= 'CAST('.$variable->$colOrigin.' AS float) AS '. $variable->$colDestination.', ';
             array_push($this->columns,$variable->$colDestination);

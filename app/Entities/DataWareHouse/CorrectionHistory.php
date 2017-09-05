@@ -12,12 +12,11 @@ class CorrectionHistory extends Model
 
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk',
-        'position',
         'variable',
         'error_value',
-        'error_comment',
-        'corrected_value',
-        'correction_type_applied',
+        'observation',
+        'correct_value',
+        'applied_correction_type',
     ];
 
     public function station(){
