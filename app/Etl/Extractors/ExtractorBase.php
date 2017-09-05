@@ -80,11 +80,30 @@ abstract class ExtractorBase
         return true;
     }
 
+    /**
+     *
+     */
     public function configureSpaceWork()
     {
         if ($this->truncateTemporal){($this->etlConfig->getRepositorySpaceWork())::truncate();}
 
         //workDatabaseTrait->truncateCorrectionTable
         $this->truncateCorrectionTable();
+    }
+
+    /**
+     * @param $extractType
+     * @param $etlConfig
+     * @return mixed|object
+     */
+    public function createExtractType($extractType,$etlConfig)
+    {
+        if (! class_exists($extractType)) {
+            if (isset($aliases['ExtractType'][$extractType])) {
+                $extractType = $aliases['ExtractType'][$extractType];
+            }
+            $extractType = __NAMESPACE__ . '\\' . ucwords('ExtractType') . '\\' . $extractType;
+        }
+        return new $extractType($etlConfig);
     }
 }

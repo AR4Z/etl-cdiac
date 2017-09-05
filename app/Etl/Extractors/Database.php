@@ -43,6 +43,7 @@ class Database extends ExtractorBase implements ExtractorInterface
     {
         # Truncar la tabla de trabajo
         $this->configureSpaceWork();
+        dd($this);
 
         # Crear el objeto de extraccion /ExtracType
         $this->extractTypeObject = $this->createExtractType($this->extractType,$this->etlConfig);
@@ -85,21 +86,7 @@ class Database extends ExtractorBase implements ExtractorInterface
     }
 
 
-    /**
-     * @param $extractType
-     * @param $etlConfig
-     * @return mixed|object
-     */
-    private function createExtractType($extractType,$etlConfig)
-    {
-        if (! class_exists($extractType)) {
-            if (isset($aliases['ExtractType'][$extractType])) {
-                $extractType = $aliases['ExtractType'][$extractType];
-            }
-            $extractType = __NAMESPACE__ . '\\' . ucwords('ExtractType') . '\\' . $extractType;
-        }
-        return new $extractType($etlConfig);
-    }
+
 
 
 

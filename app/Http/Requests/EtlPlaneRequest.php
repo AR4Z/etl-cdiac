@@ -24,6 +24,8 @@ class EtlPlaneRequest extends FormRequest
     public function rules()
     {
         return [
+            'method'        =>'required',
+            'sequence'      =>'required',
             'net_name'      =>'required',
             'station_id'    =>'required',
             'file'          =>'required|mimes:csv,txt',

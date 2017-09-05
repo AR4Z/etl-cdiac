@@ -7,8 +7,33 @@
     <div class="col-lg-8 col-lg-offset-2">
         <h1>Etl - Archivos Planos</h1>
         <br><br>
+
         <div class="col-lg-10 col-lg-offset-1">
             {!! Form::open(['route'=> 'plane-etl.loadFile','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label', 'enctype'=>'multipart/form-data']) !!}
+
+            <div class="form-group {{ $errors->has('method') ? ' has-error' : '' }}">
+                {{ Form::label('method', 'Metodo: ', ['class' => 'col-md-2 control-label']) }}
+                <div class="col-md-10">
+                    {!! Form::select('method', ['Filter' => 'Filtrar', 'Original'=>'Original','All'=> 'Original + Filtrar'] , null ,['class' => 'form-control', 'id'=> 'method', 'required']) !!}
+                    @if ($errors->has('method'))
+                        <span class="help-block">
+                                <strong>{{ $errors->first('method') }}</strong>
+                            </span>
+                    @endif
+                </div>
+            </div>
+
+            <div class="form-group {{ $errors->has('sequence') ? ' has-error' : '' }}">
+                {{ Form::label('sequence', 'Secuencia: ', ['class' => 'col-md-2 control-label']) }}
+                <div class="col-md-10">
+                    {!! Form::select('sequence', ['true'=>'Si','false' => 'No'] , null ,['class' => 'form-control', 'id'=> 'sequence', 'required']) !!}
+                    @if ($errors->has('sequence'))
+                        <span class="help-block">
+                                <strong>{{ $errors->first('sequence') }}</strong>
+                            </span>
+                    @endif
+                </div>
+            </div>
 
             <div class="form-group {{ $errors->has('net_name') ? ' has-error' : '' }}">
                     {{ Form::label('net_name', 'Red: ', ['class' => 'col-md-2 control-label']) }}
@@ -62,10 +87,8 @@
 
 @endsection
 
-
 @section('javascript')
     <script>
-
         $('#net_name').change(function () {
             $('#station_id').empty();
             var net_name = $(this).val();
@@ -76,7 +99,6 @@
                     $('#station_id').populateSelect(values);
                 },'json');
             }
-
         })
     </script>
 

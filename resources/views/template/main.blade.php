@@ -118,8 +118,8 @@
                 placeholder: {
                     id: -1,
                     text: "Seleccione un valor"
-                },
-            });
+                }
+            }).val('').change();
             $.fn.populateSelect = function (values) {
                 var options = '';
                 $.each(values, function (key, row) {

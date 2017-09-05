@@ -9,6 +9,7 @@ use Facades\App\Repositories\DataWareHouse\StationDimRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Etl\Etl;
 
 class PlaneEtlController extends Controller
 {
@@ -65,10 +66,13 @@ class PlaneEtlController extends Controller
             }
             //Ejecutar El factori de la etl
             // parametros( nombre del archivo, orden de las variables, typo de estacion, estacion)
+            $enter = $request->all();
+            $this->executePlaneEtl($enter['method'],$enter['sequence'],$enter['station_id'],$name);
         }else{
             return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]);
         }
-        dd($name);
+
+
     }
 
     private function getVariablesStation($stationId)
@@ -99,8 +103,22 @@ class PlaneEtlController extends Controller
         return ['response' => $flag,'notExist'=>$notExist,'notFind'=> $notFind];
     }
 
-    private function executePlaneEtl()
+    private function executePlaneEtl($method,$sequence,$stationId,$fileName)
     {
+        $station = StationRepository::select('*')->where('id',$stationId)->first();
+        if (is_null($station)){return false;}
+        $sequence=  ($sequence == 'false') ? false : true;
+
+        if ( $method == 'Filter' || $method == 'Original')
+        {
+            $migrate = Etl::start($method, null, null,$stationId,$sequence)
+                            ->extract('Csv',['fileName' => $fileName])
+                            ->run();
+        }else{
+
+        }
+
+        dd($migrate);
 
     }
 }
