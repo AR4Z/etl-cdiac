@@ -148,6 +148,15 @@ class TypeStationSeeder extends Seeder
                     'report_name'   => null,
                     'created_at'    => Carbon::now(),
                     'updated_at'    => Carbon::now(),
+                ],
+                [
+                    'name'          => 'Aguas Freáticas',
+                    'code'          => 'AF',
+                    'etl_method'    => 'groundwater',
+                    'description'   => 'Estación de Aguas Freáticas',
+                    'report_name'   => null,
+                    'created_at'    => Carbon::now(),
+                    'updated_at'    => Carbon::now(),
                 ]
             ]
         );

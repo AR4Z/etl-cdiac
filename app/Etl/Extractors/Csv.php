@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\EtlConfig;
+use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -22,6 +23,12 @@ class Csv extends ExtractorBase implements ExtractorInterface
     public $extractType = null;
 
     public  $truncateTemporal = true;
+
+    public $flagStationSk = false;
+
+    public $flagDateSk = false;
+
+    public $flagTimeSk = false;
 
 
     /**
@@ -57,20 +64,43 @@ class Csv extends ExtractorBase implements ExtractorInterface
         $this->configureSpaceWork();
 
         #Leer e insertar datos en base de datos
-        Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
-
-            foreach ($reader->get() as $values){
-                dd($values->toArray());
-            }
-
-        });
+        $this->loadFile();
 
         # Ingresar la llave subrrogada de la estacion
-        /*if (!($this->extractTypeObject)->flagStationSk){
+        if (!$this->flagStationSk){
             $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
-        }*/
+        }
 
         # Ejecutar el proceso de confianza y soporte de los datos
-        //$trustProccess = $this->trustProcess();
+        //$trustProcess = $this->trustProcess();
+    }
+
+    private function loadFile()
+    {
+        Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
+
+            $inputVariables = $reader->all()->getHeading();
+            $variablesName = $this->getVariablesName();
+            $variablesNameExcel = array_keys($variablesName);
+            foreach ($reader->get() as $values){
+                $val = [];
+                $values->toArray();
+                foreach ($inputVariables as $inputVariable){
+                    if (in_array($inputVariable,$variablesNameExcel)){
+                        $val[$variablesName[$inputVariable]] = $values[$inputVariable];
+                    }
+                }
+                ($this->etlConfig->getRepositorySpaceWork())::create($val);
+            }
+        });
+    }
+
+    private function getVariablesName()
+    {
+        $arr = [];
+        $configCsv = (object)Config::get('etl')['csv_keys'][$this->etlConfig->getStation()->typeStation->etl_method];
+        foreach ($configCsv as $key => $value){$arr[$key] = $value['local_name'];}
+        foreach ($this->etlConfig->getVarForFilter() as $value){$arr[$value->excel_name] = $value->local_name ;}
+        return $arr;
     }
 }

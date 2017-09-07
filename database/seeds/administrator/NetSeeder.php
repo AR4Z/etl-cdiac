@@ -253,6 +253,26 @@ class NetSeeder extends Seeder
                     'filtered_updated'          => false,
                     'created_at'                => Carbon::now(),
                     'updated_at'                => Carbon::now(),
+                ],
+                [
+                    'connection_id'             => 1,
+                    'name'                      =>'Red Aguas Freáticas',
+                    'description'               =>'Red Aguas Freáticas',
+                    'administrator_name'        => null,
+                    'center_latitude_degrees'   => null,
+                    'center_latitude_minutes'   => null,
+                    'center_latitude_seconds'   => null,
+                    'center_latitude_direction' => null,
+                    'center_longitude_degrees'  => null,
+                    'center_longitude_minutes'  => null,
+                    'center_longitude_seconds'  => null,
+                    'center_longitude_direction'=> null,
+                    'rt_active'                 => false,
+                    'map_zoom'                  => null,
+                    'original_updated'          => false,
+                    'filtered_updated'          => false,
+                    'created_at'                => Carbon::now(),
+                    'updated_at'                => Carbon::now(),
                 ]
             ]
         );

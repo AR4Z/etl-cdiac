@@ -289,6 +289,30 @@ class VariableSeeder extends Seeder
                     'report_name'           => null,
                     'created_at'            => Carbon::now(),
                     'updated_at'            => Carbon::now(),
+                ],
+                [
+                    'name'                  => 'hydrostatic_charge',
+                    'description'           => null,
+                    'excel_name'            => 'hydrostatic_charge',
+                    'database_field_name'   => null,
+                    'local_name'            => 'hydrostatic_charge',
+                    'decimal_precision'     => 4,
+                    'unit'                  => null,
+                    'report_name'           => null,
+                    'created_at'            => Carbon::now(),
+                    'updated_at'            => Carbon::now(),
+                ],
+                [
+                    'name'                  => 'raw_water_temperature',
+                    'description'           => null,
+                    'excel_name'            => 'raw_water_temperature',
+                    'database_field_name'   => null,
+                    'local_name'            => 'raw_water_temperature',
+                    'decimal_precision'     => 4,
+                    'unit'                  => null,
+                    'report_name'           => null,
+                    'created_at'            => Carbon::now(),
+                    'updated_at'            => Carbon::now(),
                 ]
             ]
         );

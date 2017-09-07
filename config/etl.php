@@ -102,4 +102,45 @@ return [
         ]
     ],
 
+    'csv_keys'  =>  [
+        'weather'       =>  [
+            'fecha' =>  [
+                'required'      => true,
+                'local_name'    => 'date',
+                'reference'     =>  'date_sk',
+            ],
+            'tiempo'    =>  [
+                'required'      => true,
+                'local_name'    => 'time',
+                'reference'     =>  'time_sk',
+            ],
+        ],
+        'air'           =>  [
+            'fecha' =>  [
+                'required'      => true,
+                'local_name'    => 'date',
+                'reference'     =>  'date_sk',
+            ],
+            'tiempo'    =>  [
+                'required'      => false,
+                'local_name'    => 'time',
+                'reference'     =>  'time_sk',
+            ],
+
+        ],
+        'groundwater'   =>  [
+            'fecha' =>  [
+                'required'      => true,
+                'local_name'    => 'date',
+                'reference'     =>  'date_sk',
+            ],
+            'tiempo'    =>  [
+                'required'      => true,
+                'local_name'    => 'time',
+                'reference'     =>  'time_sk',
+            ],
+        ],
+
+    ],
+
 ];
