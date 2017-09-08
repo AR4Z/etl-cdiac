@@ -67,12 +67,18 @@ class Csv extends ExtractorBase implements ExtractorInterface
         $this->loadFile();
 
         # Ingresar la llave subrrogada de la estacion
-        if (!$this->flagStationSk){
-            $this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());
-        }
+        if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
+
+        # Ingresar la llave subrrogada de la fecha
+        if (!$this->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
+
+        # Ingresar la llave subrrogada de la tiempo
+        if (!$this->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
 
         # Ejecutar el proceso de confianza y soporte de los datos
-        //$trustProcess = $this->trustProcess();
+        $trustProcess = $this->trustProcess();
+
+        return $this;
     }
 
     private function loadFile()

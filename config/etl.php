@@ -107,24 +107,28 @@ return [
             'fecha' =>  [
                 'required'      => true,
                 'local_name'    => 'date',
-                'reference'     =>  'date_sk',
+                'reference'     => 'date_sk',
+                'description'   => 'fecha de la medición'
             ],
             'tiempo'    =>  [
                 'required'      => true,
                 'local_name'    => 'time',
-                'reference'     =>  'time_sk',
+                'reference'     => 'time_sk',
+                'description'   => 'hora de la medición'
             ],
         ],
         'air'           =>  [
             'fecha' =>  [
                 'required'      => true,
                 'local_name'    => 'date',
-                'reference'     =>  'date_sk',
+                'reference'     => 'date_sk',
+                'description'   => 'fecha de la medición'
             ],
             'tiempo'    =>  [
-                'required'      => false,
+                'required'      => true,
                 'local_name'    => 'time',
-                'reference'     =>  'time_sk',
+                'reference'     => 'time_sk',
+                'description'   => 'hora de la medición'
             ],
 
         ],
@@ -132,12 +136,14 @@ return [
             'fecha' =>  [
                 'required'      => true,
                 'local_name'    => 'date',
-                'reference'     =>  'date_sk',
+                'reference'     => 'date_sk',
+                'description'   => 'fecha de la medición'
             ],
             'tiempo'    =>  [
                 'required'      => true,
                 'local_name'    => 'time',
-                'reference'     =>  'time_sk',
+                'reference'     => 'time_sk',
+                'description'   => 'hora de la medición'
             ],
         ],
 

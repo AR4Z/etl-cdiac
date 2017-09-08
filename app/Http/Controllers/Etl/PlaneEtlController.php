@@ -7,15 +7,13 @@ use App\Http\Requests\EtlPlaneRequest;
 use Facades\App\Repositories\Administrator\StationRepository;
 use Facades\App\Repositories\DataWareHouse\StationDimRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Etl\Etl;
 
 class PlaneEtlController extends Controller
 {
-
-    protected $keys  = ['estacion','fecha','tiempo'];
-
     /**
      *
      */
@@ -33,11 +31,18 @@ class PlaneEtlController extends Controller
         return StationDimRepository::getDifferentNetName();
     }
 
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function getStationsForNet(Request $request)
     {
         return StationDimRepository::getStationsForNet($request['net_name']);
     }
 
+    /**
+     * @param Request $request
+     */
     public function loadFileErrors(Request $request)
     {
         dd($request->all());
@@ -46,6 +51,7 @@ class PlaneEtlController extends Controller
     public function loadFile(EtlPlaneRequest $request)
     {
         $variablesStation = $this->getVariablesStation($request['station_id']);
+        $etlType = StationRepository::getStation($request['station_id'])->typeStation->etl_method;
 
         $file = $request->file('file');
         $name = time().'.'.$file->getClientOriginalExtension();
@@ -54,7 +60,7 @@ class PlaneEtlController extends Controller
             Storage::disk('public')->put($name,  \File::get($file));
             $variablesLoad = ((((Excel::load(storage_path().'/app/public/'.$name)->get())->first())->keys())->toArray());
 
-            $validate = $this->validateVariablesLoad($variablesLoad,$variablesStation);
+            $validate = $this->validateVariablesLoad($variablesLoad,$variablesStation,$etlType);
             //dd($validate);
             if (!$validate['response']){
                 $station = StationRepository::find($request['station_id']);
@@ -75,25 +81,46 @@ class PlaneEtlController extends Controller
 
     }
 
+    /**
+     * @param $stationId
+     * @return array
+     */
     private function getVariablesStation($stationId)
     {
         $arr = [];
         $var = StationRepository::findVarForFilter($stationId);
-        foreach ($var as $index => $value){array_push($arr,$value->excel_name);}
+        foreach ($var as $index => $value){array_push($arr,['excel_name' =>$value->excel_name,'description'=>$value->description]);}
         return $arr;
     }
-    private function validateVariablesLoad($variablesLoad,$variablesStation)
+
+    /**
+     * @param $variablesLoad
+     * @param $variablesStation
+     * @param $etlType
+     * @return array
+     */
+    private function validateVariablesLoad($variablesLoad, $variablesStation, $etlType)
     {
         $flag = true;
         $notExist = [];
         $notFind = [];
-        foreach ($this->keys as $key => $value){
-            $val = array_search($value,$variablesLoad);
-            if ( $val !== false){unset($variablesLoad[$val]);}
+
+        $configCsv = (object)Config::get('etl')['csv_keys'][$etlType];
+
+        foreach ($configCsv as $key => $value){
+
+            $val = array_search($key,$variablesLoad);
+            if ( $val !== false){
+                unset($variablesLoad[$val]);
+            }else{
+                if ($value['required']){
+                    array_push($notExist,$key.' : '.$value['description']);
+                }
+            }
         }
-        foreach ($variablesStation as $item =>$value) {
-            $val = array_search($value,$variablesLoad);
-            if ($val === false){$flag = false;array_push($notExist,$value);}
+        foreach ($variablesStation as $item => $value) {
+            $val = array_search($value['excel_name'],$variablesLoad);
+            if ($val === false){$flag = false;array_push($notExist,$value['excel_name'].' : '.$value['description']);}
         }
         foreach ($variablesLoad as $item => $value) {
             $val = array_search($value,$variablesStation);
@@ -103,7 +130,14 @@ class PlaneEtlController extends Controller
         return ['response' => $flag,'notExist'=>$notExist,'notFind'=> $notFind];
     }
 
-    private function executePlaneEtl($method,$sequence,$stationId,$fileName)
+    /**
+     * @param $method
+     * @param $sequence
+     * @param $stationId
+     * @param $fileName
+     * @return bool
+     */
+    private function executePlaneEtl($method, $sequence, $stationId, $fileName)
     {
         $station = StationRepository::select('*')->where('id',$stationId)->first();
         if (is_null($station)){return false;}

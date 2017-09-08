@@ -14,7 +14,12 @@ class StationRepository extends EloquentRepository
 
     public function getEtlActive()
     {
-        return $this->where('etl_active', true)->get();
+        return $this->select('*')->where('etl_active', true)->get();
+    }
+
+    public function getStation($stationId)
+    {
+        return $this->select('*')->where('id',$stationId)->first();
     }
 
     /**
@@ -46,7 +51,8 @@ class StationRepository extends EloquentRepository
                 'variable_station.maximum',
                 'variable_station.minimum',
                 'variable_station.previous_deference',
-                'variable_station.correction_type'
+                'variable_station.correction_type',
+                'variable.description'
             )
             ->where('variable_station.station_id',  $stationId)
             ->where('variable_station.etl_active', true)
