@@ -96,8 +96,12 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
      */
     private function settingConnection($connection)
     {
-        $this->configExternalConnection($connection);
-        return $this;
+        if ($this->searchExternalConnection($connection,$this->extractTable)){
+            return $this;
+        }else{
+            dd('No se hallo en ninguna conexion la tabla');
+            //TODO
+        }
     }
 
 
