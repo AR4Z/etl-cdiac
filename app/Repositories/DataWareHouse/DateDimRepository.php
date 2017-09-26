@@ -35,5 +35,9 @@ class DateDimRepository extends EloquentRepository
                     ->first()
                     ->date;
     }
+    public function getDateFromSpace($initialLimit,$finalLimit,$space)
+    {
+        return range($initialLimit,$finalLimit,$space);
+    }
 
 }

@@ -3,11 +3,12 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\Traits\TrustTrait;
+use App\Etl\Traits\WorkDatabaseTrait;
 use DB;
 
 abstract class TransformBase
 {
-    use TrustTrait;
+    use TrustTrait,WorkDatabaseTrait;
     /**
      * @param $tableSpaceWork
      * @param String $variable
@@ -123,6 +124,7 @@ abstract class TransformBase
 
 
     }
+
     /**
      * @param $value
      * @param $variable

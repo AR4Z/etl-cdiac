@@ -65,9 +65,9 @@ class EtlConfig
 
   private $finalDate = null;
 
-  private $initialTime = null;
+  private $initialTime = '00:00:00';
 
-  private $finalTime = null;
+  private $finalTime = '23:59:59';
 
   private $trustColumns = [];
 

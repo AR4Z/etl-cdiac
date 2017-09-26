@@ -31,4 +31,8 @@ class TimeDimRepository extends EloquentRepository
             ->first()
             ->time;
     }
+    public function getTimeFromSpace($space)
+    {
+        return range(1,86400,$space);
+    }
 }

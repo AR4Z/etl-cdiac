@@ -153,6 +153,46 @@ trait WorkDatabaseTrait
         return DB::connection('temporary_work')->table($tableSpaceWork)->orderby('id','DESC')->first();
     }
 
+
+    public function listDateAndTimeFromSpaceWork($tableSpaceWork)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->select('date_sk','time_sk')->orderby('date_sk','ASC')->orderby('time_sk','ASC')->get();
+    }
+
+    public function getValInRange($tableSpaceWork,$date_sk,$time,$interval)
+    {
+        return DB::connection('temporary_work')
+                    ->table($tableSpaceWork)
+                    ->select('station_sk','date_sk','time_sk')
+                    ->where('date_sk', $date_sk)
+                    ->whereBetween('time_sk',[$time,$interval])
+                    ->orderby('date_sk','ASC')
+                    ->orderby('time_sk','ASC')
+                    ->get();
+    }
+
+    public function serializationInsert($tableSpaceWork,$value)
+    {
+       DB::connection('temporary_work')->table($tableSpaceWork)->insert($value);
+    }
+
+    public function countRowForDate($tableSpaceWork,$date)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->select('*')->where('date_sk',$date)->count();
+    }
+
+    public function serializationUpdate($repositorySpaceWork,$value,$date,$time)
+    {
+        $data = ($repositorySpaceWork)::select('*')->where('date_sk',$value->date_sk)->where('time_sk',$value->time_sk)->first();
+        $data->date_sk = $date;
+        $data->time_sk = $time;
+        return $data->update();
+    }
+    public function serializationCorrect($arrayValue,$date,$time,$interval)
+    {
+        #TODO
+    }
+
     /**
      *
      */
@@ -170,5 +210,7 @@ trait WorkDatabaseTrait
     {
         TemporaryCorrectionRepository::truncate();
     }
+
+
 
 }

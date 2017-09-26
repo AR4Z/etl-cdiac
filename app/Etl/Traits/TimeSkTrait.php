@@ -21,4 +21,9 @@ trait TimeSkTrait
     {
         return TimeDimRepository::getTime($timeSk);
     }
+
+    public function getSerializationTime($space)
+    {
+        return TimeDimRepository::getTimeFromSpace($space);
+    }
 }
