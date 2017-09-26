@@ -83,10 +83,11 @@ abstract class TransformBase
     /**
      * @param $tableSpaceWork
      * @param $variable
+     * @param $searchParams
      */
-    public function updateForNull($tableSpaceWork, $variable)
+    public function updateForNull($tableSpaceWork, $variable,$searchParams)
     {
-        DB::connection('temporary_work')->table($tableSpaceWork)->where($variable, '=','-' )->update([$variable => null]);
+        DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$searchParams)->update([$variable => null]);
     }
 
     /**
