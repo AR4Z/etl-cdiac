@@ -188,10 +188,52 @@ trait WorkDatabaseTrait
         $data->time_sk = $time;
         return $data->update();
     }
-    public function serializationCorrect($arrayValue,$date,$time,$interval)
+    public function serializationCorrect($tableSpaceWork,$variables,$stationSk,$arrayValue,$date,$time,$interval)
     {
-        #TODO
+        $arr = ['station_sk'=>$stationSk,'date_sk'=>$date,'time_sk'=>$time];
+        foreach ($variables as $variable){
+            if (!is_null($variable->correct_serialization)){
+                $times = [];
+                foreach ($arrayValue as $value){array_push($times,$value->time_sk);}
+                //dd($variable,$stationSk,$arrayValue,$date,$time,$interval);
+                $arr[$variable->local_name] = $this->{'Serialization'.ucwords($variable->correct_serialization)}($tableSpaceWork,$date,$times,$variable->local_name);
+            }
+        }
+
+        $this->serializationInsert($tableSpaceWork,$arr);
+
+        foreach ($arrayValue as $value){$this->SerializationDelete($tableSpaceWork,$value);}
+
     }
+    public function SerializationDelete($tableSpaceWork,$value)
+    {
+        return DB::connection('temporary_work')
+                    ->table($tableSpaceWork)
+                    ->where('date_sk',$value->date_sk)
+                    ->where('time_sk',$value->time_sk)
+                    ->delete();
+    }
+
+    public function SerializationSum($tableSpaceWork,$date,$times,$variableName)
+    {
+        return DB::connection('temporary_work')
+                    ->table($tableSpaceWork)
+                    ->select(DB::raw("sum(CAST(".$variableName." AS FLOAT))"))
+                    ->where('date_sk',$date)
+                    ->whereIn('time_sk',$times)
+                    ->get()[0]->sum;
+    }
+    public function SerializationAverage($tableSpaceWork,$date,$times,$variableName)
+    {
+        return DB::connection('temporary_work')
+            ->table($tableSpaceWork)
+            ->select(DB::raw("avg(CAST(".$variableName." AS FLOAT))"))
+            ->where('date_sk',$date)
+            ->whereIn('time_sk',$times)
+            ->get()[0]->avg;
+    }
+
+
 
     /**
      *

@@ -48,6 +48,7 @@ class StationRepository extends EloquentRepository
                 'variable.local_name',
                 'variable.decimal_precision',
                 'variable.unit',
+                'variable.correct_serialization',
                 'variable_station.maximum',
                 'variable_station.minimum',
                 'variable_station.previous_deference',

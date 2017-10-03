@@ -128,7 +128,15 @@ class Serialization extends TransformBase implements TransformInterface
                     unset($intervalActual[$countActual-1]);
                 }
                 #Promediar en anterior
-                $this->serializationCorrect($valInRangeActual,$date,$time,$intervalActual);
+                $this->serializationCorrect(
+                        $this->etlConfig->getTableSpaceWork(),
+                        $this->etlConfig->getVarForFilter(),
+                        $this->etlConfig->getStation()->id,
+                        $valInRangeActual,
+                        $date,
+                        $time,
+                        $intervalActual
+                    );
             }
         }
     }
