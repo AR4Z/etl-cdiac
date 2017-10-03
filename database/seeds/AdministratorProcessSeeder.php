@@ -4,6 +4,8 @@ use Illuminate\Database\Seeder;
 
 class AdministratorProcessSeeder extends seeder
 {
+    //php artisan db:seed --class=AdministratorProcessSeeder
+
     /**
      * Run the database seeds.
      *

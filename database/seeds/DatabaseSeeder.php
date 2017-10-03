@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    //php artisan db:seed
     /**
      * Run the database seeds.
      *

@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 
 class DataWareHouseProcessSeeder extends Seeder
 {
+    //php artisan db:seed --class=DataWareHouseProcessSeeder
     /**
      * Run the database seeds.
      *

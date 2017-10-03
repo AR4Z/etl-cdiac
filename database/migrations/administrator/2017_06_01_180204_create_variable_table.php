@@ -23,6 +23,7 @@ class CreateVariableTable extends Migration
             $table->string('local_name')->nullable();
             $table->integer('decimal_precision')->default(0);
             $table->string('unit',50)->nullable();
+            $table->string('correct_serialization',50)->nullable();
             $table->string('report_name')->nullable();
 
             $table->timestamps();

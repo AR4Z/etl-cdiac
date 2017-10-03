@@ -3120,7 +3120,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'PAL-06',
                     'description'           => null,
@@ -3143,7 +3143,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'PAL-05',
                     'description'           => null,
@@ -3166,7 +3166,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'PAL-04',
                     'description'           => null,
@@ -3189,7 +3189,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'PAL-03',
                     'description'           => null,
@@ -3212,7 +3212,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'PAL-02',
                     'description'           => null,
@@ -3235,7 +3235,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'PAL-01',
                     'description'           => null,
@@ -3258,7 +3258,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'EST-06',
                     'description'           => null,
@@ -3281,7 +3281,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'EST-05',
                     'description'           => null,
@@ -3304,7 +3304,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'EST-04',
                     'description'           => null,
@@ -3327,7 +3327,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'EST-03',
                     'description'           => null,
@@ -3350,7 +3350,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'EST-02',
                     'description'           => null,
@@ -3373,7 +3373,7 @@ class StationSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'station_type_id'       => 17,
+                    'station_type_id'       => 16,
                     'owner_net_id'          => 13,
                     'name'                  => 'EST-01',
                     'description'           => null,
