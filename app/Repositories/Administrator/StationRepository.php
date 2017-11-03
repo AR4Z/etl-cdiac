@@ -12,6 +12,11 @@ class StationRepository extends EloquentRepository
 
     protected $model = Station::class;
 
+    protected function queryBuilder()
+    {
+        return DB::connection('administrator')->table('station');
+    }
+
     public function getEtlActive()
     {
         return $this->select('*')->where('etl_active', true)->get();
@@ -59,5 +64,13 @@ class StationRepository extends EloquentRepository
             ->where('variable_station.etl_active', true)
             ->join('variable_station', 'variable.id', '=', 'variable_station.variable_id')
             ->get();
+    }
+
+    public function getStationInServerAcquisition()
+    {
+        return $this->queryBuilder()->select('station.id','station.name','original_state.current_date','original_state.current_time')
+                    ->where('station.etl_active', true)
+                    ->join('original_state','original_state.station_id','=','station.id')
+                    ->get();
     }
 }

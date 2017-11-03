@@ -25,10 +25,10 @@ class Connection extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function net()
     {
-        return $this->belongsTo(Net::class,'net_id');
+        return $this->hasMany(Net::class,'connection_id');
     }
 }

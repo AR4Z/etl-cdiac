@@ -43,10 +43,12 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/small.css') }}" media="all">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/printer.css') }}" media="print">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/metisMenu.css') }}" media="all">
+    <link rel="stylesheet" type="text/css" href="{{ asset('libraries/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" media="all">
+    <link rel="stylesheet" type="text/css" href="{{ asset('libraries/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.min.css') }}" media="all">
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" media="all">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.css"/>
 
 
 
@@ -109,8 +111,14 @@
     {{--<!--[if lt IE 9]>--}}
     <script src="{{ asset('js/respond.js') }}" type="text/javascript"></script>
     {{--<![endif]-->--}}
+
     <script type="text/javascript" src="{{ asset('js/bootstrap-filestyle-1.2.3/src/bootstrap-filestyle.min.js')}}"> </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.js"></script>
+
+    <script src="{{asset('libraries/bootstrap-datepicker/js/bootstrap-datepicker.js')}}"></script>
+    <script src="{{asset('libraries/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js')}}"></script>
+
     <script>
         $(document).ready(function () {
             $('select').select2({
@@ -127,10 +135,40 @@
                 });
                 $(this).html(options);
             }
-        })
+        });
     </script>
-
-
+    <script>
+        $(document).ready(function() {
+            $('#data-table').DataTable({
+                "scrollY": 300,
+                "scrollX": true,
+                "language": {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "NingÃºn dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Ãšltimo",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+        } );
+    </script>
     @yield('javascript')
 
 </body>

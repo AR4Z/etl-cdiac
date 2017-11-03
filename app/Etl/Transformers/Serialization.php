@@ -43,7 +43,8 @@ class Serialization extends TransformBase implements TransformInterface
         $this->arrayTime = $this->getSerializationTime($this->timeSpace);
         $this->arrayDate = $this->getSerializationDate($this->etlConfig->getInitialDate(),$this->etlConfig->getFinalDate(), $this->dateSpace);
         $this->serialization();
-        dd($this);
+
+        return $this;
     }
 
     /**

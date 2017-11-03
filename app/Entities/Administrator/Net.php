@@ -48,11 +48,11 @@ class Net extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function connection()
     {
-        return $this->hasOne(Connection::class,'net_id','id');
+        return $this->belongsTo(Connection::class,'connection_id');
     }
 
 }

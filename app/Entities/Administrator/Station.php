@@ -29,11 +29,16 @@ class Station extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function stations()
+    public function nets()
     {
         return $this->belongsToMany(Net::class,'station_net','station_id','net_id')
             ->withPivot(['id','rt_active'])
             ->withTimestamps();
+    }
+
+    public function net()
+    {
+        return $this->belongsTo(Net::class,'owner_net_id');
     }
 
     /**
@@ -49,7 +54,7 @@ class Station extends Model
      */
     public function technicalSheetFields()
     {
-        return $this->belongsToMany(TechnicalSheetField::class,'technical_sheet_field_station','technical_sheet_field_id', 'station_id')
+        return $this->belongsToMany(TechnicalSheetField::class,'technical_sheet_field_station','station_id', 'technical_sheet_field_id')
                     ->withPivot(['id','rt_active','value'])
                     ->withTimestamps();
     }
@@ -59,7 +64,7 @@ class Station extends Model
      */
     public function variables()
     {
-        return $this->belongsToMany(Variable::class,'variable_station','variable_id','station_id')
+        return $this->belongsToMany(Variable::class,'variable_station','station_id','variable_id')
                     ->withPivot(['id','maximum','minimum','previous_deference','correction_type','rt_active','etl_active','comment'])
                     ->withTimestamps();
     }
@@ -69,7 +74,7 @@ class Station extends Model
      */
     public function graphs()
     {
-        return $this->belongsToMany(Graph::class,'graph_station','graph_id','station_id')
+        return $this->belongsToMany(Graph::class,'graph_station','station_id','graph_id')
                     ->withPivot(['id','rt_active'])
                     ->withTimestamps();
     }
