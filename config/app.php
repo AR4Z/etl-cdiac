@@ -164,14 +164,15 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
-         * Package Service Providers...
+         * Package Service Providers... (cargados automaticamente por discover)
          */
+        /*
         Laravel\Tinker\TinkerServiceProvider::class,
         Rinvex\Repository\Providers\RepositoryServiceProvider::class,
         Jenssegers\Date\DateServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
-
+¨       */
 
         /*
          * Application Service Providers...
