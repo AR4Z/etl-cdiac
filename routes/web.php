@@ -42,4 +42,5 @@ Route::group(['prefix' => 'server-acquisition','name' => 'server-acquisition'], 
 {
     Route::get('', [ 'as'=>'server-acquisition','uses'=>'Etl\ServerAcquisitionController@index']);
     Route::post('search-data', [ 'as'=>'server-acquisition.search-data','uses'=>'Etl\ServerAcquisitionController@searchData']);
+    Route::get('search-stations', [ 'as'=>'server-acquisition.search-stations','uses'=>'Etl\ServerAcquisitionController@searchStations']);
 });

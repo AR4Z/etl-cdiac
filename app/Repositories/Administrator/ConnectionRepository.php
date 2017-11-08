@@ -16,4 +16,9 @@ class ConnectionRepository extends EloquentRepository
     {
         return $this->select('*')->whereNotIn('id',$variables)->get();
     }
+
+    public function searchEtlActive()
+    {
+        return $this->select('*')->where('etl_active',true)->get();
+    }
 }

@@ -5,7 +5,8 @@ namespace App\Etl\Database;
 use Facades\App\Repositories\Administrator\ConnectionRepository;
 use Config;
 use Exception;
-use Illuminate\Support\Facades\DB;
+use DB;
+use Illuminate\Support\Facades\Artisan;
 use Log;
 /**
  *
@@ -18,13 +19,19 @@ trait DatabaseConfig
      * @param string $defaultConnection
      * @return bool
      */
-    public function searchExternalConnection($connection, $extractTable,$defaultConnection = 'external_connection')
+    public function searchExternalConnection($connection, $extractTable = null,$defaultConnection = 'external_connection')
     {
+        DB::disconnect($defaultConnection);
         $var = $this->configExternalConnection($connection,$defaultConnection);
-        if ($var){
-            if ($this->validateExistenceExternalTable($extractTable,$defaultConnection)){return true;}
+
+        if (!is_null($extractTable)){
+            if ($var){
+                if ($this->validateExistenceExternalTable($extractTable,$defaultConnection)){return true;}
+            }
+            $this->loopForConnection($connection->id,$extractTable,$defaultConnection);
         }
-        return $this->loopForConnection($connection->id,$extractTable,$defaultConnection);
+
+        return true;
     }
 
     /**
@@ -91,7 +98,7 @@ trait DatabaseConfig
           Config::set("database.connections.".$defaultConnection.".username", $connection->username);
           Config::set("database.connections.".$defaultConnection.".password", $connection->password);
 
-          //dd(Config::get('database.connections.external_connection'));
+          //dd(Config::get('database.connections.'.$defaultConnection));
           return true;
         } catch (Exception $e) {
           Log::info('Fallo en la conexión.');

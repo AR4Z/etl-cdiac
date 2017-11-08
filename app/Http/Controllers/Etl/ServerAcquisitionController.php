@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Etl;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Facades\App\Repositories\Administrator\StationRepository;
+use Facades\App\Repositories\Administrator\ConnectionRepository;
 use App\Etl\Database\DatabaseConfig;
+use Config;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class ServerAcquisitionController extends Controller
@@ -40,7 +43,28 @@ class ServerAcquisitionController extends Controller
         return view('serverAcquisition.result')->with(['externalData' => $externalData, 'search' => $data , 'station' => $station, 'keys'=> $keys]);
     }
 
-    private function connectionServerAcquisition($connection,$table)
+    /**
+     * @return $this
+     */
+    public function searchStations()
+    {
+        $connections = ConnectionRepository::searchEtlActive();
+        $arr = [];
+        foreach ($connections as $connection){
+            $flag = $this->connectionServerAcquisition($connection);
+            if ($flag){
+                $tables = DB::connection($this->connectionDefault)->select('SHOW TABLES');
+                $data = ['connection'=> $connection->name,'host'=> $connection->host,'port'=> $connection->port,'database'=> $connection->database, 'username'=> $connection->username];
+                foreach ($tables as $table){
+                    $tab = $table->{'Tables_in_'.$connection->database};
+                    if (!($tab == 'variables' or $tab == 'usuario' or $tab == 'estaciones' or $tab == 'confiestaciones')){ $data['station'] = $tab; array_push($arr,$data);}
+                }
+            }
+        }
+        return view('serverAcquisition.search_stations')->with(['stations' => $arr]);
+    }
+
+    private function connectionServerAcquisition($connection,$table = null)
     {
         # Realizar la conexion usando el trait DatabaseConnection
         return $this->searchExternalConnection($connection,$table,$this->connectionDefault);
