@@ -4,7 +4,7 @@ namespace App\Etl\Traits;
 
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
-use Carbon\Carbon;
+use App\Etl\Database\Query;
 use DB;
 
 trait WorkDatabaseTrait
@@ -21,58 +21,31 @@ trait WorkDatabaseTrait
      * @param int $limit
      * @return mixed
      */
-    public function getExternalData(
-        string $connection,
-        string $table,
-        string $keys,
-        string $select,
-        string $initialDate,
-        string $initialTime,
-        string $finalDate,
-        string $finalTime,
-        int $limit
-    ){
-        $data = DB::connection($connection)
-            ->table($table)
-            ->select(DB::raw($select))
-            ->whereBetween(
-                DB::raw("concat_ws(' ',".$keys.")"),
-                [
-                    Carbon::parse($initialDate.' '.$initialTime),
-                    Carbon::parse($finalDate.' '.$finalTime),
-                ]
-            )
-            ->orderby(DB::raw("concat_ws(' ',".$keys.")"), 'asc')
-            ->limit($limit)
-            ->get()
-            ->all();
-
-        return $data;
+    public function getExternalData(string $connection,string $table,string $keys,string $select,string $initialDate,string $initialTime,string $finalDate,string $finalTime,int $limit = null)
+    {
+        $query = new Query();
+        return $query->init($connection,$table)->select($select)->externalWhereBetween($keys,$initialDate,$initialTime,$finalDate,$finalTime)->limit($limit)->execute()->data;
     }
 
-    public function getLocalData(
-        string $connection,
-        string $table,
-        string $keys,
-        string $select,
-        string $initialDate,
-        string $initialTime,
-        string $finalDate,
-        string $finalTime,
-        int $limit
-    )
+    /**
+     * @param string $connection
+     * @param string $table
+     * @param string $keys
+     * @param string $select
+     * @param string $initialDate
+     * @param string $initialTime
+     * @param string $finalDate
+     * @param string $finalTime
+     * @param int $limit
+     * @return mixed
+     */
+    public function getLocalData(string $connection,string $table,string $keys,string $select,string $initialDate,string $initialTime,string $finalDate,string $finalTime,int $limit = null)
     {
-        $data = DB::connection($connection)
-            ->table($table)
-            ->select(DB::raw($select))
-            ->where(DB::raw("(((date_sk = $initialDate and time_sk >= $initialTime) or ( date_sk > $initialTime)) and ((date_sk = $finalDate) or (date_sk = $finalDate and time_sk <= $finalTime)))"))
-            ->orderby(DB::raw($keys), 'asc')
-            ->limit($limit)
-            ->get()
-            ->all();
-
-        dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$data);
-        return $data;
+        $query = new Query();
+        $query->init($connection,$table)->select($select)->localWhere($initialDate,$initialTime,$finalDate,$finalTime)->limit($limit)->execute();
+        //TODO -- probar la funcionalidad de este metodo --
+        dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
+        return $query->data;
     }
 
     /**
