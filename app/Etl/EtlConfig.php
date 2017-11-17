@@ -75,7 +75,7 @@ class EtlConfig
 
   private $keys = null;
 
-  private $trustProcess = true;
+  private $trustProcess = false;
 
 
 

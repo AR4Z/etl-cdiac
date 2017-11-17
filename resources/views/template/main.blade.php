@@ -49,7 +49,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" media="all">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.css"/>
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css">
 
 
     <title>@yield('title', 'Inicio - Universidad Nacional de Colombia')</title>
@@ -114,7 +114,16 @@
 
     <script type="text/javascript" src="{{ asset('js/bootstrap-filestyle-1.2.3/src/bootstrap-filestyle.min.js')}}"> </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="//cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
 
     <script src="{{asset('libraries/bootstrap-datepicker/js/bootstrap-datepicker.js')}}"></script>
     <script src="{{asset('libraries/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js')}}"></script>
@@ -140,9 +149,9 @@
     <script>
         $(document).ready(function() {
             $('#data-table').DataTable({
-                "scrollY": 300,
-                "scrollX": true,
-                "language": {
+                scrollX: true,
+                language: {
+                    "Show": "ver",
                     "sProcessing":     "Procesando...",
                     "sLengthMenu":     "Mostrar _MENU_ registros",
                     "sZeroRecords":    "No se encontraron resultados",
@@ -164,8 +173,37 @@
                     "oAria": {
                         "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
                         "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    },
+                    "buttons": {
+                        "pageLength": {
+                            _: "Ver %d Registros",
+                            '-1': "Todos los Registros"
+                        }
                     }
-                }
+                },
+                dom: 'Bfrtip',
+                lengthMenu:[[10,25,50,-1],[ '10', '25','50', 'Ver Todos' ]],
+                buttons: [
+                    { extend:    'pageLength'},
+                    {
+                        title:     'Data export',
+                        extend:    'excelHtml5',
+                        text:      '<i class="fa fa-file-excel-o"></i>',
+                        titleAttr: 'Descargar Excel'
+                    },
+                    {
+                        title:     'Data export',
+                        extend:    'csvHtml5',
+                        text:      '<i class="fa fa-file-text-o"></i>',
+                        titleAttr: 'Descargar CSV'
+                    },
+                    {
+                        title:     'Data export',
+                        extend:    'pdfHtml5',
+                        text:      '<i class="fa fa-file-pdf-o"></i>',
+                        titleAttr: 'Descargar PDF'
+                    }
+                ]
             });
         } );
     </script>
