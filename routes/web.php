@@ -44,3 +44,10 @@ Route::group(['prefix' => 'server-acquisition','name' => 'server-acquisition'], 
     Route::post('search-data', [ 'as'=>'server-acquisition.search-data','uses'=>'Etl\ServerAcquisitionController@searchData']);
     Route::get('search-stations', [ 'as'=>'server-acquisition.search-stations','uses'=>'Etl\ServerAcquisitionController@searchStations']);
 });
+
+Route::group(['prefix' => 'execute-etl','name' => 'execute-etl'], function()
+{
+    Route::get('', [ 'as'=>'execute-etl','uses'=>'Etl\ExecuteEtlController@index']);
+    Route::post('getStationsForNet', [ 'as'=>'execute-etl.getStationsForNet','uses'=>'Etl\ExecuteEtlController@getStationsForNet']);
+
+});

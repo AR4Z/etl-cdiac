@@ -46,6 +46,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('libraries/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" media="all">
     <link rel="stylesheet" type="text/css" href="{{ asset('libraries/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.min.css') }}" media="all">
 
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" media="all">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.css"/>
@@ -113,6 +114,7 @@
     {{--<![endif]-->--}}
 
     <script type="text/javascript" src="{{ asset('js/bootstrap-filestyle-1.2.3/src/bootstrap-filestyle.min.js')}}"> </script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.16/datatables.min.js"></script>
