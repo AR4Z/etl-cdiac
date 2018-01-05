@@ -7,8 +7,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-
-
 use App\Etl\Etl;
 use Storage;
 
@@ -19,65 +17,23 @@ class EtlStationJob implements ShouldQueue
     /**
      * @var
      */
-    private $typeProcess;
-    /**
-     * @var
-     */
-    private $idConnection;
-    /**
-     * @var
-     */
-    private $idStation;
-    /**
-     * @var bool
-     */
-    private $sequence;
-    /**
-     * @var null
-     */
-    private $idNet;
+    private $work;
 
-    /**
-     * Create a new job instance.
-     * @param string $typeProcess
-     * @param null $idNet
-     * @param $idConnection
-     * @param $idStation
-     * @param bool $sequence
-     */
-    public function __construct(
-        $typeProcess = 'Original',
-        $idNet = null,
-        $idConnection = null,
-        $idStation,
-        $sequence = false
-    )
+    public function __construct(Etl $work)
     {
         Storage::put('file.txt','Hola');
-
-        $this->typeProcess = $typeProcess;
-        $this->idConnection = $idConnection;
-        $this->idStation = $idStation;
-        $this->sequence = $sequence;
-        $this->idNet = $idNet;
+        $this->work = $work;
     }
 
     /**
      * Execute the job.
-     * @param Etl $etl
      * @return void
-
+     * @internal param Etl $etl
      */
     public function handle()
     {
         Storage::put('file.txt','Hola');
-
-        $result= Etl::start($this->typeProcess, $this->idConnection, $this->idStation,$this->sequence)
-                        ->extract('Database')
-                        ->transform()
-                        ->load();
-
+        $result= $this->work->run();
         Storage::put('file.txt','Hola estoy desde un EtlStationjob final');
-
     }
 }

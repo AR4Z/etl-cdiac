@@ -24,11 +24,11 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
 
     public $colDestination = 'local_name';
 
-    public $flagStationSk = false;
+    public $flagStationSk = true;
 
-    public $flagDateSk = false;
+    public $flagDateSk = true;
 
-    public $flagTimeSk = false;
+    public $flagTimeSk = true;
 
     /**
      * External constructor.

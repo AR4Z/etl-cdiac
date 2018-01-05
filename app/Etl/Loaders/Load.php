@@ -28,8 +28,6 @@ class Load extends LoadBase implements LoadInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-
-
         return $this;
     }
 
@@ -38,25 +36,33 @@ class Load extends LoadBase implements LoadInterface
      */
     public function run()
     {
+        #Extraer las configuraciones de llaves perimarias
         $this->select = $this->etlConfig->getKeys()->globalCastKey;
+
+        #Extraer las columnas que se deben ingrear que no estan el base de datos (keys and comment)
         $this->columns = $this->etlConfig->getKeys()->global;
 
-        //Configuración de la consulta para extraer los datos de temporal_work
+        #Configuración de la consulta para extraer los datos de temporal_work
         $this->setSelect('local_name','local_name');
 
-        //Direccionar los datos existentes a la tabla de existentes
+        #Direccionar los datos existentes a la tabla de existentes
         $this->redirectExisting();
 
-        //Insertar datos en en su respectiva fact
-        $this->insertAllDataInFact($this->selectTemporalTable());
+        #Extraer valores de la tabla temporal
+        $values = $this->selectTemporalTable();
 
-        //calcular la confienza y el soporte
+        #Insertar datos en en su respectiva fact
+        $this->insertAllDataInFact($values);
+
+        #calcular la confienza y el soporte
         $this->trustProcess();
 
-        //migrar los datos de correccion a historial de correccion
-        $this->migrateHistoricCorrection();
+        #migrar los datos de correccion a historial de correccion
+        if ($this->etlConfig->getTypeProcess() !== "Original"){
+            $this->migrateHistoricCorrection();
+        }
 
-        // Actualizar las fechas y horas del migrado
+        # Actualizar las fechas y horas del migrado
         $this->calculateSequence();
 
         return $this;
@@ -72,10 +78,19 @@ class Load extends LoadBase implements LoadInterface
         $variables= $this->etlConfig->getVarForFilter();
         $temporalSelect = '';
 
-        foreach ($variables as $variable){
-            $temporalSelect .= 'CAST('.$variable->$colOrigin.' AS float) AS '. $variable->$colDestination.', ';
-            array_push($this->columns,$variable->$colDestination);
+        if ($this->etlConfig->getTypeProcess() !== "Original"){
+            foreach ($variables as $variable){
+                $temporalSelect .= 'CAST('.$variable->$colOrigin.' AS float) AS '. $variable->$colDestination.', ';
+                array_push($this->columns,$variable->$colDestination);
+            }
+        }else{
+            foreach ($variables as $variable){
+                $temporalSelect .= $variable->$colOrigin.' AS '. $variable->$colDestination.', ';
+                array_push($this->columns,$variable->$colDestination);
+            }
         }
+
+
         $temporalSelect[strlen($temporalSelect)-2] = ' ';
         $this->select .= $temporalSelect;
 

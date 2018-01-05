@@ -44,7 +44,7 @@ class Database extends ExtractorBase implements ExtractorInterface
         # Truncar la tabla de trabajo
         $this->configureSpaceWork();
 
-        # Crear el objeto de extraccion /ExtracType
+        # Crear el objeto de extraccion /ExtracType (este posee configuraciones diferentes para local y externa)
         $this->extractTypeObject = $this->createExtractType($this->extractType,$this->etlConfig);
 
         # Insertar datos en el espacio de trabajo
@@ -60,14 +60,16 @@ class Database extends ExtractorBase implements ExtractorInterface
         );
 
         # Ingresar la llave subrrogada de la estacion
-        if (!($this->extractTypeObject)->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
+        if (($this->extractTypeObject)->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
         # Ingresar la llave subrrogada de la fecha
-        if (!($this->extractTypeObject)->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
+        if (($this->extractTypeObject)->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
         # Ingresar la llave subrrogada de la tiempo
-        if (!($this->extractTypeObject)->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
+        if (($this->extractTypeObject)->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
 
         # Ejecutar el proceso de confianza y soporte de los datos
         $trustProccess = $this->trustProcess();
+
+
 
         return $this;
     }
@@ -80,7 +82,6 @@ class Database extends ExtractorBase implements ExtractorInterface
     private function insertAllDataInTemporal($data)
     {
         $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),($this->extractTypeObject)->columns, $data);
-
         return true;
     }
 

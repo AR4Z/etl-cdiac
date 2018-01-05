@@ -82,7 +82,13 @@ class Query
         if (!($initialTime and $initialDate)){dd('Error los parametros initialTime e initialDate son obligatorios');}
         if (!($finalTime and $finalDate)){dd('Error los parametros finalDate e finalTime son obligatorios');}
 
-        $this->query->where(DB::raw("(((date_sk = $initialDate and time_sk >= $initialTime) or ( date_sk > $initialTime)) and ((date_sk = $finalDate) or (date_sk = $finalDate and time_sk <= $finalTime)))"));
+        $this->query->where('date_sk', '=', $initialDate);
+        $this->query->where('time_sk' ,'>=' ,$initialTime);
+        $this->query->orWhere('date_sk' ,'>' ,$initialDate);
+        $this->query->where('date_sk', '<' ,$finalDate);
+        $this->query->orWhere('date_sk' ,'=' ,$finalDate);
+        $this->query->where('time_sk', '<=' ,$finalTime);
+        //(((date_sk = $initialDate and time_sk >= $initialTime) or ( date_sk > $initialDate)) and ((date_sk < $finalDate) or (date_sk = $finalDate and time_sk <= $finalTime))"
 
         return $this;
     }
@@ -94,7 +100,7 @@ class Query
     public function orderBy(string $keys)
     {
         if (!$this->select){dd('Error no se puede hacer un order by sin el select');}
-        $this->query->orderby(DB::raw("concat_ws(' ',".$keys.")"), 'asc');
+        $this->query->orderby(DB::raw($keys), 'asc');
 
         return $this;
     }

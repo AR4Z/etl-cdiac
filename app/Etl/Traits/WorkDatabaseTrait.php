@@ -42,10 +42,15 @@ trait WorkDatabaseTrait
     public function getLocalData(string $connection,string $table,string $keys,string $select,string $initialDate,string $initialTime,string $finalDate,string $finalTime,int $limit = null)
     {
         $query = new Query();
-        $query->init($connection,$table)->select($select)->localWhere($initialDate,$initialTime,$finalDate,$finalTime)->limit($limit)->execute();
+        $query->init($connection,$table)->select($select)->localWhere($initialDate,$initialTime,$finalDate,$finalTime)->orderBy($keys)->limit($limit)->execute();
         //TODO -- probar la funcionalidad de este metodo --
-        dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
-        return $query->data;
+        $data = $query->data;
+        if (count($data) ==  0){
+            dd('Error : No hay Datos para esta estacion en estas fechas');
+        }
+
+        //dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
+        return $data;
     }
 
     /**
@@ -90,6 +95,7 @@ trait WorkDatabaseTrait
      */
     public function evaluateExistence($repository, $data)
     {
+
         $count = ($repository)::where('date_sk','=',$data->date_sk)
                                 ->where('station_sk','=',$data->station_sk)
                                 ->where('time_sk','=',$data->time_sk)

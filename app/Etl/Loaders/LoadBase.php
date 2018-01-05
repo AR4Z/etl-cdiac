@@ -9,20 +9,34 @@ abstract class LoadBase
 {
     use WorkDatabaseTrait,DateSkTrait,TimeSkTrait,TrustTrait;
 
+    public $redirectExist = [];
+
     /**
      *
      */
     public function redirectExisting()
     {
+        #Asegurar que el array de existentes este vacio
+        $this->redirectExist = [];
+
+        #Obtener los valores de la tabla te trabajo temporal
         $values = ($this->etlConfig->getRepositorySpaceWork())::all();
+
         foreach ($values as $value)
         {
+            #Evaluar la existencia de los valores en su respectiva fact
             if ($this->evaluateExistence($this->etlConfig->getRepositoryDestination(),$value))
             {
-                $this->insertExistTable(
-                    $this->etlConfig->getTableExist(),
-                    ($this->etlConfig->getRepositoryExist())::fill($value->toArray())->toArray());
+                #Extraer Dato existente en la fact respectiva
+                $exist = ($this->etlConfig->getRepositoryExist())::fill($value->toArray())->toArray();
 
+                #Insertar dato existente en la fact de existentes respectiva
+                $this->insertExistTable($this->etlConfig->getTableExist(),$exist);
+
+                # Documentar los valores existentes en el array de control
+                array_push($this->redirectExist, $exist);
+
+                #Eliminar los valores existentes de la tabla tenporal de trabajo
                 ($this->etlConfig->getRepositorySpaceWork())::delete($value->id);
             }
         }

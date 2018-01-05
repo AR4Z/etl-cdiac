@@ -49,5 +49,6 @@ Route::group(['prefix' => 'execute-etl','name' => 'execute-etl'], function()
 {
     Route::get('', [ 'as'=>'execute-etl','uses'=>'Etl\ExecuteEtlController@index']);
     Route::post('getStationsForNet', [ 'as'=>'execute-etl.getStationsForNet','uses'=>'Etl\ExecuteEtlController@getStationsForNet']);
+    Route::post('redirectionEtlFilter', [ 'as'=>'execute-etl.redirectionEtlFilter','uses'=>'Etl\ExecuteEtlController@redirectionEtlFilter']);
 
 });

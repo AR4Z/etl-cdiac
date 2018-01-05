@@ -10,4 +10,5 @@ class NetRepository extends EloquentRepository
     protected $repositoryId = 'rinvex.repository.uniqueid';
 
     protected $model = Net::class;
+
 }

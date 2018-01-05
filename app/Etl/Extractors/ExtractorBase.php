@@ -50,13 +50,12 @@ abstract class ExtractorBase
         $this->flagStationSk = true;
     }
 
-
     /**
      * @return bool
      */
     public function trustProcess()
     {
-        if (!$this->etlConfig->isTrustProcess()){false;}
+        if (!$this->etlConfig->isTrustProcess()){ return false;}
 
         # Calcular los datos entrantes para el preceso de confianza
 
@@ -86,8 +85,6 @@ abstract class ExtractorBase
     public function configureSpaceWork()
     {
         if ($this->truncateTemporal){($this->etlConfig->getRepositorySpaceWork())::truncate();}
-
-        //workDatabaseTrait->truncateCorrectionTable
         $this->truncateCorrectionTable();
     }
 

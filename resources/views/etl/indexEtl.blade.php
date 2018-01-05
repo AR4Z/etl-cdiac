@@ -5,11 +5,11 @@
 @section('content')
 
     <div class="col-lg-8 col-lg-offset-2">
-        <h1>Etl - Archivos Planos</h1>
+        <h1>Etl - Central de Acopio</h1>
         <br><br>
 
         <div class="row">
-            {!! Form::open(['route'=> 'plane-etl.loadFile','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label', 'enctype'=>'multipart/form-data']) !!}
+            {!! Form::open(['route'=> 'execute-etl.redirectionEtlFilter','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label', 'enctype'=>'multipart/form-data']) !!}
 
             <div class="form-group {{ $errors->has('method') ? ' has-error' : '' }}">
                 {{ Form::label('method', 'Metodo: ', ['class' => 'col-md-3 control-label']) }}
@@ -63,82 +63,83 @@
                     </div>
                 </div>
             </div>
-
-            <div class="form-group {{ $errors->has('sequence') ? ' has-error' : '' }}">
-                {{ Form::label('sequence', 'Secuencia: ', ['class' => 'col-md-3 control-label']) }}
-                <div class="col-md-9">
-                    <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
-                           data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
-                    @if ($errors->has('sequence'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('sequence') }}</strong>
-                            </span>
-                    @endif
+            <div class="" id="optional_fields" style="display: none">
+                <div class="form-group {{ $errors->has('sequence') ? ' has-error' : '' }}">
+                    {{ Form::label('sequence', 'Secuencia: ', ['class' => 'col-md-3 control-label']) }}
+                    <div class="col-md-9">
+                        <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
+                               data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
+                        @if ($errors->has('sequence'))
+                            <span class="help-block">
+                                    <strong>{{ $errors->first('sequence') }}</strong>
+                                </span>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group {{ $errors->has('trust_process') ? ' has-error' : '' }}">
-                {{ Form::label('trust_process', 'Calidad de datos: ', ['class' => 'col-md-3 control-label']) }}
-                <div class="col-md-9">
-                    <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
-                           data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
-                    @if ($errors->has('trust_process'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('trust_process') }}</strong>
-                            </span>
-                    @endif
+                <div class="form-group {{ $errors->has('trust_process') ? ' has-error' : '' }}">
+                    {{ Form::label('trust_process', 'Calidad de datos: ', ['class' => 'col-md-3 control-label']) }}
+                    <div class="col-md-9">
+                        <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
+                               data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
+                        @if ($errors->has('trust_process'))
+                            <span class="help-block">
+                                    <strong>{{ $errors->first('trust_process') }}</strong>
+                                </span>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group {{ $errors->has('serialization') ? ' has-error' : '' }}">
-                {{ Form::label('serialization', 'Serialización: ', ['class' => 'col-md-3 control-label']) }}
-                <div class="col-md-9">
-                    <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
-                           data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
-                    @if ($errors->has('serialization'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('serialization') }}</strong>
-                            </span>
-                    @endif
+                <div class="form-group {{ $errors->has('serialization') ? ' has-error' : '' }}">
+                    {{ Form::label('serialization', 'Serialización: ', ['class' => 'col-md-3 control-label']) }}
+                    <div class="col-md-9">
+                        <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
+                               data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
+                        @if ($errors->has('serialization'))
+                            <span class="help-block">
+                                    <strong>{{ $errors->first('serialization') }}</strong>
+                                </span>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group {{ $errors->has('filter_detection') ? ' has-error' : '' }}">
-                {{ Form::label('filter_detection', 'Filtro de Detección: ', ['class' => 'col-md-3 control-label']) }}
-                <div class="col-md-9">
-                    <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
-                           data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
-                    @if ($errors->has('filter_detection'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('filter_detection') }}</strong>
-                            </span>
-                    @endif
+                <div class="form-group {{ $errors->has('filter_detection') ? ' has-error' : '' }}">
+                    {{ Form::label('filter_detection', 'Filtro de Detección: ', ['class' => 'col-md-3 control-label']) }}
+                    <div class="col-md-9">
+                        <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
+                               data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
+                        @if ($errors->has('filter_detection'))
+                            <span class="help-block">
+                                    <strong>{{ $errors->first('filter_detection') }}</strong>
+                                </span>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group {{ $errors->has('filter_correction') ? ' has-error' : '' }}">
-                {{ Form::label('filter_correction', 'Filtro de Corrección: ', ['class' => 'col-md-3 control-label']) }}
-                <div class="col-md-9">
-                    <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
-                           data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
-                    @if ($errors->has('filter_correction'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('filter_correction') }}</strong>
-                            </span>
-                    @endif
+                <div class="form-group {{ $errors->has('filter_correction') ? ' has-error' : '' }}">
+                    {{ Form::label('filter_correction', 'Filtro de Corrección: ', ['class' => 'col-md-3 control-label']) }}
+                    <div class="col-md-9">
+                        <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
+                               data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
+                        @if ($errors->has('filter_correction'))
+                            <span class="help-block">
+                                    <strong>{{ $errors->first('filter_correction') }}</strong>
+                                </span>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group {{ $errors->has('load') ? ' has-error' : '' }}">
-                {{ Form::label('load', 'Cargar: ', ['class' => 'col-md-3 control-label']) }}
-                <div class="col-md-9">
-                    <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
-                           data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
-                    @if ($errors->has('load'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('load') }}</strong>
-                            </span>
-                    @endif
+                <div class="form-group {{ $errors->has('load') ? ' has-error' : '' }}">
+                    {{ Form::label('load', 'Cargar: ', ['class' => 'col-md-3 control-label']) }}
+                    <div class="col-md-9">
+                        <input type="checkbox" data-toggle="toggle" data-size="mini" class="disabled"
+                               data-on="Si" data-off="No" data-onstyle="success" data-offstyle="danger">
+                        @if ($errors->has('load'))
+                            <span class="help-block">
+                                    <strong>{{ $errors->first('load') }}</strong>
+                                </span>
+                        @endif
+                    </div>
                 </div>
             </div>
 
