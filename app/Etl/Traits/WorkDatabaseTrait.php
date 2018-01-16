@@ -170,18 +170,21 @@ trait WorkDatabaseTrait
     public function serializationCorrect($tableSpaceWork,$variables,$stationSk,$arrayValue,$date,$time,$interval)
     {
         $arr = ['station_sk'=>$stationSk,'date_sk'=>$date,'time_sk'=>$time];
+
+        #hayar las variables de la estacion a corregir
         foreach ($variables as $variable){
             if (!is_null($variable->correct_serialization)){
                 $times = [];
                 foreach ($arrayValue as $value){array_push($times,$value->time_sk);}
-                //dd($variable,$stationSk,$arrayValue,$date,$time,$interval);
                 $arr[$variable->local_name] = $this->{'Serialization'.ucwords($variable->correct_serialization)}($tableSpaceWork,$date,$times,$variable->local_name);
             }
         }
 
-        $this->serializationInsert($tableSpaceWork,$arr);
-
+        #Eliminar los valores actuales en el espacio de trabajo
         foreach ($arrayValue as $value){$this->SerializationDelete($tableSpaceWork,$value);}
+
+        #Insertar la Correcion en el espacio de trabajo
+        $this->serializationInsert($tableSpaceWork,$arr);
 
     }
     public function SerializationDelete($tableSpaceWork,$value)

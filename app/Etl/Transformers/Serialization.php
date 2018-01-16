@@ -40,8 +40,13 @@ class Serialization extends TransformBase implements TransformInterface
      */
     public function run()
     {
+        #Extraer el tiempo serializado apartir del espacio en segundos
         $this->arrayTime = $this->getSerializationTime($this->timeSpace);
+
+        #extraer los diferentes dias en la lista de fechas entradas
         $this->arrayDate = $this->getSerializationDate($this->etlConfig->getInitialDate(),$this->etlConfig->getFinalDate(), $this->dateSpace);
+
+        #Ejecutar la serializacion
         $this->serialization();
 
         return $this;
@@ -52,19 +57,24 @@ class Serialization extends TransformBase implements TransformInterface
      */
     public function serialization()
     {
+        #Se hace ciclo por cada dia en las fechas ingresadas
         foreach ($this->arrayDate as $date)
         {
+            #contar la cantidad de horas en un dia
             $count = $this->countRowForDate($this->etlConfig->getTableSpaceWork(),$date);
+
             if($count == 0){
-                $this->pushAllInserts($date);
+                $this->pushAllInserts($date); #insertar todas las horas para una fecha que no trae nunguna hora
             }else{
-                $this->cycleForTime($date);
+                $this->cycleForTime($date); #Evaluar las diferentes opciones de cada hora
             }
         }
+        #despues del proceso de evaluacion se incertan las horas que no fueron halladas en el espacio de trabajo
         $this->serializationInsert($this->etlConfig->getTableSpaceWork(),$this->inserts);
     }
 
     /**
+     * Metodo para insertar en el array que controla las inserciones en el espacio de trabajo
      * @param $date
      * @param $time
      */
@@ -80,11 +90,16 @@ class Serialization extends TransformBase implements TransformInterface
     {
         foreach ($this->arrayTime as $time)
         {
+            #obtener intervalo de evaluacion
             $intervalActual = $this->timeSpace + $time - 1;
 
+            #Evaluar cantidad en el rango actual
             $valInRangeActual = $this->getValInRange($this->etlConfig->getTableSpaceWork(),$date,$time,$intervalActual);
+
+            #Evaluar cantidad en el rango siguiente
             $valInRangeNext = $this->getValInRange($this->etlConfig->getTableSpaceWork(),$date,$intervalActual,$intervalActual + $this->timeSpace);
 
+            #Evaluar
             $this->conditionalSerialization(
                 $valInRangeActual,
                 $valInRangeNext,
@@ -126,23 +141,24 @@ class Serialization extends TransformBase implements TransformInterface
                 if ($countNext == 0){
                     #pasar ultimo actual a next
                     $this->serializationUpdate($this->etlConfig->getRepositorySpaceWork(), $valInRangeActual[$countActual-1],$date,$intervalActual + 1);
-                    unset($intervalActual[$countActual-1]);
+                    unset($valInRangeActual[$countActual-1]);
                 }
                 #Promediar en anterior
                 $this->serializationCorrect(
-                        $this->etlConfig->getTableSpaceWork(),
-                        $this->etlConfig->getVarForFilter(),
-                        $this->etlConfig->getStation()->id,
-                        $valInRangeActual,
-                        $date,
-                        $time,
-                        $intervalActual
-                    );
+                    $this->etlConfig->getTableSpaceWork(),
+                    $this->etlConfig->getVarForFilter(),
+                    $this->etlConfig->getStation()->id,
+                    $valInRangeActual,
+                    $date,
+                    $time,
+                    $intervalActual
+                );
             }
         }
     }
 
     /**
+     * Metodo para insertar un dia completo de horas
      * @param $date
      */
     public function pushAllInserts($date)
