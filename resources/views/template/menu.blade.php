@@ -1,17 +1,35 @@
 <div class="navbar-default sidebar" role="navigation">
-
-    <div class="menu-icon-container">
-        <div class="menu-icon-2 hide-show change">
-            <div class="bar1-2"></div>
-            <div class="bar2-2"></div>
-            <div class="bar3-2"></div>
-        </div>
+    <div class="sidebar-nav navbar-collapse">
+        <ul class="nav" id="side-menu">
+            <li><a href="{{ url('/') }}"><i class="fa fa-dashboard fa-fw"></i>Inicio</a></li>
+            <li>
+                <a href="#"><i class="fa fa-table fa-fw"></i> Ejecutar Proceso<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li><a href="{{ url('/plane-etl/index') }}"> Archivo plano</a></li>
+                    <li><a href="{{ url('/execute-etl') }}"> Central de Acopio</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Consultas<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li><a href="{{ url('/server-acquisition') }}">Central de Acopio</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="http://cdiac.manizales.unal.edu.co/"><i class="fa fa-files-o fa-fw"></i>
+                    Página principal
+                </a>
+                </a><span class="caret-right"></span>
+            </li>
+        </ul>
     </div>
-
+</div>
+<!--
+<div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav" id="side-menu">
             <li>
-                <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                <a href=""><i class="fa fa-dashboard fa-fw"></i>   Inicio</a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
@@ -23,7 +41,7 @@
                         <a href="morris.html">Morris.js Charts</a>
                     </li>
                 </ul>
-                <!-- /.nav-second-level -->
+
             </li>
             <li>
                 <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
@@ -53,7 +71,7 @@
                         <a href="grid.html">Grid</a>
                     </li>
                 </ul>
-                <!-- /.nav-second-level -->
+
             </li>
             <li>
                 <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
@@ -92,10 +110,10 @@
                                 <a href="#">Third Level Item</a>
                             </li>
                         </ul>
-                        <!-- /.nav-third-level -->
+
                     </li>
                 </ul>
-                <!-- /.nav-second-level -->
+
             </li>
             <li>
                 <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
@@ -107,9 +125,10 @@
                         <a href="login.html">Login Page</a>
                     </li>
                 </ul>
-                <!-- /.nav-second-level -->
+
             </li>
         </ul>
     </div>
-    <!-- /.sidebar-collapse -->
+
 </div>
+-->

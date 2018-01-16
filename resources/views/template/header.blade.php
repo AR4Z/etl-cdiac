@@ -61,10 +61,8 @@
             </nav>
         </div>
     </div>
-    <div id="bs-navbar" class="navbar-collapse collapse navigation">
-        <div class="site-url">
-            <a href="http://subdominio.unal.edu.co/">subdominio.unal.edu.co</a>
-        </div>
+    <div id="bs-navbar" class="navbar-collapse collapse navigation"><br>
+        <div class="site-url"><a href=""> Sistema de ETL (Extracción - Transformación - Carga)</a></div>
         <div class="buscador">
             <div class="gcse-searchbox-only" data-resultsUrl="http://unal.edu.co/resultados-de-la-busqueda/" data-newWindow="true"></div>
         </div>
@@ -88,10 +86,5 @@
             <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="unalOpenMenuServicios" data-target="#services">Servicios<span class="caret"> </span>
             </div>
         </div>
-        <div class="btn-group hidden-sm hidden-md hidden-lg hidden-print">
-            <div class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="unalOpenMenuPerfiles" data-target="#profiles">Perfiles<span class="caret"> </span>
-            </div>
-        </div>
     </div>
-
 </header>
