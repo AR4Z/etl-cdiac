@@ -2,20 +2,42 @@
 
 namespace App\Http\Controllers\Etl;
 
-use Facades\App\Repositories\DataWareHouse\StationDimRepository;
+use App\Repositories\DataWareHouse\StationDimRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Etl\Etl;
 use App\Jobs\EtlStationJob;
+use App\Repositories\Administrator\StationRepository;
 
 class ExecuteEtlController extends Controller
 {
+    /**
+     * valor que controla los espacios entre las fechas a filtrar (esto puede ser un parametro en el futuro)
+     * @var int
+     */
+    private $spaceDaysForFilter = 15;
+    /**
+     * @var StationRepository
+     */
+    private $stationRepository;
+    /**
+     * @var \App\Http\Controllers\Etl\StationDimRepository
+     */
+    private $stationDimRepository;
+
+
+    public function __construct(StationRepository $stationRepository,StationDimRepository $stationDimRepository)
+    {
+        $this->stationRepository = $stationRepository;
+        $this->stationDimRepository = $stationDimRepository;
+    }
+
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        $differentNetName = StationDimRepository::getDifferentNetName();
+        $differentNetName = $this->stationDimRepository->getDifferentNetName();
         $differentNetName['ALL'] = '---------- TODAS LAS REDES ------------ ';
         return view('etl.indexEtl',compact('differentNetName'));
     }
@@ -27,7 +49,7 @@ class ExecuteEtlController extends Controller
     public function getStationsForNet(Request $request)
     {
         $data = $request['net_name'];
-        $stations = ($data == 'ALL') ? StationDimRepository::getIdAndNameStations() : StationDimRepository::getStationsForNet($data);
+        $stations = ($data == 'ALL') ? $this->stationDimRepository->getIdAndNameStations() : $this->stationDimRepository->getStationsForNet($data);
         $flag = count($stations)+1;
         $stations[$flag] = clone $stations[0];
         $stations[$flag]->id = 0;
@@ -39,22 +61,75 @@ class ExecuteEtlController extends Controller
     public function redirectionEtlFilter(Request $request)
     {
         $data = $request->all();
+
         $data['sequence'] = true; // (ESTO DEBE CAMBIAR) actualmente todas las estaciones tienen secuencia
 
         if ($data['net_name'] == "ALL"){
-
             if ($data['station_id'] == 0){
+                dd('escoji todas las estaciones todas las redes');
                 $this->executeAllStations($data['method'],$data['start'],$data['end'],$data['sequence']);
             }else{
+                dd('escogi una estacion de todas las estaciones');
                 $this->executeOneStation($data['method'],null,$data['station_id'],$data['start'],$data['end'],$data['sequence']);
             }
         }else{
-           $this->executeOneStation($data['method'],null,$data['station_id'],$data['start'],$data['end'],$data['sequence']);
-        }
+            if ($data['station_id'] == 0){
+                $this->executeOneNetAllStations($data['method'],$data['net_name'],$data['station_id'],$data['start'],$data['end'],$data['sequence']);
+            }else{
+                $this->executeOneStation($data['method'],null,$data['station_id'],$data['start'],$data['end'],$data['sequence']);
+            }
+         }
 
+        dd('stop final');
+    }
+    public function executeOneNetAllStations(string $method, string $net, string $station, string $initialDate, string $finalDate, bool $sequence)
+    {
+        #obtener una estacion basado en un nombre de red
+        $oneStationForNet = $this->stationDimRepository->getIdStationForName($net)->id;
+
+        #obtener un id de estacion basado en un id de estacion
+        $netId = $this->stationRepository->getIdNetForIdStation($oneStationForNet)->id;
+
+        #obtener todas las estaciones de $netId
+        $stationForNet = $this->stationRepository->getStationForNetEtlActive($netId);
+
+        foreach ($stationForNet as $station){
+            $this->executeOneStation($method,  $station->owner_net_id,  $station->id,  $initialDate,  $finalDate,  $sequence);
+        }
     }
 
-    public function executeOneStation(string $method,string $net = null,string $station,string $initialDate,string $finalDate,bool $sequence)
+    /**
+     * @param string $method
+     * @param string|null $net
+     * @param string $station
+     * @param string $initialDate
+     * @param string $finalDate
+     * @param bool $sequence
+     */
+    public function executeOneStation(string $method, string $net = null, string $station, string $initialDate, string $finalDate, bool $sequence)
+    {
+        $spaceDays = $this->spaceDaysForFilter;
+        $dateOne = date_create($initialDate);
+        $dateTwo = date_create($finalDate);
+        $countDays = date_diff($dateOne, $dateTwo)->days;
+        $last = $countDays % $spaceDays;
+        $control = intval($countDays / $spaceDays);
+        $i = 0;
+        while ($i <= $control)
+        {
+            if ($i == $control){$spaceDays = $last +1 ;}
+
+            $dateInit = (clone ($dateOne))->format('Y-m-d');
+            $dateFin = date_add(clone ($dateOne), date_interval_create_from_date_string('+'.$spaceDays -1 .' days'));
+            $dateOne =  date_add(clone ($dateFin), date_interval_create_from_date_string('+1 days'));
+            $dateFin = $dateFin->format('Y-m-d');
+
+            $this->dispatchJob($method, $net, $station,  $dateInit,  $dateFin,  $sequence);
+            $i++;
+        }
+    }
+
+    public function dispatchJob(string $method, string $net = null, string $station, string $initialDate, string $finalDate, bool $sequence)
     {
         $work = null;
         $work2 = null;
@@ -72,7 +147,6 @@ class ExecuteEtlController extends Controller
                 break;
         }
 
-
         if (!is_null($work)){
             EtlStationJob::dispatch($work);
             //$work->run();
@@ -82,14 +156,14 @@ class ExecuteEtlController extends Controller
             EtlStationJob::dispatch($work2);
             //$work2->run();
         }
-
-        dd($work,$work2);
     }
 
     public function executeAllStations(string $method, string $initialDate,string $finalDate,bool $sequence)
     {
-        dd('entre all stations');
-
+        $stationEtlTrue = $this->stationRepository->getStationsForEtl();
+        foreach ($stationEtlTrue as $station){
+            $this->executeOneStation($method, $station->owner_net_id,  $station->id,  $initialDate,  $finalDate,  $sequence);
+        }
     }
 
     /**
@@ -162,5 +236,6 @@ class ExecuteEtlController extends Controller
     {
 
     }
+
 
 }

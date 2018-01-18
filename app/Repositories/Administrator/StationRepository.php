@@ -73,4 +73,42 @@ class StationRepository extends EloquentRepository
                     ->join('original_state','original_state.station_id','=','station.id')
                     ->get();
     }
+
+    public function getStationsForFilterETL()
+    {
+        return $this->queryBuilder()
+                ->select('station.id','owner_net_id')
+                ->join('filter_state','station.id','=', 'filter_state.station_id')
+                ->where('station.etl_active',true)
+                ->where('filter_state.updated',false)
+                ->get();
+    }
+
+    public function getStationsForOriginalETL()
+    {
+        return $this->queryBuilder()
+            ->select('station.id','owner_net_id')
+            ->join('original_state','station.id','=', 'filter_state.station_id')
+            ->where('station.etl_active',true)
+            ->where('filter_state.updated',false)
+            ->get();
+    }
+
+    public function getStationsForEtl()
+    {
+        return $this->select('id','owner_net_id')->where('etl_active',true)->get();
+    }
+    public function getIdNetForIdStation($stationId)
+    {
+        return $this->select('owner_net_id as id')->where('id',$stationId)->first();
+    }
+    public function getStationForNetEtlActive($netId)
+    {
+        return $this->queryBuilder()
+                    ->select('station.id','station.owner_net_id','station.station_type_id','station.name')
+                    ->join('station_type','station.station_type_id','=', 'station_type.id')
+                    ->where('station.owner_net_id',$netId)
+                    ->whereNotNull('station_type.etl_method')
+                    ->get();
+    }
 }

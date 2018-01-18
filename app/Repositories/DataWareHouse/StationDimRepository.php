@@ -28,4 +28,9 @@ class StationDimRepository extends EloquentRepository
         return $this->select('station_sk as id','name')->orderby('name','ASC')->get();
     }
 
+    public function getIdStationForName($netName)
+    {
+        return $this->select('station_sk as id')->where('net_name',$netName)->first();
+    }
+
 }
