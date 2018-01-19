@@ -11,4 +11,9 @@ class NetRepository extends EloquentRepository
 
     protected $model = Net::class;
 
+    public function getNetName()
+    {
+        return $this->select('id','name')->where('etl_active',true)->pluck('name','id');
+    }
+
 }

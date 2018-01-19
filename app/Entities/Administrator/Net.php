@@ -15,7 +15,7 @@ class Net extends Model
     protected $fillable = [
         'connection_id','name','description','administrator_name', 'center_latitude_degrees','center_latitude_minutes','center_latitude_seconds',
         'center_latitude_direction', 'center_longitude_degrees', 'center_longitude_minutes', 'center_longitude_seconds',
-        'center_longitude_direction', 'rt_active', 'map_zoom', 'original_updated', 'filtered_updated'
+        'center_longitude_direction', 'rt_active', 'etl_active','map_zoom', 'original_updated', 'filtered_updated'
     ];
 
     protected $hidden = [

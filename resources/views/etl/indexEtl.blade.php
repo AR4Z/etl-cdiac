@@ -158,11 +158,11 @@
     <script>
         $('#net_name').change(function () {
             $('#station_id').empty();
-            var net_name = $(this).val();
-            if ( net_name === ''){
+            var id = $(this).val();
+            if ( id === ''){
                 $('#station_id').empty();
             }else{
-                $.post('/etl-cdiac/execute-etl/getStationsForNet',{ net_name: net_name },function (values) {
+                $.post('/etl-cdiac/execute-etl/getStationsForNet',{ id: id },function (values) {
                     $('#station_id').populateSelect(values);
                 },'json');
             }

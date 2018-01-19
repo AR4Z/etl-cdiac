@@ -84,6 +84,19 @@ class StationRepository extends EloquentRepository
                 ->get();
     }
 
+    public function getStationEtlActive()
+    {
+        return $this->queryBuilder()
+                ->select('station.id', 'station.name')
+                ->join('net','station.owner_net_id','=','net.id')
+                ->join('station_type','station.station_type_id','=', 'station_type.id')
+                ->whereNotNull('station_type.etl_method')
+                ->where('station.etl_active',true)
+                ->where('net.etl_active',true)
+                ->orderby('station.name','ASC')
+                ->get();
+    }
+
     public function getStationsForOriginalETL()
     {
         return $this->queryBuilder()

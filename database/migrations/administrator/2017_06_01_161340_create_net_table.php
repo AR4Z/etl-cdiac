@@ -31,6 +31,7 @@ class CreateNetTable extends Migration
             $table->double('center_longitude_seconds')->nullable();
             $table->string('center_longitude_direction')->nullable();
             $table->boolean('rt_active')->default(false);
+            $table->boolean('etl_active')->default(false);
             $table->integer('map_zoom')->nullable();
             $table->boolean('original_updated')->default(false);
             $table->boolean('filtered_updated')->default(false);

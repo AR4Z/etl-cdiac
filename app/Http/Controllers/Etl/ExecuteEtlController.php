@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Etl;
 
-use App\Repositories\DataWareHouse\StationDimRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Etl\Etl;
 use App\Jobs\EtlStationJob;
-use App\Repositories\Administrator\StationRepository;
+use App\Repositories\DataWareHouse\StationDimRepository;
+use App\Repositories\Administrator\{StationRepository,NetRepository};
 
 class ExecuteEtlController extends Controller
 {
@@ -24,12 +24,27 @@ class ExecuteEtlController extends Controller
      * @var \App\Http\Controllers\Etl\StationDimRepository
      */
     private $stationDimRepository;
+    /**
+     * @var NetRepository
+     */
+    private $netRepository;
 
 
-    public function __construct(StationRepository $stationRepository,StationDimRepository $stationDimRepository)
+    /**
+     * ExecuteEtlController constructor.
+     * @param StationRepository $stationRepository
+     * @param StationDimRepository $stationDimRepository
+     * @param NetRepository $netRepository
+     */
+    public function __construct(
+        StationRepository $stationRepository,
+        StationDimRepository $stationDimRepository,
+        NetRepository $netRepository
+    )
     {
         $this->stationRepository = $stationRepository;
         $this->stationDimRepository = $stationDimRepository;
+        $this->netRepository = $netRepository;
     }
 
     /**
@@ -37,8 +52,8 @@ class ExecuteEtlController extends Controller
      */
     public function index()
     {
-        $differentNetName = $this->stationDimRepository->getDifferentNetName();
-        $differentNetName['ALL'] = '---------- TODAS LAS REDES ------------ ';
+        $differentNetName = $this->netRepository->getNetName();
+        $differentNetName[0] = '---------- TODAS LAS REDES ------------ ';
         return view('etl.indexEtl',compact('differentNetName'));
     }
 
@@ -48,8 +63,13 @@ class ExecuteEtlController extends Controller
      */
     public function getStationsForNet(Request $request)
     {
-        $data = $request['net_name'];
-        $stations = ($data == 'ALL') ? $this->stationDimRepository->getIdAndNameStations() : $this->stationDimRepository->getStationsForNet($data);
+        $data = $request['id'];
+        #no retornar nada cuando el parametro enviado es null
+        if (is_null($data)){return;}
+        #obtener las estaciones dependiando de la red
+        $stations =  ($data == 0) ? $this->stationRepository->getStationEtlActive() : $this->stationRepository->getStationForNetEtlActive($data);
+
+        #insertar la opcion de incluir las estaciones
         $flag = count($stations)+1;
         $stations[$flag] = clone $stations[0];
         $stations[$flag]->id = 0;
@@ -58,18 +78,19 @@ class ExecuteEtlController extends Controller
         return $stations;
     }
 
+    /**
+     * @param Request $request
+     */
     public function redirectionEtlFilter(Request $request)
     {
         $data = $request->all();
 
-        $data['sequence'] = true; // (ESTO DEBE CAMBIAR) actualmente todas las estaciones tienen secuencia
+        $data['sequence'] = true; #(ESTO DEBE CAMBIAR) actualmente todas las estaciones tienen secuencia
 
-        if ($data['net_name'] == "ALL"){
+        if ($data['net_name'] == 0){
             if ($data['station_id'] == 0){
-                dd('escoji todas las estaciones todas las redes');
                 $this->executeAllStations($data['method'],$data['start'],$data['end'],$data['sequence']);
             }else{
-                dd('escogi una estacion de todas las estaciones');
                 $this->executeOneStation($data['method'],null,$data['station_id'],$data['start'],$data['end'],$data['sequence']);
             }
         }else{
@@ -82,6 +103,15 @@ class ExecuteEtlController extends Controller
 
         dd('stop final');
     }
+
+    /**
+     * @param string $method
+     * @param string $net
+     * @param string $station
+     * @param string $initialDate
+     * @param string $finalDate
+     * @param bool $sequence
+     */
     public function executeOneNetAllStations(string $method, string $net, string $station, string $initialDate, string $finalDate, bool $sequence)
     {
         #obtener una estacion basado en un nombre de red
@@ -129,6 +159,14 @@ class ExecuteEtlController extends Controller
         }
     }
 
+    /**
+     * @param string $method
+     * @param string|null $net
+     * @param string $station
+     * @param string $initialDate
+     * @param string $finalDate
+     * @param bool $sequence
+     */
     public function dispatchJob(string $method, string $net = null, string $station, string $initialDate, string $finalDate, bool $sequence)
     {
         $work = null;
@@ -158,7 +196,13 @@ class ExecuteEtlController extends Controller
         }
     }
 
-    public function executeAllStations(string $method, string $initialDate,string $finalDate,bool $sequence)
+    /**
+     * @param string $method
+     * @param string $initialDate
+     * @param string $finalDate
+     * @param bool $sequence
+     */
+    public function executeAllStations(string $method, string $initialDate, string $finalDate, bool $sequence)
     {
         $stationEtlTrue = $this->stationRepository->getStationsForEtl();
         foreach ($stationEtlTrue as $station){
