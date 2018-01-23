@@ -48,13 +48,13 @@
             </div>
 
             <div class="form-group {{ $errors->has('date_range') ? ' has-error' : '' }}">
-                {{ Form::label('date_range', 'Rango de Fechas: ', ['class' => 'col-lg-3 control-label']) }}
+                {{ Form::label('date_range', 'Rango de Fechas: ', ['class' => 'col-lg-3 control-label','required']) }}
                 <div class="col-lg-9" id="sandbox-container">
                     <div class="input-daterange input-group" id="datepicker">
                         <span class="input-group-addon">De</span>
-                        <input type="text" class="input-sm form-control" name="start" />
-                        <span class="input-group-addon">Hasta</span>
-                        <input type="text" class="input-sm form-control" name="end" />
+                        <input required  type="text" class="input-sm form-control" name="start"/>
+                        <span   class="input-group-addon">Hasta</span>
+                        <input required type="text" class="input-sm form-control" name="end" />
                         @if ($errors->has('date_range'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('date_range') }}</strong>
