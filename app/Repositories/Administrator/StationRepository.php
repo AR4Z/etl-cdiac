@@ -77,34 +77,40 @@ class StationRepository extends EloquentRepository
     public function getStationsForFilterETL()
     {
         return $this->queryBuilder()
-                ->select('station.id','owner_net_id')
-                ->join('filter_state','station.id','=', 'filter_state.station_id')
-                ->where('station.etl_active',true)
-                ->where('filter_state.updated',false)
-                ->get();
-    }
-
-    public function getStationEtlActive()
-    {
-        return $this->queryBuilder()
-                ->select('station.id', 'station.name')
-                ->join('net','station.owner_net_id','=','net.id')
-                ->join('station_type','station.station_type_id','=', 'station_type.id')
-                ->whereNotNull('station_type.etl_method')
-                ->where('station.etl_active',true)
-                ->where('net.etl_active',true)
-                ->orderby('station.name','ASC')
-                ->get();
+                    ->select('station.id','station.name','station.owner_net_id','filter_state.current_date','filter_state.current_time')
+                    ->join('filter_state','station.id','=', 'filter_state.station_id')
+                    ->join('station_type','station.station_type_id','=', 'station_type.id')
+                    ->whereNotNull('station_type.etl_method')
+                    ->where('station.etl_active',true)
+                    ->where('filter_state.updated',false)
+                    ->orderby('station.id','ASC')
+                    ->get();
     }
 
     public function getStationsForOriginalETL()
     {
         return $this->queryBuilder()
-            ->select('station.id','owner_net_id')
-            ->join('original_state','station.id','=', 'filter_state.station_id')
-            ->where('station.etl_active',true)
-            ->where('filter_state.updated',false)
-            ->get();
+                    ->select('station.id','station.name','station.owner_net_id','original_state.current_date','original_state.current_time')
+                    ->join('original_state','station.id','=', 'original_state.station_id')
+                    ->join('station_type','station.station_type_id','=', 'station_type.id')
+                    ->whereNotNull('station_type.etl_method')
+                    ->where('station.etl_active',true)
+                    ->where('original_state.updated',false)
+                    ->orderby('station.id','ASC')
+                    ->get();
+    }
+
+    public function getStationEtlActive()
+    {
+        return $this->queryBuilder()
+                    ->select('station.id', 'station.name')
+                    ->join('net','station.owner_net_id','=','net.id')
+                    ->join('station_type','station.station_type_id','=', 'station_type.id')
+                    ->whereNotNull('station_type.etl_method')
+                    ->where('station.etl_active',true)
+                    ->where('net.etl_active',true)
+                    ->orderby('station.name','ASC')
+                    ->get();
     }
 
     public function getStationsForEtl()

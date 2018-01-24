@@ -15,9 +15,10 @@ class ExecuteEtlController extends Controller
      */
     public function index()
     {
-        $differentNetName = $this->netRepository->getNetName();
-        $differentNetName[0] = '---------- TODAS LAS REDES ------------ ';
-        return view('etl.indexEtl',compact('differentNetName'));
+        $this->ejecuteTestJob();
+        //$differentNetName = $this->netRepository->getNetName();
+        //$differentNetName[0] = '---------- TODAS LAS REDES ------------ ';
+        //return view('etl.indexEtl',compact('differentNetName'));
     }
 
     /**

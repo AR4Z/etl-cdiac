@@ -10,4 +10,7 @@ class OriginalStateRepository extends EloquentRepository
     protected $repositoryId = 'rinvex.repository.uniqueid';
 
     protected $model = OriginalState::class;
+
+
+
 }

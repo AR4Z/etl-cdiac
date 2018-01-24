@@ -2,12 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\EtlGeneralProcessJob;
+use App\Jobs\EtlYesterdayJob;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use App\Etl\Traits\BaseExecuteEtl;
 
 class EtlCommand extends Command
 {
+    use BaseExecuteEtl;
     /**
      * The name and signature of the console command.
      *
@@ -38,7 +40,11 @@ class EtlCommand extends Command
      */
     public function handle()
     {
-        dispatch(new EtlGeneralProcessJob());
+        #iniciar el proceso para las estaciones presentes en la tabla de originales
+        $this->executeAllOriginalYesterday();
+
+        #iniciar el proceso para las estaciones presentes en la tabla de filtrados
+        $this->executeAllFilterYesterday();
     }
 }
 

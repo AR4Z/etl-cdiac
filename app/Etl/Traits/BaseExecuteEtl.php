@@ -3,7 +3,7 @@
 namespace app\Etl\Traits;
 
 use App\Etl\Etl;
-use App\Jobs\EtlStationJob;
+use App\Jobs\{EtlStationJob,EtlYesterdayJob};
 use App\Repositories\DataWareHouse\StationDimRepository;
 use App\Repositories\Administrator\{StationRepository,NetRepository};
 
@@ -27,6 +27,12 @@ trait BaseExecuteEtl
      */
     private $netRepository;
 
+    /**
+     * BaseExecuteEtl constructor.
+     * @param StationRepository $stationRepository
+     * @param StationDimRepository $stationDimRepository
+     * @param NetRepository $netRepository
+     */
     function __construct(
         StationRepository $stationRepository,
         StationDimRepository $stationDimRepository,
@@ -182,6 +188,39 @@ trait BaseExecuteEtl
             ->extract('Database',['trustProcess'=> false,'extractType' => 'External', 'initialDate' => $initialDate,'initialTime' => '00:00:00','finalDate' =>  $finalDate,'finalTime' => '23:59:59'])
             ->transform('Original')
             ->load();
+    }
+
+    /**
+     *
+     */
+    public function executeAllOriginalYesterday()
+    {
+        $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
+        $stations = $this->stationRepository->getStationsForOriginalETL();
+        foreach ($stations as $station)
+        {
+            $this->executeOneStation('Original',  $station->owner_net_id,  $station->id,  $date, $date ,  true);
+        }
+
+    }
+
+    /**
+     *
+     */
+    public function executeAllFilterYesterday()
+    {
+        $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
+        $stations = $this->stationRepository->getStationsForFilterETL();
+        foreach ($stations as $station)
+        {
+            $this->executeOneStation('Original',  $station->owner_net_id,  $station->id,  $date, $date ,  true);
+        }
+
+    }
+
+    public function ejecuteTestJob()
+    {
+        EtlYesterdayJob::dispatch();
     }
 
 

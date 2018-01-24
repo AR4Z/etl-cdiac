@@ -7,16 +7,15 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Storage;
-use app\Etl\Traits\BaseExecuteEtl;
+use App\Etl\Traits\BaseExecuteEtl;
 
-
-class EtlGeneralProcessJob implements ShouldQueue
+class EtlYesterdayJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, BaseExecuteEtl;
 
     /**
      * Create a new job instance.
+     *
      */
     public function __construct()
     {
@@ -30,6 +29,10 @@ class EtlGeneralProcessJob implements ShouldQueue
      */
     public function handle()
     {
+        #iniciar el proceso para las estaciones presentes en la tabla de originales
+        $this->executeAllOriginalYesterday();
 
+        #iniciar el proceso para las estaciones presentes en la tabla de filtrados
+        $this->executeAllFilterYesterday();
     }
 }
