@@ -36,9 +36,9 @@ trait BaseExecuteEtl
     function __construct(
         StationRepository $stationRepository,
         StationDimRepository $stationDimRepository,
-        NetRepository $netRepository)
+        NetRepository $netRepository
+    )
     {
-
         $this->stationRepository = $stationRepository;
         $this->stationDimRepository = $stationDimRepository;
         $this->netRepository = $netRepository;
@@ -209,7 +209,7 @@ trait BaseExecuteEtl
      */
     public function executeAllFilterYesterday()
     {
-        $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
+         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForFilterETL();
         foreach ($stations as $station)
         {
@@ -218,7 +218,7 @@ trait BaseExecuteEtl
 
     }
 
-    public function ejecuteTestJob()
+    public function executeTestJob()
     {
         EtlYesterdayJob::dispatch();
     }

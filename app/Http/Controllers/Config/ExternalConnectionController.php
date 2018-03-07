@@ -15,20 +15,30 @@ use App\Etl\Etl;
 use App\Repositories\Config\ConnectionRepository;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\EtlStationJob;
+use App\Etl\Traits\BaseExecuteEtl;
+use App\Repositories\Administrator\StationRepository;
 
 
 
 class ExternalConnectionController extends Controller
 {
+    use BaseExecuteEtl;
+
     private $connectionRepository;
+    /**
+     * @var StationRepository
+     */
+    private $stationRepository;
 
     /**
      * ExternalConnectionController constructor.
      * @param ConnectionRepository $connectionRepository
+     * @param StationRepository $stationRepository
      */
-    function __construct(ConnectionRepository $connectionRepository)
+    function __construct(ConnectionRepository $connectionRepository,StationRepository $stationRepository)
     {
         $this->connectionRepository = $connectionRepository;
+        $this->stationRepository = $stationRepository;
     }
 
     /**
@@ -38,9 +48,11 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
+        $this->executeAllOriginalYesterday($this->stationRepository);
+       // dd($this->stationRepository);
         //dd($this->connectionRepository->getCacheLifetime());
         //dd($this->connectionRepository->where('id', 1)->first());
-
+        /*
         $jobEtl = Etl::start('Original', null, null,1,false) // sequense true
                         ->extract('Database',['trustProcess'=> false,'extractType' => 'External', 'initialDate' => '2015-11-05','initialTime' => '00:00:00','finalDate' => '2015-11-06','finalTime' => '23:59:59']) //'initialTime' => '05:00:00','finalTime' => '10:59:59'
                         ->transform('Serialization')
@@ -53,7 +65,7 @@ class ExternalConnectionController extends Controller
         EtlStationJob::dispatch($jobEtl);
 
         dd($jobEtl,'Hola');
-
+        */
     }
 
     /**

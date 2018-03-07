@@ -2,9 +2,10 @@
 
 namespace App\Repositories\Administrator;
 
-use DB;
+
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Station;
+use DB;
 
 class StationRepository extends EloquentRepository
 {
