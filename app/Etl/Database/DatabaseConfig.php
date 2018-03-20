@@ -21,7 +21,6 @@ trait DatabaseConfig
      */
     public function searchExternalConnection($connection, $extractTable = null,$defaultConnection = 'external_connection')
     {
-        DB::disconnect($defaultConnection);
         $var = $this->configExternalConnection($connection,$defaultConnection);
 
         if (!is_null($extractTable)){
@@ -46,14 +45,14 @@ trait DatabaseConfig
         $i = 0;
         $flag = false;
         $limit = count($connections);
+
         while ($i < $limit and !$flag){
             $var = $this->configExternalConnection($connections[$i],$defaultConnection);
             if ($var){
-                $flag = $this->validateExistenceExternalTable($extractTable,$defaultConnection);
+                $flag = $this->validateExistenceExternalTable($extractTable,$defaultConnection,$i);
             }
             $i++;
         }
-
         return $flag;
     }
 
@@ -62,13 +61,12 @@ trait DatabaseConfig
      * @param $defaultConnection
      * @return bool
      */
-    private function validateExistenceExternalTable(string $extractTable,$defaultConnection)
+    private function validateExistenceExternalTable(string $extractTable,$defaultConnection,$position = null)
     {
         $tables = DB::connection($defaultConnection)->select('SHOW TABLES');
         $arr= [];
         foreach ($tables as $table){array_push($arr,array_values((array)$table)[0]);}
-
-        return (! array_search($extractTable,$arr) == false);
+        return (!(array_search($extractTable,$arr) == false));
     }
 
     /**
@@ -81,6 +79,8 @@ trait DatabaseConfig
 
       private function configExternalConnection($connection,$defaultConnection)
       {
+          DB::disconnect($defaultConnection);
+
           if ($connection->id == 1){
               return false;
           }
@@ -97,6 +97,7 @@ trait DatabaseConfig
           Config::set("database.connections.".$defaultConnection.".database", $connection->database);
           Config::set("database.connections.".$defaultConnection.".username", $connection->username);
           Config::set("database.connections.".$defaultConnection.".password", $connection->password);
+
 
           //dd(Config::get('database.connections.'.$defaultConnection));
           return true;

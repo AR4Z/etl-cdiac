@@ -7,6 +7,8 @@ use App\Console\Commands\MigrateInPath;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\EtlYesterdayJob;
+use App\Etl\Traits\BaseExecuteEtl;
 
 class Kernel extends ConsoleKernel
 {
@@ -28,7 +30,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-       $schedule->command('Etl:Start')->dailyAt('01:00');
+       //$schedule->command('Etl:Start')->dailyAt('01:00');
+       // $schedule->job(new EtlYesterdayJob)->everyMinute();
+        /*
+        $schedule->call(function(){
+            $this->executeAllOriginalYesterday();
+        })->everyMinute();*/
     }
 
     /**
