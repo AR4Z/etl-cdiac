@@ -49,7 +49,7 @@ trait DatabaseConfig
         while ($i < $limit and !$flag){
             $var = $this->configExternalConnection($connections[$i],$defaultConnection);
             if ($var){
-                $flag = $this->validateExistenceExternalTable($extractTable,$defaultConnection,$i);
+                $flag = $this->validateExistenceExternalTable($extractTable,$defaultConnection);
             }
             $i++;
         }
@@ -61,7 +61,7 @@ trait DatabaseConfig
      * @param $defaultConnection
      * @return bool
      */
-    private function validateExistenceExternalTable(string $extractTable,$defaultConnection,$position = null)
+    private function validateExistenceExternalTable(string $extractTable,$defaultConnection)
     {
         $tables = DB::connection($defaultConnection)->select('SHOW TABLES');
         $arr= [];
@@ -97,7 +97,6 @@ trait DatabaseConfig
           Config::set("database.connections.".$defaultConnection.".database", $connection->database);
           Config::set("database.connections.".$defaultConnection.".username", $connection->username);
           Config::set("database.connections.".$defaultConnection.".password", $connection->password);
-
 
           //dd(Config::get('database.connections.'.$defaultConnection));
           return true;
