@@ -32,9 +32,11 @@ class CreateStationTable extends Migration
             $table->string('longitude_direction')->nullable();
             $table->boolean('rt_active')->default(false);
             $table->boolean('etl_active')->default(false);
+            $table->boolean('alert_a25')->default(false);
             $table->string('image_1')->nullable();
             $table->string('image_2')->nullable();
             $table->string('pdf_file')->nullable();
+
 
             $table->timestamps();
 

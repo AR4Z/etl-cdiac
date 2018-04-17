@@ -45,7 +45,6 @@ trait DatabaseConfig
         $i = 0;
         $flag = false;
         $limit = count($connections);
-
         while ($i < $limit and !$flag){
             $var = $this->configExternalConnection($connections[$i],$defaultConnection);
             if ($var){

@@ -27,8 +27,6 @@ class CreateConnectionTable extends Migration
             $table->boolean('etl_active')->default(false);
 
             $table->timestamps();
-
-
         });
     }
 

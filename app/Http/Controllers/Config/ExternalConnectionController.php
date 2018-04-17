@@ -48,7 +48,7 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
-        $this->executeAllOriginalYesterday($this->stationRepository);
+        $this->executeAllOriginalYesterday();
        // dd($this->stationRepository);
         //dd($this->connectionRepository->getCacheLifetime());
         //dd($this->connectionRepository->where('id', 1)->first());
