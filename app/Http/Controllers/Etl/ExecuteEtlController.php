@@ -15,10 +15,10 @@ class ExecuteEtlController extends Controller
      */
     public function index()
     {
-        $this->executeTestJob();
-        //$differentNetName = $this->netRepository->getNetName();
-        //$differentNetName[0] = '---------- TODAS LAS REDES ------------ ';
-        //return view('etl.indexEtl',compact('differentNetName'));
+        //$this->executeTestJob();
+        $differentNetName = $this->netRepository->getNetName();
+        $differentNetName[0] = '---------- TODAS LAS REDES ------------ ';
+        return view('etl.indexEtl',compact('differentNetName'));
     }
 
     /**
@@ -47,25 +47,29 @@ class ExecuteEtlController extends Controller
      */
     public function redirectionEtlFilter(Request $request)
     {
+        $jobs = false; # TODO : Debe entrar por parametro
         $data = $request->all();
+        $data['sequence'] = true; # TODO: Dede entrar por parametro
+        $data['trustProcess'] = false; # TODO: Debe entrar por parametro
 
-        $data['sequence'] = true; #(ESTO DEBE CAMBIAR) actualmente todas las estaciones tienen secuencia
-
+        $extract = ['method' => 'Database','optionExtract' => ['trustProcess'=> $data['trustProcess'], 'initialDate' => $data['start'],'initialTime' => '00:00:00','finalDate' =>  $data['end'],'finalTime' => '23:59:59']];
+        $transform = [];
+        $load = [];
         if ($data['net_name'] == 0){
             if ($data['station_id'] == 0){
-                $this->executeAllStations($data['method'],$data['start'],$data['end'],$data['sequence']);
+                $response = $this->executeAllStations($data['method'],$data['sequence'],$extract,$transform,$load,$jobs);
             }else{
-                $this->executeOneStation($data['method'],null,$data['station_id'],$data['start'],$data['end'],$data['sequence']);
+                $response = $this->executeOneStation($data['method'],null,$data['station_id'],$data['sequence'],$extract,$transform,$load,$jobs);
             }
         }else{
             if ($data['station_id'] == 0){
-                $this->executeOneNetAllStations($data['method'],$data['net_name'],$data['station_id'],$data['start'],$data['end'],$data['sequence']);
+                $response = $this->executeOneNetAllStations($data['method'],$data['net_name'],$data['sequence'],$extract,$transform,$load,$jobs);
             }else{
-                $this->executeOneStation($data['method'],null,$data['station_id'],$data['start'],$data['end'],$data['sequence']);
+                $response = $this->executeOneStation($data['method'],null,$data['station_id'], $data['sequence'],$extract,$transform,$load,$jobs);
             }
          }
 
-        dd('stop final');
+        dd('stop final',$response);
     }
 
 

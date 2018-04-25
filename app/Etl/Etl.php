@@ -44,7 +44,7 @@ class Etl
      * @return Etl
      */
 
-  public function etlConfig(Etl $etl, String $typeProcess, $net,$connection, int $station, bool $sequence)
+  public function etlConfig(Etl $etl, String $typeProcess, $net = null,$connection = null, int $station, bool $sequence)
   {
     $etl->etlConfig = new EtlConfig($typeProcess, $net,$connection, $station,$sequence);
     return $etl;

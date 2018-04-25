@@ -11,9 +11,12 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Etl\Etl;
+use App\Etl\Traits\BaseExecuteEtl;
+
 
 class PlaneEtlController extends Controller
 {
+    use BaseExecuteEtl;
     /**
      *
      */
@@ -118,15 +121,18 @@ class PlaneEtlController extends Controller
                 }
             }
         }
+        # se buscan las varia
         foreach ($variablesStation as $item => $value) {
             $val = array_search($value['excel_name'],$variablesLoad);
             if ($val === false){$flag = false;array_push($notExist,$value['excel_name'].' : '.$value['description']);}
         }
+
+        $excelName = array_column($variablesStation, 'excel_name');
+
         foreach ($variablesLoad as $item => $value) {
-            $val = array_search($value,$variablesStation);
+            $val = array_search($value,$excelName);
             if ($val === false){$flag = false;array_push($notFind,$value);}
         }
-
         return ['response' => $flag,'notExist'=>$notExist,'notFind'=> $notFind];
     }
 
@@ -139,20 +145,24 @@ class PlaneEtlController extends Controller
      */
     private function executePlaneEtl($method, $sequence, $stationId, $fileName)
     {
+        $trustProcess = false; # TODO : Debe entrar por parametro
+        $jobs = false; # TODO : Debe entrar por parametro
         $station = StationRepository::select('*')->where('id',$stationId)->first();
         if (is_null($station)){return false;}
         $sequence=  ($sequence == 'false') ? false : true;
 
-        if ( $method == 'Filter' || $method == 'Original')
-        {
-            $migrate = Etl::start($method, null, null,$stationId,$sequence)
-                            ->extract('Csv',['fileName' => $fileName])
-                            ->run();
-        }else{
+        $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $fileName]];
+        $transform = [];
+        $load = [];
 
-        }
+        $response = $this->executeOneStation('Original',$station->owner_net_id,$stationId,$sequence,$extract,$transform,$load,false);
 
-        dd($migrate);
+        $etlConfig = $response['work1']->etlConfig;
+        $extract2 =  ['method' => 'Database','optionExtract' =>['trustProcess'=> $trustProcess,'extractType' => 'Local', 'initialDate' => $etlConfig->getInitialDate(), 'initialTime' => $etlConfig->getInitialTime(), 'finalDate' =>  $etlConfig->getFinalDate(), 'finalTime' => $etlConfig->getFinalTime()]];
+
+        $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,false,$extract2,[],[], $jobs);
+
+        dd($response,$response2);
 
     }
 }

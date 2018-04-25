@@ -29,11 +29,6 @@ class CreateOriginalAirFactTable extends Migration
             $table->string('o3_estan_ugm3')->nullable();
             $table->string('pm10')->nullable();
             $table->string('pm2_5')->nullable();
-            $table->string('evapotranspiration')->nullable();
-            $table->string('evapotranspiration')->nullable();
-            $table->string('evapotranspiration')->nullable();
-            $table->string('evapotranspiration')->nullable();
-            $table->string('evapotranspiration')->nullable();
             $table->longText('comment')->nullable();
 
             $table->primary(['station_sk', 'date_sk', 'time_sk'], 'original_air_fact_pk');

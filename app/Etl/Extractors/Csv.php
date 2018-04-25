@@ -30,7 +30,6 @@ class Csv extends ExtractorBase implements ExtractorInterface
 
     public $flagTimeSk = false;
 
-
     /**
      * Csv constructor.
      * @param $etlConfig
@@ -75,6 +74,9 @@ class Csv extends ExtractorBase implements ExtractorInterface
         # Ingresar la llave subrrogada de la tiempo
         if (!$this->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
 
+        # Editar las fechas y horas iniciales y finales dependiendo de los registros engresados por archivo plano
+        $this->configureDateTimes();
+
         # Ejecutar el proceso de confianza y soporte de los datos
         $trustProcess = $this->trustProcess();
 
@@ -108,5 +110,22 @@ class Csv extends ExtractorBase implements ExtractorInterface
         foreach ($configCsv as $key => $value){$arr[$key] = $value['local_name'];}
         foreach ($this->etlConfig->getVarForFilter() as $value){$arr[$value->excel_name] = $value->local_name ;}
         return $arr;
+    }
+
+    private function configureDateTimes()
+    {
+        $repository = $this->etlConfig->getRepositorySpaceWork();
+
+        $initVal = $this->getInitialDataInSpaceWork($repository);
+        $finalVal = $this->getFinalDataInSpaceWork($repository);
+
+        if (!is_null($initVal)){
+            $this->etlConfig->setInitialDate($initVal->date);
+            $this->etlConfig->setInitialTime($initVal->time);
+        }
+        if (!is_null($finalVal)){
+            $this->etlConfig->setFinalDate($finalVal->date);
+            $this->etlConfig->setFinalTime($finalVal->time);
+        }
     }
 }

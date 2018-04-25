@@ -27,6 +27,8 @@ trait BaseExecuteEtl
      */
     private $netRepository;
 
+    private $jobsActive = false;
+
     /**
      * BaseExecuteEtl constructor.
      * @param StationRepository $stationRepository
@@ -47,12 +49,14 @@ trait BaseExecuteEtl
     /**
      * @param string $method
      * @param string $net
-     * @param string $station
-     * @param string $initialDate
-     * @param string $finalDate
      * @param bool $sequence
+     * @param array $extract
+     * @param array $transform
+     * @param array $load
+     * @param bool $jobs
+     * @return array
      */
-    public function executeOneNetAllStations(string $method, string $net, string $station, string $initialDate, string $finalDate, bool $sequence)
+    public function executeOneNetAllStations(string $method, string $net, bool $sequence,array $extract = [], array $transform = [], array $load = [],bool $jobs = false)
     {
         #obtener una estacion basado en un nombre de red
         $oneStationForNet = $this->stationDimRepository->getIdStationForName($net)->id;
@@ -63,131 +67,222 @@ trait BaseExecuteEtl
         #obtener todas las estaciones de $netId
         $stationForNet = $this->stationRepository->getStationForNetEtlActive($netId);
 
+        $response = [];
+
         foreach ($stationForNet as $station){
-            $this->executeOneStation($method,  $station->owner_net_id,  $station->id,  $initialDate,  $finalDate,  $sequence);
+            $res = $this->executeOneStation($method, $station->owner_net_id,  $station->id,$sequence,$extract,$transform,$load,$jobs);
+            array_push($response,$res);
         }
+        return $response;
     }
 
     /**
      * @param string $method
      * @param string|null $net
      * @param string $station
-     * @param string $initialDate
-     * @param string $finalDate
      * @param bool $sequence
+     * @param array $extract
+     * @param array $transform
+     * @param array $load
+     * @param bool $jobs
+     * @return array
      */
-    public function executeOneStation(string $method, string $net = null, string $station, string $initialDate, string $finalDate, bool $sequence)
+    public function executeOneStation(
+        string $method,
+        string $net = null,
+        string $station,
+        bool $sequence = false,
+        array $extract = [],
+        array $transform = [],
+        array $load = [],
+        bool $jobs = false
+    )
     {
-        $spaceDays = $this->spaceDaysForFilter;
-        $dateOne = date_create($initialDate);
-        $dateTwo = date_create($finalDate);
-        $countDays = date_diff($dateOne, $dateTwo)->days;
-        $last = $countDays % $spaceDays;
-        $control = intval($countDays / $spaceDays);
-        $i = 0;
-        while ($i <= $control)
-        {
-            if ($i == $control){$spaceDays = $last +1 ;}
+        $response = null;
+        $this->jobsActive = $jobs;
 
-            $dateInit = (clone ($dateOne))->format('Y-m-d');
-            $dateFin = date_add(clone ($dateOne), date_interval_create_from_date_string('+'.$spaceDays -1 .' days'));
-            $dateOne =  date_add(clone ($dateFin), date_interval_create_from_date_string('+1 days'));
-            $dateFin = $dateFin->format('Y-m-d');
+        if($extract['method'] == 'Csv'){
+            $response =  $this->dispatchJob($method, $net, $station,$sequence,$extract,$transform,$load);
+        }else{
+            $spaceDays = $this->spaceDaysForFilter;
+            $dateOne = date_create($extract['optionExtract']['initialDate']);
+            $dateTwo = date_create($extract['optionExtract']['finalDate']);
+            $countDays = date_diff($dateOne, $dateTwo)->days;
+            $last = $countDays % $spaceDays;
+            $control = intval($countDays / $spaceDays);
+            $i = 0;
+            $arr = [];
+            while ($i <= $control)
+            {
+                if ($i == $control){$spaceDays = $last +1 ;}
 
-            $this->dispatchJob($method, $net, $station,  $dateInit,  $dateFin,  $sequence);
-            $i++;
+                $extract['optionExtract']['initialDate'] = (clone ($dateOne))->format('Y-m-d');
+                $dateFin = date_add(clone ($dateOne), date_interval_create_from_date_string('+'.$spaceDays -1 .' days'));
+                $dateOne =  date_add(clone ($dateFin), date_interval_create_from_date_string('+1 days'));
+                $extract['optionExtract']['finalDate'] = $dateFin->format('Y-m-d');
+
+                $res = $this->dispatchJob($method, $net, $station,$sequence,$extract,$transform,$load);
+                array_push($arr,$res);
+                $i++;
+            }
+            $response = $arr;
         }
+
+        return $response;
     }
 
     /**
      * @param string $method
      * @param string|null $net
      * @param string $station
-     * @param string $initialDate
-     * @param string $finalDate
      * @param bool $sequence
+     * @param array $extract
+     * @param array $transform
+     * @param array $load
+     * @return array
      */
-    public function dispatchJob(string $method, string $net = null, string $station, string $initialDate, string $finalDate, bool $sequence)
+    public function dispatchJob(string $method, string $net = null, string $station, bool $sequence, array $extract = [], array $transform = [], array $load = [])
     {
         $work = null;
         $work2 = null;
-
+        $arr =  ['execution' => 'asynchronous','work1' => null, 'work2' => null];
         switch ($method) {
             case "Filter":
-                $work = $this->filterJob($net,null,intval($station),$initialDate, $finalDate,$sequence);
+                $work = $this->filterJob($net,null,intval($station),$sequence,$extract,$transform,$load);
                 break;
             case "Original":
-                $work = $this->OriginalJob($net,null,intval($station),$initialDate, $finalDate,$sequence);
+                $work = $this->OriginalJob($net,null,intval($station),$sequence,$extract,$transform,$load);
                 break;
             case "All":
-                $work = $this->OriginalJob($net,null,intval($station),$initialDate, $finalDate,$sequence);
-                $work2 = $this->filterJob($net,null,intval($station),$initialDate, $finalDate,$sequence);
+                $work = $this->OriginalJob($net,null,intval($station),$sequence,$extract,$transform,$load);
+                $work2 = $this->filterJob($net,null,intval($station),$sequence,$extract,$transform,$load);
                 break;
         }
 
-        if (!is_null($work)){
-            EtlStationJob::dispatch($work);
-            //$work->run();
+        if ($this->jobsActive){
+            if (!is_null($work)){ EtlStationJob::dispatch($work); $arr['work1'] = 'Se envio un trabajo a las pilas'; }
+            if (!is_null($work2)){ EtlStationJob::dispatch($work2); $arr['work2'] = 'Se envio un trabajo a las pilas'; }
+        }else{
+            if (!is_null($work)){
+                $work->run();
+                $arr['execution'] = 'Synchronous'; $arr['work1'] = $work;
+            }
+            if (!is_null($work2)){
+                $work2->run();
+                $arr['execution'] = 'Synchronous'; $arr['work2'] = $work2;
+            }
         }
 
-        if (!is_null($work2)){
-            EtlStationJob::dispatch($work2);
-            //$work2->run();
-        }
+        return $arr;
     }
 
     /**
-     * @param string $method
-     * @param string $initialDate
-     * @param string $finalDate
-     * @param bool $sequence
+     * @param string $method --- el metodo de quiera a ejecutar puede ser Firter, Original o ALL
+     * @param bool $sequence --- Si es necesario que se actualise la tabla de control del ETL originalState o filterSate
+     * @param array $extract
+     * @param array $transform
+     * @param array $load
+     * @param bool $jobs --- true determina que se ejecuta en una pila asincrona, false para ejecusion en  formato sincrono
+     * @return array
      */
-    public function executeAllStations(string $method, string $initialDate, string $finalDate, bool $sequence)
+
+    public function executeAllStations(string $method, bool $sequence, array $extract = [], array $transform = [], array $load = [],bool $jobs)
     {
         $stationEtlTrue = $this->stationRepository->getStationsForEtl();
+        $arr= []; $response = null;
         foreach ($stationEtlTrue as $station){
-            $this->executeOneStation($method, $station->owner_net_id,  $station->id,  $initialDate,  $finalDate,  $sequence);
+            $response = $this->executeOneStation($method, $station->owner_net_id,  $station->id, $sequence,$extract,$transform,$load,$jobs);
+            array_push($arr,$response);
         }
+
+        return $arr;
     }
 
     /**
      * @param null $net
      * @param null $connection
      * @param $station
-     * @param string $initialDate
-     * @param string $finalDate
      * @param bool $sequence
+     * @param array $extract
+     * @param array $transform
+     * @param array $load
      * @return Etl
      */
-    public function filterJob($net = null, $connection = null, $station, string $initialDate, string $finalDate, bool $sequence)//array $extractOptions,bool $serialization,bool $detection,bool $correction
+    public function filterJob(
+        $net = null,
+        $connection = null,
+        $station,
+        bool $sequence,
+        array $extract = [],
+        array $transform = [],
+        array $load = []
+    )# array $extractOptions,bool $serialization,bool $detection,bool $correction
     {
-        $etl = new Etl();
+        $serialization = true; # TODO : Esto debe entrar por parametro.
 
-        return $etl->start('Filter', $net, $connection,$station,$sequence)
-            ->extract('Database',['trustProcess'=> true,'extractType' => 'Local', 'initialDate' => $initialDate,'initialTime' => '00:00:00','finalDate' =>  $finalDate,'finalTime' => '23:59:59'])
-            ->transform('Serialization')
-            ->transform('FilterDetection')
-            ->transform('FilterCorrection')
-            ->load();
+        $etl = Etl::start('Filter', $net, $connection,$station,$sequence);
+
+         if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Csv'){
+             $extract['optionExtract']['extractType'] = 'Local';
+         }
+
+         $etl->extract($extract['method'],$extract['optionExtract']);
+
+         if ($serialization){ $etl->transform('Serialization'); }
+
+         if (empty($transform)){
+            $etl->transform('FilterDetection');
+            $etl->transform('FilterCorrection');
+         }else{
+             foreach ($transform as $trans){
+                 $etl->transform($trans['method'],$trans['optionTransform']);
+             }
+         }
+
+         if (empty($load)){ $etl->load(); } else { $etl->load($load['method'],$load['optionLoad']);}
+
+        return $etl;
     }
 
     /**
      * @param null $net
      * @param null $connection
      * @param $station
-     * @param string $initialDate
-     * @param string $finalDate
      * @param bool $sequence
+     * @param array $extract
+     * @param array $transform
+     * @param array $load
      * @return Etl
      */
-    public function OriginalJob($net = null, $connection = null, $station, string $initialDate, string $finalDate, bool $sequence)//array $extractOptions,bool $serialization,bool $detection,bool $correction
+    public function OriginalJob(
+        $net = null,
+        $connection = null,
+        $station,
+        bool $sequence,
+        array $extract = [],
+        array $transform = [],
+        array $load = []
+    )//array $extractOptions,bool $serialization,bool $detection,bool $correction
     {
-        $etl = new Etl();
+        $etl = Etl::start('Original', $net, $connection,$station,$sequence);
 
-        return $etl->start('Original', $net, $connection,$station,$sequence)
-            ->extract('Database',['trustProcess'=> false,'extractType' => 'External', 'initialDate' => $initialDate,'initialTime' => '00:00:00','finalDate' =>  $finalDate,'finalTime' => '23:59:59'])
-            ->transform('Original')
-            ->load();
+        if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Csv'){
+            $extract['optionExtract']['extractType'] = 'External';
+        }
+
+        $etl->extract($extract['method'],$extract['optionExtract']);
+
+        if (empty($transform)){
+            $etl->transform('Original');
+        }else{
+            foreach ($transform as $trans){
+                $etl->transform($trans['method'],$trans['optionTransform']);
+            }
+        }
+
+        if (empty($load)){ $etl->load(); } else { $etl->load($load['method'],$load['optionLoad']);}
+
+        return $etl;
     }
 
     /**
@@ -195,13 +290,23 @@ trait BaseExecuteEtl
      */
     public function executeAllOriginalYesterday()
     {
+        $jobs = true;
+        $trustProcess = false;
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForOriginalETL();
         foreach ($stations as $station)
         {
-            $this->executeOneStation('Original',  $station->owner_net_id,  $station->id,  $date, $date ,  true);
+            $this->executeOneStation(
+                'Original',
+                $station->owner_net_id,
+                $station->id,
+                true,
+                ['method' => 'Database', 'optionExtract' => ['trustProcess'=> $trustProcess,'extractType' => 'External', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],
+                [],
+                [],
+                $jobs
+            );
         }
-
     }
 
     /**
@@ -209,19 +314,28 @@ trait BaseExecuteEtl
      */
     public function executeAllFilterYesterday()
     {
-         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
+        $jobs = true;
+        $trustProcess = false;
+        $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForFilterETL();
         foreach ($stations as $station)
         {
-            $this->executeOneStation('Original',  $station->owner_net_id,  $station->id,  $date, $date ,  true);
+            $this->executeOneStation(
+                'Filter',
+                $station->owner_net_id,
+                $station->id,
+                true,
+                ['method' => 'Database','optionExtract' =>['trustProcess'=> $trustProcess,'extractType' => 'Local', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],
+                [],
+                [],
+                $jobs
+            );
         }
-
     }
 
     public function executeTestJob()
     {
         EtlYesterdayJob::dispatch();
     }
-
 
 }

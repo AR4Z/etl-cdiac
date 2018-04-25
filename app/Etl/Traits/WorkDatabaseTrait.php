@@ -95,7 +95,6 @@ trait WorkDatabaseTrait
      */
     public function evaluateExistence($repository, $data)
     {
-
         $count = ($repository)::where('date_sk','=',$data->date_sk)
                                 ->where('station_sk','=',$data->station_sk)
                                 ->where('time_sk','=',$data->time_sk)
@@ -233,6 +232,16 @@ trait WorkDatabaseTrait
     public function truncateCorrectionTable()
     {
         TemporaryCorrectionRepository::truncate();
+    }
+
+    public function getInitialDataInSpaceWork($repository)
+    {
+        return ($repository)::select('*')->orderByRaw("date_sk ASC, time_sk ASC")->first();
+    }
+
+    public function getFinalDataInSpaceWork($repository)
+    {
+        return ($repository)::select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
     }
 
 

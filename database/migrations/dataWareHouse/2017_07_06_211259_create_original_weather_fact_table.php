@@ -32,11 +32,6 @@ class CreateOriginalWeatherFactTable extends Migration
             $table->string('barometric_pressure')->nullable();
             $table->string('evapotranspiration')->nullable();
             $table->string('solar_radiation')->nullable();
-            $table->string('name')->nullable();
-            $table->string('name')->nullable();
-            $table->string('name')->nullable();
-            $table->string('name')->nullable();
-            $table->string('name')->nullable();
             $table->longText('comment')->nullable();
 
             $table->primary(['station_sk', 'date_sk', 'time_sk'], 'original_weather_fact_pk');
