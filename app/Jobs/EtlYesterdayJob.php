@@ -33,6 +33,6 @@ class EtlYesterdayJob implements ShouldQueue
         $this->executeAllOriginalYesterday();
 
         #iniciar el proceso para las estaciones presentes en la tabla de filtrados
-        $this->executeAllFilterYesterday();
+        //$this->executeAllFilterYesterday();
     }
 }

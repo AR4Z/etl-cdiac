@@ -4,8 +4,8 @@ namespace app\Etl\Traits;
 
 use App\Etl\Etl;
 use App\Jobs\{EtlStationJob,EtlYesterdayJob};
-use App\Repositories\DataWareHouse\StationDimRepository;
-use App\Repositories\Administrator\{StationRepository,NetRepository};
+use Facades\App\Repositories\DataWareHouse\StationDimRepository;
+use Facades\App\Repositories\Administrator\{StationRepository,NetRepository};
 
 trait BaseExecuteEtl
 {
@@ -291,16 +291,18 @@ trait BaseExecuteEtl
     public function executeAllOriginalYesterday()
     {
         $jobs = true;
-        $trustProcess = false;
+        $trustProcess = false; # TODO : Esto debe ser true
+        $sequence = false; # TODO : Esto debe ser true
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForOriginalETL();
+
         foreach ($stations as $station)
         {
             $this->executeOneStation(
                 'Original',
                 $station->owner_net_id,
                 $station->id,
-                true,
+                $sequence,
                 ['method' => 'Database', 'optionExtract' => ['trustProcess'=> $trustProcess,'extractType' => 'External', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],
                 [],
                 [],
@@ -315,7 +317,8 @@ trait BaseExecuteEtl
     public function executeAllFilterYesterday()
     {
         $jobs = true;
-        $trustProcess = false;
+        $trustProcess = false; # TODO : Esto debe ser true
+        $sequence = false; # TODO : Esto debe ser true
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForFilterETL();
         foreach ($stations as $station)
@@ -324,7 +327,7 @@ trait BaseExecuteEtl
                 'Filter',
                 $station->owner_net_id,
                 $station->id,
-                true,
+                $sequence,
                 ['method' => 'Database','optionExtract' =>['trustProcess'=> $trustProcess,'extractType' => 'Local', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],
                 [],
                 [],

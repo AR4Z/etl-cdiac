@@ -46,7 +46,8 @@ trait WorkDatabaseTrait
         //TODO -- probar la funcionalidad de este metodo --
         $data = $query->data;
         if (count($data) ==  0){
-            dd('Error : No hay Datos para esta estacion en estas fechas');
+            //dd('Error : No hay Datos para esta estacion en estas fechas');
+            echo ("Error : No hay Datos para esta estacion  en estas fechas: $initialDate $initialTime -- $finalDate $finalTime");
         }
 
         //dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
@@ -78,10 +79,12 @@ trait WorkDatabaseTrait
 
         DB::connection($connection)->statement($insert);
     }
+
     /**
      * @param string $connection
      * @param string $table
      * @param array $data
+     * @return
      */
     public function insertDataEncode(string $connection, string $table, $data = [])
     {

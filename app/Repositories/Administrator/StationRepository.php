@@ -131,4 +131,9 @@ class StationRepository extends EloquentRepository
                     ->whereNotNull('station_type.etl_method')
                     ->get();
     }
+
+    public function countReportData($station)
+    {
+
+    }
 }

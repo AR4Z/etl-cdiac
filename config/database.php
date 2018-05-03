@@ -113,6 +113,19 @@ return [
             'engine'    => null,
         ],
 
+        'auditory' => [
+            'driver'    => env('DB_DRIVER_AUDITORY', 'pgsql'),
+            'host'      => env('DB_HOST_AUDITORY', '127.0.0.1'),
+            'port'      => env('DB_PORT_AUDITORY', '5432'),
+            'database'  => env('DB_AUDITORY', 'forge'),
+            'username'  => env('DB_USERNAME_AUDITORY', 'forge'),
+            'password'  => env('DB_PASSWORD_AUDITORY', ''),
+            'charset'   => 'utf8',
+            'prefix'    => '',
+            'schema'    => 'public',
+            'sslmode'   => 'prefer',
+        ],
+
     ],
 
     /*

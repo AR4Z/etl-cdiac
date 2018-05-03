@@ -19,7 +19,7 @@ trait DatabaseConfig
      * @param string $defaultConnection
      * @return bool
      */
-    public function searchExternalConnection($connection, $extractTable = null,$defaultConnection = 'external_connection')
+    public function searchExternalConnection($connection = null, $extractTable = null,$defaultConnection = 'external_connection')
     {
         $var = $this->configExternalConnection($connection,$defaultConnection);
 
