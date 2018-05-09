@@ -317,10 +317,11 @@ trait BaseExecuteEtl
     public function executeAllFilterYesterday()
     {
         $jobs = true;
-        $trustProcess = false; # TODO : Esto debe ser true
+        $trustProcess = true; # TODO : Esto debe ser true
         $sequence = false; # TODO : Esto debe ser true
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForFilterETL();
+
         foreach ($stations as $station)
         {
             $this->executeOneStation(

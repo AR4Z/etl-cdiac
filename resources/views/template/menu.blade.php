@@ -13,6 +13,7 @@
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Consultas<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li><a href="{{ url('/server-acquisition') }}">Central de Acopio</a></li>
+                    <li><a href="{{ url('/search-missing') }}">Datos Faltantes</a></li>
                 </ul>
             </li>
             <li>

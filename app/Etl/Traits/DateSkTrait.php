@@ -9,6 +9,7 @@ Trait DateSkTrait
 {
     /**
      * @param $date
+     * @return
      */
     public function calculateDateSk($date)
     {

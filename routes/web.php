@@ -52,3 +52,10 @@ Route::group(['prefix' => 'execute-etl','name' => 'execute-etl'], function()
     Route::post('redirectionEtlFilter', [ 'as'=>'execute-etl.redirectionEtlFilter','uses'=>'Etl\ExecuteEtlController@redirectionEtlFilter']);
 
 });
+
+Route::group(['prefix' => 'search-missing','name' => 'search-missing'], function()
+{
+    Route::get('', [ 'as'=>'search-missing','uses'=>'Etl\SearchMissingData@index']);
+    Route::post('search-data', [ 'as'=>'search-missing.search-data','uses'=>'Etl\SearchMissingData@searchData']);
+    Route::post('stationsForFactTable', [ 'as'=>'search-missing.stationsForFactTable','uses'=>'Etl\SearchMissingData@stationsForFactTable']);
+});

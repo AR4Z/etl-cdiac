@@ -32,5 +32,4 @@ class StationDimRepository extends EloquentRepository
     {
         return $this->select('station_sk as id')->where('net_name',$netName)->first();
     }
-
 }

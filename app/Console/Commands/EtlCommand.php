@@ -35,6 +35,8 @@ class EtlCommand extends Command
      */
     private $stationRepository;
 
+    # php artisan Etl:Star
+
     /**
      * Create a new command instance.
      * @param EtlYesterdayJob $etlYesterdayJob

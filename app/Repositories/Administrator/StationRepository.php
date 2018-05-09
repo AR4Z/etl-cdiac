@@ -29,16 +29,19 @@ class StationRepository extends EloquentRepository
     }
 
     /**
-     * @param $stationId
+     * @param int $stationId
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
 
     public function findRelationship(int $stationId)
     {
         return $this->createModel()->with(['originalState','filterState','typeStation'])->find($stationId);
     }
+
     /**
      * @param $stationId
+     * @return
      */
     public function findVarForFilter($stationId)
     {
@@ -84,7 +87,9 @@ class StationRepository extends EloquentRepository
                     ->whereNotNull('station_type.etl_method')
                     ->where('station.etl_active',true)
                     ->where('filter_state.updated',false)
+                    ->whereNotNull('station.table_db_name')
                     ->orderby('station.id','ASC')
+                    //->limit(1)
                     ->get();
     }
 
@@ -97,8 +102,11 @@ class StationRepository extends EloquentRepository
                     ->whereNotNull('station_type.etl_method')
                     ->where('station.etl_active',true)
                     ->where('original_state.updated',false)
+                    ->whereNotNull('station.table_db_name')
                     ->orderby('station.id','ASC')
+                    //->limit(1)
                     ->get();
+
     }
 
     public function getStationEtlActive()
@@ -130,6 +138,39 @@ class StationRepository extends EloquentRepository
                     ->where('station.owner_net_id',$netId)
                     ->whereNotNull('station_type.etl_method')
                     ->get();
+    }
+
+    public function getStationsForTypology($type)
+    {
+        return $this->queryBuilder()
+            ->select('station.id as id','station.name as name')
+            ->join('station_type','station.station_type_id','=', 'station_type.id')
+            ->where('station_type.etl_method',$type)
+            ->orderby('name','ASC')
+            ->get();
+    }
+
+    public function getIdStationsForTypology($type)
+    {
+        return $this->queryBuilder()
+                ->select('station.id')
+                ->join('station_type','station.station_type_id','=', 'station_type.id')
+                ->where('station_type.etl_method',$type)
+                ->pluck('id')
+                ->toArray();
+    }
+
+    public function countMissingDataForStation($fact_table,$station_id){
+        return DB::connection('data_warehouse')
+                    ->table($fact_table)
+                    ->select(DB::raw("station_dim.station_sk, station_dim.name, date_dim.date_sk, date_dim.date, count($fact_table.time_sk)"))
+                    ->where("$fact_table.station_sk", '=',$station_id)
+                    ->join('station_dim', $fact_table.'.station_sk', '=', 'station_dim.station_sk')
+                    ->join('date_dim', $fact_table.'.date_sk', '=', 'date_dim.date_sk')
+                    ->groupBy("station_dim.station_sk", "station_dim.name", "date_dim.date_sk", "date_dim.date")
+                    ->orderBY('date_dim.date_sk')
+                    ->get()
+                    ->toArray();
     }
 
     public function countReportData($station)
