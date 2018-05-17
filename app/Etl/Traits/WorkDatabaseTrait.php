@@ -49,7 +49,6 @@ trait WorkDatabaseTrait
             //dd('Error : No hay Datos para esta estacion en estas fechas');
             echo ("Error : No hay Datos para esta estacion  en estas fechas: $initialDate $initialTime -- $finalDate $finalTime");
         }
-
         //dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
         return $data;
     }
@@ -74,7 +73,14 @@ trait WorkDatabaseTrait
     public function insertData(string $connection, string $table, $columns = [], $data = [])
     {
         $insert = "INSERT INTO ".$table." (".implode(',',$columns).") values ";
-        foreach ($data as $can){$insert .= "('".implode("' ,'",(array)$can)."'),";}
+
+        foreach ($data as $can){
+            $insert .= "( ";
+            foreach ($can as $column){ $insert .= (is_null($column)) ? "NULL ," : "'$column'," ;}
+            $insert[strlen($insert)-1] = ' ';
+            $insert .= "),";
+            //$insert .= "('".implode("','",(array)$can)."'),";
+        }
         $insert[strlen($insert)-1] = ' ';
 
         DB::connection($connection)->statement($insert);

@@ -230,7 +230,7 @@ trait BaseExecuteEtl
 
          if ($serialization){ $etl->transform('Serialization'); }
 
-         if (empty($transform)){
+         if (count($transform) == 0){
             $etl->transform('FilterDetection');
             $etl->transform('FilterCorrection');
          }else{
@@ -239,7 +239,7 @@ trait BaseExecuteEtl
              }
          }
 
-         if (empty($load)){ $etl->load(); } else { $etl->load($load['method'],$load['optionLoad']);}
+         if (count($load) == 0){ $etl->load(); } else { $etl->load($load['method'],$load['optionLoad']);}
 
         return $etl;
     }

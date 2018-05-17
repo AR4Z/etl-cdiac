@@ -69,8 +69,6 @@ class Database extends ExtractorBase implements ExtractorInterface
         # Ejecutar el proceso de confianza y soporte de los datos
         $trustProccess = $this->trustProcess();
 
-
-
         return $this;
     }
 

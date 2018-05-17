@@ -84,7 +84,7 @@ abstract class ExtractorBase
      */
     public function configureSpaceWork()
     {
-        if ($this->truncateTemporal){($this->etlConfig->getRepositorySpaceWork())::truncate();}
+        ($this->etlConfig->getRepositorySpaceWork())::truncate();
         $this->truncateCorrectionTable();
     }
 

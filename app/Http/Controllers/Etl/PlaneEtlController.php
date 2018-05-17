@@ -48,40 +48,56 @@ class PlaneEtlController extends Controller
      */
     public function loadFileErrors(Request $request)
     {
-        dd($request->all());
+        $config = json_decode($request["config"]);
+        $fileName = $request["name"];
+        /*
+         *  Execute Factory ETL
+         *  @param  Method, Sequence, Starion Id, File Name
+       */
+        $this->executePlaneEtl($config->method,$config->sequence,$config->station_id,$fileName);
+
+        # Retornar a la vista de genracion de reportes
+        # TODO
+        dd('termine');
     }
 
     public function loadFile(EtlPlaneRequest $request)
     {
         $variablesStation = $this->getVariablesStation($request['station_id']);
         $etlType = StationRepository::getStation($request['station_id'])->typeStation->etl_method;
-
         $file = $request->file('file');
+        $enter = $request->all();
+
+        # Asignar un nombre unico para el archivo entrante
         $name = time().'.'.$file->getClientOriginalExtension();
 
-        if ($file->getClientOriginalExtension() == 'csv'){
-            Storage::disk('public')->put($name,  \File::get($file));
-            $variablesLoad = ((((Excel::load(storage_path().'/app/public/'.$name)->get())->first())->keys())->toArray());
+        if ($file->getClientOriginalExtension() != 'csv'){ return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]); }
 
-            $validate = $this->validateVariablesLoad($variablesLoad,$variablesStation,$etlType);
-            //dd($validate);
-            if (!$validate['response']){
-                $station = StationRepository::find($request['station_id']);
-                return view('etl.displayPlaneErrors')
+        # Guardar el archivo en el servidor
+        Storage::disk('public')->put($name,  \File::get($file));
+
+        # Obtener la primera fila que corresponde a los encabezados del archivo csv
+        $variablesLoad = ((((Excel::load(storage_path().'/app/public/'.$name)->get())->first())->keys())->toArray());
+
+        # Validar columnas de entrada con las columnas registradas para la estacion
+        $validate = $this->validateVariablesLoad($variablesLoad,$variablesStation,$etlType);
+
+        if (!$validate['response']){
+            return view('etl.displayPlaneErrors')
                         ->with('validate',$validate)
-                        ->with('station',$station)
+                        ->with('config',json_encode($enter))
                         ->with('name',$name)
                         ->withErrors(['file'=> ['','']]);
-            }
-            //Ejecutar El factori de la etl
-            // parametros( nombre del archivo, orden de las variables, typo de estacion, estacion)
-            $enter = $request->all();
-            $this->executePlaneEtl($enter['method'],$enter['sequence'],$enter['station_id'],$name);
-        }else{
-            return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]);
         }
 
+        /*
+         *  Execute Factory ETL
+         *  @param  Method, Sequence, Starion Id, File Name
+         */
+        $this->executePlaneEtl($enter['method'],$enter['sequence'],$enter['station_id'],$name);
 
+        # Retornar a la vista de genracion de reportes
+        # TODO
     }
 
     /**
@@ -148,13 +164,15 @@ class PlaneEtlController extends Controller
         $trustProcess = false; # TODO : Debe entrar por parametro
         $jobs = false; # TODO : Debe entrar por parametro
         $station = StationRepository::select('*')->where('id',$stationId)->first();
+        $sequence =  ($sequence == 'false') ? false : true;
+
         if (is_null($station)){return false;}
-        $sequence=  ($sequence == 'false') ? false : true;
 
         $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $fileName]];
         $transform = [];
         $load = [];
 
+        # La Opcion originales no puede ojecutarse por medio de jobs pues se necesitan datos para poder ejecutar el proceso de filtrado.
         $response = $this->executeOneStation('Original',$station->owner_net_id,$stationId,$sequence,$extract,$transform,$load,false);
 
         $etlConfig = $response['work1']->etlConfig;

@@ -22,7 +22,7 @@ class Csv extends ExtractorBase implements ExtractorInterface
 
     public $extractType = null;
 
-    public  $truncateTemporal = true;
+    public $truncateTemporal = true;
 
     public $flagStationSk = false;
 
@@ -56,14 +56,15 @@ class Csv extends ExtractorBase implements ExtractorInterface
         $this->method = $method;
     }
 
-
     public function run()
     {
-        # Truncar la tabla de trabajo
-        $this->configureSpaceWork();
+        if ($this->truncateTemporal){
+            # Truncar la tabla de trabajo
+            $this->configureSpaceWork();
 
-        #Leer e insertar datos en base de datos
-        $this->loadFile();
+            #Leer e insertar datos en base de datos
+            $this->loadFile();
+        }
 
         # Ingresar la llave subrrogada de la estacion
         if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}

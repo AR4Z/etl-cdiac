@@ -11,7 +11,7 @@ class FilterDetection extends TransformBase implements TransformInterface
 
     public $etlConfig = null;
 
-    protected $paramSearch = ['-'];
+    protected $paramSearch = ["-","''"];
 
 
     /**
@@ -33,7 +33,7 @@ class FilterDetection extends TransformBase implements TransformInterface
 
         foreach ($varFilter as $value){
 
-            // Convertir valores extraños a null
+            # Convertir valores extraños a null
             $this->updateForNull($this->etlConfig->getTableSpaceWork(),$value->local_name,$this->paramSearch);
 
             // detectar los valores que sobrepasan los limites

@@ -60,7 +60,7 @@
                         </ul>
                         <div>
                             <h5>+ Si preciona en 'continuar' la(s) variable(s) faltante(s) será(n) tomada(s) como null.</h5>
-                            <h5>+ Tambien puede arreglar el archivo y presionar en 'volver a cargar'.</h5>
+                            <h5>+ Puede arreglar el archivo y presionar en 'volver a cargar'.</h5>
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@
                         <br>
                         <div>
                             {!! Form::open(['route'=> 'plane-etl.loadFileErrors','method'=> 'POST']) !!}
-                                {{ Form::hidden('station', $station) }}
+                                {{ Form::hidden('config', $config) }}
                                 {{ Form::hidden('name', $name) }}
                                 <div class="">
                                     <a href="{{ route('plane-etl.index') }}" class="btn btn-danger pull-left">Volver a Cargar</a>
