@@ -10,31 +10,6 @@
 
         <div class="col-lg-10 col-lg-offset-1">
             {!! Form::open(['route'=> 'plane-etl.loadFile','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label', 'enctype'=>'multipart/form-data']) !!}
-
-            <div class="form-group {{ $errors->has('method') ? ' has-error' : '' }}">
-                {{ Form::label('method', 'Metodo: ', ['class' => 'col-md-2 control-label']) }}
-                <div class="col-md-10">
-                    {!! Form::select('method', ['Filter' => 'Filtrar', 'Original'=>'Original','All'=> 'Original + Filtrar'] , null ,['class' => 'form-control', 'id'=> 'method', 'required']) !!}
-                    @if ($errors->has('method'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('method') }}</strong>
-                            </span>
-                    @endif
-                </div>
-            </div>
-
-            <div class="form-group {{ $errors->has('sequence') ? ' has-error' : '' }}">
-                {{ Form::label('sequence', 'Secuencia: ', ['class' => 'col-md-2 control-label']) }}
-                <div class="col-md-10">
-                    {!! Form::select('sequence', ['true'=>'Si','false' => 'No'] , null ,['class' => 'form-control', 'id'=> 'sequence', 'required']) !!}
-                    @if ($errors->has('sequence'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('sequence') }}</strong>
-                            </span>
-                    @endif
-                </div>
-            </div>
-
             <div class="form-group {{ $errors->has('net_name') ? ' has-error' : '' }}">
                     {{ Form::label('net_name', 'Red: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
@@ -49,7 +24,7 @@
                 <div class="form-group {{ $errors->has('station_id') ? ' has-error' : '' }}">
                     {{ Form::label('station_id', 'Estación: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
-                        {!!  Form::select('station_id', [],null,['class' => 'form-control', 'id'=> 'station_id', 'required']) !!}
+                        {!!  Form::select('station_id', [],null,['class' => 'form-control ', 'id'=> 'station_id', 'required']) !!}
                         @if ($errors->has('station_id'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('station_id') }}</strong>
@@ -58,24 +33,53 @@
                     </div>
                 </div>
 
-                <div class="form-group {{ $errors->has('file') ? ' has-error' : '' }}">
-                    {{ Form::label('file', 'Archivo: ', ['class' => 'col-md-2 control-label']) }}
-                    <div class="col-md-10">
-                        {{ Form::file('file',['class'=>'filestyle', 'data-iconName'=> '','data-placeholder'=>'Seleccione Un Archivo CSV-delimitado por comas   -->','required']) }}
-                        @if ($errors->has('file'))
-                            <span class="help-block">
-                                <strong>{{ $errors->first('file') }}</strong>
+            <div class="form-group {{ $errors->has('method') ? ' has-error' : '' }}">
+                {{ Form::label('method', 'Metodo: ', ['class' => 'col-md-2 control-label']) }}
+                <div class="col-md-10">
+                    {!! Form::select('method', ['Filter' => 'Filtrar', 'Original'=>'Original'] , null ,['class' => 'form-control', 'id'=> 'method', 'required']) !!}
+                    @if ($errors->has('method'))
+                        <span class="help-block">
+                                <strong>{{ $errors->first('method') }}</strong>
                             </span>
-                        @endif
+                    @endif
+                </div>
+            </div>
 
+            <div class="form-group">
+                {{ Form::label('options', 'Opciones: ', ['class' => 'col-md-2 control-label']) }}
+                <div class=" col-md-10 ">
+                    <div class="col-md-3">
+                        {!! Form::checkbox('sequence', 'sequence' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'sequence', 'data-off'=>'no-sequence' , 'data-onstyle'=>'success', 'data-size'=>'mini' ,'id'=> 'sequence']) !!}
                     </div>
-
+                    <div class="col-md-3">
+                        {!! Form::checkbox('jobs', 'jobs' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'asynchronous', 'data-off'=>'synchronous' , 'data-onstyle'=>'success', 'data-size'=>'mini' ,'id'=> 'jobs']) !!}
+                    </div>
+                    <div class="col-md-3">
+                        {!! Form::checkbox('serialization', 'serialization' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'serialization', 'data-off'=>'no-serialization' , 'data-onstyle'=>'success' ,  'data-size'=>'mini' ,'id'=> 'serialization']) !!}
+                    </div>
+                    <div class="col-md-3">
+                        {!! Form::checkbox('trust_process', 'trust_process' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'trust-process', 'data-off'=>'no-trust-process' , 'data-onstyle'=>'success' ,  'data-size'=>'mini' ,'id'=> 'trust_process']) !!}
+                    </div>
                 </div>
 
-                <div class="">
-                    <button type="submit" class="btn btn-raised btn-success btn-inline pull-right">Enviar</button>
+            </div>
+
+            <div class="form-group {{ $errors->has('file') ? ' has-error' : '' }}">
+                {{ Form::label('file', 'Archivo: ', ['class' => 'col-md-2 control-label']) }}
+                <div class="col-md-10">
+                    {{ Form::file('file',['class'=>'filestyle', 'data-iconName'=> '','data-placeholder'=>'Seleccione Un Archivo CSV-delimitado por comas   -->','required']) }}
+                    @if ($errors->has('file'))
+                        <span class="help-block">
+                            <strong>{{ $errors->first('file') }}</strong>
+                        </span>
+                    @endif
                 </div>
 
+            </div>
+
+            <div class="">
+                <button type="submit" class="btn btn-raised btn-success btn-inline pull-right">Enviar</button>
+            </div>
             {!! Form::close() !!}
         </div>
 

@@ -45,8 +45,16 @@ abstract class TransformBase
         if(!is_null($overflowPreviousDeference)){
             if (!is_null($values)){
                 foreach ($values as $key =>$value){
-                    $previous_id = $value->id - 1;
-                    $previous_value =DB::connection('temporary_work')->table($tableSpaceWork)->select('id',DB::raw("CAST($variable AS double precision)"))->where('id', '=' ,$previous_id)->first();
+
+                    $previous_value = DB::connection('temporary_work')
+                        ->table($tableSpaceWork)
+                        ->select('id',DB::raw("CAST($variable AS double precision)"))
+                        ->where('date_sk', '<=' ,$value->date_sk)
+                        ->where('time_sk', '<' ,$value->time_sk)
+                        ->orderBy('date_sk', 'DESC')
+                        ->orderBy('time_sk', 'DESC')
+                        ->first();
+
                     if (!is_null($previous_value)){
                         if (!is_null($previous_value->$variable)){
                             $deference = abs($value->$variable - $previous_value->$variable);

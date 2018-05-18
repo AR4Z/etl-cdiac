@@ -68,8 +68,7 @@
                         <br>
                         <div>
                             {!! Form::open(['route'=> 'plane-etl.loadFileErrors','method'=> 'POST']) !!}
-                                {{ Form::hidden('config', $config) }}
-                                {{ Form::hidden('name', $name) }}
+                                {{ Form::hidden('options', $options) }}
                                 <div class="">
                                     <a href="{{ route('plane-etl.index') }}" class="btn btn-danger pull-left">Volver a Cargar</a>
                                     <button type="submit" class="btn btn-raised btn-success btn-inline pull-right">Continuar</button>
@@ -80,7 +79,7 @@
                     </div>
                 </div>
             @endif
-                <br>
+                <br> <br> <br> <br>
         </div>
 
 

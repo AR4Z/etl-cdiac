@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Etl;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EtlPlaneRequest;
-use Facades\App\Repositories\Administrator\StationRepository;
-use Facades\App\Repositories\DataWareHouse\StationDimRepository;
+use App\Repositories\Administrator\NetRepository;
+use App\Repositories\Administrator\StationRepository;
+use App\Repositories\DataWareHouse\StationDimRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
@@ -17,12 +18,43 @@ use App\Etl\Traits\BaseExecuteEtl;
 class PlaneEtlController extends Controller
 {
     use BaseExecuteEtl;
+
+
+    /**
+     * @var StationRepository
+     */
+    private $stationRepository;
+    /**
+     * @var StationDimRepository
+     */
+    private $stationDimRepository;
+    /**
+     * @var NetRepository
+     */
+    private $netRepository;
+
+    /**
+     * PlaneEtlController constructor.
+     * @param StationRepository $stationRepository
+     * @param StationDimRepository $stationDimRepository
+     * @param NetRepository $netRepository
+     */
+    public function __construct(
+        StationRepository $stationRepository,
+        StationDimRepository $stationDimRepository,
+        NetRepository $netRepository)
+    {
+        $this->stationRepository = $stationRepository;
+        $this->stationDimRepository = $stationDimRepository;
+        $this->netRepository = $netRepository;
+    }
+
     /**
      *
      */
     public function index()
     {
-        $differentNetName = StationDimRepository::getDifferentNetName();
+        $differentNetName = $this->stationDimRepository->getDifferentNetName();
         return view('etl.index',compact('differentNetName'));
     }
 
@@ -31,7 +63,7 @@ class PlaneEtlController extends Controller
      */
     public function getDifferentNetName()
     {
-        return StationDimRepository::getDifferentNetName();
+        return $this->stationDimRepository->getDifferentNetName();
     }
 
     /**
@@ -40,7 +72,7 @@ class PlaneEtlController extends Controller
      */
     public function getStationsForNet(Request $request)
     {
-        return StationDimRepository::getStationsForNet($request['net_name']);
+        return $this->stationDimRepository->getStationsForNet($request->get('net_name'));
     }
 
     /**
@@ -48,45 +80,44 @@ class PlaneEtlController extends Controller
      */
     public function loadFileErrors(Request $request)
     {
-        $config = json_decode($request["config"]);
-        $fileName = $request["name"];
-        /*
-         *  Execute Factory ETL
-         *  @param  Method, Sequence, Starion Id, File Name
-       */
-        $this->executePlaneEtl($config->method,$config->sequence,$config->station_id,$fileName);
+        $result = $this->executePlaneEtl(json_decode($request->get('options')));
 
         # Retornar a la vista de genracion de reportes
         # TODO
-        dd('termine');
+        dd('termine',$result);
     }
 
+    /**
+     * @param EtlPlaneRequest $request
+     * @return $this
+     */
     public function loadFile(EtlPlaneRequest $request)
     {
-        $variablesStation = $this->getVariablesStation($request['station_id']);
-        $etlType = StationRepository::getStation($request['station_id'])->typeStation->etl_method;
-        $file = $request->file('file');
-        $enter = $request->all();
+        $options = $this->getOptions($request);
 
-        # Asignar un nombre unico para el archivo entrante
-        $name = time().'.'.$file->getClientOriginalExtension();
+        # El proceso solo acepta archivos csv
+        if (($options->file)->getClientOriginalExtension() != 'csv'){ return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]); }
 
-        if ($file->getClientOriginalExtension() != 'csv'){ return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]); }
+        $options->variables_station = $this->getVariablesStation($options->station_id);
+        $options->etl_type = $this->stationRepository->getStation($options->station_id)->typeStation->etl_method;
+
+        if (is_null($options->etl_type)){ return redirect()->back()->withErrors(['file'=> 'No exisite Metodo Etl para el tipo de estación seleccionado']);}
+
+        $options->file_name = time().'.'.($options->file)->getClientOriginalExtension();
 
         # Guardar el archivo en el servidor
-        Storage::disk('public')->put($name,  \File::get($file));
+        Storage::disk('public')->put( $options->file_name,  \File::get($options->file));
 
         # Obtener la primera fila que corresponde a los encabezados del archivo csv
-        $variablesLoad = ((((Excel::load(storage_path().'/app/public/'.$name)->get())->first())->keys())->toArray());
+        $options->variables_load = ((((Excel::load(storage_path().'/app/public/'. $options->file_name)->get())->first())->keys())->toArray());
 
         # Validar columnas de entrada con las columnas registradas para la estacion
-        $validate = $this->validateVariablesLoad($variablesLoad,$variablesStation,$etlType);
+        $validate = $this->validateVariablesLoad($options->variables_load,$options->variables_station, $options->etl_type);
 
         if (!$validate['response']){
             return view('etl.displayPlaneErrors')
                         ->with('validate',$validate)
-                        ->with('config',json_encode($enter))
-                        ->with('name',$name)
+                        ->with('options',json_encode($options))
                         ->withErrors(['file'=> ['','']]);
         }
 
@@ -94,10 +125,31 @@ class PlaneEtlController extends Controller
          *  Execute Factory ETL
          *  @param  Method, Sequence, Starion Id, File Name
          */
-        $this->executePlaneEtl($enter['method'],$enter['sequence'],$enter['station_id'],$name);
+        $result = $this->executePlaneEtl($options);
 
         # Retornar a la vista de genracion de reportes
         # TODO
+        dd('termine',$result);
+    }
+
+    /**
+     * @param Request $request
+     * @return object
+     */
+    private function getOptions(Request $request)
+    {
+        $options = [];
+
+        $options['sequence'] = $request->exists('sequence');
+        $options['jobs'] = $request->exists('jobs');
+        $options['serialization'] = $request->exists('serialization');
+        $options['trust_process'] = $request->exists('trust_process');
+        $options['method'] = $request->get('method');
+        $options['station_id'] = (integer)$request->get('station_id');
+        $options['net_name'] = $request->get('net_name');
+        $options['file'] = $request->file('file');;
+
+        return (object)$options;
     }
 
     /**
@@ -107,7 +159,7 @@ class PlaneEtlController extends Controller
     private function getVariablesStation($stationId)
     {
         $arr = [];
-        $var = StationRepository::findVarForFilter($stationId);
+        $var = $this->stationRepository->findVarForFilter($stationId);
         foreach ($var as $index => $value){array_push($arr,['excel_name' =>$value->excel_name,'description'=>$value->description]);}
         return $arr;
     }
@@ -153,34 +205,28 @@ class PlaneEtlController extends Controller
     }
 
     /**
-     * @param $method
-     * @param $sequence
-     * @param $stationId
-     * @param $fileName
-     * @return bool
+     * @param $options
+     * @return object
      */
-    private function executePlaneEtl($method, $sequence, $stationId, $fileName)
+    private function executePlaneEtl($options)
     {
-        $trustProcess = false; # TODO : Debe entrar por parametro
-        $jobs = false; # TODO : Debe entrar por parametro
-        $station = StationRepository::select('*')->where('id',$stationId)->first();
-        $sequence =  ($sequence == 'false') ? false : true;
+        $station = $this->stationRepository->getStation($options->station_id);
 
-        if (is_null($station)){return false;}
+        if (is_null($station)){return (object)['original'=> false,'filter' => false, 'error' => 'no se encontró la estación'];}
 
-        $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $fileName]];
+        $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $options->file_name]];
         $transform = [];
         $load = [];
 
         # La Opcion originales no puede ojecutarse por medio de jobs pues se necesitan datos para poder ejecutar el proceso de filtrado.
-        $response = $this->executeOneStation('Original',$station->owner_net_id,$stationId,$sequence,$extract,$transform,$load,false);
+        $response = $this->executeOneStation('Original',$station->owner_net_id,$options->station_id,$options->sequence,$extract,$transform,$load,false);
 
         $etlConfig = $response['work1']->etlConfig;
-        $extract2 =  ['method' => 'Database','optionExtract' =>['trustProcess'=> $trustProcess,'extractType' => 'Local', 'initialDate' => $etlConfig->getInitialDate(), 'initialTime' => $etlConfig->getInitialTime(), 'finalDate' =>  $etlConfig->getFinalDate(), 'finalTime' => $etlConfig->getFinalTime()]];
+        $extract2 =  ['method' => 'Database','optionExtract' =>['trustProcess'=> $options->trust_process,'extractType' => 'Local', 'initialDate' => $etlConfig->getInitialDate(), 'initialTime' => $etlConfig->getInitialTime(), 'finalDate' =>  $etlConfig->getFinalDate(), 'finalTime' => $etlConfig->getFinalTime()]];
 
-        $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,false,$extract2,[],[], $jobs);
+        $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,$options->sequence,$extract2,[],[], $options->jobs);
 
-        dd($response,$response2);
+        return (object)['Original'=> $response,'Filter' => $response2];
 
     }
 }
