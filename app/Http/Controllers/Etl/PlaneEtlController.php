@@ -211,22 +211,93 @@ class PlaneEtlController extends Controller
     private function executePlaneEtl($options)
     {
         $station = $this->stationRepository->getStation($options->station_id);
+        $response = null;
 
         if (is_null($station)){return (object)['original'=> false,'filter' => false, 'error' => 'no se encontró la estación'];}
 
+        $typeStation = ($this->stationRepository->getTypeStation($options->station_id))->etl_method;
+
+        if (is_null($typeStation)){return (object)['original'=> false,'filter' => false, 'error' => 'No se encuentra un metodo ETL para la estación seleccionada'];}
+
         $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $options->file_name]];
-        $transform = [];
-        $load = [];
 
+        switch ($typeStation) {
+            case "weather":
+                $response = $this->executeWeather($station,$extract,$options);
+                break;
+            case "air":
+                $response = $this->executeAir($station,$extract,$options);
+                break;
+            case "groundwater":
+                $response = $this->executeGroundwater($station,$extract,$options);
+                break;
+            default:
+                $response = ['original'=> false,'filter' => false, 'error' => 'se ejecutó ningun proceso de migrado - posiblemente sea un typo de estacion nuevo y no exista función de ejecusión'];
+        }
+
+        dd($response);
+
+        return (object)$response;
+
+    }
+
+    /**
+     * @param $station
+     * @param $extract
+     * @param $options
+     * @return array
+     */
+    private function executeWeather($station, $extract, $options)
+    {
         # La Opcion originales no puede ojecutarse por medio de jobs pues se necesitan datos para poder ejecutar el proceso de filtrado.
-        $response = $this->executeOneStation('Original',$station->owner_net_id,$options->station_id,$options->sequence,$extract,$transform,$load,false);
+        $response = $this->executeOneStation('Original',$station->owner_net_id,$options->station_id,$options->sequence,$extract,[],[],false);
+        $response2 = false;
 
+        if ($options->method == 'Filter'){
+            $etlConfig = $response['work1']->etlConfig;
+            $extract2 =  [
+                'method' => 'Database',
+                'optionExtract' =>[
+                    'trustProcess'=> $options->trust_process,
+                    'extractType' => 'Local',
+                    'initialDate' => $etlConfig->getInitialDate(),
+                    'initialTime' => $etlConfig->getInitialTime(),
+                    'finalDate' =>  $etlConfig->getFinalDate(),
+                    'finalTime' => $etlConfig->getFinalTime()
+                ]
+            ];
+            $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,$options->sequence,$extract2,[],[], $options->jobs);
+        }
+        return ['Original'=> $response,'Filter' => $response2];
+    }
+
+
+    private function executeAir($station, $extract, $options)
+    {
+        # La Opcion originales no puede ojecutarse por medio de jobs pues se necesitan datos para poder ejecutar el proceso de filtrado.
+        $response = $this->executeOneStation('Original',$station->owner_net_id,$options->station_id,$options->sequence,$extract,[],[],false);
+/*
         $etlConfig = $response['work1']->etlConfig;
-        $extract2 =  ['method' => 'Database','optionExtract' =>['trustProcess'=> $options->trust_process,'extractType' => 'Local', 'initialDate' => $etlConfig->getInitialDate(), 'initialTime' => $etlConfig->getInitialTime(), 'finalDate' =>  $etlConfig->getFinalDate(), 'finalTime' => $etlConfig->getFinalTime()]];
+
+        $extract2 =  [
+            'method' => 'Database',
+            'optionExtract' =>[
+                'trustProcess'=> $options->trust_process,
+                'extractType' => 'Local',
+                'initialDate' => $etlConfig->getInitialDate(),
+                'initialTime' => $etlConfig->getInitialTime(),
+                'finalDate' =>  $etlConfig->getFinalDate(),
+                'finalTime' => $etlConfig->getFinalTime()
+            ]
+        ];
 
         $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,$options->sequence,$extract2,[],[], $options->jobs);
+*/
+        return ['Original'=> $response]; # ,'Filter' => $response2
 
-        return (object)['Original'=> $response,'Filter' => $response2];
+    }
+    private function executeGroundwater($station, $extract, $options)
+    {
 
     }
 }

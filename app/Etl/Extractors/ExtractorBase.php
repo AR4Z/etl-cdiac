@@ -5,6 +5,7 @@ namespace App\Etl\Extractors;
 
 use Carbon\Carbon;
 use App\Etl\Traits\{DateSkTrait, TimeSkTrait, WorkDatabaseTrait,TrustTrait};
+use function Composer\Autoload\includeFile;
 
 
 /**
@@ -24,7 +25,9 @@ abstract class ExtractorBase
     public function updateDateSk($repository)
     {
         $dates = ($repository)::getDatesDistinct();
-        foreach ($dates as $date){($repository)::updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);}
+        foreach ($dates as $date){
+            ($repository)::updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);
+        }
         $this->flagDateSk = true;
     }
 
@@ -35,7 +38,14 @@ abstract class ExtractorBase
     public  function updateTimeSk($repository)
     {
         $times = ($repository)::getTimesDistinct();
-        foreach ($times as $time){($repository)::updateTimeSk($this->calculateTimeSk($time->time),$time->time);}
+        foreach ($times as $time){
+            if($time->time == '24:00:00'){
+                ($repository)::incrementDateSk($time->id,1);
+                ($repository)::updateTimeSkFromStationSk($time->id,$this->calculateTimeSk('00:00:00'));
+            }else{
+                ($repository)::updateTimeSk($this->calculateTimeSk($time->time),$time->time);
+            }
+        }
         $this->flagTimeSk = true;
     }
 

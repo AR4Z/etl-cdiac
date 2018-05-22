@@ -39,6 +39,14 @@ class StationRepository extends EloquentRepository
         return $this->createModel()->with(['originalState','filterState','typeStation'])->find($stationId);
     }
 
+    public function getTypeStation($id)
+    {
+        return $this->queryBuilder()
+                    ->select('station_type.*')
+                    ->join('station_type','station.station_type_id','=', 'station_type.id')
+                    ->where('station.id',$id)
+                    ->first();
+    }
     /**
      * @param $stationId
      * @return

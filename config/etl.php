@@ -43,10 +43,10 @@ return [
             'tableSpaceWork'        => 'temporal_air',
             'tableExist'            => 'exist_fact_air',
             'repositorySpaceWork'   => 'Facades\\App\\Repositories\\TemporaryWork\\TemporalAirRepository',
-            'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\OriginalFactAirRepository',
+            'repositoryDestination' => 'Facades\\App\\Repositories\\DataWareHouse\\OriginalAirFactRepository',
             'repositoryExist'       => 'Facades\\App\\Repositories\\TemporaryWork\\ExistFactAirRepository',
             'trustRepository'       => 'Facades\\App\\Repositories\\DataWareHouse\\AirReliabilityRepository',
-            'tableDestination'      => 'original_fact_air',
+            'tableDestination'      => 'original_air_fact',
             'tableTrust'            => 'air_reliability',
             'stateTable'            => 'originalState',
         ],
@@ -110,7 +110,7 @@ return [
                 'reference'     => 'date_sk',
                 'description'   => 'fecha de la medición'
             ],
-            'tiempo'    =>  [
+            'hora'    =>  [
                 'required'      => true,
                 'local_name'    => 'time',
                 'reference'     => 'time_sk',
@@ -124,7 +124,7 @@ return [
                 'reference'     => 'date_sk',
                 'description'   => 'fecha de la medición'
             ],
-            'tiempo'    =>  [
+            'hora'    =>  [
                 'required'      => true,
                 'local_name'    => 'time',
                 'reference'     => 'time_sk',
@@ -139,7 +139,7 @@ return [
                 'reference'     => 'date_sk',
                 'description'   => 'fecha de la medición'
             ],
-            'tiempo'    =>  [
+            'hora'    =>  [
                 'required'      => true,
                 'local_name'    => 'time',
                 'reference'     => 'time_sk',
