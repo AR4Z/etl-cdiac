@@ -16,20 +16,16 @@ class TimeDimRepository extends EloquentRepository
      * @param $time
      * @return mixed
      */
-    public function getTimeSk($time){
-
-        return $this->select('time_sk')
-            ->where('time',$time)
-            ->first()
-            ->time_sk;
+    public function getTimeSk($time)
+    {
+        $val = $this->select('time_sk')->where('time',$time)->first();
+        return (is_null($val)) ? null : $val->time_sk ;
     }
 
     public function getTime($timeSk)
     {
-        return $this->select('time')
-            ->where('time_sk',$timeSk)
-            ->first()
-            ->time;
+        $val =  $this->select('time')->where('time_sk',$timeSk)->first();
+        return (is_null($val)) ? null : $val->time;
     }
     public function getTimeFromSpace($space)
     {

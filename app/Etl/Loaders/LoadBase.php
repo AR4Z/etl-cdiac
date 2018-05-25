@@ -3,6 +3,7 @@ namespace  App\Etl\Loaders;
 
 use App\Etl\Traits\{DateSkTrait,TimeSkTrait,WorkDatabaseTrait,TrustTrait};
 use Carbon\Carbon;
+use function Couchbase\defaultDecoder;
 use DB;
 
 abstract class LoadBase
@@ -21,7 +22,6 @@ abstract class LoadBase
 
         #Obtener los valores de la tabla te trabajo temporal
         $values = ($this->etlConfig->getRepositorySpaceWork())::all();
-
         foreach ($values as $value)
         {
             #Evaluar la existencia de los valores en su respectiva fact
@@ -30,14 +30,16 @@ abstract class LoadBase
                 #Extraer Dato existente en la fact respectiva
                 $exist = ($this->etlConfig->getRepositoryExist())::fill($value->toArray())->toArray();
 
-                #Insertar dato existente en la fact de existentes respectiva
-                $this->insertExistTable($this->etlConfig->getTableExist(),$exist);
+                if (!$this->evaluateExistence($this->etlConfig->getRepositoryExist(),$value))
+                {
+                    #Insertar dato existente en la fact de existentes respectiva
+                    $this->insertExistTable($this->etlConfig->getTableExist(),$exist);
 
-                # Documentar los valores existentes en el array de control
-                array_push($this->redirectExist, $exist);
-
+                    # Documentar los valores existentes en el array de control
+                    array_push($this->redirectExist, $exist);
+                }
                 #Eliminar los valores existentes de la tabla tenporal de trabajo
-                ($this->etlConfig->getRepositorySpaceWork())::delete($value->id);
+                $this->deleteFromDateAndTime($this->etlConfig->getTableSpaceWork(),$value->date_sk,$value->time_sk);
             }
         }
     }

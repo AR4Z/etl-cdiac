@@ -276,23 +276,32 @@ class PlaneEtlController extends Controller
     {
         # La Opcion originales no puede ojecutarse por medio de jobs pues se necesitan datos para poder ejecutar el proceso de filtrado.
         $response = $this->executeOneStation('Original',$station->owner_net_id,$options->station_id,$options->sequence,$extract,[],[],false);
-/*
+
         $etlConfig = $response['work1']->etlConfig;
 
         $extract2 =  [
             'method' => 'Database',
             'optionExtract' =>[
-                'trustProcess'=> $options->trust_process,
-                'extractType' => 'Local',
-                'initialDate' => $etlConfig->getInitialDate(),
-                'initialTime' => $etlConfig->getInitialTime(),
-                'finalDate' =>  $etlConfig->getFinalDate(),
-                'finalTime' => $etlConfig->getFinalTime()
+                'trustProcess'  => $options->trust_process,
+                'extractType'   => 'Local',
+                'initialDate'   => $etlConfig->getInitialDate(),
+                'initialTime'   => $etlConfig->getInitialTime(),
+                'finalDate'     => $etlConfig->getFinalDate(),
+                'finalTime'     => $etlConfig->getFinalTime()
             ]
         ];
 
-        $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,$options->sequence,$extract2,[],[], $options->jobs);
-*/
+        $transform = [
+            [
+                'method'            => 'FilterAir',
+                'optionTransform'   => []
+            ]
+        ];
+
+        $load = [];
+
+        $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,$options->sequence,$extract2,$transform,$load, $options->jobs);
+
         return ['Original'=> $response]; # ,'Filter' => $response2
 
     }

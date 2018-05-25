@@ -36,29 +36,33 @@ class Load extends LoadBase implements LoadInterface
      */
     public function run()
     {
-        #Extraer las configuraciones de llaves perimarias
+        # Extraer las configuraciones de llaves perimarias
         $this->select = $this->etlConfig->getKeys()->globalCastKey;
 
-        #Extraer las columnas que se deben ingrear que no estan el base de datos (keys and comment)
+        # Extraer las columnas que se deben ingrear que no estan el base de datos (keys and comment)
         $this->columns = $this->etlConfig->getKeys()->global;
 
-        #Configuración de la consulta para extraer los datos de temporal_work
+        # Configuración de la consulta para extraer los datos de temporal_work
         $this->setSelect('local_name','local_name');
 
-        #Direccionar los datos existentes a la tabla de existentes
+        # Direccionar los datos existentes a la tabla de existentes
         $this->redirectExisting();
 
-        #Extraer valores de la tabla temporal
+        # Eliminar datos duplicados TODO
+
+        # Extraer valores de la tabla temporal
         $values = $this->selectTemporalTable();
 
-        #Insertar datos en en su respectiva fact
-        $this->insertAllDataInFact($values);
+        if (!empty($values)){
+            #Insertar datos en en su respectiva fact
+            $this->insertAllDataInFact($values);
+        }
 
-        #calcular la confienza y el soporte
+        # Calcular la confienza y el soporte
         $this->trustProcess();
 
-        #migrar los datos de correccion a historial de correccion
-        if ($this->etlConfig->getTypeProcess() !== "Original"){
+        # Migrar los datos de correccion a historial de correccion
+        if ($this->etlConfig->getTypeProcess() != "Original"){
             $this->migrateHistoricCorrection();
         }
 

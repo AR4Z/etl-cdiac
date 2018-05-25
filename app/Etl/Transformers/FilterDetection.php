@@ -11,8 +11,13 @@ class FilterDetection extends TransformBase implements TransformInterface
 
     public $etlConfig = null;
 
-    protected $paramSearch = ["-"];
+    public $paramSearch = ["-"];
 
+    public $changeOverflowLower = 0;
+
+    public $changeOverflowHigher = null;
+
+    public $changeOverflowPreviousDeference = null;
 
     /**
      * @param EtlConfig $etlConfig
@@ -42,7 +47,10 @@ class FilterDetection extends TransformBase implements TransformInterface
                     $value->local_name,
                     $value->maximum,
                     $value->minimum,
-                    $value->previous_deference
+                    $value->previous_deference,
+                    $this->changeOverflowLower,
+                    $this->changeOverflowHigher,
+                    $this->changeOverflowPreviousDeference
              );
 
             // insertar los valores correctos deben ir a trust
@@ -51,12 +59,5 @@ class FilterDetection extends TransformBase implements TransformInterface
 
         return $this;
     }
-
-    public function setParamSearch(array $params)
-    {
-        foreach ($params as $param){ array_push($this->paramSearch, $param);}
-    }
-
-
 
 }

@@ -42,7 +42,12 @@ trait WorkDatabaseTrait
     public function getLocalData(string $connection,string $table,string $keys,string $select,string $initialDate,string $initialTime,string $finalDate,string $finalTime,int $limit = null)
     {
         $query = new Query();
-        $query->init($connection,$table)->select($select)->localWhere($initialDate,$initialTime,$finalDate,$finalTime)->orderBy($keys)->limit($limit)->execute();
+        $query->init($connection,$table)
+            ->select($select)
+            ->localWhere($initialDate,$initialTime,$finalDate,$finalTime)
+            ->orderBy($keys)
+            ->limit($limit)
+            ->execute();
         //TODO -- probar la funcionalidad de este metodo --
         $data = $query->data;
         if (count($data) ==  0){
@@ -61,7 +66,9 @@ trait WorkDatabaseTrait
      */
     public function getAllData(string $connection, string $table, string $select)
     {
-        return DB::connection($connection)->table($table)->select(DB::raw($select))->get()->toArray();
+        return DB::connection($connection)->table($table)->select(DB::raw($select))
+            ->whereNotNull('station_sk')->whereNotNull('date_sk')->whereNotNull('time_sk')
+            ->get()->toArray();
     }
 
     /**
@@ -108,8 +115,7 @@ trait WorkDatabaseTrait
                                 ->where('station_sk','=',$data->station_sk)
                                 ->where('time_sk','=',$data->time_sk)
                                 ->count();
-
-        return ($count != 0)? true : false;
+        return ($count == 0)? false : true;
     }
 
     /**
@@ -189,18 +195,18 @@ trait WorkDatabaseTrait
         }
 
         #Eliminar los valores actuales en el espacio de trabajo
-        foreach ($arrayValue as $value){$this->SerializationDelete($tableSpaceWork,$value);}
+        foreach ($arrayValue as $value){$this->deleteFromDateAndTime($tableSpaceWork,$value->date_sk,$value->time_sk);}
 
         #Insertar la Correcion en el espacio de trabajo
         $this->serializationInsert($tableSpaceWork,$arr);
 
     }
-    public function SerializationDelete($tableSpaceWork,$value)
+    public function deleteFromDateAndTime($tableSpaceWork, $date_sk, $time_sk)
     {
         return DB::connection('temporary_work')
                     ->table($tableSpaceWork)
-                    ->where('date_sk',$value->date_sk)
-                    ->where('time_sk',$value->time_sk)
+                    ->where('date_sk',$date_sk)
+                    ->where('time_sk',$time_sk)
                     ->delete();
     }
 
@@ -251,6 +257,15 @@ trait WorkDatabaseTrait
     public function getFinalDataInSpaceWork($repository)
     {
         return ($repository)::select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
+    }
+
+    public function getWhereIn($tableSpaceWork,$variable,array $search)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)
+                    ->select('id','station_sk','date_sk','time_sk',$variable)
+                    ->whereIn($variable,$search)
+                    ->orderby('id')
+                    ->get();
     }
 
 

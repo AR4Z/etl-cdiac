@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\App;
 /**
  *
  */
-class EtlConfig
+class EtlConfig 
 {
     use RemoveAccents;
   /**

@@ -3,7 +3,6 @@
 
 namespace App\Etl\Transformers;
 
-
 use App\Etl\EtlConfig;
 use App\Etl\Traits\CorrectMethod;
 

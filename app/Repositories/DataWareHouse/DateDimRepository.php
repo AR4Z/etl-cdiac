@@ -20,20 +20,14 @@ class DateDimRepository extends EloquentRepository
      */
     public function getDateSk(Carbon $date)
     {
-        return $this->select('date_sk')
-                    ->whereDay('date',$date->day)
-                    ->whereMonth('date',$date->month)
-                    ->whereYear('date',$date->year)
-                    ->first()
-                    ->date_sk;
+        $val = $this->select('date_sk')->whereDay('date',$date->day)->whereMonth('date',$date->month)->whereYear('date',$date->year)->first();
+        return (is_null($val)) ? null : $val->date_sk;
     }
 
     public function getDate($dateSk)
     {
-        return $this->select('date')
-                    ->where('date_sk',$dateSk)
-                    ->first()
-                    ->date;
+        $val =  $this->select('date')->where('date_sk',$dateSk)->first();
+        return (is_null($val)) ? null : $val->date;
     }
     public function getDateFromSpace($initialLimit,$finalLimit,$space)
     {

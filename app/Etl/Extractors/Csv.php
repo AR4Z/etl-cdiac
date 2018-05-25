@@ -121,12 +121,20 @@ class Csv extends ExtractorBase implements ExtractorInterface
         $finalVal = $this->getFinalDataInSpaceWork($repository);
 
         if (!is_null($initVal)){
-            $this->etlConfig->setInitialDate($initVal->date);
-            $this->etlConfig->setInitialTime($initVal->time);
+            $this->etlConfig->setInitialDate(
+                $this->calculateDateFromDateSk($initVal->date_sk)
+            );
+            $this->etlConfig->setInitialTime(
+                $this->calculateTimeFromTimeSk($initVal->time_sk)
+            );
         }
         if (!is_null($finalVal)){
-            $this->etlConfig->setFinalDate($finalVal->date);
-            $this->etlConfig->setFinalTime($finalVal->time);
+            $this->etlConfig->setFinalDate(
+                $this->calculateDateFromDateSk($finalVal->date_sk)
+            );
+            $this->etlConfig->setFinalTime(
+                $this->calculateTimeFromTimeSk($finalVal->time_sk)
+            );
         }
     }
 }

@@ -6,10 +6,13 @@ use Facades\App\Repositories\DataWareHouse\TimeDimRepository;
 
 trait TimeSkTrait
 {
+    public $maxValueSk = 86400;
+
     /**
      * @param $time
      * @return mixed
      */
+
     public function calculateTimeSk($time)
     {
         $completeTime = TimeDimRepository::getTimeSk($time);
