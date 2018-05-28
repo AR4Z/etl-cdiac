@@ -302,7 +302,7 @@ class PlaneEtlController extends Controller
 
         $response2 =    $this->executeOneStation('Filter',$station->owner_net_id,$station->id,$options->sequence,$extract2,$transform,$load, $options->jobs);
 
-        return ['Original'=> $response]; # ,'Filter' => $response2
+        return ['Original'=> $response,'Filter' => $response2];
 
     }
     private function executeGroundwater($station, $extract, $options)

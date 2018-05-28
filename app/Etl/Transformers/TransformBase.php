@@ -3,23 +3,24 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlBase;
+use function Couchbase\defaultDecoder;
 use DB;
 
 abstract class TransformBase extends EtlBase
 {
     /**
-     * @param $tableSpaceWork
-     * @param String $variable
-     * @param $overflowMaximum
-     * @param $overflowMinimum
-     * @param $overflowPreviousDeference
-     * @param $changeOverflowLower
-     * @param $changeOverflowHigher
-     * @param $changeOverflowPreviousDeference
+     * @param string $tableSpaceWork
+     * @param string $variable
+     * @param null $overflowMaximum
+     * @param null $overflowMinimum
+     * @param null $overflowPreviousDeference
+     * @param null $changeOverflowLower
+     * @param null $changeOverflowHigher
+     * @param null $changeOverflowPreviousDeference
      */
     public function overflow(
-        $tableSpaceWork,
-        $variable,
+        string $tableSpaceWork,
+        string $variable,
         $overflowMaximum = null,
         $overflowMinimum = null,
         $overflowPreviousDeference = null,
@@ -81,13 +82,13 @@ abstract class TransformBase extends EtlBase
     }
 
     /**
-     * @param $tableSpaceWork
-     * @param $variable
+     * @param string $tableSpaceWork
+     * @param string $variable
      * @param $deleteLastHour
      * @param $spaceTimeDelete
-     * @return null
+     * @return bool
      */
-    public function updateRageTime($tableSpaceWork,$variable, $deleteLastHour, $spaceTimeDelete)
+    public function updateRageTime(string $tableSpaceWork, string $variable, $deleteLastHour, $spaceTimeDelete)
     {
         $values = $this->getWhereIn($tableSpaceWork,$variable,$deleteLastHour);
 
@@ -113,7 +114,16 @@ abstract class TransformBase extends EtlBase
         }
     }
 
-    public function updateInRange($tableSpaceWork,$variable,$initDateSk,$initTimeSk,$finalTimeSk,$valueForChange)
+    /**
+     * @param string $tableSpaceWork
+     * @param string $variable
+     * @param $initDateSk
+     * @param $initTimeSk
+     * @param $finalTimeSk
+     * @param null $valueForChange
+     * @return bool
+     */
+    public function updateInRange(string $tableSpaceWork, string $variable, $initDateSk, $initTimeSk, $finalTimeSk, $valueForChange = null)
     {
         $query  = DB::connection('temporary_work')->table($tableSpaceWork)->where('date_sk','=',$initDateSk)->where('time_sk','>=', $initTimeSk)->where('time_sk', '<=', $finalTimeSk);
 
@@ -130,10 +140,10 @@ abstract class TransformBase extends EtlBase
     }
 
     /**
-     * @param $local_name
+     * @param string $local_name
      * @return bool
      */
-    public function trustProcess($local_name)
+    public function trustProcess(string $local_name)
     {
         if (!$this->etlConfig->isTrustProcess()){return false;}
 
@@ -145,14 +155,26 @@ abstract class TransformBase extends EtlBase
         );
     }
 
+
     /**
-     * @param $tableSpaceWork
-     * @param $variable
-     * @param $searchParams
+     * @param string $tableSpaceWork
+     * @param string $variable
+     * @param array $searchParams
+     * @return bool
      */
-    public function updateForNull($tableSpaceWork, $variable,$searchParams)
+    public function updateForNull(string $tableSpaceWork, string $variable, array $searchParams = ['-'])
     {
-        DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$searchParams)->update([$variable => null]);
+       $query =  DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$searchParams);
+       $values = $query->select('id','station_sk','date_sk','time_sk',$variable)->get();
+
+       if (is_null($values) or empty($values)){return false;}
+
+       foreach ($values as $value ) {$this->insertInCorrectionTable($value,$variable,null,'known_error_value');}
+
+       $query->update([$variable => null]);
+
+       return true;
+
     }
 
     /**
@@ -194,10 +216,10 @@ abstract class TransformBase extends EtlBase
     /**
      * @param $value
      * @param $variable
-     * @param $change
-     * @param $observation
+     * @param null $change
+     * @param null $observation
      */
-    private function insertInCorrectionTable($value,$variable,$change = null,$observation = null)
+    private function insertInCorrectionTable($value, $variable, $change = null, $observation = null)
     {
         DB::connection('temporary_work')
                 ->table('temporary_correction')
@@ -213,7 +235,12 @@ abstract class TransformBase extends EtlBase
                 ]);
     }
 
-    private function evaluateExistenceInHistoryCorrection($id,$variable){
+    /**
+     * @param $id
+     * @param $variable
+     * @return bool
+     */
+    private function evaluateExistenceInHistoryCorrection($id, $variable){
 
         $value=  DB::connection('temporary_work')
                     ->table('temporary_correction')
@@ -224,11 +251,38 @@ abstract class TransformBase extends EtlBase
         return ($value == 0) ? false : true;
     }
 
+    /**
+     * @param array $params
+     */
     public function setParamSearch(array $params)
     {
         foreach ($params as $param){ array_push($this->paramSearch, $param);}
     }
 
+    /**
+     * @param string $tableSpaceWork
+     * @param string $variable
+     * @return bool
+     */
+    public function changeCommaForPoint(string $tableSpaceWork, string $variable)
+    {
+        $values = DB::connection('temporary_work')->table($tableSpaceWork)->select('station_sk','date_sk','time_sk',$variable)->whereNotNull($variable)->get();
 
+        if (is_null($values) or count($values) == 0){return false;}
+
+        foreach ($values as $value)
+        {
+            $val = str_replace (",", ".",$value->$variable);
+
+            DB::connection('temporary_work')
+                ->table($tableSpaceWork)
+                ->where('station_sk','=',$value->station_sk)
+                ->where('date_sk','=',$value->date_sk)
+                ->where('time_sk','=',$value->time_sk)
+                ->update([$variable => $val]);
+        }
+
+        return true;
+    }
 
 }
