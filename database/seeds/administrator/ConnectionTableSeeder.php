@@ -104,6 +104,19 @@ class ConnectionTableSeeder extends Seeder
                     'etl_active'        => true,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
+                ],
+                [
+                    'name'      => 'cucuta',
+                    'host'      => '172.23.177.60',
+                    'port'      => '3306',
+                    'database'  => 'cucuta_db',
+                    'username'  => 'usrConsulta',
+                    'password'  => encrypt('consulta'),
+                    'connection_driver' => 'mysql',
+                    'rt_active'         => true,
+                    'etl_active'        => true,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]
             ]
         );

@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Administrator;
 
-
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Station;
 use DB;
@@ -83,6 +82,8 @@ class StationRepository extends EloquentRepository
         return $this->queryBuilder()->select('station.id','station.name','original_state.current_date','original_state.current_time')
                     ->where('station.etl_active', true)
                     ->join('original_state','original_state.station_id','=','station.id')
+                    ->join('station_type','station.station_type_id','=', 'station_type.id')
+                    ->where('station_type.etl_method', '=', 'weather')
                     ->get();
     }
 
