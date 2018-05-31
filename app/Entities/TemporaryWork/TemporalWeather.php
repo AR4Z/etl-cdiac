@@ -26,7 +26,8 @@ class TemporalWeather extends Model
      * @var array
      */
     protected $fillable = [
-        'station_sk', 'date_sk', 'time_sk','date','time',
+        'station_sk', 'date_sk', 'time_sk',
+        'date','time',
         'rainfall',
         'temperature',
         'max_temperature',

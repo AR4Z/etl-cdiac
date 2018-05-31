@@ -3942,7 +3942,7 @@ class VariableStationSeeder extends Seeder
                 ],
                 [
                     'station_id'            => 67,
-
+                    'variable_id'           => 9,
                     'maximum'               => null,
                     'minimum'               => null,
                     'previous_deference'    => null,

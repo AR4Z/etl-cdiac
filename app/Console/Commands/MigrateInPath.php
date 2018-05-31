@@ -23,7 +23,7 @@ class MigrateInPath extends Command
 
     protected $route = 'database/migrations/';
 
-    // Example Php artisan migrate:inPat migrate dataWareHouse
+    // Example => php artisan migrate:inPat migrate dataWareHouse
 
 
     /**
