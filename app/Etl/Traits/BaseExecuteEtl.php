@@ -70,7 +70,7 @@ trait BaseExecuteEtl
         $response = [];
 
         foreach ($stationForNet as $station){
-            $res = $this->executeOneStation($method, $station->owner_net_id,  $station->id,$sequence,$extract,$transform,$load,$jobs);
+            $res = $this->executeOneStation($method, $station->net_id,  $station->id,$sequence,$extract,$transform,$load,$jobs);
             array_push($response,$res);
         }
         return $response;
@@ -191,7 +191,7 @@ trait BaseExecuteEtl
         $stationEtlTrue = $this->stationRepository->getStationsForEtl();
         $arr= []; $response = null;
         foreach ($stationEtlTrue as $station){
-            $response = $this->executeOneStation($method, $station->owner_net_id,  $station->id, $sequence,$extract,$transform,$load,$jobs);
+            $response = $this->executeOneStation($method, $station->net_id,  $station->id, $sequence,$extract,$transform,$load,$jobs);
             array_push($arr,$response);
         }
 
@@ -300,7 +300,7 @@ trait BaseExecuteEtl
         {
             $this->executeOneStation(
                 'Original',
-                $station->owner_net_id,
+                $station->net_id,
                 $station->id,
                 $sequence,
                 ['method' => 'Database', 'optionExtract' => ['trustProcess'=> $trustProcess,'extractType' => 'External', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],
@@ -326,7 +326,7 @@ trait BaseExecuteEtl
         {
             $this->executeOneStation(
                 'Filter',
-                $station->owner_net_id,
+                $station->net_id,
                 $station->id,
                 $sequence,
                 ['method' => 'Database','optionExtract' =>['trustProcess'=> $trustProcess,'extractType' => 'Local', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],

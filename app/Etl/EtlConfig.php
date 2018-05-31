@@ -188,7 +188,7 @@ class EtlConfig
 
   public function setNet($net)
   {
-      $netId = (is_null($net)) ?  $this->station->owner_net_id : $net;
+      $netId = (is_null($net)) ?  $this->station->net_id : $net;
       $this->net = NetRepository::find($netId);
       return $this;
   }

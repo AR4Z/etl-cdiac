@@ -16,20 +16,30 @@ class TemporalAirTable extends Migration
         Schema::connection('temporary_work')->create('temporal_air', function (Blueprint $table) {
 
             $table->increments('id');
+
             $table->integer('station_sk')->nullable();
             $table->integer('date_sk')->nullable();
             $table->integer('time_sk')->nullable();
+
             $table->string('date')->nullable();
             $table->string('time')->nullable();
-            $table->string('so2_local_ppt')->nullable();
+
+            $table->string('so2_local_ppb')->nullable();
             $table->string('so2_local_ugm3')->nullable();
             $table->string('so2_estan_ugm3')->nullable();
-            $table->string('co_local_ppt')->nullable();
+
+            $table->string('co_local_ppb')->nullable();
             $table->string('co_local_ugm3')->nullable();
-            $table->string('o3_local_ppt')->nullable();
+            $table->string('co_estan_ugm3')->nullable();
+
+            $table->string('o3_local_ppb')->nullable();
+            $table->string('o3_local_ugm3')->nullable();
             $table->string('o3_estan_ugm3')->nullable();
+
             $table->string('pm10')->nullable();
             $table->string('pm2_5')->nullable();
+            $table->string('pst')->nullable();
+
             $table->string('comment')->nullable();
 
             $table->timestamps();

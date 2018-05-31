@@ -15,6 +15,7 @@ class VariableSeeder extends Seeder
         DB::connection('administrator')->table('variable')->insert(
             [
                 [
+                    # id => 1
                     'name'                  => 'Precipitación',
                     'description'           => 'Productos liquidos o sólidos de la condensación de vapor de agua que caen de las nebes o son depositados desde el aire sobre la tierra. La cantidad total de precipitación que llega al suelo en un periodo determinado se expresa en términos de la profundidad.',
                     'excel_name'            => 'precipitacion',
@@ -28,6 +29,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 2
                     'name'                  => 'Temperatura del aire',
                     'description'           => 'Es la magnitud física que se caracteriza por el movimiento aleatorio medio de las moléculas en un cuerpo físico.',
                     'excel_name'            => 'temperatura',
@@ -41,6 +43,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 3
                     'name'                  => 'Humedad Relativa',
                     'description'           => 'Es la relación porcentual entre la cantidad de vapor de agua que tiene el aire y el máximo que podría contener a una temperatura y presión determinada',
                     'excel_name'            => 'humedad_relativa',
@@ -54,6 +57,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 4
                     'name'                  => 'Velocidad del Viento',
                     'description'           => 'Es la relación de la distancia recorrida por el aire con respecto del tiempo empleado en recorrerla',
                     'excel_name'            => 'velocidad_viento',
@@ -67,6 +71,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    #id = 5
                     'name'                  => 'Dirección del Viento',
                     'description'           => 'Está definida por el punto del horizonte del observador desde el cual el viento sopla. En la actualidad, se usa internacionalmente la rosa de vientos dividida en 360°',
                     'excel_name'            => 'direccion_viento',
@@ -80,6 +85,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 6
                     'name'                  => 'Presión Barométrica',
                     'description'           => 'Es la presión que ejerce la atmósfera que rodea la tierra sobre todos los objetos que se hallan en contacto con ella. Es un elemnto climático cuya existencia se debe a la presencia de la masa atmosférica, varía en forma temporal y espacial',
                     'excel_name'            => 'presion_barometrica',
@@ -93,6 +99,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 7
                     'name'                  => 'Radiación Solar',
                     'description'           => 'Es la energía emitida por el sol, que se propaga en todas las direcciones a través del espacio mediante ondas electromagnéticas. Esta energía es el motor que determina la dinámica de los procesos atmosféricos y el clima',
                     'excel_name'            => 'radiacion_solar',
@@ -106,6 +113,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    #id => 8
                     'name'                  => 'Evapotranspiración',
                     'description'           => 'Se define como la pérdida de humedad de una superficie por evaporación directa junto con la pérdida de agua por transpiración de la vegetación',
                     'excel_name'            => 'evapotranspiracion',
@@ -119,6 +127,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    #id => 9
                     'name'                  => 'Nivel',
                     'description'           => 'Es la altura desde el fondo de una corriente hasta la lámina de agua',
                     'excel_name'            => 'nivel',
@@ -132,6 +141,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    #id => 10
                     'name'                  => 'Caudal',
                     'description'           => 'Es la cantidad de fluido que pasa en una unidad de tiempo. Normalmente se identifica con el flujo volumétrico o volumen que pasa por un área dada en la unidad de tiempo',
                     'excel_name'            => 'caudal',
@@ -145,32 +155,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'name'                  => 'Nivel sobrante',
-                    'description'           => 'nivel para estaciones Red Bocatomas CHEC',
-                    'excel_name'            => 'nivel',
-                    'database_field_name'   => 'nivel',
-                    'local_name'            => 'water_level',
-                    'decimal_precision'     => 1,
-                    'unit'                  => 'cm',
-                    'correct_serialization' => 'average',
-                    'report_name'           => 'reporteNivel.php',
-                    'created_at'            => Carbon::now(),
-                    'updated_at'            => Carbon::now(),
-                ],
-                [
-                    'name'                  => 'Caudal sobrante',
-                    'description'           => 'Caudal para las estaciones de la Red Bocatomas CHEC',
-                    'excel_name'            => 'caudal',
-                    'database_field_name'   => 'caudal',
-                    'local_name'            => 'flow_rate',
-                    'decimal_precision'     => 4,
-                    'unit'                  => 'm3/s',
-                    'correct_serialization' => 'average',
-                    'report_name'           => 'reporteCaudal.php',
-                    'created_at'            => Carbon::now(),
-                    'updated_at'            => Carbon::now(),
-                ],
-                [
+                    # id => 11
                     'name'                  => 'Estado alarma',
                     'description'           => null,
                     'excel_name'            => 'estado_alarma',
@@ -184,6 +169,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    #id => 12
                     'name'                  => 'PM10',
                     'description'           => 'Material particulado 10',
                     'excel_name'            => 'pm10',
@@ -197,7 +183,8 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
-                    'name'                  => 'pm2_5',
+                    # id => 13
+                    'name'                  => 'PM2_5',
                     'description'           => null,
                     'excel_name'            => 'pm2_5',
                     'database_field_name'   => null,
@@ -210,11 +197,12 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 14
                     'name'                  => 'o3',
                     'description'           => null,
                     'excel_name'            => 'o3',
                     'database_field_name'   => null,
-                    'local_name'            => 'o3_local_ppt',
+                    'local_name'            => 'o3_local_ppb',
                     'decimal_precision'     => 2,
                     'unit'                  => null,
                     'correct_serialization' => 'average',
@@ -223,11 +211,12 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 15
                     'name'                  => 'so2',
                     'description'           => null,
                     'excel_name'            => 'so2',
                     'database_field_name'   => null,
-                    'local_name'            => 'so2_local_ppt',
+                    'local_name'            => 'so2_local_ppb',
                     'decimal_precision'     => 2,
                     'unit'                  => null,
                     'correct_serialization' => 'average',
@@ -236,11 +225,12 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id = 16
                     'name'                  => 'co',
                     'description'           => null,
                     'excel_name'            => 'co',
                     'database_field_name'   => null,
-                    'local_name'            => 'co_local_ppt',
+                    'local_name'            => 'co_local_ppb',
                     'decimal_precision'     => 2,
                     'unit'                  => null,
                     'correct_serialization' => 'average',
@@ -249,6 +239,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    #id => 17
                     'name'                  => 'Temperatura máxima',
                     'description'           => null,
                     'excel_name'            => 'temperatura_max',
@@ -262,6 +253,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id = 18
                     'name'                  => 'Temperatura mínima',
                     'description'           => null,
                     'excel_name'            => 'temperatura_min',
@@ -275,6 +267,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 19
                     'name'                  => 'Temperatura media',
                     'description'           => null,
                     'excel_name'            => 'temperatura_med',
@@ -288,6 +281,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 20
                     'name'                  => 'Brillo',
                     'description'           => null,
                     'excel_name'            => 'brillo',
@@ -301,6 +295,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 21
                     'name'                  => 'pst',
                     'description'           => null,
                     'excel_name'            => 'pst',
@@ -314,6 +309,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 22
                     'name'                  => 'hydrostatic_charge',
                     'description'           => null,
                     'excel_name'            => 'hydrostatic_charge',
@@ -327,6 +323,7 @@ class VariableSeeder extends Seeder
                     'updated_at'            => Carbon::now(),
                 ],
                 [
+                    # id => 23
                     'name'                  => 'raw_water_temperature',
                     'description'           => null,
                     'excel_name'            => 'raw_water_temperature',

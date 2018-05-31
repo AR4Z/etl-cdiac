@@ -90,7 +90,7 @@ class StationRepository extends EloquentRepository
     public function getStationsForFilterETL()
     {
         return $this->queryBuilder()
-                    ->select('station.id','station.name','station.owner_net_id','filter_state.current_date','filter_state.current_time')
+                    ->select('station.id','station.name','station.net_id','filter_state.current_date','filter_state.current_time')
                     ->join('filter_state','station.id','=', 'filter_state.station_id')
                     ->join('station_type','station.station_type_id','=', 'station_type.id')
                     ->whereNotNull('station_type.etl_method')
@@ -105,7 +105,7 @@ class StationRepository extends EloquentRepository
     public function getStationsForOriginalETL()
     {
         return $this->queryBuilder()
-                    ->select('station.id','station.name','station.owner_net_id','original_state.current_date','original_state.current_time')
+                    ->select('station.id','station.name','station.net_id','original_state.current_date','original_state.current_time')
                     ->join('original_state','station.id','=', 'original_state.station_id')
                     ->join('station_type','station.station_type_id','=', 'station_type.id')
                     ->whereNotNull('station_type.etl_method')
@@ -122,7 +122,7 @@ class StationRepository extends EloquentRepository
     {
         return $this->queryBuilder()
                     ->select('station.id', 'station.name')
-                    ->join('net','station.owner_net_id','=','net.id')
+                    ->join('net','station.net_id','=','net.id')
                     ->join('station_type','station.station_type_id','=', 'station_type.id')
                     ->whereNotNull('station_type.etl_method')
                     ->where('station.etl_active',true)
@@ -133,18 +133,18 @@ class StationRepository extends EloquentRepository
 
     public function getStationsForEtl()
     {
-        return $this->select('id','owner_net_id')->where('etl_active',true)->get();
+        return $this->select('id','net_id')->where('etl_active',true)->get();
     }
     public function getIdNetForIdStation($stationId)
     {
-        return $this->select('owner_net_id as id')->where('id',$stationId)->first();
+        return $this->select('net_id as id')->where('id',$stationId)->first();
     }
     public function getStationForNetEtlActive($netId)
     {
         return $this->queryBuilder()
-                    ->select('station.id','station.owner_net_id','station.station_type_id','station.name')
+                    ->select('station.id','station.net_id','station.station_type_id','station.name')
                     ->join('station_type','station.station_type_id','=', 'station_type.id')
-                    ->where('station.owner_net_id',$netId)
+                    ->where('station.net_id',$netId)
                     ->whereNotNull('station_type.etl_method')
                     ->get();
     }
