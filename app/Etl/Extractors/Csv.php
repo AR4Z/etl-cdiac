@@ -56,6 +56,9 @@ class Csv extends ExtractorBase implements ExtractorInterface
         $this->method = $method;
     }
 
+    /**
+     * @return $this|mixed
+     */
     public function run()
     {
         if ($this->truncateTemporal){
@@ -64,6 +67,9 @@ class Csv extends ExtractorBase implements ExtractorInterface
 
             #Leer e insertar datos en base de datos
             $this->loadFile();
+
+            # Se elimina la ultima fecha para datos de aire que tiene hora incorrecta
+            $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'24:00:00');
         }
 
         # Ingresar la llave subrrogada de la estacion
@@ -84,6 +90,9 @@ class Csv extends ExtractorBase implements ExtractorInterface
         return $this;
     }
 
+    /**
+     *
+     */
     private function loadFile()
     {
         Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
@@ -104,6 +113,9 @@ class Csv extends ExtractorBase implements ExtractorInterface
         });
     }
 
+    /**
+     * @return array
+     */
     private function getVariablesName()
     {
         $arr = [];
@@ -113,10 +125,12 @@ class Csv extends ExtractorBase implements ExtractorInterface
         return $arr;
     }
 
+    /**
+     *
+     */
     private function configureDateTimes()
     {
         $repository = $this->etlConfig->getRepositorySpaceWork();
-
         $initVal = $this->getInitialDataInSpaceWork($repository);
         $finalVal = $this->getFinalDataInSpaceWork($repository);
 

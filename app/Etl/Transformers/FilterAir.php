@@ -26,6 +26,12 @@ class FilterAir extends TransformBase implements TransformInterface
 
     public $changeOverflowPreviousDeference = null;
 
+    public $variablesCalculated = [
+        'so2_local_ppb' => ['destiny' => 'so2_estan_ugm3', 'factor' =>  2.62],
+        'o3_local_ppb'  => ['destiny' => 'o3_estan_ugm3', 'factor' =>   1.96],
+        'co_local_ppb'  => ['destiny' => 'co_estan_ugm3', 'factor' =>   1.14],
+    ];
+
     /**
      * @param EtlConfig $etlConfig
      * @return mixed
@@ -39,6 +45,7 @@ class FilterAir extends TransformBase implements TransformInterface
     public function run()
     {
         $varFilter = $this->etlConfig->getVarForFilter();
+        $variablesCalculatedName = array_keys($this->variablesCalculated);
 
         foreach ($varFilter as $value)
         {
@@ -68,8 +75,19 @@ class FilterAir extends TransformBase implements TransformInterface
                 $this->changeOverflowPreviousDeference
             );
 
+            # Insertar datos calculados
+            if (in_array($value->local_name,$variablesCalculatedName)){
+                $this->generateVariableCalculated(
+                    $this->etlConfig->getTableSpaceWork(),
+                    $value->local_name,
+                    $this->variablesCalculated[$value->local_name]
+                );
+            }
+
             # Insertar los valores correctos deben ir a trust
             $this->trustProcess($value->local_name);
         }
+
+        dd($this);
     }
 }

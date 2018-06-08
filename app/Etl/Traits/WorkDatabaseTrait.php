@@ -146,13 +146,23 @@ trait WorkDatabaseTrait
         return DB::connection('temporary_work')->table($tableSpaceWork)->orderby('id','DESC')->first();
     }
 
-
+    /**
+     * @param $tableSpaceWork
+     * @return mixed
+     */
     public function listDateAndTimeFromSpaceWork($tableSpaceWork)
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->select('date_sk','time_sk')->orderby('date_sk','ASC')->orderby('time_sk','ASC')->get();
     }
 
-    public function getValInRange($tableSpaceWork,$date_sk,$time,$interval)
+    /**
+     * @param $tableSpaceWork
+     * @param $date_sk
+     * @param $time
+     * @param $interval
+     * @return mixed
+     */
+    public function getValInRange($tableSpaceWork, $date_sk, $time, $interval)
     {
         return DB::connection('temporary_work')
                     ->table($tableSpaceWork)
@@ -164,24 +174,50 @@ trait WorkDatabaseTrait
                     ->get();
     }
 
-    public function serializationInsert($tableSpaceWork,$value)
+    /**
+     * @param $tableSpaceWork
+     * @param $value
+     */
+    public function serializationInsert($tableSpaceWork, $value)
     {
        DB::connection('temporary_work')->table($tableSpaceWork)->insert($value);
     }
 
-    public function countRowForDate($tableSpaceWork,$date)
+    /**
+     * @param $tableSpaceWork
+     * @param $date
+     * @return mixed
+     */
+    public function countRowForDate($tableSpaceWork, $date)
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->select('*')->where('date_sk',$date)->count();
     }
 
-    public function serializationUpdate($repositorySpaceWork,$value,$date,$time)
+    /**
+     * @param $repositorySpaceWork
+     * @param $value
+     * @param $date
+     * @param $time
+     * @return mixed
+     */
+    public function serializationUpdate($repositorySpaceWork, $value, $date, $time)
     {
         $data = ($repositorySpaceWork)::select('*')->where('date_sk',$value->date_sk)->where('time_sk',$value->time_sk)->first();
         $data->date_sk = $date;
         $data->time_sk = $time;
         return $data->update();
     }
-    public function serializationCorrect($tableSpaceWork,$variables,$stationSk,$arrayValue,$date,$time,$interval)
+
+    /**
+     * @param $tableSpaceWork
+     * @param $variables
+     * @param $stationSk
+     * @param $arrayValue
+     * @param $date
+     * @param $time
+     * @param $interval
+     */
+    public function serializationCorrect($tableSpaceWork, $variables, $stationSk, $arrayValue, $date, $time, $interval)
     {
         $arr = ['station_sk'=>$stationSk,'date_sk'=>$date,'time_sk'=>$time];
 
@@ -201,6 +237,13 @@ trait WorkDatabaseTrait
         $this->serializationInsert($tableSpaceWork,$arr);
 
     }
+
+    /**
+     * @param $tableSpaceWork
+     * @param $date_sk
+     * @param $time_sk
+     * @return mixed
+     */
     public function deleteFromDateAndTime($tableSpaceWork, $date_sk, $time_sk)
     {
         return DB::connection('temporary_work')
@@ -210,7 +253,14 @@ trait WorkDatabaseTrait
                     ->delete();
     }
 
-    public function SerializationSum($tableSpaceWork,$date,$times,$variableName)
+    /**
+     * @param $tableSpaceWork
+     * @param $date
+     * @param $times
+     * @param $variableName
+     * @return mixed
+     */
+    public function SerializationSum($tableSpaceWork, $date, $times, $variableName)
     {
         return DB::connection('temporary_work')
                     ->table($tableSpaceWork)
@@ -219,7 +269,15 @@ trait WorkDatabaseTrait
                     ->whereIn('time_sk',$times)
                     ->get()[0]->sum;
     }
-    public function SerializationAverage($tableSpaceWork,$date,$times,$variableName)
+
+    /**
+     * @param $tableSpaceWork
+     * @param $date
+     * @param $times
+     * @param $variableName
+     * @return mixed
+     */
+    public function SerializationAverage($tableSpaceWork, $date, $times, $variableName)
     {
         return DB::connection('temporary_work')
             ->table($tableSpaceWork)
@@ -228,8 +286,6 @@ trait WorkDatabaseTrait
             ->whereIn('time_sk',$times)
             ->get()[0]->avg;
     }
-
-
 
     /**
      *
@@ -249,17 +305,31 @@ trait WorkDatabaseTrait
         TemporaryCorrectionRepository::truncate();
     }
 
+    /**
+     * @param $repository
+     * @return mixed
+     */
     public function getInitialDataInSpaceWork($repository)
     {
         return ($repository)::select('*')->orderByRaw("date_sk ASC, time_sk ASC")->first();
     }
 
+    /**
+     * @param $repository
+     * @return mixed
+     */
     public function getFinalDataInSpaceWork($repository)
     {
         return ($repository)::select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
     }
 
-    public function getWhereIn($tableSpaceWork,$variable,array $search)
+    /**
+     * @param $tableSpaceWork
+     * @param $variable
+     * @param array $search
+     * @return mixed
+     */
+    public function getWhereIn($tableSpaceWork, $variable, array $search)
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)
                     ->select('id','station_sk','date_sk','time_sk',$variable)
@@ -268,6 +338,42 @@ trait WorkDatabaseTrait
                     ->get();
     }
 
+    /**
+     * @param $tableSpaceWork
+     * @param $time
+     * @return bool
+     */
+    public function deleteLastDate($tableSpaceWork, $time)
+    {
+        $query = DB::connection('temporary_work')->table($tableSpaceWork);
+
+        $value =  $query->select('id','time')->orderby('id','DESC')->first();
+
+        if ($value->time = $time){ $query->where('id',$value->id)->delete(); }
+
+        return true;
+    }
 
 
+    /**
+     * @param string $tableSpaceWork
+     * @param string $variableName
+     * @param array $infoCalculation
+     * @return bool
+     */
+    public function generateVariableCalculated(string $tableSpaceWork, string $variableName, array $infoCalculation)
+    {
+        $values = DB::connection('temporary_work')->table($tableSpaceWork)->select('id',$variableName)->whereNotNull($variableName)->get();
+
+        foreach ($values as $value) {
+            DB::connection('temporary_work')
+                ->table($tableSpaceWork)
+                ->where('id',$value->id)
+                ->update([
+                        $infoCalculation['destiny'] => round(((double)$value->{$variableName}) *  $infoCalculation['factor'],2)
+                    ]
+                );
+        }
+        return true;
+    }
 }
