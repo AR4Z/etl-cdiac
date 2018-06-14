@@ -14,7 +14,7 @@ class FilterAir extends TransformBase implements TransformInterface
 
     public $etlConfig = null;
 
-    public $paramSearch = ['Samp<', 'InVld', 'RS232', 'OffScan','-'];
+    public $paramSearch = ['Samp<', 'InVld', 'RS232', 'OffScan','-','Sin Dato'];
 
     public $deleteLastHour = ['Span','Zero'];
 
@@ -87,7 +87,5 @@ class FilterAir extends TransformBase implements TransformInterface
             # Insertar los valores correctos deben ir a trust
             $this->trustProcess($value->local_name);
         }
-
-        dd($this);
     }
 }

@@ -17,6 +17,12 @@ class ServerAcquisitionController extends Controller
 
     private $connectionDefault = 'server_external_consult';
 
+
+    public function __construct()
+    {
+
+    }
+
     public function index()
     {
         $stations = StationRepository::getStationInServerAcquisition();

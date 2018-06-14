@@ -180,12 +180,12 @@ class PlaneEtlController extends Controller
 
         foreach ($configCsv as $key => $value){
 
-            $val = array_search($key,$variablesLoad);
+            $val = array_search($value['incoming_name'],$variablesLoad);
             if ( $val !== false){
                 unset($variablesLoad[$val]);
             }else{
                 if ($value['required']){
-                    array_push($notExist,$key.' : '.$value['description']);
+                    array_push($notExist,$value['incoming_name'].' : '.$value['description']);
                 }
             }
         }

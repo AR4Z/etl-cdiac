@@ -20,6 +20,7 @@ class CreateTemporalGroundwaterFactTable extends Migration
             $table->bigInteger('date_sk')->unsigned();
             $table->bigInteger('time_sk')->unsigned();
 
+            $table->string('date_time')->nullable();
             $table->string('date')->nullable();
             $table->string('time')->nullable();
 

@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\EtlConfig;
+use function Couchbase\defaultDecoder;
 use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -29,6 +30,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
     public $flagDateSk = false;
 
     public $flagTimeSk = false;
+
+    public $dateTime = false;
 
     /**
      * Csv constructor.
@@ -67,10 +70,19 @@ class Csv extends ExtractorBase implements ExtractorInterface
 
             #Leer e insertar datos en base de datos
             $this->loadFile();
-
-            # Se elimina la ultima fecha para datos de aire que tiene hora incorrecta
-            $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'24:00:00');
         }
+
+        if ($this->dateTime){
+            # Calcular la fecha y la hora dependiendo de un DateTime
+            $this->getCalculateDateAndTime($this->etlConfig->getRepositorySpaceWork(),$this->etlConfig->getTableSpaceWork());
+        }
+
+        # Eliminar cambos no deseados en las llaves primarias
+        $this->deleteTimeAndDateNull($this->etlConfig->getTableSpaceWork());
+
+        # Eliminar Ultimo dato el cual es erroneo por definicion
+        $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'00:00:00');
+        $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'24:00:00');
 
         # Ingresar la llave subrrogada de la estacion
         if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
@@ -87,6 +99,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
         # Ejecutar el proceso de confianza y soporte de los datos
         $trustProcess = $this->trustProcess();
 
+        dd($this);
+
         return $this;
     }
 
@@ -98,8 +112,11 @@ class Csv extends ExtractorBase implements ExtractorInterface
         Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
 
             $inputVariables = $reader->all()->getHeading();
-            $variablesName = $this->getVariablesName();
+            $variablesName = $this->getVariablesName($inputVariables);
             $variablesNameExcel = array_keys($variablesName);
+
+           $this->dateTime = in_array('data_time',$inputVariables);
+
             foreach ($reader->get() as $values){
                 $val = [];
                 $values->toArray();
@@ -114,14 +131,22 @@ class Csv extends ExtractorBase implements ExtractorInterface
     }
 
     /**
+     * @param $inputVariables
      * @return array
      */
-    private function getVariablesName()
+    private function getVariablesName($inputVariables)
     {
         $arr = [];
         $configCsv = (object)Config::get('etl')['csv_keys'][$this->etlConfig->getStation()->typeStation->etl_method];
-        foreach ($configCsv as $key => $value){$arr[$key] = $value['local_name'];}
-        foreach ($this->etlConfig->getVarForFilter() as $value){$arr[$value->excel_name] = $value->local_name ;}
+        foreach ($configCsv as $key => $value){
+            if (in_array($value['incoming_name'],$inputVariables)){$arr[$value['incoming_name']] = $value['local_name'];}
+        }
+        foreach ($this->etlConfig->getVarForFilter() as $value)
+        {
+            if (in_array($value->excel_name,$inputVariables)){
+                $arr[$value->excel_name] = $value->local_name ;
+            }
+        }
         return $arr;
     }
 

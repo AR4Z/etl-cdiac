@@ -11,7 +11,7 @@ class TemporalGroundwater extends Model
     protected $table = 'temporal_groundwater';
 
     protected $fillable = [
-        'id','station_sk', 'date_sk', 'time_sk',
+        'id','station_sk', 'date_sk', 'time_sk','date_time',
         'date','time',
         'raw_air_pressure',
         'raw_air_temperature',

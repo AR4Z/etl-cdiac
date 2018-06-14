@@ -109,9 +109,9 @@ abstract class TransformBase extends EtlBase
                 $this->updateInRange($tableSpaceWork,$variable,$value->date_sk,$value->time_sk,$limit,null);
                 $this->updateInRange($tableSpaceWork,$variable,$secondDateSk,$value->time_sk,$limit,null);
             }
-
-            return true;
         }
+
+        return true;
     }
 
     /**
@@ -164,14 +164,17 @@ abstract class TransformBase extends EtlBase
      */
     public function updateForNull(string $tableSpaceWork, string $variable, array $searchParams = ['-'])
     {
-       $query =  DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$searchParams);
-       $values = $query->select('id','station_sk','date_sk','time_sk',$variable)->get();
+       $values =  DB::connection('temporary_work')
+                       ->table($tableSpaceWork)
+                       ->select('id','station_sk','date_sk','time_sk',$variable)
+                       ->whereIn($variable,$searchParams)
+                       ->get();
 
        if (is_null($values) or empty($values)){return false;}
 
        foreach ($values as $value ) {$this->insertInCorrectionTable($value,$variable,null,'known_error_value');}
 
-       $query->update([$variable => null]);
+        DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$searchParams)->update([$variable => null]);
 
        return true;
 

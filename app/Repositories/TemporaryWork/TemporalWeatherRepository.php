@@ -92,4 +92,12 @@ class TemporalWeatherRepository extends EloquentRepository implements TemporaryI
         return $this->createModel()->where('id', '=', $stationSk)->update(['time_sk' => $value]);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getDateTime()
+    {
+        return $this->select('id','date_time')->get();
+    }
+
 }

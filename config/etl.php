@@ -104,28 +104,50 @@ return [
 
     'csv_keys'  =>  [
         'weather'       =>  [
+            'date_time' => [
+                'required'      => true,
+                'type'          => 'compound',
+                'incoming_name' => 'date_time',
+                'local_name'    => 'date_time',
+                'description'   => 'Fecha y Hora de la medicion'
+            ],
             'fecha' =>  [
                 'required'      => true,
+                'type'          => 'simple',
+                'incoming_name' => 'fecha',
                 'local_name'    => 'date',
                 'reference'     => 'date_sk',
                 'description'   => 'fecha de la medición'
             ],
             'hora'    =>  [
                 'required'      => true,
+                'type'          => 'simple',
+                'incoming_name' => 'hora',
                 'local_name'    => 'time',
                 'reference'     => 'time_sk',
                 'description'   => 'hora de la medición'
             ],
         ],
-        'air'           =>  [
+        'air'   =>  [
+            'date_time' => [
+                'required'      => true,
+                'type'          => 'compound',
+                'incoming_name' => 'date_time',
+                'local_name'    => 'date_time',
+                'description'   => 'Fecha y Hora de la medicion'
+            ],
             'fecha' =>  [
                 'required'      => true,
+                'type'          => 'simple',
+                'incoming_name' => 'fecha',
                 'local_name'    => 'date',
                 'reference'     => 'date_sk',
                 'description'   => 'fecha de la medición'
             ],
             'hora'    =>  [
                 'required'      => true,
+                'type'          => 'simple',
+                'incoming_name' => 'hora',
                 'local_name'    => 'time',
                 'reference'     => 'time_sk',
                 'description'   => 'hora de la medición'
@@ -133,14 +155,25 @@ return [
 
         ],
         'groundwater'   =>  [
+            'date_time' => [
+                'required'      => true,
+                'type'          => 'compound',
+                'incoming_name' => 'date_time',
+                'local_name'    => 'date_time',
+                'description'   => 'Fecha y Hora de la medicion'
+            ],
             'fecha' =>  [
                 'required'      => true,
+                'type'          => 'simple',
+                'incoming_name' => 'fecha',
                 'local_name'    => 'date',
                 'reference'     => 'date_sk',
                 'description'   => 'fecha de la medición'
             ],
             'hora'    =>  [
                 'required'      => true,
+                'type'          => 'simple',
+                'incoming_name' => 'hora',
                 'local_name'    => 'time',
                 'reference'     => 'time_sk',
                 'description'   => 'hora de la medición'

@@ -26,7 +26,7 @@ class TemporalAir extends Model
      * @var array
      */
     protected $fillable = [
-        'station_sk', 'date_sk', 'time_sk',
+        'station_sk', 'date_sk', 'time_sk', 'date_time',
         'date','time',
         'so2_local_ppb',
         'so2_local_ugm3',

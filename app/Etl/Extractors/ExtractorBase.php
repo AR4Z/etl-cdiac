@@ -5,8 +5,8 @@ namespace App\Etl\Extractors;
 
 use Carbon\Carbon;
 use App\Etl\Traits\{DateSkTrait, TimeSkTrait, WorkDatabaseTrait,TrustTrait};
-use function Composer\Autoload\includeFile;
-
+use DB;
+use Exception;
 
 /**
  * @property bool flagTimeSk
@@ -17,6 +17,8 @@ use function Composer\Autoload\includeFile;
 abstract class ExtractorBase
 {
     use DateSkTrait, TimeSkTrait,WorkDatabaseTrait, TrustTrait;
+
+    public $keyErrors = ['_','Min','Date','Time','Max','Date','Time','AVG','Num','Data[%]'];
 
     /**
      * @param $repository
@@ -112,5 +114,50 @@ abstract class ExtractorBase
             $extractType = __NAMESPACE__ . '\\' . ucwords('ExtractType') . '\\' . $extractType;
         }
         return new $extractType($etlConfig);
+    }
+
+    /**
+     * @param $repository
+     * @param $tableSpaceWork
+     */
+    public function getCalculateDateAndTime($repository, $tableSpaceWork)
+    {
+        $values = ($repository)::getDateTime();
+
+        foreach ($values as $value)
+        {
+            $dateTime = $this->parseCarbonDateTime(trim($value->date_time));
+            if (!is_null($dateTime)){
+                $this->updateDateTimeFromId($tableSpaceWork,$value->id,$dateTime->format('Y-m-d'),$dateTime->format('H:i:s'));
+            }
+        }
+    }
+
+    /**
+     * @param string $dateTime
+     * @return null|static
+     */
+    public function parseCarbonDateTime(string $dateTime = '')
+    {
+        $value = null;
+        try {
+            if (!empty($dateTime)){
+                $value = Carbon::parse($dateTime);
+            }
+            return $value;
+        } catch (Exception $e) {
+            return $value;
+        }
+    }
+
+    public function deleteTimeAndDateNull($tableSpaceWork)
+    {
+        $this->deleteWhereInVariable($tableSpaceWork,'date_time',$this->keyErrors);
+        $this->deleteWhereInVariable($tableSpaceWork,'date',$this->keyErrors);
+        $this->deleteWhereInVariable($tableSpaceWork,'time',$this->keyErrors);
+
+        $this->deleteNullVariable($tableSpaceWork,'date');
+
+        return true;
     }
 }

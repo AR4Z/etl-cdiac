@@ -47,4 +47,9 @@ interface TemporaryInterface
      * @return mixed
      */
     public function updateTimeSkFromStationSk($stationSk, $value);
+
+    /**
+     * @return mixed
+     */
+    public function getDateTime();
 }

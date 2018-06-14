@@ -16,11 +16,15 @@ class CreateTemporalClimaTable extends Migration
         Schema::connection('temporary_work')->create('temporal_weather', function (Blueprint $table) {
 
             $table->increments('id');
+
             $table->integer('station_sk')->nullable();
             $table->integer('date_sk')->nullable();
             $table->integer('time_sk')->nullable();
+
+            $table->string('date_time')->nullable();
             $table->string('date')->nullable();
             $table->string('time')->nullable();
+
             $table->string('temperature')->nullable();
             $table->string('rainfall')->nullable();
             $table->string('max_temperature')->nullable();

@@ -376,4 +376,32 @@ trait WorkDatabaseTrait
         }
         return true;
     }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param int $id
+     * @param string $date
+     * @param string $time
+     * @return mixed
+     */
+    public function updateDateTimeFromId(string $tableSpaceWork, int $id, string $date, string $time)
+    {
+      return DB::connection('temporary_work')->table($tableSpaceWork)->where('id',$id)->update(['date' => $date,'time' => $time]);
+    }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param string $variable
+     * @param array $arr
+     * @return mixed
+     */
+    public function deleteWhereInVariable(string $tableSpaceWork, string $variable, array $arr)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$arr)->delete();
+    }
+
+    public function deleteNullVariable($tableSpaceWork,$variable)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->whereNull($variable)->delete();
+    }
 }

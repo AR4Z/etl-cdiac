@@ -21,6 +21,7 @@ class TemporalAirTable extends Migration
             $table->integer('date_sk')->nullable();
             $table->integer('time_sk')->nullable();
 
+            $table->string('date_time')->nullable();
             $table->string('date')->nullable();
             $table->string('time')->nullable();
 
