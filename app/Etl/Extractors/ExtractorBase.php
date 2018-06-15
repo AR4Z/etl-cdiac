@@ -127,6 +127,7 @@ abstract class ExtractorBase
         foreach ($values as $value)
         {
             $dateTime = $this->parseCarbonDateTime(trim($value->date_time));
+
             if (!is_null($dateTime)){
                 $this->updateDateTimeFromId($tableSpaceWork,$value->id,$dateTime->format('Y-m-d'),$dateTime->format('H:i:s'));
             }
@@ -135,7 +136,7 @@ abstract class ExtractorBase
 
     /**
      * @param string $dateTime
-     * @return null|static
+     * @return Carbon
      */
     public function parseCarbonDateTime(string $dateTime = '')
     {
@@ -150,6 +151,10 @@ abstract class ExtractorBase
         }
     }
 
+    /**
+     * @param $tableSpaceWork
+     * @return bool
+     */
     public function deleteTimeAndDateNull($tableSpaceWork)
     {
         $this->deleteWhereInVariable($tableSpaceWork,'date_time',$this->keyErrors);

@@ -3,11 +3,8 @@
 
 namespace App\Etl\Loaders;
 
-
 use App\Etl\EtlConfig;
 use App\Etl\Traits\WorkDatabaseTrait;
-
-
 
 class Load extends LoadBase implements LoadInterface
 {
@@ -93,7 +90,6 @@ class Load extends LoadBase implements LoadInterface
                 array_push($this->columns,$variable->$colDestination);
             }
         }
-
 
         $temporalSelect[strlen($temporalSelect)-2] = ' ';
         $this->select .= $temporalSelect;

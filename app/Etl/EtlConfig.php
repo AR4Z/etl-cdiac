@@ -77,8 +77,6 @@ class EtlConfig
 
   private $trustProcess = false;
 
-
-
     /**
      * EtlConfig constructor.
      * @param String $typeProcess
@@ -567,7 +565,7 @@ class EtlConfig
      */
     public function setKeys($keys)
     {
-        $this->keys = new PrimaryKeys($keys) ;
+        $this->keys = new PrimaryKeys($this->typeProcess,$this->station->typeStation->etl_method,$keys) ;
         return $this;
     }
 

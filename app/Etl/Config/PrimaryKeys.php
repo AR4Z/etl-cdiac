@@ -32,11 +32,26 @@ class PrimaryKeys
     public $mergeExternalIncomingKeys = '';
 
 
-    function __construct($keys)
+    function __construct($typeProcess, $etlMethod, $keys)
     {
-        $this->globalKeys = $keys;
-        $this->global = array_keys($keys);
+        $this->globalKeys = $this->getReactiveKeys($typeProcess,$etlMethod,$keys);
+        $this->global = array_keys($this->globalKeys);
         $this->config();
+    }
+
+    private function getReactiveKeys($typeProcess, $etlMethod, $keys)
+    {
+        $arr = [];
+        foreach ($keys as $key => $value)
+        {
+            if ($value['type'] == 'all' or $value['type'] == $etlMethod){
+                if (($typeProcess == 'Original' and $value['external_incoming'] == true) or
+                    ( $typeProcess == 'Filter' and $value['local_incoming'] == true ) or
+                    ( $value['key'] == true )
+                ){$arr[$key] = $value; }
+            }
+        }
+        return $arr;
     }
 
     private function config()

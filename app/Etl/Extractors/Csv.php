@@ -81,8 +81,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
         $this->deleteTimeAndDateNull($this->etlConfig->getTableSpaceWork());
 
         # Eliminar Ultimo dato el cual es erroneo por definicion
-        $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'00:00:00');
         $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'24:00:00');
+        $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'00:00:00');
 
         # Ingresar la llave subrrogada de la estacion
         if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
@@ -99,8 +99,6 @@ class Csv extends ExtractorBase implements ExtractorInterface
         # Ejecutar el proceso de confianza y soporte de los datos
         $trustProcess = $this->trustProcess();
 
-        dd($this);
-
         return $this;
     }
 
@@ -115,7 +113,7 @@ class Csv extends ExtractorBase implements ExtractorInterface
             $variablesName = $this->getVariablesName($inputVariables);
             $variablesNameExcel = array_keys($variablesName);
 
-           $this->dateTime = in_array('data_time',$inputVariables);
+           $this->dateTime = in_array('date_time',$inputVariables);
 
             foreach ($reader->get() as $values){
                 $val = [];

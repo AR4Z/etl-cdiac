@@ -50,13 +50,14 @@ trait BaseExecuteEtl
      * @param string $method
      * @param string $net
      * @param bool $sequence
+     * @param bool $serialization
      * @param array $extract
      * @param array $transform
      * @param array $load
      * @param bool $jobs
      * @return array
      */
-    public function executeOneNetAllStations(string $method, string $net, bool $sequence,array $extract = [], array $transform = [], array $load = [],bool $jobs = false)
+    public function executeOneNetAllStations(string $method, string $net, bool $sequence,bool $serialization,array $extract = [], array $transform = [], array $load = [],bool $jobs = false)
     {
         #obtener una estacion basado en un nombre de red
         $oneStationForNet = $this->stationDimRepository->getIdStationForName($net)->id;
@@ -70,7 +71,7 @@ trait BaseExecuteEtl
         $response = [];
 
         foreach ($stationForNet as $station){
-            $res = $this->executeOneStation($method, $station->net_id,  $station->id,$sequence,$extract,$transform,$load,$jobs);
+            $res = $this->executeOneStation($method, $station->net_id,  $station->id,$sequence,$serialization,$extract,$transform,$load,$jobs);
             array_push($response,$res);
         }
         return $response;
@@ -81,6 +82,7 @@ trait BaseExecuteEtl
      * @param string|null $net
      * @param string $station
      * @param bool $sequence
+     * @param bool $serialization
      * @param array $extract
      * @param array $transform
      * @param array $load
@@ -92,6 +94,7 @@ trait BaseExecuteEtl
         string $net = null,
         string $station,
         bool $sequence = false,
+        bool $serialization = false,
         array $extract = [],
         array $transform = [],
         array $load = [],
@@ -102,7 +105,7 @@ trait BaseExecuteEtl
         $this->jobsActive = $jobs;
 
         if($extract['method'] == 'Csv'){
-            $response =  $this->dispatchJob($method, $net, $station,$sequence,$extract,$transform,$load);
+            $response =  $this->dispatchJob($method, $net, $station,$sequence,$serialization,$extract,$transform,$load);
         }else{
             $spaceDays = $this->spaceDaysForFilter;
             $dateOne = date_create($extract['optionExtract']['initialDate']);
@@ -121,7 +124,7 @@ trait BaseExecuteEtl
                 $dateOne =  date_add(clone ($dateFin), date_interval_create_from_date_string('+1 days'));
                 $extract['optionExtract']['finalDate'] = $dateFin->format('Y-m-d');
 
-                $res = $this->dispatchJob($method, $net, $station,$sequence,$extract,$transform,$load);
+                $res = $this->dispatchJob($method, $net, $station,$sequence,$serialization,$extract,$transform,$load);
                 array_push($arr,$res);
                 $i++;
             }
@@ -136,26 +139,27 @@ trait BaseExecuteEtl
      * @param string|null $net
      * @param string $station
      * @param bool $sequence
+     * @param bool $serialization
      * @param array $extract
      * @param array $transform
      * @param array $load
      * @return array
      */
-    public function dispatchJob(string $method, string $net = null, string $station, bool $sequence, array $extract = [], array $transform = [], array $load = [])
+    public function dispatchJob(string $method, string $net = null, string $station, bool $sequence, bool $serialization,array $extract = [], array $transform = [], array $load = [])
     {
         $work = null;
         $work2 = null;
         $arr =  ['execution' => 'asynchronous','work1' => null, 'work2' => null];
         switch ($method) {
             case "Filter":
-                $work = $this->filterJob($net,null,intval($station),$sequence,$extract,$transform,$load);
+                $work = $this->filterJob($net,null,intval($station),$sequence,$serialization,$extract,$transform,$load);
                 break;
             case "Original":
                 $work = $this->OriginalJob($net,null,intval($station),$sequence,$extract,$transform,$load);
                 break;
             case "All":
                 $work = $this->OriginalJob($net,null,intval($station),$sequence,$extract,$transform,$load);
-                $work2 = $this->filterJob($net,null,intval($station),$sequence,$extract,$transform,$load);
+                $work2 = $this->filterJob($net,null,intval($station),$sequence,$serialization,$extract,$transform,$load);
                 break;
         }
 
@@ -179,6 +183,7 @@ trait BaseExecuteEtl
     /**
      * @param string $method --- el metodo de quiera a ejecutar puede ser Firter, Original o ALL
      * @param bool $sequence --- Si es necesario que se actualise la tabla de control del ETL originalState o filterSate
+     * @param bool $serialization
      * @param array $extract
      * @param array $transform
      * @param array $load
@@ -186,12 +191,12 @@ trait BaseExecuteEtl
      * @return array
      */
 
-    public function executeAllStations(string $method, bool $sequence, array $extract = [], array $transform = [], array $load = [],bool $jobs)
+    public function executeAllStations(string $method, bool $sequence, bool $serialization,array $extract = [], array $transform = [], array $load = [],bool $jobs)
     {
         $stationEtlTrue = $this->stationRepository->getStationsForEtl();
         $arr= []; $response = null;
         foreach ($stationEtlTrue as $station){
-            $response = $this->executeOneStation($method, $station->net_id,  $station->id, $sequence,$extract,$transform,$load,$jobs);
+            $response = $this->executeOneStation($method, $station->net_id,  $station->id, $sequence,$serialization,$extract,$transform,$load,$jobs);
             array_push($arr,$response);
         }
 
@@ -203,6 +208,7 @@ trait BaseExecuteEtl
      * @param null $connection
      * @param $station
      * @param bool $sequence
+     * @param bool $serialization
      * @param array $extract
      * @param array $transform
      * @param array $load
@@ -212,14 +218,13 @@ trait BaseExecuteEtl
         $net = null,
         $connection = null,
         $station,
-        bool $sequence,
+        bool $sequence = false,
+        bool $serialization = false,
         array $extract = [],
         array $transform = [],
         array $load = []
     )# array $extractOptions,bool $serialization,bool $detection,bool $correction
     {
-        $serialization = true; # TODO : Esto debe entrar por parametro.
-
         $etl = Etl::start('Filter', $net, $connection,$station,$sequence);
 
          if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Csv'){
@@ -293,6 +298,7 @@ trait BaseExecuteEtl
         $jobs = true;
         $trustProcess = false; # TODO : Esto debe ser true
         $sequence = false; # TODO : Esto debe ser true
+        $serialization = false; # TODO
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForOriginalETL();
 
@@ -303,6 +309,7 @@ trait BaseExecuteEtl
                 $station->net_id,
                 $station->id,
                 $sequence,
+                $serialization,
                 ['method' => 'Database', 'optionExtract' => ['trustProcess'=> $trustProcess,'extractType' => 'External', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],
                 [],
                 [],
@@ -319,6 +326,7 @@ trait BaseExecuteEtl
         $jobs = true;
         $trustProcess = true; # TODO : Esto debe ser true
         $sequence = false; # TODO : Esto debe ser true
+        $serialization = true; #TODO
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = $this->stationRepository->getStationsForFilterETL();
 
@@ -329,6 +337,7 @@ trait BaseExecuteEtl
                 $station->net_id,
                 $station->id,
                 $sequence,
+                $serialization,
                 ['method' => 'Database','optionExtract' =>['trustProcess'=> $trustProcess,'extractType' => 'Local', 'initialDate' => $date,'initialTime' => '00:00:00','finalDate' =>  $date,'finalTime' => '23:59:59']],
                 [],
                 [],

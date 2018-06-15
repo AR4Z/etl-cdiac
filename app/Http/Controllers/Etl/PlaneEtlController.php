@@ -266,7 +266,7 @@ class PlaneEtlController extends Controller
                     'finalTime' => $etlConfig->getFinalTime()
                 ]
             ];
-            $response2 =    $this->executeOneStation('Filter',$station->net_id,$station->id,$options->sequence,$extract2,[],[], $options->jobs);
+            $response2 =    $this->executeOneStation('Filter',$station->net_id,$station->id,$options->sequence,$options->serialization,$extract2,[],[], $options->jobs);
         }
         return ['Original'=> $response,'Filter' => $response2];
     }
@@ -275,7 +275,7 @@ class PlaneEtlController extends Controller
     private function executeAir($station, $extract, $options)
     {
         # La Opcion originales no puede ojecutarse por medio de jobs pues se necesitan datos para poder ejecutar el proceso de filtrado.
-        $response = $this->executeOneStation('Original',$station->net_id,$options->station_id,$options->sequence,$extract,[],[],false);
+        $response = $this->executeOneStation('Original',$station->net_id,$options->station_id,$options->sequence,$options->serialization,$extract,[],[],false);
 
         $etlConfig = $response['work1']->etlConfig;
 
@@ -300,7 +300,7 @@ class PlaneEtlController extends Controller
 
         $load = [];
 
-        $response2 =    $this->executeOneStation('Filter',$station->net_id,$station->id,$options->sequence,$extract2,$transform,$load, $options->jobs);
+        $response2 =    $this->executeOneStation('Filter',$station->net_id,$station->id,$options->sequence,$options->serialization,$extract2,$transform,$load, $options->jobs);
 
         return ['Original'=> $response,'Filter' => $response2];
 

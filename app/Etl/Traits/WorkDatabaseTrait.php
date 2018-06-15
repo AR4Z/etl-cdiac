@@ -345,11 +345,13 @@ trait WorkDatabaseTrait
      */
     public function deleteLastDate($tableSpaceWork, $time)
     {
-        $query = DB::connection('temporary_work')->table($tableSpaceWork);
+        $value = DB::connection('temporary_work')->table($tableSpaceWork)->select('id','time')->orderby('id','DESC')->first();
 
-        $value =  $query->select('id','time')->orderby('id','DESC')->first();
-
-        if ($value->time = $time){ $query->where('id',$value->id)->delete(); }
+        if (!empty($value)){
+            if ($value->time = $time){
+                DB::connection('temporary_work')->table($tableSpaceWork)->where('id',$value->id)->delete();
+            }
+        }
 
         return true;
     }

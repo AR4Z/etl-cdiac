@@ -12,7 +12,6 @@ class Etl
    */
   Public $etlConfig = null;
 
-
   Public $etlObject = [];
 
   public $flagEtl = 0;

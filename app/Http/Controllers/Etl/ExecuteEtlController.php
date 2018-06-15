@@ -51,21 +51,22 @@ class ExecuteEtlController extends Controller
         $data = $request->all();
         $data['sequence'] = true; # TODO: Dede entrar por parametro
         $data['trustProcess'] = false; # TODO: Debe entrar por parametro
+        $data['serialization'] = false; # TODO: Debe entrar por parametro
 
         $extract = ['method' => 'Database','optionExtract' => ['trustProcess'=> $data['trustProcess'], 'initialDate' => $data['start'],'initialTime' => '00:00:00','finalDate' =>  $data['end'],'finalTime' => '23:59:59']];
         $transform = [];
         $load = [];
         if ($data['net_name'] == 0){
             if ($data['station_id'] == 0){
-                $response = $this->executeAllStations($data['method'],$data['sequence'],$extract,$transform,$load,$jobs);
+                $response = $this->executeAllStations($data['method'],$data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
             }else{
-                $response = $this->executeOneStation($data['method'],null,$data['station_id'],$data['sequence'],$extract,$transform,$load,$jobs);
+                $response = $this->executeOneStation($data['method'],null,$data['station_id'],$data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
             }
         }else{
             if ($data['station_id'] == 0){
-                $response = $this->executeOneNetAllStations($data['method'],$data['net_name'],$data['sequence'],$extract,$transform,$load,$jobs);
+                $response = $this->executeOneNetAllStations($data['method'],$data['net_name'],$data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
             }else{
-                $response = $this->executeOneStation($data['method'],null,$data['station_id'], $data['sequence'],$extract,$transform,$load,$jobs);
+                $response = $this->executeOneStation($data['method'],null,$data['station_id'], $data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
             }
          }
 
