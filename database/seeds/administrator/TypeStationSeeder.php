@@ -15,6 +15,7 @@ class TypeStationSeeder extends Seeder
         DB::connection('administrator')->table('station_type')->insert(
             [
                 [
+                    #id 1
                     'name'          => 'Meteorológica',
                     'code'          => 'M',
                     'etl_method'    => 'weather',
@@ -24,6 +25,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 2
                     'name'          => 'Hidrometeorológica',
                     'code'          => 'H',
                     'etl_method'    => 'weather',
@@ -33,6 +35,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 3
                     'name'          => 'Repetidora',
                     'code'          => 'R',
                     'etl_method'    => null,
@@ -42,6 +45,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 4
                     'name'          => 'Alarma Sonora',
                     'code'          => 'AS',
                     'etl_method'    => null,
@@ -51,6 +55,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 5
                     'name'          => 'Alerta',
                     'code'          => 'A',
                     'etl_method'    => null,
@@ -60,6 +65,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 6
                     'name'          => 'Central',
                     'code'          => 'C',
                     'etl_method'    => null,
@@ -69,6 +75,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 7
                     'name'          => 'Calidad del aire',
                     'code'          => 'CA',
                     'etl_method'    => 'air',
@@ -78,6 +85,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 8
                     'name'          => 'Meteorológica movil',
                     'code'          => 'MM',
                     'etl_method'    => 'weather',
@@ -87,6 +95,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 9
                     'name'          => 'Calidad del agua',
                     'code'          => 'CAG',
                     'etl_method'    => null,
@@ -96,6 +105,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 10
                     'name'          => 'Sismológica',
                     'code'          => 'SI',
                     'etl_method'    => null,
@@ -105,6 +115,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 11
                     'name'          => 'Freatimétrica',
                     'code'          => 'F',
                     'etl_method'    => 'groundwater',
@@ -114,6 +125,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 12
                     'name'          => 'Suelo',
                     'code'          => 'SU',
                     'etl_method'    => null,
@@ -123,6 +135,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 13
                     'name'          => 'Principal',
                     'code'          => 'PP',
                     'etl_method'    => 'weather',
@@ -132,6 +145,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 15
                     'name'          => 'Pluviométrica',
                     'code'          => 'PM',
                     'etl_method'    => 'weather',
@@ -141,6 +155,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 16
                     'name'          => 'Pluviográfica',
                     'code'          => 'PG',
                     'etl_method'    => 'weather',
@@ -150,6 +165,7 @@ class TypeStationSeeder extends Seeder
                     'updated_at'    => Carbon::now(),
                 ],
                 [
+                    #id 17
                     'name'          => 'Aguas Freáticas',
                     'code'          => 'AF',
                     'etl_method'    => 'groundwater',

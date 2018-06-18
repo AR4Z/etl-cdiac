@@ -15,8 +15,9 @@ class NetSeeder extends Seeder
         DB::connection('administrator')->table('net')->insert(
             [
                 [
+                    #id 1
                     'connection_id'             => 4,
-                    'name'                      =>'Red Manizales - UGR',
+                    'name'                      =>'Manizales - UGR',
                     'description'               =>'Red de Estaciones Meteorológicas e Hidrometeorológicas Asociadas a la Prevención de Desastres en el Municipio de Manizales',
                     'administrator_name'        =>'Alexander Pachón',
                     'center_latitude_degrees'   => 5,
@@ -36,6 +37,7 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 2
                     'connection_id'             => 7,
                     'name'                      =>'SAT cuenca Q. El Guamo',
                     'description'               =>'Red de estaciones ubicadas en la cuenca de la quebrada El Guamo',
@@ -57,6 +59,7 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 3
                     'connection_id'             => 7,
                     'name'                      =>'SAT cuenca Q. Olivares',
                     'description'               =>'Red de estaciones ubicadas en la cuenca de la quebrada Olivares',
@@ -78,6 +81,7 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 4
                     'connection_id'             => 7,
                     'name'                      =>'SAT cuenca Q. Manizales',
                     'description'               =>'Red de estaciones ubicadas en la cuenca de la quebrada Manizales',
@@ -99,8 +103,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 5
                     'connection_id'             => 7,
-                    'name'                      =>'Red hidrometeorológica cuencas Manizales',
+                    'name'                      =>'hidrometeorológica cuencas Manizales',
                     'description'               =>'Red de estaciones hidrometeorológicas ubicadas en diferentes cuencas del municipio de Manizales',
                     'administrator_name'        =>'Julián David Sánchez Hernández',
                     'center_latitude_degrees'   => 5,
@@ -120,8 +125,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 6
                     'connection_id'             => 2,
-                    'name'                      =>'Red Caldas',
+                    'name'                      =>'Caldas',
                     'description'               =>'Red de estaciones ubicada en el departamento de Caldas',
                     'administrator_name'        =>'Lorena Giraldo Gómez',
                     'center_latitude_degrees'   => 5,
@@ -141,8 +147,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 7
                     'connection_id'             => 5,
-                    'name'                      =>'Red Nevados',
+                    'name'                      =>'Nevados',
                     'description'               =>'Red de estaciones ubicada en el Parque natural Nacional los Nevados',
                     'administrator_name'        =>'Lorena Giraldo Gómez',
                     'center_latitude_degrees'   => 4,
@@ -162,8 +169,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 8
                     'connection_id'             => 6,
-                    'name'                      =>'Red Udeger',
+                    'name'                      =>'Udeger',
                     'description'               =>'Red de estaciones estaciones pertenecientes a la UDEGER',
                     'administrator_name'        =>'Anyela María Arias Guarin',
                     'center_latitude_degrees'   => 5,
@@ -183,8 +191,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 9
                     'connection_id'             => 3,
-                    'name'                      =>'Red CHEC - Bocatomas',
+                    'name'                      =>'CHEC - Bocatomas',
                     'description'               =>'Red CHEC',
                     'administrator_name'        =>'',
                     'center_latitude_degrees'   => 5,
@@ -204,8 +213,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 10
                     'connection_id'             => 1,
-                    'name'                      =>'Red Calidad del Aire',
+                    'name'                      =>'Calidad del Aire',
                     'description'               =>'Red de estaciones que miden la calidad del aire',
                     'administrator_name'        =>'Beatriz Helena Aristizabal',
                     'center_latitude_degrees'   => 5,
@@ -225,8 +235,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 11
                     'connection_id'             => 1,
-                    'name'                      =>'Red Cenicafé',
+                    'name'                      =>'Cenicafé',
                     'description'               =>'Red de estaciones de datos históricos pertenecientes a Cenicafé',
                     'administrator_name'        => null,
                     'center_latitude_degrees'   => null,
@@ -246,8 +257,9 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 12
                     'connection_id'             => 1,
-                    'name'                      =>'Red Risaralda',
+                    'name'                      =>'Risaralda',
                     'description'               =>'Red de Risaralda',
                     'administrator_name'        => null,
                     'center_latitude_degrees'   => null,
@@ -267,9 +279,32 @@ class NetSeeder extends Seeder
                     'updated_at'                => Carbon::now(),
                 ],
                 [
+                    #id 13
                     'connection_id'             => 1,
-                    'name'                      =>'Red Aguas Freáticas',
+                    'name'                      =>'Aguas Freáticas',
                     'description'               =>'Red Aguas Freáticas',
+                    'administrator_name'        => null,
+                    'center_latitude_degrees'   => null,
+                    'center_latitude_minutes'   => null,
+                    'center_latitude_seconds'   => null,
+                    'center_latitude_direction' => null,
+                    'center_longitude_degrees'  => null,
+                    'center_longitude_minutes'  => null,
+                    'center_longitude_seconds'  => null,
+                    'center_longitude_direction'=> null,
+                    'rt_active'                 => false,
+                    'etl_active'                => false,
+                    'map_zoom'                  => null,
+                    'original_updated'          => false,
+                    'filtered_updated'          => false,
+                    'created_at'                => Carbon::now(),
+                    'updated_at'                => Carbon::now(),
+                ],
+                [
+                    #id 14
+                    'connection_id'             => 1,
+                    'name'                      =>'Estaciones Comunitarias',
+                    'description'               =>'Red Estaciones Comunitarias',
                     'administrator_name'        => null,
                     'center_latitude_degrees'   => null,
                     'center_latitude_minutes'   => null,
