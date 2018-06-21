@@ -62,6 +62,7 @@ class StationRepository extends EloquentRepository
                 'variable.excel_name',
                 'variable.database_field_name',
                 'variable.local_name',
+                'variable.reliability_name',
                 'variable.decimal_precision',
                 'variable.unit',
                 'variable.correct_serialization',

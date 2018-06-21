@@ -21,6 +21,7 @@ class CreateVariableTable extends Migration
             $table->string('excel_name')->nullable();
             $table->string('database_field_name')->nullable();
             $table->string('local_name')->nullable();
+            $table->string('reliability_name')->nullable();
             $table->integer('decimal_precision')->default(0);
             $table->string('unit',50)->nullable();
             $table->string('correct_serialization',50)->nullable();

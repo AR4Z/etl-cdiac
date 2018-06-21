@@ -24,6 +24,7 @@ trait TrustTrait
     public function incomingCalculation($trustRepository,$temporalTable,$tableTrust,$variables)
     {
         $values = $this->consultValues($temporalTable,$this->generateSelect($variables));
+
         $trustActuality = [];
         foreach ($values as $value){
 
@@ -44,13 +45,14 @@ trait TrustTrait
      * @param $temporalTable
      * @param $tableTrust
      * @param $variable
-     * @return array
+     * @param $reliability_name
+     * @return void
      */
-    public function insertGoods($trustRepository, $temporalTable, $tableTrust, $variable)
+    public function insertGoods($trustRepository, $temporalTable, $tableTrust, $variable,$reliability_name)
     {
         $values = DB::connection('temporary_work')
                     ->table($temporalTable)
-                    ->select(DB::raw("CAST(station_sk AS integer),CAST(date_sk AS integer),COUNT($variable) AS ".$variable.$this->goods))
+                    ->select(DB::raw("CAST(station_sk AS integer),CAST(date_sk AS integer),COUNT($variable) AS ".$reliability_name.$this->goods))
                     ->groupby('station_sk','date_sk')
                     ->orderby(DB::raw("station_sk,date_sk"),'asc')
                     ->get();
@@ -71,13 +73,15 @@ trait TrustTrait
     {
         foreach ($columns as $column){
             $value = ($this->etlConfig->getTrustRepository())::where('station_sk',$column['station_sk'])->where('date_sk' , $column['date_sk'])->first();
-
             foreach ($variables as $variable){
-                $total_records = $value->{$variable->local_name.$this->incoming};
-                $correct_records = $value->{$variable->local_name.$this->goods};
+                if (!is_null($variable->reliability_name)){
 
-                $value->{$variable->local_name.$this->trust} = $this->calculateTrust($total_records,$correct_records);
-                $value->{$variable->local_name.$this->support} = $this->calculateSupport($correct_records,$measurementsPerDay);
+                    $total_records = $value->{$variable->reliability_name.$this->incoming};
+                    $correct_records = $value->{$variable->reliability_name.$this->goods};
+
+                    $value->{$variable->reliability_name.$this->trust} = $this->calculateTrust($total_records,$correct_records);
+                    $value->{$variable->reliability_name.$this->support} = $this->calculateSupport($correct_records,$measurementsPerDay);
+                }
             }
             $value->update();
         }
@@ -147,9 +151,6 @@ trait TrustTrait
         return ['station_sk' => $value->station_sk,'date_sk' => $value->date_sk];
     }
 
-
-
-
     /**
     /**
      * @param $trustRepository
@@ -172,7 +173,11 @@ trait TrustTrait
     private function generateSelect($variables)
     {
         $text = '';
-        foreach ($variables as $variable){$text .= 'COUNT(case '.$variable->local_name.' when \'-\' then null else 1 end) AS '. $variable->local_name .''.$this->incoming.',';}
+        foreach ($variables as $variable){
+            if (!is_null($variable->reliability_name)){
+                $text .= 'COUNT(case '.$variable->local_name.' when \'-\' then null else 1 end) AS '. $variable->reliability_name .''.$this->incoming.',';
+            }
+        }
         $text[strlen($text)-1] = ' ';
 
         return $text;

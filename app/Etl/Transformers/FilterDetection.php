@@ -54,7 +54,7 @@ class FilterDetection extends TransformBase implements TransformInterface
              );
 
             // insertar los valores correctos deben ir a trust
-            $this->trustProcess($value->local_name);
+            $this->trustProcess($value);
         }
 
         return $this;

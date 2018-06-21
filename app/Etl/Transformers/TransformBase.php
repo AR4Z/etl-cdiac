@@ -140,21 +140,23 @@ abstract class TransformBase extends EtlBase
     }
 
     /**
-     * @param string $local_name
+     * @param $variables
      * @return bool
      */
-    public function trustProcess(string $local_name)
+    public function trustProcess($variables)
     {
         if (!$this->etlConfig->isTrustProcess()){return false;}
+
+        if (is_null($variables->reliability_name)){return false;}
 
         $this->insertGoods(
             $this->etlConfig->getTrustRepository(),
             $this->etlConfig->getTableSpaceWork(),
             $this->etlConfig->getTableTrust(),
-            $local_name
+            $variables->local_name,
+            $variables->reliability_name
         );
     }
-
 
     /**
      * @param string $tableSpaceWork
@@ -212,7 +214,6 @@ abstract class TransformBase extends EtlBase
                     'applied_correction_type' => $applied_correction_type
                 ]);
         }
-
 
     }
 
