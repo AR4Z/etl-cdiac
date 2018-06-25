@@ -4,6 +4,7 @@ namespace App\Etl\Extractors;
 
 use App\Etl\Database\DatabaseConfig;
 use App\Etl\EtlConfig;
+use function Couchbase\defaultDecoder;
 
 
 class Database extends ExtractorBase implements ExtractorInterface

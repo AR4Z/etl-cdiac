@@ -96,7 +96,9 @@ class PlaneEtlController extends Controller
         $options = $this->getOptions($request);
 
         # El proceso solo acepta archivos csv
-        if (($options->file)->getClientOriginalExtension() != 'csv'){ return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]); }
+        if (!($options->extension == 'csv' or $options->extension == 'txt')) {
+            return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]);
+        }
 
         $options->variables_station = $this->getVariablesStation($options->station_id);
         $options->etl_type = $this->stationRepository->getStation($options->station_id)->typeStation->etl_method;
@@ -109,7 +111,11 @@ class PlaneEtlController extends Controller
         Storage::disk('public')->put( $options->file_name,  \File::get($options->file));
 
         # Obtener la primera fila que corresponde a los encabezados del archivo csv
-        $options->variables_load = ((((Excel::load(storage_path().'/app/public/'. $options->file_name)->get())->first())->keys())->toArray());
+        if ($options->extension == 'csv'){
+            $options->variables_load = ((((Excel::load(storage_path().'/app/public/'. $options->file_name)->get())->first())->keys())->toArray());
+        }else if ($options->extension == 'txt') {
+            $options->variables_load = explode(",",file(storage_path().'/app/public/'. $options->file_name,FILE_IGNORE_NEW_LINES)[0]);
+        }
 
         # Validar columnas de entrada con las columnas registradas para la estacion
         $validate = $this->validateVariablesLoad($options->variables_load,$options->variables_station, $options->etl_type);
@@ -147,7 +153,8 @@ class PlaneEtlController extends Controller
         $options['method'] = $request->get('method');
         $options['station_id'] = (integer)$request->get('station_id');
         $options['net_name'] = $request->get('net_name');
-        $options['file'] = $request->file('file');;
+        $options['file'] = $request->file('file');
+        $options['extension'] = ($request->file('file'))->getClientOriginalExtension();
 
         return (object)$options;
     }
@@ -219,7 +226,7 @@ class PlaneEtlController extends Controller
 
         if (is_null($typeStation)){return (object)['original'=> false,'filter' => false, 'error' => 'No se encuentra un metodo ETL para la estación seleccionada'];}
 
-        $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $options->file_name]];
+        $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $options->file_name, 'extension' => $options->extension]];
 
         switch ($typeStation) {
             case "weather":

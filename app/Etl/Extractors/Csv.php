@@ -15,6 +15,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
    */
     private $method = 'Csv';
 
+    public $extension = 'csv';
+
     public $etlConfig = null;
 
     public $fileName = null;
@@ -107,25 +109,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
      */
     private function loadFile()
     {
-        Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
-
-            $inputVariables = $reader->all()->getHeading();
-            $variablesName = $this->getVariablesName($inputVariables);
-            $variablesNameExcel = array_keys($variablesName);
-
-           $this->dateTime = in_array('date_time',$inputVariables);
-
-            foreach ($reader->get() as $values){
-                $val = [];
-                $values->toArray();
-                foreach ($inputVariables as $inputVariable){
-                    if (in_array($inputVariable,$variablesNameExcel)){
-                        $val[$variablesName[$inputVariable]] = $values[$inputVariable];
-                    }
-                }
-                ($this->etlConfig->getRepositorySpaceWork())::create($val);
-            }
-        });
+        if (!method_exists($this,$this->extension)){ return false;}
+        return $this->{$this->extension}();
     }
 
     /**
@@ -173,5 +158,81 @@ class Csv extends ExtractorBase implements ExtractorInterface
                 $this->calculateTimeFromTimeSk($finalVal->time_sk)
             );
         }
+    }
+
+    /**
+     * @param array $inputVariables
+     */
+    private function setDateTimeProperty(array $inputVariables)
+    {
+        $this->dateTime = in_array('date_time',$inputVariables);
+    }
+
+    /**
+     * @return bool
+     */
+    private function csv()
+    {
+        Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
+
+            $inputVariables = $reader->all()->getHeading();
+            $variablesName = $this->getVariablesName($inputVariables);
+            $variablesNameExcel = array_keys($variablesName);
+
+            $this->setDateTimeProperty($inputVariables);
+
+            foreach ($reader->get() as $values){
+                $val = [];
+                $values->toArray();
+                foreach ($inputVariables as $inputVariable){
+                    if (in_array($inputVariable,$variablesNameExcel)){
+                        $val[$variablesName[$inputVariable]] = $values[$inputVariable];
+                    }
+                }
+                ($this->etlConfig->getRepositorySpaceWork())::create($val);
+            }
+        });
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function txt()
+    {
+        # Se lee el archivo
+        $file = file(storage_path().'/app/public/'. $this->fileName,FILE_IGNORE_NEW_LINES);
+
+        # Extraer los encabezados del archivo text delimitado por comas
+        $inputVariables = explode(",",$file[0]);
+
+        # Se eliminan los encabezados el array del archivo
+        unset($file[0]);
+
+        # Se cargan las variables dependiendo de las variables cargadas
+        $variablesName = $this->getVariablesName($inputVariables);
+
+        # Se edita la propiedad data time
+        $this->setDateTimeProperty($inputVariables);
+
+        # Se buscan los encabezados entrantes y se obtiene el nombre en la tabla temporal
+        $headers = [];
+        foreach ($inputVariables as $inputVariable){
+            if (array_key_exists($inputVariable,$variablesName)){
+                array_push($headers,$variablesName[$inputVariable]);
+            }
+        }
+
+        # Se genera el array para insertar en la tabla temporal
+        $data = [];
+        foreach ($file as $row) {
+            array_push($data,array_combine($headers,explode(",",$row)));
+        }
+
+        # Se inserta el array en a tabla temporal
+        $this->insertDataArray($this->etlConfig->getTableSpaceWork(),$data);
+
+        return true;
     }
 }

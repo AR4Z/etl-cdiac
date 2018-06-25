@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors;
 
 
+use App\Etl\EtlBase;
 use Carbon\Carbon;
 use App\Etl\Traits\{DateSkTrait, TimeSkTrait, WorkDatabaseTrait,TrustTrait};
 use DB;
@@ -14,7 +15,7 @@ use Exception;
  * @property bool flagStationSk
  * @property  object etlConfig
  */
-abstract class ExtractorBase
+abstract class ExtractorBase extends EtlBase
 {
     use DateSkTrait, TimeSkTrait,WorkDatabaseTrait, TrustTrait;
 
@@ -22,7 +23,7 @@ abstract class ExtractorBase
 
     /**
      * @param $repository
-     * @return bool
+     * @return void
      */
     public function updateDateSk($repository)
     {
