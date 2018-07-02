@@ -1,15 +1,12 @@
 <?php
 namespace  App\Etl\Loaders;
 
-use App\Etl\Traits\{DateSkTrait,TimeSkTrait,WorkDatabaseTrait,TrustTrait};
+use App\Etl\EtlBase;
 use Carbon\Carbon;
-use function Couchbase\defaultDecoder;
 use DB;
 
-abstract class LoadBase
+abstract class LoadBase extends EtlBase
 {
-    use WorkDatabaseTrait,DateSkTrait,TimeSkTrait,TrustTrait;
-
     public $redirectExist = [];
 
     /**

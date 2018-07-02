@@ -4,12 +4,9 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlConfig;
-use App\Etl\Traits\CorrectMethod;
 
 class FilterCorrection extends TransformBase implements TransformInterface
 {
-    use CorrectMethod;
-
     public $method = 'Correction';
 
     public $etlConfig = null;

@@ -4,12 +4,9 @@
 namespace App\Etl\Loaders;
 
 use App\Etl\EtlConfig;
-use App\Etl\Traits\WorkDatabaseTrait;
 
 class Load extends LoadBase implements LoadInterface
 {
-    use WorkDatabaseTrait;
-
     private $method = 'General';
 
     public  $etlConfig = null;

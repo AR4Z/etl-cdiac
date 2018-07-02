@@ -2,14 +2,11 @@
 
 namespace App\Etl;
 
-use App\Etl\Traits\CorrectMethod;
-use App\Etl\Traits\DateSkTrait;
-use App\Etl\Traits\RemoveAccents;
-use App\Etl\Traits\TimeSkTrait;
-use App\Etl\Traits\TrustTrait;
-use App\Etl\Traits\WorkDatabaseTrait;
+use App\Etl\Traits\{CorrectMethod,DateSkTrait,RemoveAccents,TimeSkTrait,TrustTrait,WorkDatabaseTrait};
+use App\Etl\Database\DatabaseConfig;
 
 class EtlBase
 {
-    use TrustTrait,DateSkTrait,TimeSkTrait,CorrectMethod,RemoveAccents, WorkDatabaseTrait;
+    use TrustTrait,DateSkTrait,TimeSkTrait,CorrectMethod,RemoveAccents, WorkDatabaseTrait,DatabaseConfig;
 }
+

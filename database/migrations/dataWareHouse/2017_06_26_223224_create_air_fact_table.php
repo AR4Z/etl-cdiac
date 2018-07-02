@@ -20,21 +20,20 @@ class CreateAirFactTable extends Migration
             $table->bigInteger('time_sk')->unsigned();
 
             $table->decimal('so2_local_ppb', 10, 2)->nullable();
-            $table->decimal('so2_local_ugm3', 10, 2)->nullable();
+            #$table->decimal('so2_local_ugm3', 10, 2)->nullable();
             $table->decimal('so2_estan_ugm3', 10, 2)->nullable();
 
             $table->decimal('co_local_ppb', 10, 2)->nullable();
-            $table->decimal('co_local_ugm3', 10, 2)->nullable();
+            #$table->decimal('co_local_ugm3', 10, 2)->nullable();
             $table->decimal('co_estan_ugm3', 10, 2)->nullable();
 
             $table->decimal('o3_local_ppb', 10, 2)->nullable();
-            $table->decimal('o3_local_ugm3', 10, 2)->nullable();
+            #$table->decimal('o3_local_ugm3', 10, 2)->nullable();
             $table->decimal('o3_estan_ugm3', 10, 2)->nullable();
 
             $table->decimal('pm10', 10, 2)->nullable();
             $table->decimal('pm2_5', 10, 2)->nullable();
             $table->decimal('pst', 10, 2)->nullable();
-
 
             $table->longText('comment')->nullable();
 

@@ -3,13 +3,9 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlConfig;
-use App\Etl\Traits\DateSkTrait;
-use App\Etl\Traits\TimeSkTrait;
 
 class Serialization extends TransformBase implements TransformInterface
 {
-    use TimeSkTrait,DateSkTrait;
-
     public $etlConfig = null;
 
     public $station_sk = null;

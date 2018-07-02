@@ -2,6 +2,7 @@
 
 namespace App\Etl\Traits;
 
+use function Couchbase\defaultDecoder;
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use App\Etl\Database\Query;
@@ -108,11 +109,17 @@ trait WorkDatabaseTrait
      * @param string $connection
      * @param string $table
      * @param array $data
-     * @return
+     * @return bool
      */
     public function insertDataEncode(string $connection, string $table, $data = [])
     {
-        return DB::connection($connection)->table($table)->insert(json_decode(json_encode($data), true));
+        $localData =  array_chunk(json_decode(json_encode($data),true),5000,true);
+
+        foreach ($localData as $localValue){
+            DB::connection($connection)->table($table)->insert($localValue);
+        }
+
+        return true;
     }
 
     /**
@@ -359,7 +366,7 @@ trait WorkDatabaseTrait
         $value = DB::connection('temporary_work')->table($tableSpaceWork)->select('id','time')->orderby('id','DESC')->first();
 
         if (!empty($value)){
-            if ($value->time = $time){
+            if ($value->time == $time){
                 DB::connection('temporary_work')->table($tableSpaceWork)->where('id',$value->id)->delete();
             }
         }

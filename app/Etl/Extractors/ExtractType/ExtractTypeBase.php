@@ -2,8 +2,9 @@
 
 namespace App\Etl\Extractors\ExtractType;
 
+use App\Etl\Extractors\ExtractorBase;
 
-class ExtractTypeBase
+class ExtractTypeBase extends ExtractorBase
 {
     /**
      * @param $extractTable

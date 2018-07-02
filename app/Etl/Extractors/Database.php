@@ -2,15 +2,10 @@
 
 namespace App\Etl\Extractors;
 
-use App\Etl\Database\DatabaseConfig;
 use App\Etl\EtlConfig;
-use function Couchbase\defaultDecoder;
-
 
 class Database extends ExtractorBase implements ExtractorInterface
 {
-    use DatabaseConfig;
-
   /**
    * $method is the data type incoming
    */
@@ -24,7 +19,6 @@ class Database extends ExtractorBase implements ExtractorInterface
     public $extractType = null;
 
     public  $truncateTemporal = true;
-
 
     /**
      * @param $etlConfig

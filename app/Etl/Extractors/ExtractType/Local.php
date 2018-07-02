@@ -3,16 +3,10 @@
 namespace App\Etl\Extractors\ExtractType;
 
 use App\Etl\EtlConfig;
-use App\Etl\Traits\DateSkTrait;
-use App\Etl\Traits\TimeSkTrait;
-use App\Etl\Traits\WorkDatabaseTrait;
 use Carbon\Carbon;
-
 
 class Local extends ExtractTypeBase implements ExtractTypeInterface
 {
-    use WorkDatabaseTrait,DateSkTrait,TimeSkTrait;
-
     public $extractType = 'Local';
 
     public $extractConnection = 'data_warehouse';

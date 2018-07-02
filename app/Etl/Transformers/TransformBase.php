@@ -3,7 +3,6 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlBase;
-use function Couchbase\defaultDecoder;
 use DB;
 
 abstract class TransformBase extends EtlBase

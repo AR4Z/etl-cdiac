@@ -5,7 +5,6 @@ namespace App\Etl\Extractors;
 
 use App\Etl\EtlBase;
 use Carbon\Carbon;
-use App\Etl\Traits\{DateSkTrait, TimeSkTrait, WorkDatabaseTrait,TrustTrait};
 use DB;
 use Exception;
 
@@ -17,8 +16,6 @@ use Exception;
  */
 abstract class ExtractorBase extends EtlBase
 {
-    use DateSkTrait, TimeSkTrait,WorkDatabaseTrait, TrustTrait;
-
     public $keyErrors = ['_','Min','Date','Time','Max','Date','Time','AVG','Num','Data[%]'];
 
     /**

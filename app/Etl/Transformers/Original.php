@@ -2,13 +2,10 @@
 
 namespace App\Etl\Transformers;
 
-
 use App\Etl\EtlConfig;
-
 
 class Original extends TransformBase implements TransformInterface
 {
-
     private $method = 'Original';
 
     /**

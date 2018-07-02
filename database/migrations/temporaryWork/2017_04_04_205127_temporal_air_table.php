@@ -26,15 +26,15 @@ class TemporalAirTable extends Migration
             $table->string('time')->nullable();
 
             $table->string('so2_local_ppb')->nullable();
-            $table->string('so2_local_ugm3')->nullable();
+            # $table->string('so2_local_ugm3')->nullable();
             $table->string('so2_estan_ugm3')->nullable();
 
             $table->string('co_local_ppb')->nullable();
-            $table->string('co_local_ugm3')->nullable();
+            # $table->string('co_local_ugm3')->nullable();
             $table->string('co_estan_ugm3')->nullable();
 
             $table->string('o3_local_ppb')->nullable();
-            $table->string('o3_local_ugm3')->nullable();
+            # $table->string('o3_local_ugm3')->nullable();
             $table->string('o3_estan_ugm3')->nullable();
 
             $table->string('pm10')->nullable();

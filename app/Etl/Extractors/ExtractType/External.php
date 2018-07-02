@@ -2,14 +2,10 @@
 
 namespace App\Etl\Extractors\ExtractType;
 
-use App\Etl\Database\DatabaseConfig;
 use App\Etl\EtlConfig;
-use App\Etl\Traits\WorkDatabaseTrait;
 
 class External extends ExtractTypeBase implements ExtractTypeInterface
 {
-    use DatabaseConfig,WorkDatabaseTrait;
-
     public $extractType = 'External';
 
     public $extractConnection = 'external_connection';

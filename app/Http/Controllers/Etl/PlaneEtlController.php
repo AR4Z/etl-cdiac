@@ -292,9 +292,9 @@ class PlaneEtlController extends Controller
                 'trustProcess'  => $options->trust_process,
                 'extractType'   => 'Local',
                 'initialDate'   => $etlConfig->getInitialDate(),
-                'initialTime'   => $etlConfig->getInitialTime(),
+                'initialTime'   => '00:00:00',
                 'finalDate'     => $etlConfig->getFinalDate(),
-                'finalTime'     => $etlConfig->getFinalTime()
+                'finalTime'     => '23:59:59'
             ]
         ];
 

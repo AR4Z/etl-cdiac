@@ -3,21 +3,16 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlConfig;
-use App\Etl\Traits\CorrectMethod;
-use function Couchbase\defaultDecoder;
-
 
 class FilterAir extends TransformBase implements TransformInterface
 {
-    use CorrectMethod;
-
     public $method = 'FilterAir';
 
     public $etlConfig = null;
 
     public $paramSearch = ['Samp<', 'InVld', 'RS232', 'OffScan','-','Sin Dato','NA'];
 
-    public $deleteLastHour = ['Span','Zero'];
+    public $deleteLastHour = ['Span','Zero','Cero','Muestra<'];
 
     public $spaceTimeDelete = 3600; # Tiempo a eliminar en segundos (una hora)
 
@@ -42,7 +37,6 @@ class FilterAir extends TransformBase implements TransformInterface
         $this->etlConfig = $etlConfig;
         return $this;
     }
-
 
     public function run()
     {
