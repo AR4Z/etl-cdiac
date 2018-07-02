@@ -29,6 +29,7 @@ class TemporalWeather extends Model
         'station_sk', 'date_sk', 'time_sk','date_time',
         'date','time',
         'rainfall',
+        'accumulated_rainfall',
         'temperature',
         'max_temperature',
         'min_temperature',
@@ -41,6 +42,7 @@ class TemporalWeather extends Model
         'wind_direction',
         'barometric_pressure',
         'evapotranspiration',
+        'accumulated_evapotranspiration',
         'solar_radiation',
         'comment',
     ];

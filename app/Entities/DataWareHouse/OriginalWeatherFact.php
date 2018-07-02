@@ -19,6 +19,7 @@ class OriginalWeatherFact extends Model
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk',
         'rainfall',
+        'accumulated_rainfall',
         'temperature',
         'max_temperature',
         'min_temperature',
@@ -31,6 +32,7 @@ class OriginalWeatherFact extends Model
         'wind_direction',
         'barometric_pressure',
         'evapotranspiration',
+        'accumulated_evapotranspiration',
         'solar_radiation',
         'comment',
     ];

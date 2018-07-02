@@ -14,6 +14,7 @@ class ExistFactWeather extends Model
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk',
         'rainfall',
+        'accumulated_rainfall',
         'temperature',
         'max_temperature',
         'min_temperature',
@@ -26,6 +27,7 @@ class ExistFactWeather extends Model
         'wind_direction',
         'barometric_pressure',
         'evapotranspiration',
+        'accumulated_evapotranspiration',
         'solar_radiation',
         'comment',
     ];

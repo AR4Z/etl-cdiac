@@ -27,6 +27,7 @@ class CreateTemporalClimaTable extends Migration
 
             $table->string('temperature')->nullable();
             $table->string('rainfall')->nullable();
+            $table->string('accumulated_rainfall')->nullable();
             $table->string('max_temperature')->nullable();
             $table->string('min_temperature')->nullable();
             $table->string('avg_temperature')->nullable();
@@ -38,7 +39,9 @@ class CreateTemporalClimaTable extends Migration
             $table->string('wind_direction')->nullable();
             $table->string('barometric_pressure')->nullable();
             $table->string('evapotranspiration')->nullable();
+            $table->string('accumulated_evapotranspiration')->nullable();
             $table->string('solar_radiation')->nullable();
+
             $table->string('comment')->nullable();
 
             $table->timestamps();

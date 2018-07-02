@@ -18,7 +18,9 @@ class CreateOriginalWeatherFactTable extends Migration
             $table->bigInteger('station_sk')->unsigned();
             $table->bigInteger('date_sk')->unsigned();
             $table->bigInteger('time_sk')->unsigned();
+
             $table->string('rainfall')->nullable();
+            $table->string('accumulated_rainfall')->nullable();
             $table->string('temperature')->nullable();
             $table->string('max_temperature')->nullable();
             $table->string('min_temperature')->nullable();
@@ -31,7 +33,9 @@ class CreateOriginalWeatherFactTable extends Migration
             $table->string('wind_direction')->nullable();
             $table->string('barometric_pressure')->nullable();
             $table->string('evapotranspiration')->nullable();
+            $table->string('accumulated_evapotranspiration')->nullable();
             $table->string('solar_radiation')->nullable();
+
             $table->longText('comment')->nullable();
 
             $table->primary(['station_sk', 'date_sk', 'time_sk'], 'original_weather_fact_pk');

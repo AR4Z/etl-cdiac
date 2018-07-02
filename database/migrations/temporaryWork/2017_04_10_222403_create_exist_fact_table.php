@@ -18,7 +18,9 @@ class CreateExistFactTable extends Migration
             $table->integer('station_sk')->nullable();
             $table->integer('date_sk')->nullable();
             $table->integer('time_sk')->nullable();
+
             $table->string('rainfall')->nullable();
+            $table->string('accumulated_rainfall')->nullable();
             $table->string('date')->nullable();
             $table->string('time')->nullable();
             $table->string('temperature')->nullable();
@@ -33,7 +35,9 @@ class CreateExistFactTable extends Migration
             $table->string('wind_direction')->nullable();
             $table->string('barometric_pressure')->nullable();
             $table->string('evapotranspiration')->nullable();
+            $table->string('accumulated_evapotranspiration')->nullable();
             $table->string('solar_radiation')->nullable();
+
             $table->string('comment')->nullable();
 
             $table->timestamps();

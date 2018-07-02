@@ -20,6 +20,10 @@ class CreateAlertForStationTable extends Migration
             $table->unsignedInteger('station_id');
             $table->unsignedInteger('alert_id');
 
+            $table->decimal('flag_level_one')->nullable();
+            $table->decimal('flag_level_two')->nullable();
+            $table->decimal('flag_level_three')->nullable();
+
             $table->boolean('active')->default(false);
 
             $table->timestamps();
