@@ -257,7 +257,7 @@ class PlaneEtlController extends Controller
     private function executeWeather($station, $extract, $options)
     {
         # La Opcion originales no puede ojecutarse por medio de jobs pues se necesitan datos para poder ejecutar el proceso de filtrado.
-        $response = $this->executeOneStation('Original',$station->net_id,$options->station_id,$options->sequence,$extract,[],[],false);
+        $response = $this->executeOneStation('Original',$station->net_id,$options->station_id,$options->sequence,$options->serialization,$extract,[],[],false);
         $response2 = false;
 
         if ($options->method == 'Filter'){
@@ -268,9 +268,9 @@ class PlaneEtlController extends Controller
                     'trustProcess'=> $options->trust_process,
                     'extractType' => 'Local',
                     'initialDate' => $etlConfig->getInitialDate(),
-                    'initialTime' => $etlConfig->getInitialTime(),
+                    'initialTime' => '00:00:00',
                     'finalDate' =>  $etlConfig->getFinalDate(),
-                    'finalTime' => $etlConfig->getFinalTime()
+                    'finalTime' => '23:59:59'
                 ]
             ];
             $response2 =    $this->executeOneStation('Filter',$station->net_id,$station->id,$options->sequence,$options->serialization,$extract2,[],[], $options->jobs);

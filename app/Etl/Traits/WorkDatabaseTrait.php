@@ -439,4 +439,14 @@ trait WorkDatabaseTrait
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->insert($inserts);
     }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param string $variable
+     * @return bool
+     */
+    public function changeCommaForPoint(string $tableSpaceWork, string $variable)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->update([ $variable => DB::raw( " REGEXP_REPLACE($variable,',','.') " )]);
+    }
 }

@@ -192,6 +192,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
                 ($this->etlConfig->getRepositorySpaceWork())::create($val);
             }
         });
+        # cambiar de comas a puntos los datos de las variables
+        $this->changeCommaForPointAllVariables();
 
         return true;
     }
@@ -232,6 +234,17 @@ class Csv extends ExtractorBase implements ExtractorInterface
 
         # Se inserta el array en a tabla temporal
         $this->insertDataArray($this->etlConfig->getTableSpaceWork(),$data);
+
+        return true;
+    }
+
+    public function changeCommaForPointAllVariables()
+    {
+        #Cambiar comas por puntos en los decimales.
+        $varFilter = $this->etlConfig->getVarForFilter();
+        foreach ($varFilter as $value) {
+            $this->changeCommaForPoint($this->etlConfig->getTableSpaceWork(), $value->local_name);
+        }
 
         return true;
     }

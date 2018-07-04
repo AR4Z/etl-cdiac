@@ -56,9 +56,6 @@ class FilterAir extends TransformBase implements TransformInterface
                 $this->spaceTimeDelete
             );
 
-            # Cambiar las comas por puntos
-            $this->changeCommaForPoint($this->etlConfig->getTableSpaceWork(),$value->local_name);
-
             # Detectar los valores que sobrepasan los limites
             $this->overflow(
                 $this->etlConfig->getTableSpaceWork(),

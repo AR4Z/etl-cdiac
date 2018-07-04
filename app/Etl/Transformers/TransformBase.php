@@ -261,31 +261,4 @@ abstract class TransformBase extends EtlBase
     {
         foreach ($params as $param){ array_push($this->paramSearch, $param);}
     }
-
-    /**
-     * @param string $tableSpaceWork
-     * @param string $variable
-     * @return bool
-     */
-    public function changeCommaForPoint(string $tableSpaceWork, string $variable)
-    {
-        $values = DB::connection('temporary_work')->table($tableSpaceWork)->select('station_sk','date_sk','time_sk',$variable)->whereNotNull($variable)->get();
-
-        if (is_null($values) or count($values) == 0){return false;}
-
-        foreach ($values as $value)
-        {
-            $val = str_replace (",", ".",$value->$variable);
-
-            DB::connection('temporary_work')
-                ->table($tableSpaceWork)
-                ->where('station_sk','=',$value->station_sk)
-                ->where('date_sk','=',$value->date_sk)
-                ->where('time_sk','=',$value->time_sk)
-                ->update([$variable => $val]);
-        }
-
-        return true;
-    }
-
 }
