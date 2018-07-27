@@ -233,15 +233,21 @@ trait BaseExecuteEtl
 
          $etl->extract($extract['method'],$extract['optionExtract']);
 
-         if ($serialization){ $etl->transform('Serialization'); }
-
          if (count($transform) == 0){
+
             $etl->transform('FilterDetection');
+
+            if ($serialization){ $etl->transform('Serialization'); }
+
             $etl->transform('FilterCorrection');
+
          }else{
              foreach ($transform as $trans){
                  $etl->transform($trans['method'],$trans['optionTransform']);
              }
+
+             if ($serialization){ $etl->transform('Serialization'); }
+
          }
 
          if (count($load) == 0){ $etl->load(); } else { $etl->load($load['method'],$load['optionLoad']);}

@@ -19,6 +19,8 @@ class CreateAlertTable extends Migration
 
             $table->string('name');
             $table->string('code')->unique();
+            $table->string('icon')->nullable();
+            $table->string('table')->nullable();
             $table->string('description',500)->nullable();
 
             $table->boolean('active')->deaut(false);

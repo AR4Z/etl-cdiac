@@ -294,7 +294,7 @@ class AlertStationSeeder extends Seeder
                 ],
                 [
                     # id => 32
-                    'station_id'    => 97,
+                    'station_id'    => 98,
                     'alert_id'      => 1,
                     'flag_level_one'    => null,
                     'flag_level_two'    => null,
@@ -382,10 +382,9 @@ class AlertStationSeeder extends Seeder
                     'flag_level_three'  => null,
                     'active'        => true,
                 ],
-                # Aqui inician los datos de inuncadion
                 [
                     # id => 43
-                    'station_id'        => 85, # Q. EL GUAMO- CDI SAN SEBASTIÁN
+                    'station_id'        => 105,
                     'alert_id'          => 2,
                     'flag_level_one'    => 9.4,
                     'flag_level_two'    => 11.6,
@@ -394,7 +393,52 @@ class AlertStationSeeder extends Seeder
                 ],
                 [
                     # id => 44
-                    'station_id'        => 96, # Q. OLIVARES -AGUAS DE MANIZALES
+                    'station_id'        => 108,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 9.4,
+                    'flag_level_two'    => 11.6,
+                    'flag_level_three'  => 13.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 45
+                    'station_id'        => 107,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 9.4,
+                    'flag_level_two'    => 11.6,
+                    'flag_level_three'  => 13.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 46
+                    'station_id'        => 6,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 9.4,
+                    'flag_level_two'    => 11.6,
+                    'flag_level_three'  => 13.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 47
+                    'station_id'        => 135,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 9.4,
+                    'flag_level_two'    => 11.6,
+                    'flag_level_three'  => 13.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 48
+                    'station_id'        => 99,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 9.4,
+                    'flag_level_two'    => 11.6,
+                    'flag_level_three'  => 13.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 49
+                    'station_id'        => 109,
                     'alert_id'          => 2,
                     'flag_level_one'    => 11.6,
                     'flag_level_two'    => 15.2,
@@ -402,8 +446,89 @@ class AlertStationSeeder extends Seeder
                     'active'            => true,
                 ],
                 [
-                    # id => 45
-                    'station_id'        => 107, # Q. MANIZALES- SKINCO
+                    # id => 50
+                    'station_id'        => 106,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.6,
+                    'flag_level_two'    => 15.2,
+                    'flag_level_three'  => 17.8,
+                    'active'            => true,
+                ],
+                [
+                    # id => 51
+                    'station_id'        => 102,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.6,
+                    'flag_level_two'    => 15.2,
+                    'flag_level_three'  => 17.8,
+                    'active'            => true,
+                ],
+                [
+                    # id => 52
+                    'station_id'        => 7,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.6,
+                    'flag_level_two'    => 15.2,
+                    'flag_level_three'  => 17.8,
+                    'active'            => true,
+                ],
+                [
+                    # id => 53
+                    'station_id'        => 96,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.6,
+                    'flag_level_two'    => 15.2,
+                    'flag_level_three'  => 17.8,
+                    'active'            => true,
+                ],
+                [
+                    # id => 54
+                    'station_id'        => 92,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.6,
+                    'flag_level_two'    => 15.2,
+                    'flag_level_three'  => 17.8,
+                    'active'            => true,
+                ],
+                [
+                    # id => 55
+                    'station_id'        => 104,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.2,
+                    'flag_level_two'    => 12.8,
+                    'flag_level_three'  => 15.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 56
+                    'station_id'        => 85,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.2,
+                    'flag_level_two'    => 12.8,
+                    'flag_level_three'  => 15.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 57
+                    'station_id'        => 20,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.2,
+                    'flag_level_two'    => 12.8,
+                    'flag_level_three'  => 15.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 58
+                    'station_id'        => 98,
+                    'alert_id'          => 2,
+                    'flag_level_one'    => 11.2,
+                    'flag_level_two'    => 12.8,
+                    'flag_level_three'  => 15.2,
+                    'active'            => true,
+                ],
+                [
+                    # id => 59
+                    'station_id'        => 93,
                     'alert_id'          => 2,
                     'flag_level_one'    => 11.2,
                     'flag_level_two'    => 12.8,

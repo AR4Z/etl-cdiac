@@ -11,7 +11,7 @@ class FilterDetection extends TransformBase implements TransformInterface
 
     public $etlConfig = null;
 
-    public $paramSearch = ["-"];
+    public $paramSearch = ['-'];
 
     public $changeOverflowLower = 0;
 

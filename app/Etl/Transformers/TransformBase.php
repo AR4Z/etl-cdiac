@@ -261,4 +261,13 @@ abstract class TransformBase extends EtlBase
     {
         foreach ($params as $param){ array_push($this->paramSearch, $param);}
     }
+
+    public function filterWindSpeedZero()
+    {
+        return DB::connection('temporary_work')
+            ->table($this->etlConfig->getTableSpaceWork())
+            ->whereNotNull('wind_direction')
+            ->where(function ($query){$query->whereRaw('CAST(wind_speed AS FLOAT) = 0')->orWhere('wind_speed','=',null);})
+            ->update(['wind_direction' => null, 'comment' => DB::raw("CONCAT(comment,  ' filterWindSpeedZero -' )")]);
+    }
 }

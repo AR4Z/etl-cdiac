@@ -188,7 +188,7 @@ class StationSeeder extends Seeder
                     # station id => 6
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '174460302001',
+                    'code'                  => '170010301016',
                     'name'                  => 'Q.  TESORITO',
                     'description'           => null,
                     'table_db_name'         =>  'est_qmanizales',
@@ -2874,8 +2874,8 @@ class StationSeeder extends Seeder
                     # station id => 85
                     'station_type_id'       => 2,
                     'net_id'                => 2,
-                    'code'                  => null,
-                    'name'                  => 'Q. EL GUAMO- CDI SAN SEBASTIÁN',
+                    'code'                  => '170010301026',
+                    'name'                  => 'Q. EL GUAMO - CDI SAN SEBASTIÁN',
                     'description'           => null,
                     'table_db_name'         =>  'qelguamo_cdi',
                     'measurements_per_day'  => 288,
@@ -3316,7 +3316,7 @@ class StationSeeder extends Seeder
                     # station id => 98
                     'station_type_id'       => 1,
                     'net_id'                => 2,
-                    'code'                  => '170010303020',
+                    'code'                  => '170010302025',
                     'name'                  => 'PERALONSO-CHEC',
                     'description'           => null,
                     'table_db_name'         =>  'sub_peralonso_chec',
@@ -3452,7 +3452,7 @@ class StationSeeder extends Seeder
                     # station id => 102
                     'station_type_id'       => 2,
                     'net_id'                => 3,
-                    'code'                  => '170010303019',
+                    'code'                  => '170010301029',
                     'name'                  => 'Q. OLIVARES- BOCATOMA RÍO BLANCO',
                     'description'           => null,
                     'table_db_name'         =>  'qolivares_bocatoma',

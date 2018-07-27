@@ -18,13 +18,14 @@ class FilterCorrection extends TransformBase implements TransformInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-
         return $this;
     }
 
     public function run()
     {
         $varFilter = $this->etlConfig->getVarForFilter();
+
+        $this->ExecuteFilterWindSpeedZero($varFilter->toArray());
 
         foreach ($varFilter as $variable){
             if ($variable->correction_type){
@@ -36,6 +37,13 @@ class FilterCorrection extends TransformBase implements TransformInterface
             }
         }
 
+    }
+
+    public function ExecuteFilterWindSpeedZero($varFilter)
+    {
+        if (array_search('wind_speed', array_column($varFilter,'local_name'))){
+            $this->filterWindSpeedZero();
+        }
     }
 
 }
