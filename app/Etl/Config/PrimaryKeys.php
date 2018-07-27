@@ -21,6 +21,8 @@ class PrimaryKeys
 
     public $notExternalIncomingKeys = [];
 
+    public $notCalculatedColumns = [];
+
     public $globalCastKey = '';
 
     public $selectCastKey = '';
@@ -71,6 +73,11 @@ class PrimaryKeys
 
             if ($value['key']){
                 array_push($this->keys,$key);
+            }
+            if (!is_null($value['calculated'])){
+                if (!$value['calculated']){
+                    array_push($this->notCalculatedColumns,$key);
+                }
             }
 
             if ($value['local_incoming']){

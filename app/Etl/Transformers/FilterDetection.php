@@ -57,6 +57,12 @@ class FilterDetection extends TransformBase implements TransformInterface
             $this->trustProcess($value);
         }
 
+        $staticVariables = $this->etlConfig->getKeys()->notCalculatedColumns;
+
+        foreach ($staticVariables as $variable){
+            $this->updateForNull($this->etlConfig->getTableSpaceWork(),$variable,$this->paramSearch);
+        }
+
         return $this;
     }
 

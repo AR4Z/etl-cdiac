@@ -36,7 +36,6 @@ class FilterCorrection extends TransformBase implements TransformInterface
                 );
             }
         }
-
     }
 
     public function ExecuteFilterWindSpeedZero($varFilter)

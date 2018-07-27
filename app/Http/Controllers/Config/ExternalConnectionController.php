@@ -60,7 +60,7 @@ class ExternalConnectionController extends Controller
                         //->transform('Serialization')
                         ->transform('FilterDetection')  #['paramSearch'=> ['r','j']] parametro opcional de valores de busqueda
                         ->transform('FilterCorrection')
-                        //->load()
+                        ->load()
                         ->run()
         ;// este punto y coma termina el proceso de configuracion
 

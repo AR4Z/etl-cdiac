@@ -157,7 +157,7 @@ return [
             'local_name'        =>  'comment',
             'external_name'     =>  'observaciones',
             'cast_name'         =>  'comment',
-            'calculated'        =>  false,
+            'calculated'        =>  null,
             'local_incoming'    =>  true,
             'external_incoming' =>  true,
             'key'               =>  false,
