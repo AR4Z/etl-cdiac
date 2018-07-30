@@ -13,6 +13,8 @@ class FilterDetection extends TransformBase implements TransformInterface
 
     public $paramSearch = ['-'];
 
+    public $commentFilters = ['CappedRainGauge'];
+
     public $changeOverflowLower = 0;
 
     public $changeOverflowHigher = null;
@@ -35,6 +37,9 @@ class FilterDetection extends TransformBase implements TransformInterface
     public function run()
     {
         $varFilter = $this->etlConfig->getVarForFilter();
+
+        # Ejecutar los filtros definidos para el campo de comentarios
+        foreach ($this->commentFilters as $filter){ $this->{'ExecuteFilter'.$filter}($varFilter->toArray()); }
 
         foreach ($varFilter as $value){
 
@@ -64,6 +69,16 @@ class FilterDetection extends TransformBase implements TransformInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @param $varFilter
+     */
+    public function ExecuteFilterCappedRainGauge($varFilter)
+    {
+        if (is_numeric (array_search('rainfall', array_column($varFilter,'local_name')))){
+            $this->filterCappedRainGauge(['rainfall' => null,'accumulated_rainfall' => null]);
+        }
     }
 
 }

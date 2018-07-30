@@ -449,4 +449,27 @@ trait WorkDatabaseTrait
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->update([ $variable => DB::raw( " REGEXP_REPLACE($variable,',','.') " )]);
     }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param int $id
+     * @param array $variables
+     * @return mixed
+     */
+    public function deleteAfterIdVariable(string $tableSpaceWork, int $id, array $variables)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '>=' ,$id)->update($variables);
+    }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param int $initialId
+     * @param int $finalId
+     * @param array $variables
+     * @return mixed
+     */
+    public function deleteInRangeIdVariable(string $tableSpaceWork, int $initialId, int $finalId, array $variables)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->whereBetween('id', [$initialId, $finalId])->update($variables);
+    }
 }

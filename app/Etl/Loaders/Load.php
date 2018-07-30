@@ -31,10 +31,10 @@ class Load extends LoadBase implements LoadInterface
     public function run()
     {
         # Extraer las configuraciones de llaves perimarias
-        $this->select = $this->etlConfig->getKeys()->globalCastKey;
+        $this->select = $this->etlConfig->getKeys()->loadCastKey;
 
-        # Extraer las columnas que se deben ingrear que no estan el base de datos (keys and comment)
-        $this->columns = $this->etlConfig->getKeys()->global;
+        # Extraer las columnas que se deben ingrear que no estan el base de datos (keys and comment and etc)
+        $this->columns = $this->etlConfig->getKeys()->load;
 
         # Configuración de la consulta para extraer los datos de temporal_work
         $this->setSelect('local_name','local_name');

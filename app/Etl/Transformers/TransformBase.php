@@ -270,4 +270,50 @@ abstract class TransformBase extends EtlBase
             ->where(function ($query){$query->whereRaw('CAST(wind_speed AS FLOAT) = 0')->orWhere('wind_speed','=',null);})
             ->update(['wind_direction' => null, 'comment' => DB::raw("CONCAT(comment,  ' filterWindSpeedZero -' )")]);
     }
+
+    /**
+     * @param $variable
+     * @return bool
+     */
+    public function filterCappedRainGauge($variables)
+    {
+       $result =  DB::connection('temporary_work')
+                     ->table($this->etlConfig->getTableSpaceWork())
+                    ->select('id','comment')
+                    ->where('comment','like','% PTI %')
+                    ->orWhere('comment','like','% PTF %')
+                    ->orderBy('id')
+                    ->get()
+                    ->toArray();
+
+       if (count($result) == 0){ return false;}
+
+       $flag = 'PTF';
+       foreach ($result as $key => $var){
+           $var->banderCRG = (is_numeric(strpos($var->comment,'PTI'))) ? 'PTI' : 'PTF';
+
+           if ($var->banderCRG === $flag){ unset($result[$key]); }
+
+           if (!empty($var)){ $flag = $var->banderCRG; }
+       }
+
+       $result = array_combine(range(0, count($result)-1), array_values($result));
+       $countData = count($result);
+
+       if ($countData == 1){
+          $this->deleteAfterIdVariable($this->etlConfig->getTableSpaceWork(),$result[0]->id,$variables);
+       }else{
+           if ($countData % 2 !== 0){
+               $this->deleteAfterIdVariable($this->etlConfig->getTableSpaceWork(),$result[$countData - 1]->id,$variables);
+               unset($result[$countData - 1]);
+               $countData -= 1;
+           }
+
+           for( $i = 0; $i < $countData; $i += 2){
+               $this->deleteInRangeIdVariable($this->etlConfig->getTableSpaceWork(),$result[$i]->id,$result[$i + 1]->id,$variables);
+           }
+       }
+
+       return true;
+    }
 }

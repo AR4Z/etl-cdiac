@@ -25,8 +25,6 @@ class FilterCorrection extends TransformBase implements TransformInterface
     {
         $varFilter = $this->etlConfig->getVarForFilter();
 
-        $this->ExecuteFilterWindSpeedZero($varFilter->toArray());
-
         foreach ($varFilter as $variable){
             if ($variable->correction_type){
                 $this->correctControl(
@@ -40,9 +38,8 @@ class FilterCorrection extends TransformBase implements TransformInterface
 
     public function ExecuteFilterWindSpeedZero($varFilter)
     {
-        if (array_search('wind_speed', array_column($varFilter,'local_name'))){
+        if (is_numeric (array_search('wind_speed', array_column($varFilter,'local_name')))){
             $this->filterWindSpeedZero();
         }
     }
-
 }

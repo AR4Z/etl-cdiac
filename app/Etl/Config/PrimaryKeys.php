@@ -9,6 +9,8 @@ class PrimaryKeys
 
     public $global  = [];
 
+    public $load = [];
+
     public $keys = [];
 
     public $castKeys = [];
@@ -25,6 +27,8 @@ class PrimaryKeys
 
     public $globalCastKey = '';
 
+    public $loadCastKey = '';
+
     public $selectCastKey = '';
 
     public $selectKey = '';
@@ -38,7 +42,7 @@ class PrimaryKeys
     {
         $this->globalKeys = $this->getReactiveKeys($typeProcess,$etlMethod,$keys);
         $this->global = array_keys($this->globalKeys);
-        $this->config();
+        $this->config($typeProcess,$etlMethod);
     }
 
     private function getReactiveKeys($typeProcess, $etlMethod, $keys)
@@ -47,21 +51,22 @@ class PrimaryKeys
         foreach ($keys as $key => $value)
         {
             if ($value['type'] == 'all' or $value['type'] == $etlMethod){
-                if (($typeProcess == 'Original' and $value['external_incoming'] == true) or
-                    ( $typeProcess == 'Filter' and $value['local_incoming'] == true ) or
-                    ( $value['key'] == true )
-                ){$arr[$key] = $value; }
+
+                if (($typeProcess == 'Original' and $value['external_incoming']) or ( $typeProcess == 'Filter' and $value['local_incoming'] ) or ( $value['key'])){
+                    $arr[$key] = $value;
+                }
             }
         }
         return $arr;
     }
 
-    private function config()
+    private function config($typeProcess,$etlMethod)
     {
         $temporalSelect = ' ';
         $temporalCastSelect = ' ';
         $temporalLocalMerge = ' ';
         $temporalExternalMerge = ' ';
+        $temporalLoadCastKey = ' ';
 
         foreach ($this->globalKeys  as  $key => $value)
         {
@@ -99,6 +104,20 @@ class PrimaryKeys
             }else{
                 array_push($this->notExternalIncomingKeys,$key);
             }
+
+            if ($value['type'] == 'all' or $value['type'] == $etlMethod){
+
+                if ($typeProcess == 'Original' and $value['load_original']){
+                    $this->loadCastKey  .= ' '.$value['local_name'].' ,';
+                    array_push($this->load,$value['local_name']);
+                }
+
+                if ( $typeProcess == 'Filter' and $value['load_filter'] ){
+                    $this->loadCastKey .= ' CAST('.$value['local_name'].' AS '.$value['type_data'].') ,';
+                    array_push($this->load,$value['local_name']);
+                }
+            }
+
         }
 
         $this->selectKey = $temporalSelect;
