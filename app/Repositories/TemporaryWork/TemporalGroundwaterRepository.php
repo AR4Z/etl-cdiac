@@ -5,6 +5,7 @@ namespace App\Repositories\TemporaryWork;
 
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporalGroundwater;
+use DB;
 
 class TemporalGroundwaterRepository extends EloquentRepository implements TemporaryInterface
 {
@@ -64,7 +65,7 @@ class TemporalGroundwaterRepository extends EloquentRepository implements Tempor
      */
     public function truncate()
     {
-        return DB::Connection('temporary_work')->table('temporal_weather')->truncate();
+        return DB::Connection('temporary_work')->table('temporal_groundwater')->truncate();
     }
 
     /**

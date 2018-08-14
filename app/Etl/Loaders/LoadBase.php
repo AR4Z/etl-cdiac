@@ -65,17 +65,21 @@ abstract class LoadBase extends EtlBase
      */
     public function calculateSequence()
     {
-        $data = $this->getLastMigrateData($this->etlConfig->geTtableSpaceWork());
-        if (!is_null($data))
-        {
-           $response =  ($this->etlConfig->getSequence() and Carbon::parse($this->etlConfig->getFinalDate()) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
+        if ($this->etlConfig->getSequence()){
 
-            $this->updateDateAndTime(
-                $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()},
-                $this->calculateDateFromDateSk($data->date_sk),
-                $this->calculateTimeFromTimeSk($data->time_sk),
-                $response
-            );
+            $data = $this->getLastMigrateData($this->etlConfig->geTtableSpaceWork());
+
+            if (!is_null($data))
+            {
+                $response =  ($this->etlConfig->getSequence() and Carbon::parse($this->etlConfig->getFinalDate()) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
+
+                $this->updateDateAndTime(
+                    $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()},
+                    $this->calculateDateFromDateSk($data->date_sk),
+                    $this->calculateTimeFromTimeSk($data->time_sk),
+                    $response
+                );
+            }
         }
     }
 

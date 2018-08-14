@@ -16,9 +16,10 @@ class CreateTemporalGroundwaterFactTable extends Migration
         Schema::connection('temporary_work')->create('temporal_groundwater', function (Blueprint $table) {
 
             $table->increments('id');
-            $table->bigInteger('station_sk')->unsigned();
-            $table->bigInteger('date_sk')->unsigned();
-            $table->bigInteger('time_sk')->unsigned();
+
+            $table->integer('station_sk')->nullable();
+            $table->integer('date_sk')->nullable();
+            $table->integer('time_sk')->nullable();
 
             $table->string('date_time')->nullable();
             $table->string('date')->nullable();

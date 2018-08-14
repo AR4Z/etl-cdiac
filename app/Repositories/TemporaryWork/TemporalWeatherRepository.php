@@ -7,7 +7,6 @@ use App\Entities\TemporaryWork\TemporalWeather;
 use DB;
 
 
-
 class TemporalWeatherRepository extends EloquentRepository implements TemporaryInterface
 {
 

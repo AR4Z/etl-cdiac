@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TemporalGroundwater extends Model
 {
-    protected $connection = 'data_warehouse';
+    protected $connection = 'temporary_work';
 
     protected $table = 'temporal_groundwater';
 

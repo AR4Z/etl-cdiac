@@ -3,6 +3,7 @@
 namespace App\Etl;
 
 use App\Etl\Traits\RemoveAccents;
+use function Couchbase\defaultDecoder;
 use Facades\App\Repositories\Administrator\NetRepository;
 use Facades\App\Repositories\Administrator\ConnectionRepository;
 use Facades\App\Repositories\Administrator\StationRepository;
@@ -88,17 +89,21 @@ class EtlConfig
 
     function __construct(String $typeProcess, $netId = null,$connection = null, int $stationId,bool $sequence= false)
     {
-        $this->setTypeProcess($typeProcess)
-                ->setStation($stationId)
-                ->setNet($netId)
-                ->setConnection($connection)
-                ->setVarForFilter($stationId)
-                ->setSequence($sequence)
-                ->config()
-                ->setInitialDate($this->station->{$this->stateTable}->current_date)
-                ->setInitialTime($this->station->{$this->stateTable}->current_time)
-                ->setFinalDate(gmdate("Y-m-d",time()))
-                ->setFinalTime('00:00:00');
+        $this->setTypeProcess($typeProcess);
+        $this->setStation($stationId);
+        $this->setNet($netId);
+        $this->setConnection($connection);
+        $this->setVarForFilter($stationId);
+        $this->config();
+
+        $initialDate = (is_null($this->station->{$this->stateTable})) ? '1990-01-01' : $this->station->{$this->stateTable}->current_date;
+        $this->setInitialDate($initialDate);
+
+        $initialTime = (is_null($this->station->{$this->stateTable})) ? '00:00:00' : $this->station->{$this->stateTable}->current_time;
+        $this->setInitialTime($initialTime);
+
+        $this->setFinalDate(gmdate("Y-m-d",time()));
+        $this->setFinalTime('23:55:00');
     }
 
     /**
@@ -539,7 +544,6 @@ class EtlConfig
         $this->varForFilter = StationRepository::findVarForFilter($stationId);
         return $this;
     }
-
 
     /**
      * @return bool

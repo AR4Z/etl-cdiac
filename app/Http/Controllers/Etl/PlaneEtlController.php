@@ -314,6 +314,6 @@ class PlaneEtlController extends Controller
     }
     private function executeGroundwater($station, $extract, $options)
     {
-
+        return $this->executeOneStation('Original', $station->net_id, $options->station_id, $options->sequence, $options->serialization, $extract,[],[],false);
     }
 }
