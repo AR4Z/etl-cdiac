@@ -20,13 +20,30 @@ trait TimeSkTrait
         if ($completeTime){return $completeTime;}
     }
 
+    /**
+     * @param $timeSk
+     * @return mixed
+     */
     public function calculateTimeFromTimeSk($timeSk)
     {
         return TimeDimRepository::getTime($timeSk);
     }
 
+    /**
+     * @param $space
+     * @return mixed
+     */
     public function getSerializationTime($space)
     {
         return TimeDimRepository::getTimeFromSpace($space);
+    }
+
+    /**
+     * @param $space
+     * @return mixed
+     */
+    public function getStandardDataTime($space)
+    {
+        return TimeDimRepository::getStandardData($this->getSerializationTime($space));
     }
 }

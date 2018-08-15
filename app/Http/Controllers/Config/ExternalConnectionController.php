@@ -59,8 +59,8 @@ class ExternalConnectionController extends Controller
                         ->extract('Database',['trustProcess'=> false,'extractType' => 'Local', 'initialDate' => '2017-11-05','initialTime' => '00:00:00','finalDate' => '2017-11-06','finalTime' => '23:59:59']) //'initialTime' => '05:00:00','finalTime' => '10:59:59'
                         //->transform('Serialization')
                         ->transform('FilterDetection')  #['paramSearch'=> ['r','j']] parametro opcional de valores de busqueda
-                        ->transform('FilterCorrection')
-                        ->load()
+                        ->transform('Homogenization')
+                        //->load()
                         ->run()
         ;// este punto y coma termina el proceso de configuracion
 

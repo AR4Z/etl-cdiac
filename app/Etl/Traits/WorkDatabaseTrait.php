@@ -2,7 +2,6 @@
 
 namespace App\Etl\Traits;
 
-use function Couchbase\defaultDecoder;
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use App\Etl\Database\Query;
@@ -184,7 +183,7 @@ trait WorkDatabaseTrait
     {
         return DB::connection('temporary_work')
                     ->table($tableSpaceWork)
-                    ->select('station_sk','date_sk','time_sk')
+                    ->select('*')
                     ->where('date_sk', $date_sk)
                     ->whereBetween('time_sk',[$time,$interval])
                     ->orderby('date_sk','ASC')
@@ -406,7 +405,7 @@ trait WorkDatabaseTrait
      */
     public function updateDateTimeFromId(string $tableSpaceWork, int $id, string $date, string $time)
     {
-      return DB::connection('temporary_work')->table($tableSpaceWork)->where('id',$id)->update(['date' => $date,'time' => $time]);
+        return DB::connection('temporary_work')->table($tableSpaceWork)->where('id','=',$id)->update(['date_sk' => $date,'time_sk' => $time]);
     }
 
     /**
@@ -471,5 +470,15 @@ trait WorkDatabaseTrait
     public function deleteInRangeIdVariable(string $tableSpaceWork, int $initialId, int $finalId, array $variables)
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->whereBetween('id', [$initialId, $finalId])->update($variables);
+    }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param array $times
+     * @return mixed
+     */
+    public function deleteEldestHomogenization(string $tableSpaceWork, array $times)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->whereNotIn('time_sk',$times)->delete();
     }
 }
