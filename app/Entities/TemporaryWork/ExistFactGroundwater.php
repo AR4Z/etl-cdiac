@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExistFactGroundwater extends Model
 {
-    protected $connection = 'data_warehouse';
+    protected $connection = 'temporary_work';
 
-    protected $table = 'temporal_groundwater';
+    protected $table = 'exist_fact_groundwater';
 
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk',

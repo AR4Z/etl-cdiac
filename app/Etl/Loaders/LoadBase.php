@@ -19,6 +19,7 @@ abstract class LoadBase extends EtlBase
 
         #Obtener los valores de la tabla te trabajo temporal
         $values = ($this->etlConfig->getRepositorySpaceWork())::all();
+
         foreach ($values as $value)
         {
             #Evaluar la existencia de los valores en su respectiva fact

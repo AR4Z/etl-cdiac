@@ -2,6 +2,7 @@
 
 namespace App\Etl\Traits;
 
+use function Couchbase\defaultDecoder;
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use App\Etl\Database\Query;
@@ -128,11 +129,13 @@ trait WorkDatabaseTrait
      */
     public function evaluateExistence($repository, $data)
     {
-        $count = ($repository)::where('date_sk','=',$data->date_sk)
+        $count = ($repository)::selectRaw('count(station_sk) AS count')
+                                ->where('date_sk','=',$data->date_sk)
                                 ->where('station_sk','=',$data->station_sk)
                                 ->where('time_sk','=',$data->time_sk)
-                                ->count();
-        return ($count == 0)? false : true;
+                                ->get()->toArray()[0]['count'];
+
+        return ($count == 0) ? false : true;
     }
 
     /**
@@ -399,13 +402,12 @@ trait WorkDatabaseTrait
     /**
      * @param string $tableSpaceWork
      * @param int $id
-     * @param string $date
-     * @param string $time
+     * @param array $updates
      * @return mixed
      */
-    public function updateDateTimeFromId(string $tableSpaceWork, int $id, string $date, string $time)
+    public function updateDateTimeFromId(string $tableSpaceWork, int $id, array $updates)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->where('id','=',$id)->update(['date_sk' => $date,'time_sk' => $time]);
+        return DB::connection('temporary_work')->table($tableSpaceWork)->where('id','=',$id)->update($updates);
     }
 
     /**

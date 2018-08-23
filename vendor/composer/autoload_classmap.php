@@ -83,6 +83,7 @@ return array(
     'App\\Etl\\Transformers\\FilterAir' => $baseDir . '/app/Etl/Transformers/FilterAir.php',
     'App\\Etl\\Transformers\\FilterCorrection' => $baseDir . '/app/Etl/Transformers/FilterCorrection.php',
     'App\\Etl\\Transformers\\FilterDetection' => $baseDir . '/app/Etl/Transformers/FilterDetection.php',
+    'App\\Etl\\Transformers\\Homogenization' => $baseDir . '/app/Etl/Transformers/Homogenization.php',
     'App\\Etl\\Transformers\\Original' => $baseDir . '/app/Etl/Transformers/Original.php',
     'App\\Etl\\Transformers\\Serialization' => $baseDir . '/app/Etl/Transformers/Serialization.php',
     'App\\Etl\\Transformers\\TransformBase' => $baseDir . '/app/Etl/Transformers/TransformBase.php',

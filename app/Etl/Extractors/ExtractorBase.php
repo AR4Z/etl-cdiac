@@ -2,7 +2,6 @@
 
 namespace App\Etl\Extractors;
 
-
 use App\Etl\EtlBase;
 use Carbon\Carbon;
 use DB;
@@ -127,7 +126,7 @@ abstract class ExtractorBase extends EtlBase
             $dateTime = $this->parseCarbonDateTime(trim($value->date_time));
 
             if (!is_null($dateTime)){
-                $this->updateDateTimeFromId($tableSpaceWork,$value->id,$dateTime->format('Y-m-d'),$dateTime->format('H:i:s'));
+                $this->updateDateTimeFromId($tableSpaceWork,$value->id,[ 'date' => $dateTime->format('Y-m-d'),'time' =>$dateTime->format('H:i:s')]);
             }
         }
     }

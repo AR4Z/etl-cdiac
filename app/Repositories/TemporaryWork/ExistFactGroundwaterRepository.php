@@ -7,6 +7,9 @@ use App\Entities\TemporaryWork\ExistFactGroundwater;
 
 class ExistFactGroundwaterRepository extends EloquentRepository
 {
+
     protected $repositoryId = 'rinvex.repository.uniqueid';
+
     protected $model = ExistFactGroundwater::class;
+
 }

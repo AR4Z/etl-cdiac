@@ -46,7 +46,7 @@ class Homogenization extends TransformBase implements TransformInterface
 
         # editar elementos
         foreach ($this->updates as $update) {
-            $this->updateDateTimeFromId($this->etlConfig->getTableSpaceWork(),$update['value']->id,$update['date'], $update['time']);
+            $this->updateDateTimeFromId($this->etlConfig->getTableSpaceWork(),$update['value']->id,['date_sk' =>$update['date'], 'time_sk' =>$update['time']]);
         }
 
         # insertar elementos
@@ -210,7 +210,7 @@ class Homogenization extends TransformBase implements TransformInterface
      */
     public function executeFormula(float $v1, float $v2, int $t1, int $t2, int $t3, int $round = 2)
     {
-        return round(($v1 + (($v2 - $v1)/($t2 - $t1)) * ($t3 - $t1)),$round);
+        return round(($v1 + (($v2 - $v1)/($t2 - $t1)) * ($t3 - $t1)),2);
     }
 
     /**
