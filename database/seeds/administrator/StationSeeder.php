@@ -18,7 +18,7 @@ class StationSeeder extends Seeder
                     # station id => 1
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '174440302001',
+                    'code'                  => '174440301001',
                     'name'                  => 'MARQUETALIA- ALCALDÍA',
                     'description'           => null,
                     'table_db_name'         => 'est_marquetalia',
@@ -52,7 +52,7 @@ class StationSeeder extends Seeder
                     # station id => 2
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '178770301001',
+                    'code'                  => '178770302001',
                     'name'                  => 'RÍO RISARALDA- LA PALMERA',
                     'description'           => null,
                     'table_db_name'         =>  'est_risaralda',
@@ -86,7 +86,7 @@ class StationSeeder extends Seeder
                     # station id => 3
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '174860302002',
+                    'code'                  => '174860301002',
                     'name'                  => 'NEIRA- HOGARES JUVENILES',
                     'description'           => null,
                     'table_db_name'         => 'est_neira',
@@ -120,7 +120,7 @@ class StationSeeder extends Seeder
                     # station id => 4
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '178730302007',
+                    'code'                  => '178730301007',
                     'name'                  => 'VILLAMARÍA- HOSPITAL',
                     'description'           => null,
                     'table_db_name'         => 'est_hospivilla',
@@ -154,7 +154,7 @@ class StationSeeder extends Seeder
                     # station id => 5
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '174460302001',
+                    'code'                  => '174460301001',
                     'name'                  => 'MARULANDA - EL PÁRAMO',
                     'description'           => null,
                     'table_db_name'         => 'est_marulanda',
@@ -188,7 +188,7 @@ class StationSeeder extends Seeder
                     # station id => 6
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '170010301016',
+                    'code'                  => '170010302016',
                     'name'                  => 'Q.  TESORITO',
                     'description'           => null,
                     'table_db_name'         =>  'est_qmanizales',
@@ -222,7 +222,7 @@ class StationSeeder extends Seeder
                     # station id => 7
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '170010301015',
+                    'code'                  => '170010302015',
                     'name'                  => 'Q. OLIVARES- EL POPAL',
                     'description'           => null,
                     'table_db_name'         =>  'est_olivares',
@@ -256,7 +256,7 @@ class StationSeeder extends Seeder
                     # station id => 8
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '174860301001',
+                    'code'                  => '174860302001',
                     'name'                  => 'RÍO GUACAICA- CHEC',
                     'description'           => null,
                     'table_db_name'         =>  'est_guacaica_chec',
@@ -290,7 +290,7 @@ class StationSeeder extends Seeder
                     # station id => 9
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '174860301003',
+                    'code'                  => '174860302003',
                     'name'                  => 'RÍO GUACAICA- EL JORDAN',
                     'description'           => null,
                     'table_db_name'         => 'est_guacaica_naranjos',
@@ -324,7 +324,7 @@ class StationSeeder extends Seeder
                     # station id => 10
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '175410301001',
+                    'code'                  => '175410302001',
                     'name'                  => 'RÍO PENSILVANIA - MICROCENTRAL',
                     'description'           => null,
                     'table_db_name'         => 'est_pensilvania',
@@ -358,7 +358,7 @@ class StationSeeder extends Seeder
                     # station id => 11
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '175130301001',
+                    'code'                  => '175130302001',
                     'name'                  => 'RÍO POZO',
                     'description'           => null,
                     'table_db_name'         =>  'est_riopozo',
@@ -392,7 +392,7 @@ class StationSeeder extends Seeder
                     # station id => 12
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '178730301006',
+                    'code'                  => '178730302006',
                     'name'                  => 'RÍO RIOCLARO- LA GUAYANA',
                     'description'           => null,
                     'table_db_name'         =>  'est_rioclaroguayana',
@@ -426,7 +426,7 @@ class StationSeeder extends Seeder
                     # station id => 13
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '174330301002',
+                    'code'                  => '174330302002',
                     'name'                  => 'RÍO SANTO DOMINGO- MANZANARES',
                     'description'           => null,
                     'table_db_name'         =>  'est_santodomingo',
@@ -460,7 +460,7 @@ class StationSeeder extends Seeder
                     # station id => 14
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '177770301002',
+                    'code'                  => '177770302002',
                     'name'                  => 'RÍO SUPÍA- LOS PIONONOS',
                     'description'           => null,
                     'table_db_name'         =>  'est_supia2',
@@ -494,7 +494,7 @@ class StationSeeder extends Seeder
                     # station id => 15
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '177770301001',
+                    'code'                  => '177770302001',
                     'name'                  => 'RÍO SUPÍA- SUPÍA',
                     'description'           => null,
                     'table_db_name'         =>  'est_supia',
@@ -528,7 +528,7 @@ class StationSeeder extends Seeder
                     # station id => 16
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '176530302001',
+                    'code'                  => '176530301001',
                     'name'                  => 'SALAMINA - CHEC',
                     'description'           => null,
                     'table_db_name'         =>  'est_salamina',
@@ -562,7 +562,7 @@ class StationSeeder extends Seeder
                     # station id => 17
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '174330302001',
+                    'code'                  => '174330301001',
                     'name'                  => 'MANZANARES',
                     'description'           => null,
                     'table_db_name'         =>  'est_manzanares',
@@ -596,7 +596,7 @@ class StationSeeder extends Seeder
                     # station id => 18
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102013',
+                    'code'                  => '170010101013',
                     'name'                  => 'ALCÁZARES',
                     'description'           => null,
                     'table_db_name'         =>  'est_alcazares',
@@ -630,7 +630,7 @@ class StationSeeder extends Seeder
                     # station id => 19
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102008',
+                    'code'                  => '170010101008',
                     'name'                  => 'ARANJUEZ',
                     'description'           => null,
                     'table_db_name'         =>  'est_aranjuez',
@@ -664,7 +664,7 @@ class StationSeeder extends Seeder
                     # station id => 20
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102009',
+                    'code'                  => '170010101009',
                     'name'                  => 'BOSQUES DEL NORTE',
                     'description'           => null,
                     'table_db_name'         =>  'est_bosques',
@@ -698,7 +698,7 @@ class StationSeeder extends Seeder
                     # station id => 21
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102014',
+                    'code'                  => '170010501014',
                     'name'                  => 'CHEC-URIBE',
                     'description'           => null,
                     'table_db_name'         =>  'est_chec',
@@ -732,7 +732,7 @@ class StationSeeder extends Seeder
                     # station id => 22
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102007',
+                    'code'                  => '170010101007',
                     'name'                  => 'EL CARMEN',
                     'description'           => null,
                     'table_db_name'         =>  'est_carmen',
@@ -800,7 +800,7 @@ class StationSeeder extends Seeder
                     # station id => 24
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102005',
+                    'code'                  => '170010101005',
                     'name'                  => 'LA NUBIA',
                     'description'           => null,
                     'table_db_name'         =>  'est_enea',
@@ -834,7 +834,7 @@ class StationSeeder extends Seeder
                     # station id => 25
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102011',
+                    'code'                  => '170010101011',
                     'name'                  => 'HOSPITAL DE CALDAS',
                     'description'           => null,
                     'table_db_name'         =>  'est_hospital',
@@ -902,7 +902,7 @@ class StationSeeder extends Seeder
                     # station id => 27
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102010',
+                    'code'                  => '170010101010',
                     'name'                  => 'LA PALMA',
                     'description'           => null,
                     'table_db_name'         =>  'est_palma',
@@ -936,7 +936,7 @@ class StationSeeder extends Seeder
                     # station id => 28
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102012',
+                    'code'                  => '170010101012',
                     'name'                  => 'MILAN- PLANTA NIZA',
                     'description'           => null,
                     'table_db_name'         =>  'est_niza',
@@ -970,7 +970,7 @@ class StationSeeder extends Seeder
                     # station id => 29
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010202003',
+                    'code'                  => '170010201003',
                     'name'                  => 'POSGRADOS',
                     'description'           => null,
                     'table_db_name'         =>  'est_posgrados',
@@ -1004,7 +1004,7 @@ class StationSeeder extends Seeder
                     # station id => 30
                     'station_type_id'       => 2,
                     'net_id'                => 1,
-                    'code'                  => '170010102001',
+                    'code'                  => '170010202001',
                     'name'                  => 'Q. PALOGRANDE- RUTA 30',
                     'description'           => null,
                     'table_db_name'         =>  'est_ruta',
@@ -1038,7 +1038,7 @@ class StationSeeder extends Seeder
                     # station id => 31
                     'station_type_id'       => 1,
                     'net_id'                => 1,
-                    'code'                  => '170010102006',
+                    'code'                  => '170010101006',
                     'name'                  => 'YARUMOS',
                     'description'           => null,
                     'table_db_name'         =>  'est_yarumos',
@@ -1140,7 +1140,7 @@ class StationSeeder extends Seeder
                     # station id => 34
                     'station_type_id'       => 2,
                     'net_id'                => 7,
-                    'code'                  => '178730301003',
+                    'code'                  => '178730302003',
                     'name'                  => 'Q. MOLINOS P.N.N.N.',
                     'description'           => null,
                     'table_db_name'         =>  'est_molinos',
@@ -1174,7 +1174,7 @@ class StationSeeder extends Seeder
                     # station id => 35
                     'station_type_id'       => 2,
                     'net_id'                => 7,
-                    'code'                  => '178730301004',
+                    'code'                  => '178730302004',
                     'name'                  => 'Q. NEREIDAS P.N.N.N.',
                     'description'           => null,
                     'table_db_name'         =>  'est_nereidas',
@@ -2058,7 +2058,7 @@ class StationSeeder extends Seeder
                     # station id => 61
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '173800301001',
+                    'code'                  => '173800302001',
                     'name'                  => 'RÍO DOÑA JUANA',
                     'description'           => null,
                     'table_db_name'         =>  'est_donajuana',
@@ -2092,7 +2092,7 @@ class StationSeeder extends Seeder
                     # station id => 62
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '175130301002',
+                    'code'                  => '175130302002',
                     'name'                  => 'RÍO PÁCORA',
                     'description'           => null,
                     'table_db_name'         =>  'est_pacora',
@@ -2126,7 +2126,7 @@ class StationSeeder extends Seeder
                     # station id => 63
                     'station_type_id'       => 2,
                     'net_id'                => 6,
-                    'code'                  => '174860301004',
+                    'code'                  => '174860302004',
                     'name'                  => 'RÍO TAPIAS',
                     'description'           => null,
                     'table_db_name'         =>  'est_juntas',
@@ -2160,7 +2160,7 @@ class StationSeeder extends Seeder
                     # station id => 64
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '171740501007',
+                    'code'                  => '171740502007',
                     'name'                  => 'SUBESTACIÓN SAN FRANCISCO',
                     'description'           => null,
                     'table_db_name'         =>  'est_sanfrancisco',
@@ -2194,7 +2194,7 @@ class StationSeeder extends Seeder
                     # station id => 65
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '171740501008',
+                    'code'                  => '171740502008',
                     'name'                  => 'SUBESTACIÓN LA ESTRELLA',
                     'description'           => null,
                     'table_db_name'         =>  'est_estrella',
@@ -2228,7 +2228,7 @@ class StationSeeder extends Seeder
                     # station id => 66
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '175240501002',
+                    'code'                  => '175240502002',
                     'name'                  => 'SUBESTACIÓN LA ESMERALDA',
                     'description'           => null,
                     'table_db_name'         =>  'est_esmeralda',
@@ -2262,7 +2262,7 @@ class StationSeeder extends Seeder
                     # station id => 67
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '171740501006',
+                    'code'                  => '171740502006',
                     'name'                  => 'SUBESTACIÓN CAMPOALEGRE',
                     'description'           => null,
                     'table_db_name'         =>  'est_campoalegre',
@@ -2296,7 +2296,7 @@ class StationSeeder extends Seeder
                     # station id => 68
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '171740501005',
+                    'code'                  => '171740502005',
                     'name'                  => 'SUBESTACIÓN MONTEVIDEO',
                     'description'           => null,
                     'table_db_name'         =>  'est_montevideo',
@@ -2330,7 +2330,7 @@ class StationSeeder extends Seeder
                     # station id => 69
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '178730501016',
+                    'code'                  => '178730502016',
                     'name'                  => 'SUBESTACIÓN MUNICIPAL',
                     'description'           => null,
                     'table_db_name'         =>  'est_municipal',
@@ -2364,7 +2364,7 @@ class StationSeeder extends Seeder
                     # station id => 70
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '170010501059',
+                    'code'                  => '170010502059',
                     'name'                  => 'SUBESTACIÓN SANCANCIO',
                     'description'           => null,
                     'table_db_name'         =>  'est_sancancio',
@@ -2398,7 +2398,7 @@ class StationSeeder extends Seeder
                     # station id => 71
                     'station_type_id'       => 2,
                     'net_id'                => 9,
-                    'code'                  => '174860501005',
+                    'code'                  => '174860502005',
                     'name'                  => 'SUBESTACIÓN GUACAICA',
                     'description'           => null,
                     'table_db_name'         =>  'est_guacaica_bocatoma',
@@ -2432,7 +2432,7 @@ class StationSeeder extends Seeder
                     # station id => 72
                     'station_type_id'       => 2,
                     'net_id'                => 8,
-                    'code'                  => '171740401001',
+                    'code'                  => '171740402001',
                     'name'                  => 'RIO CHINCHINÁ CENICAFÉ',
                     'description'           => null,
                     'table_db_name'         =>  'est_cenicafe',
@@ -2466,7 +2466,7 @@ class StationSeeder extends Seeder
                     # station id => 73
                     'station_type_id'       => 2,
                     'net_id'                => 8,
-                    'code'                  => '178730401010',
+                    'code'                  => '178730402010',
                     'name'                  => 'RÍO RIOCLARO - LA BATEA',
                     'description'           => null,
                     'table_db_name'         =>  'est_batea',
@@ -2500,7 +2500,7 @@ class StationSeeder extends Seeder
                     # station id => 74
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '170010302018',
+                    'code'                  => '170010307057',
                     'name'                  => 'LICEO ISABEL LA CATÓLICA',
                     'description'           => null,
                     'table_db_name'         =>  'est_liceo_isabel',
@@ -2704,7 +2704,7 @@ class StationSeeder extends Seeder
                     # station id => 80
                     'station_type_id'       => 7,
                     'net_id'                => 10,
-                    'code'                  => '170010307059',
+                    'code'                  => '170010307089',
                     'name'                  => 'MALTERÍA',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -2738,7 +2738,7 @@ class StationSeeder extends Seeder
                     # station id => 81
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301031',
+                    'code'                  => '170010302031',
                     'name'                  => 'Q. MANZANARES- IBC',
                     'description'           => null,
                     'table_db_name'         =>  'qmanzanaresibc',
@@ -2772,7 +2772,7 @@ class StationSeeder extends Seeder
                     # station id => 82
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301034',
+                    'code'                  => '170010302034',
                     'name'                  => 'Q. LAS PAVAS- AUTOPISTAS DEL CAFÉ',
                     'description'           => null,
                     'table_db_name'         =>  'qlaspavas',
@@ -2806,7 +2806,7 @@ class StationSeeder extends Seeder
                     # station id => 83
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301032',
+                    'code'                  => '170010302032',
                     'name'                  => 'Q. LA FRANCIA- LOS PUENTES',
                     'description'           => null,
                     'table_db_name'         =>  'qlafrancia',
@@ -2840,7 +2840,7 @@ class StationSeeder extends Seeder
                     # station id => 84
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301033',
+                    'code'                  => '171740302009',
                     'name'                  => 'Q. EL ROSARIO- SAN MARCOS DE LEÓN',
                     'description'           => null,
                     'table_db_name'         =>  'qrosario',
@@ -2874,7 +2874,7 @@ class StationSeeder extends Seeder
                     # station id => 85
                     'station_type_id'       => 2,
                     'net_id'                => 2,
-                    'code'                  => '170010301026',
+                    'code'                  => '170010302026',
                     'name'                  => 'Q. EL GUAMO - CDI SAN SEBASTIÁN',
                     'description'           => null,
                     'table_db_name'         =>  'qelguamo_cdi',
@@ -2908,7 +2908,7 @@ class StationSeeder extends Seeder
                     # station id => 86
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301035',
+                    'code'                  => '170010302035',
                     'name'                  => 'Q. EL BOHÍO',
                     'description'           => null,
                     'table_db_name'         =>  'qelbohio_aguila',
@@ -2942,7 +2942,7 @@ class StationSeeder extends Seeder
                     # station id => 87
                     'station_type_id'       => 1,
                     'net_id'                => 6,
-                    'code'                  => '176650302001',
+                    'code'                  => '176650301001',
                     'name'                  => 'SAN JOSÉ',
                     'description'           => null,
                     'table_db_name'         =>  'est_rsanjose',
@@ -2976,7 +2976,7 @@ class StationSeeder extends Seeder
                     # station id => 88
                     'station_type_id'       => 1,
                     'net_id'                => 5,
-                    'code'                  => '170010301044',
+                    'code'                  => '170010302044',
                     'name'                  => 'Q. MARMATO- PLANTA CHEC',
                     'description'           => null,
                     'table_db_name'         =>  'qmarmato_chec',
@@ -3010,7 +3010,7 @@ class StationSeeder extends Seeder
                     # station id => 89
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301036',
+                    'code'                  => '170010302036',
                     'name'                  => 'Q. PALOGRANDE TERMINAL DE TRANSPORTES',
                     'description'           => null,
                     'table_db_name'         =>  'qpalogrande_term',
@@ -3044,7 +3044,7 @@ class StationSeeder extends Seeder
                     # station id => 90
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301037',
+                    'code'                  => '170010302037',
                     'name'                  => 'RÍO CHINCHINÁ BOSQUE POPULAR',
                     'description'           => null,
                     'table_db_name'         =>  'rchinchina_bos',
@@ -3078,7 +3078,7 @@ class StationSeeder extends Seeder
                     # station id => 91
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301041',
+                    'code'                  => '170010302041',
                     'name'                  => 'Q. SALINAS-RELLENO SANITARIO EMAS',
                     'description'           => null,
                     'table_db_name'         => 'qsalinas',
@@ -3112,7 +3112,7 @@ class StationSeeder extends Seeder
                     # station id => 92
                     'station_type_id'       => 2,
                     'net_id'                => 3,
-                    'code'                  => '170010301042',
+                    'code'                  => '170010302042',
                     'name'                  => 'Q. OLIVARES- BOMBEROS VOLUNTARIOS',
                     'description'           => null,
                     'table_db_name'         =>  'qolivares_bomberos',
@@ -3146,7 +3146,7 @@ class StationSeeder extends Seeder
                     # station id => 93
                     'station_type_id'       => 2,
                     'net_id'                => 2,
-                    'code'                  => '170010301045',
+                    'code'                  => '170010302045',
                     'name'                  => 'Q. EL GUAMO- LAVADERO LOS PUENTES',
                     'description'           => null,
                     'table_db_name'         =>  'qelguamo_puentes',
@@ -3180,7 +3180,7 @@ class StationSeeder extends Seeder
                     # station id => 94
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301038',
+                    'code'                  => '170010302038',
                     'name'                  => 'Q. EL PERRO- EXPOFERIAS',
                     'description'           => null,
                     'table_db_name'         =>  'qelperro',
@@ -3214,7 +3214,7 @@ class StationSeeder extends Seeder
                     # station id => 95
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301038',
+                    'code'                  => '170010302050',
                     'name'                  => 'Q. EL TRIUNFO- MIRADOR DE VILLAPILAR',
                     'description'           => null,
                     'table_db_name'         =>  'qeltriunfo',
@@ -3248,7 +3248,7 @@ class StationSeeder extends Seeder
                     # station id => 96
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301030',
+                    'code'                  => '170010302030',
                     'name'                  => 'Q. OLIVARES -AGUAS DE MANIZALES',
                     'description'           => null,
                     'table_db_name'         =>  'qolivares_aguasm',
@@ -3316,7 +3316,7 @@ class StationSeeder extends Seeder
                     # station id => 98
                     'station_type_id'       => 1,
                     'net_id'                => 2,
-                    'code'                  => '170010302025',
+                    'code'                  => '170010301025',
                     'name'                  => 'PERALONSO-CHEC',
                     'description'           => null,
                     'table_db_name'         =>  'sub_peralonso_chec',
@@ -3350,7 +3350,7 @@ class StationSeeder extends Seeder
                     # station id => 99
                     'station_type_id'       => 2,
                     'net_id'                => 5,
-                    'code'                  => '170010301040',
+                    'code'                  => '170010302040',
                     'name'                  => 'Q. CRISTALES- VALLE DE LA ALHAMBRA',
                     'description'           => null,
                     'table_db_name'         =>  'qcristales',
@@ -3452,7 +3452,7 @@ class StationSeeder extends Seeder
                     # station id => 102
                     'station_type_id'       => 2,
                     'net_id'                => 3,
-                    'code'                  => '170010301029',
+                    'code'                  => '170010302029',
                     'name'                  => 'Q. OLIVARES- BOCATOMA RÍO BLANCO',
                     'description'           => null,
                     'table_db_name'         =>  'qolivares_bocatoma',
@@ -3520,7 +3520,7 @@ class StationSeeder extends Seeder
                     # station id => 104
                     'station_type_id'       => 1,
                     'net_id'                => 2,
-                    'code'                  => '170010302047',
+                    'code'                  => '170010301047',
                     'name'                  => 'ANTENAS-ALTO DEL GUAMO',
                     'description'           => null,
                     'table_db_name'         =>  'redsonora_guamo',
@@ -3554,7 +3554,7 @@ class StationSeeder extends Seeder
                     # station id => 105
                     'station_type_id'       => 1,
                     'net_id'                => 4,
-                    'code'                  => '170010302023',
+                    'code'                  => '170010301023',
                     'name'                  => 'FINCA LA PAZ',
                     'description'           => null,
                     'table_db_name'         =>  'finca_lapaz',
@@ -3588,7 +3588,7 @@ class StationSeeder extends Seeder
                     # station id => 106
                     'station_type_id'       => 1,
                     'net_id'                => 3,
-                    'code'                  => '170010302022',
+                    'code'                  => '170010301022',
                     'name'                  => 'EL MIRADOR',
                     'description'           => null,
                     'table_db_name'         =>  'elmirador',
@@ -3622,7 +3622,7 @@ class StationSeeder extends Seeder
                     # station id => 107
                     'station_type_id'       => 2,
                     'net_id'                => 4,
-                    'code'                  => '170010301028',
+                    'code'                  => '170010302028',
                     'name'                  => 'Q. MANIZALES- SKINCO',
                     'description'           => null,
                     'table_db_name'         =>  'qmanizales_colombit',
@@ -3656,7 +3656,7 @@ class StationSeeder extends Seeder
                     # station id => 108
                     'station_type_id'       => 1,
                     'net_id'                => 4,
-                    'code'                  => '170010302024',
+                    'code'                  => '170010301024',
                     'name'                  => 'HACIENDA MANZANARES',
                     'description'           => null,
                     'table_db_name'         =>  'hac_manzanares',
@@ -3690,7 +3690,7 @@ class StationSeeder extends Seeder
                     # station id => 109
                     'station_type_id'       => 1,
                     'net_id'                => 3,
-                    'code'                  => '170010302021',
+                    'code'                  => '170010301021',
                     'name'                  => 'ALTO DE LA COCA',
                     'description'           => null,
                     'table_db_name'         => 'alto_coca',
@@ -4064,7 +4064,7 @@ class StationSeeder extends Seeder
                     # station id => 120
                     'station_type_id'       => 2,
                     'net_id'                => 8,
-                    'code'                  => '178730401009',
+                    'code'                  => '178730402009',
                     'name'                  => 'RÍO CHINCHINÁ EL BOSQUE',
                     'description'           => null,
                     'table_db_name'         =>  'est_bosque',
@@ -4336,7 +4336,7 @@ class StationSeeder extends Seeder
                     # station id => 128
                     'station_type_id'       => 1,
                     'net_id'                => 9,
-                    'code'                  => null,
+                    'code'                  => '178730501015',
                     'name'                  => 'FINCA PIRINEOS - CHEC',
                     'description'           => null,
                     'table_db_name'         => 'est_pirineos',
@@ -4404,7 +4404,7 @@ class StationSeeder extends Seeder
                     # station id => 130
                     'station_type_id'       => 2,
                     'net_id'                => 8,
-                    'code'                  => '170010401051',
+                    'code'                  => '170010402051',
                     'name'                  => 'RÍO CHINCHINÁ JARDINES',
                     'description'           => null,
                     'table_db_name'         => 'est_jardines',
@@ -4506,7 +4506,7 @@ class StationSeeder extends Seeder
                     # station id => 133
                     'station_type_id'       => 4,
                     'net_id'                => 8,
-                    'code'                  => '178730403011',
+                    'code'                  => '178730302005',
                     'name'                  => 'RIOCLARO',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -4540,7 +4540,7 @@ class StationSeeder extends Seeder
                     # station id => 134
                     'station_type_id'       => 2,
                     'net_id'                => 7,
-                    'code'                  => '178730501014',
+                    'code'                  => '178730502014',
                     'name'                  => 'Q. NEREIDAS- CHEC',
                     'description'           => null,
                     'table_db_name'         => 'est_qnereidas_ch',
@@ -4574,7 +4574,7 @@ class StationSeeder extends Seeder
                     # station id => 135
                     'station_type_id'       => 2,
                     'net_id'                => 4,
-                    'code'                  => '170010301027',
+                    'code'                  => '170010302027',
                     'name'                  => 'Q. GUAYABAL- RECINTO DEL PENSAMIENTO',
                     'description'           => null,
                     'table_db_name'         => 'qguayabal_rec',
@@ -5050,7 +5050,7 @@ class StationSeeder extends Seeder
                     # station id => 149
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '173800302003',
+                    'code'                  => '173800301003',
                     'name'                  => 'LA DORADA GUARINOCITO - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5084,7 +5084,7 @@ class StationSeeder extends Seeder
                     # station id => 150
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '178670303001',
+                    'code'                  => '178670301001',
                     'name'                  => 'VICTORIA - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5118,7 +5118,7 @@ class StationSeeder extends Seeder
                     # station id => 151
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '178670304002',
+                    'code'                  => '178670301002',
                     'name'                  => 'VICTORIA CAÑAVERAL - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5152,7 +5152,7 @@ class StationSeeder extends Seeder
                     # station id => 152
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '174330305003',
+                    'code'                  => '174330301003',
                     'name'                  => 'MANZANARES ALCALDÍA - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5186,7 +5186,7 @@ class StationSeeder extends Seeder
                     # station id => 153
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '174330306004',
+                    'code'                  => '174330301004',
                     'name'                  => 'MANZANARES AGUABONITA - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5220,7 +5220,7 @@ class StationSeeder extends Seeder
                     # station id => 154
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '174950307001',
+                    'code'                  => '174950301001',
                     'name'                  => 'NORCASIA - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5254,7 +5254,7 @@ class StationSeeder extends Seeder
                     # station id => 155
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '175410308002',
+                    'code'                  => '175410301002',
                     'name'                  => 'PENSILVANIA - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5288,7 +5288,7 @@ class StationSeeder extends Seeder
                     # station id => 156
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '176530309001',
+                    'code'                  => '176530301002',
                     'name'                  => 'SALAMINA - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5322,7 +5322,7 @@ class StationSeeder extends Seeder
                     # station id => 157
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '170500310001',
+                    'code'                  => '170500301001',
                     'name'                  => 'ARANZAZU - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5356,7 +5356,7 @@ class StationSeeder extends Seeder
                     # station id => 158
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '170130311001',
+                    'code'                  => '170130301001',
                     'name'                  => 'AGUADAS - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5390,7 +5390,7 @@ class StationSeeder extends Seeder
                     # station id => 159
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '17420312001',
+                    'code'                  => '17420301001',
                     'name'                  => 'ANSERMA - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
@@ -5424,7 +5424,7 @@ class StationSeeder extends Seeder
                     # station id => 160
                     'station_type_id'       => 1,
                     'net_id'                => 14,
-                    'code'                  => '178770313001',
+                    'code'                  => '178770301002',
                     'name'                  => 'VITERBO - COMUNITARIAS',
                     'description'           => null,
                     'table_db_name'         => null,
