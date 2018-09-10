@@ -44,6 +44,9 @@ class Load extends LoadBase implements LoadInterface
 
         # Eliminar datos duplicados TODO
 
+        # Calcular date_time
+        $this->InsertDateTime();
+
         # Extraer valores de la tabla temporal
         $values = $this->selectTemporalTable();
 
@@ -125,6 +128,25 @@ class Load extends LoadBase implements LoadInterface
     public function setMethod(string $method)
     {
         $this->method = $method;
+    }
+
+    /**
+     *
+     */
+    public function InsertDateTime()
+    {
+        # TODO => calcular cuando la fecha y la hora son null
+
+        $val = $this->getIdAndDateTime($this->etlConfig->getTableSpaceWork());
+
+        foreach ($val as $item)
+        {
+            $this->updateDateTimeFromId(
+                $this->etlConfig->getTableSpaceWork(),
+                $item->id,
+                [ 'date_time'=> $item->date.' '.$item->time ]
+            );
+        }
     }
 
 

@@ -208,7 +208,7 @@ trait WorkDatabaseTrait
      * @param $date
      * @return mixed
      */
-    public function countRowForDate($tableSpaceWork, $date)
+    public function countRowForDate(string $tableSpaceWork,$date)
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->select('*')->where('date_sk',$date)->count();
     }
@@ -479,8 +479,13 @@ trait WorkDatabaseTrait
      * @param array $times
      * @return mixed
      */
-    public function deleteEldestHomogenization(string $tableSpaceWork, array $times)
+    public function deleteEldestHomogenization(string $tableSpaceWork, $times)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->whereNotIn('time_sk',$times)->delete();
+        return DB::connection('temporary_work')->table($tableSpaceWork)->whereNotIn('time_sk',(array)$times)->delete();
+    }
+
+    public function getIdAndDateTime(string $tableSpaceWork)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->select('id','date','time')->get();
     }
 }

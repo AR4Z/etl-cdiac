@@ -3,13 +3,11 @@
 namespace App\Etl;
 
 use App\Etl\Traits\RemoveAccents;
-use function Couchbase\defaultDecoder;
 use Facades\App\Repositories\Administrator\NetRepository;
 use Facades\App\Repositories\Administrator\ConnectionRepository;
 use Facades\App\Repositories\Administrator\StationRepository;
 use App\Etl\Config\PrimaryKeys;
 use Config;
-use Illuminate\Support\Facades\App;
 
 /**
  *
@@ -41,6 +39,8 @@ class EtlConfig
    * $tableSpaceWork is optional: 'temporal_clima' - 'temporal_aire' - null
    * $tableSpaceWork indicates the temporal space work
    */
+
+  private $config = null;
 
   private $tableTrust = null;
 
@@ -122,6 +122,8 @@ class EtlConfig
     public function config()
     {
         $config = (object)Config::get('etl');
+
+        $this->config = $config;
 
         $this->setKeys((array_key_exists('extraColumns',$config)) ? $config->extraColumns : false);
 
@@ -579,6 +581,21 @@ class EtlConfig
     public function getKeys()
     {
         return $this->keys;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+
+    public function setConfig($config)
+    {
+        $this->config = $config;
+        return $this;
     }
 
 }

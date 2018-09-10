@@ -6,13 +6,20 @@ namespace App\Repositories\DataWareHouse;
 use Carbon\Carbon;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\DateDim;
+use DB;
 
 class DateDimRepository extends EloquentRepository
 {
     protected $repositoryId = 'rinvex.repository.uniqueid';
 
     protected $model = DateDim::class;
-
+    /**
+     * @return mixed
+     */
+    protected function queryBuilder()
+    {
+        return DB::connection('data_warehouse')->table('date_dim');
+    }
 
     /**
      * @param Carbon $date
@@ -32,6 +39,11 @@ class DateDimRepository extends EloquentRepository
     public function getDateFromSpace($initialLimit,$finalLimit,$space)
     {
         return range($initialLimit,$finalLimit,$space);
+    }
+
+    public function getWhereInDateAndDateSk($datesSk)
+    {
+        return $this->queryBuilder()->select('date_sk','date')->whereIn('date_sk',$datesSk)->get()->toArray();
     }
 
 }

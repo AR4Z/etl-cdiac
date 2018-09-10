@@ -28,4 +28,9 @@ Trait DateSkTrait
 
         return DateDimRepository::getDateFromSpace($this->calculateDateSk(Carbon::parse($limitInitial)),$this->calculateDateSk(Carbon::parse($limitFinal)), $space);
     }
+
+    public function getDateAndDateSk(array $datesSk)
+    {
+        return DateDimRepository::getWhereInDateAndDateSk($datesSk);
+    }
 }

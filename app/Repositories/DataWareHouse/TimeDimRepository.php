@@ -55,6 +55,6 @@ class TimeDimRepository extends EloquentRepository
      */
     public function getStandardData($elements)
     {
-        return $this->queryBuilder()->select('time_sk')->whereIn('time_sk', $elements)->orderBy('time_sk')->get()->toArray();
+        return $this->queryBuilder()->select('time_sk','time')->whereIn('time_sk', $elements)->orderBy('time_sk')->get()->toArray();
     }
 }

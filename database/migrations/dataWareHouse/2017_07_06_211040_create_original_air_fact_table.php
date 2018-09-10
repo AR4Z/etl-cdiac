@@ -14,9 +14,12 @@ class CreateOriginalAirFactTable extends Migration
     public function up()
     {
         Schema::connection('data_warehouse')->create('original_air_fact', function (Blueprint $table) {
+
             $table->bigInteger('station_sk')->unsigned();
             $table->bigInteger('date_sk')->unsigned();
             $table->bigInteger('time_sk')->unsigned();
+
+            $table->dateTime('date_time')->nullable();
 
             $table->string('so2_local_ppb')->nullable();
             # $table->string('so2_local_ugm3')->nullable();

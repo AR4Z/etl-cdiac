@@ -3,6 +3,8 @@
 namespace App\Etl\Config;
 
 
+use function Couchbase\defaultDecoder;
+
 class PrimaryKeys
 {
     public $globalKeys = [];
@@ -72,18 +74,11 @@ class PrimaryKeys
         {
             $this->globalCastKey .= 'CAST('.$key.' AS '.$value['type_data'].') ,';
 
-            if (!is_null($value['cast_name'])){
-                array_push($this->castKeys,$value['cast_name']);
-            }
+            if (!is_null($value['cast_name'])){ array_push($this->castKeys,$value['cast_name']); }
 
-            if ($value['key']){
-                array_push($this->keys,$key);
-            }
-            if (!is_null($value['calculated'])){
-                if (!$value['calculated']){
-                    array_push($this->notCalculatedColumns,$key);
-                }
-            }
+            if ($value['key']){ array_push($this->keys,$key); }
+
+            if (!is_null($value['calculated']) and !$value['calculated']){ array_push($this->notCalculatedColumns,$key); }
 
             if ($value['local_incoming']){
                 array_push($this->localCalculatedKeys,$key);

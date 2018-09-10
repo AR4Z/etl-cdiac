@@ -19,6 +19,8 @@ class CreateExistFactTable extends Migration
             $table->integer('date_sk')->nullable();
             $table->integer('time_sk')->nullable();
 
+            $table->string('date_time')->nullable();
+
             $table->string('rainfall')->nullable();
             $table->string('accumulated_rainfall')->nullable();
             $table->string('date')->nullable();

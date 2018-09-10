@@ -38,15 +38,24 @@ class Homogenization extends TransformBase implements TransformInterface
      */
     public function run()
     {
-        $this->arrayTime = array_column($this->getStandardDataTime($this->timeSpace),'time_sk');
+        $this->arrayTime = $this->getStandardDataTime($this->timeSpace);
 
-        $this->arrayDate = $this->getSerializationDate($this->etlConfig->getInitialDate(),$this->etlConfig->getFinalDate(), $this->dateSpace);
+        $this->arrayDate = $this->getDateAndDateSk($this->getSerializationDate($this->etlConfig->getInitialDate(),$this->etlConfig->getFinalDate(), $this->dateSpace));
 
         $this->homogenization();
 
         # editar elementos
         foreach ($this->updates as $update) {
-            $this->updateDateTimeFromId($this->etlConfig->getTableSpaceWork(),$update['value']->id,['date_sk' =>$update['date'], 'time_sk' =>$update['time']]);
+            $this->updateDateTimeFromId(
+                $this->etlConfig->getTableSpaceWork(),
+                $update['value']->id,
+                [
+                    'date_sk'   => $update['date_sk'],
+                    'date'      => $update['date'],
+                    'time_sk'   => $update['time_sk'],
+                    'time'      => $update['time']
+                ]
+            );
         }
 
         # insertar elementos
@@ -55,7 +64,10 @@ class Homogenization extends TransformBase implements TransformInterface
         }
 
         # eliminar elementos nos pertenecientes a las series homogenizadas
-        $this->deleteEldestHomogenization($this->etlConfig->getTableSpaceWork(),$this->arrayTime);
+        $this->deleteEldestHomogenization(
+            $this->etlConfig->getTableSpaceWork(),
+            array_column($this->arrayTime,'time_sk')
+        );
 
         return $this;
     }
@@ -69,7 +81,7 @@ class Homogenization extends TransformBase implements TransformInterface
         foreach ($this->arrayDate as $date)
         {
             #contar la cantidad de horas en un dia
-            $count = $this->countRowForDate($this->etlConfig->getTableSpaceWork(),$date);
+            $count = $this->countRowForDate($this->etlConfig->getTableSpaceWork(),$date->date_sk);
 
             if($count == 0){
                 $this->pushAllInserts($date); #insertar todas las horas para una fecha que no trae nunguna hora
@@ -87,7 +99,7 @@ class Homogenization extends TransformBase implements TransformInterface
     {
         foreach ($this->arrayTime as $time)
         {
-            array_push($this->inserts,['station_sk' => $this->etlConfig->getStation()->id,'date_sk' => $date, 'time_sk' => $time ]);
+            array_push($this->inserts,['station_sk' => $this->etlConfig->getStation()->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time]);
         }
     }
 
@@ -98,15 +110,15 @@ class Homogenization extends TransformBase implements TransformInterface
     {
         foreach ($this->arrayTime as $time)
         {
-           $upperLimit = $this->timeSpace + $time;
-           $lowerLimit = (($time - $this->timeSpace) <= 0 ) ? 1 : $time - $this->timeSpace;
+           $upperLimit = $this->timeSpace + $time->time_sk;
+           $lowerLimit = (($time->time_sk - $this->timeSpace) <= 0 ) ? 1 : $time->time_sk - $this->timeSpace;
 
             #Evaluar cantidad en el rango actual
-            $valInRangeActual = $this->getValInRange($this->etlConfig->getTableSpaceWork(),$date,$lowerLimit,$upperLimit);
+            $valInRangeActual = $this->getValInRange($this->etlConfig->getTableSpaceWork(),$date->date_sk,$lowerLimit,$upperLimit);
 
             if (!is_null($valInRangeActual)) {
                 # se evalua si el tiempo esta mal posicionado.
-                if (!(in_array($time,array_column(  $valInRangeActual->toArray(),'time_sk')))){
+                if (!(in_array((array)$time,array_column(  $valInRangeActual->toArray(),'time_sk')))){
                     switch (count($valInRangeActual)) {
                         case 0:
                             $this->homogenizationNotElements($date,$time);
@@ -130,9 +142,9 @@ class Homogenization extends TransformBase implements TransformInterface
      * @param $date
      * @param $time
      */
-    public function homogenizationNotElements(int $date, int $time)
+    public function homogenizationNotElements($date, $time)
     {
-        array_push($this->inserts,['date_sk'=> $date,'time_sk'=> $time ]);
+        array_push($this->inserts,['date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ]);
     }
 
     /**
@@ -140,10 +152,10 @@ class Homogenization extends TransformBase implements TransformInterface
      * @param $date
      * @param $time
      */
-    public function homogenizationOneElements($value, int $date, int $time)
+    public function homogenizationOneElements($value, $date, $time)
     {
-        if (!($value->time_sk == $time)){
-           array_push($this->updates, ['value'=>$value,'date' => $date, 'time' => $time ]);
+        if (!($value->time_sk == $time->time_sk)){
+           array_push($this->updates, ['value'=> $value,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ]);
         }
     }
 
@@ -153,16 +165,18 @@ class Homogenization extends TransformBase implements TransformInterface
      * @param $date
      * @param $time
      */
-    public function homogenizationTwoElements($valueOne, $valueTwo, int $date, int $time)
+    public function homogenizationTwoElements($valueOne, $valueTwo, $date, $time)
     {
         $arr = [];
         $arr['station_sk'] = $valueOne->station_sk;
-        $arr['date_sk'] = $date;
-        $arr['time_sk'] = $time;
+        $arr['date_sk'] = $date->date_sk;
+        $arr['date'] = $date->date;
+        $arr['time_sk'] = $time->time_sk;
+        $arr['time'] = $time->time;
 
         foreach ($this->etlConfig->getVarForFilter() as $variable)
         {
-            $arr[$variable->local_name] = $this->directionElements($variable->local_name,$valueOne,$valueTwo,$time,$variable->decimal_precision);
+            $arr[$variable->local_name] = $this->directionElements($variable->local_name,$valueOne,$valueTwo,$time->time_sk,$variable->decimal_precision);
         }
         array_push($this->inserts,$arr);
     }
@@ -179,19 +193,21 @@ class Homogenization extends TransformBase implements TransformInterface
 
         $arr = [];
         $arr['station_sk'] = $valInRangeActual[0]->station_sk;
-        $arr['date_sk'] = $date;
-        $arr['time_sk'] = $time;
+        $arr['date_sk'] = $date->date_sk;
+        $arr['date'] = $date->date;
+        $arr['time_sk'] = $time->time_sk;
+        $arr['time'] = $time->time;
 
         # se particionan dependiendo de si son mayores o menores.
-        foreach ($valInRangeActual as $value){array_push(${($value->time_sk <= $time) ? 'arrLower' : 'arrHigher' } , $value);}
+        foreach ($valInRangeActual as $value){array_push(${($value->time_sk <= $time->time_sk) ? 'arrLower' : 'arrHigher' } , $value);}
 
         foreach ($this->etlConfig->getVarForFilter() as $variable)
         {
             $arr[$variable->local_name] = $this->directionElements(
                 $variable->local_name,
-                (float)(count($arrLower) > 1) ? $this->findNearestValue($variable->local_name,$arrLower,$time) : $arrLower[0],
-                (float)(count($arrHigher) > 1) ? $this->findNearestValue($variable->local_name,$arrHigher,$time) : $arrHigher[0],
-                $time,
+                (float)(count($arrLower) > 1) ? $this->findNearestValue($variable->local_name,$arrLower,$time->time_sk) : $arrLower[0],
+                (float)(count($arrHigher) > 1) ? $this->findNearestValue($variable->local_name,$arrHigher,$time->time_sk) : $arrHigher[0],
+                $time->time_sk,
                 $variable->decimal_precision
             );
 
@@ -249,7 +265,14 @@ class Homogenization extends TransformBase implements TransformInterface
 
         if (!is_null($valueOne->{$variableName})){
             if (!is_null($valueTwo->{$variableName})){
-                $value = $this->executeFormula((float)$valueOne->{$variableName},(float)$valueTwo->{$variableName},$valueOne->time_sk, $valueTwo->time_sk, $time, $decimalPrecision);
+                $value = $this->executeFormula(
+                    (float)$valueOne->{$variableName},
+                    (float)$valueTwo->{$variableName},
+                    $valueOne->time_sk,
+                    $valueTwo->time_sk,
+                    $time,
+                    $decimalPrecision
+                );
             }else{
                 $value = $valueOne->{$variableName};
             }

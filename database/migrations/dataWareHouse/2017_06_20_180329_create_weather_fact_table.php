@@ -14,9 +14,13 @@ class CreateWeatherFactTable extends Migration
     public function up()
     {
         Schema::connection('data_warehouse')->create('weather_fact', function (Blueprint $table) {
+
             $table->bigInteger('station_sk')->unsigned();
             $table->bigInteger('date_sk')->unsigned();
             $table->bigInteger('time_sk')->unsigned();
+
+            $table->dateTime('date_time')->nullable();
+
             $table->decimal('rainfall', 10, 4)->nullable();
             $table->decimal('temperature', 10, 4)->nullable();
             $table->decimal('max_temperature', 10, 4)->nullable();

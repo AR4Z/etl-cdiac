@@ -19,6 +19,8 @@ class CreateOriginalWeatherFactTable extends Migration
             $table->bigInteger('date_sk')->unsigned();
             $table->bigInteger('time_sk')->unsigned();
 
+            $table->dateTime('date_time')->nullable();
+
             $table->string('rainfall')->nullable();
             $table->string('accumulated_rainfall')->nullable();
             $table->string('temperature')->nullable();

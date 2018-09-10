@@ -12,7 +12,7 @@ class ExistFactWeather extends Model
     protected $table = 'exist_fact_weather';
 
     protected $fillable = [
-        'station_sk', 'date_sk', 'time_sk',
+        'station_sk', 'date_sk', 'time_sk','date_time',
         'rainfall',
         'accumulated_rainfall',
         'temperature',

@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors\ExtractType;
 
 use App\Etl\EtlConfig;
+use function Couchbase\defaultDecoder;
 
 class External extends ExtractTypeBase implements ExtractTypeInterface
 {

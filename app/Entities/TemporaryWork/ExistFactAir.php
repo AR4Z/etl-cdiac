@@ -11,7 +11,7 @@ class ExistFactAir extends Model
     protected $table = 'exist_fact_air';
 
     protected $fillable = [
-        'station_sk', 'date_sk', 'time_sk',
+        'station_sk', 'date_sk', 'time_sk','date_time',
         'so2_local_ppb',
         'so2_estan_ugm3',
         'co_local_ppb',

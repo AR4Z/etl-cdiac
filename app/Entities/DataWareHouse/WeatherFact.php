@@ -17,7 +17,7 @@ class WeatherFact extends Model
     protected $primaryKey = ['station_sk', 'date_sk', 'time_sk'];
 
     protected $fillable = [
-        'station_sk', 'date_sk', 'time_sk',
+        'station_sk', 'date_sk', 'time_sk','date_time',
         'rainfall',
         'temperature',
         'max_temperature',

@@ -19,6 +19,8 @@ class CreateAirFactTable extends Migration
             $table->bigInteger('date_sk')->unsigned();
             $table->bigInteger('time_sk')->unsigned();
 
+            $table->dateTime('date_time')->nullable();
+
             $table->decimal('so2_local_ppb', 10, 2)->nullable();
             #$table->decimal('so2_local_ugm3', 10, 2)->nullable();
             $table->decimal('so2_estan_ugm3', 10, 2)->nullable();
