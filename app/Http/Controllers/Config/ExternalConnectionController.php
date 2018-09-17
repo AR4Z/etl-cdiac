@@ -56,10 +56,11 @@ class ExternalConnectionController extends Controller
         //dd($this->connectionRepository->where('id', 1)->first());
 
         $jobEtl = Etl::start('Filter', null, null,19,false) // sequense true
-                        ->extract('Database',['trustProcess'=> false,'extractType' => 'External', 'initialDate' => '2017-06-10','initialTime' => '00:00:00','finalDate' => '2017-06-12','finalTime' => '23:59:59']) //'initialTime' => '05:00:00','finalTime' => '10:59:59'
+                        ->extract('Database',['trustProcess'=> false,'extractType' => 'Local', 'initialDate' => '2017-06-10','initialTime' => '00:00:00','finalDate' => '2017-06-12','finalTime' => '23:59:59']) //'initialTime' => '05:00:00','finalTime' => '10:59:59'
                         //->transform('Serialization')
                         ->transform('FilterDetection')  #['paramSearch'=> ['r','j']] parametro opcional de valores de busqueda
                         ->transform('Homogenization')
+                        //->transform('Serialization')
                         ->load()
                         ->run()
         ;// este punto y coma termina el proceso de configuracion

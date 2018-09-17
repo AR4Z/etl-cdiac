@@ -484,8 +484,67 @@ trait WorkDatabaseTrait
         return DB::connection('temporary_work')->table($tableSpaceWork)->whereNotIn('time_sk',(array)$times)->delete();
     }
 
+    /**
+     * @param string $tableSpaceWork
+     * @return mixed
+     */
     public function getIdAndDateTime(string $tableSpaceWork)
     {
         return DB::connection('temporary_work')->table($tableSpaceWork)->select('id','date','time')->get();
+    }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param string $key
+     * @param string $column
+     * @return mixed
+     */
+    public function selectColumnWhereNull(string $tableSpaceWork, string $key, string $column)
+    {
+        return DB::connection('temporary_work')
+            ->table($tableSpaceWork)
+            ->select($key)
+            ->distinct($column)
+            ->whereNull($column)
+            ->orderBy($key)
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param $dateSk
+     * @param null $date
+     * @return mixed
+     */
+    public function updateDateFromDateSk(string $tableSpaceWork, $dateSk, $date = null)
+    {
+        return DB::connection('temporary_work')->table($tableSpaceWork)->where('date_sk', '=',$dateSk)->update(['date'=> $date]);
+    }
+
+    /**
+     * @param string $tableSpaceWork
+     * @param $timeSk
+     * @param null $time
+     * @return mixed
+     */
+    public function updateTimeFromTimeSk(string $tableSpaceWork, $timeSk, $time = null)
+    {
+        return DB::connection('temporary_work')
+            ->table($tableSpaceWork)
+            ->where('time_sk', '=',$timeSk)
+            ->update(['time'=> $time]);
+    }
+
+    public function getDuplicates(string $tableSpaceWork)
+    {
+        return DB::connection('temporary_work')
+            ->table($tableSpaceWork)
+            ->selectRaw('station_sk,date_sk,time_sk, max(id)')
+            ->groupBy('station_sk','date_sk','time_sk')
+            ->havingRaw('count(station_sk) > 1')
+            ->orderBy('station_sk','date_sk','time_sk')
+            ->get()
+            ->toArray();
     }
 }

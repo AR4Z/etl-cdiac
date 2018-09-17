@@ -2,9 +2,6 @@
 
 namespace App\Etl\Config;
 
-
-use function Couchbase\defaultDecoder;
-
 class PrimaryKeys
 {
     public $globalKeys = [];
@@ -16,6 +13,8 @@ class PrimaryKeys
     public $keys = [];
 
     public $castKeys = [];
+
+    public $extractColumns = [];
 
     public $localCalculatedKeys = [];
 
@@ -39,31 +38,35 @@ class PrimaryKeys
 
     public $mergeExternalIncomingKeys = '';
 
+    public $extractConsult = '';
 
     function __construct($typeProcess, $etlMethod, $keys)
     {
-        $this->globalKeys = $this->getReactiveKeys($typeProcess,$etlMethod,$keys);
+        $this->globalKeys = $this->getReactiveKeys($etlMethod,$keys);
+
         $this->global = array_keys($this->globalKeys);
-        $this->config($typeProcess,$etlMethod);
+
+        #$this->config($typeProcess,$etlMethod);
     }
 
-    private function getReactiveKeys($typeProcess, $etlMethod, $keys)
+    private function getReactiveKeys($etlMethod,$keys)
     {
         $arr = [];
-        foreach ($keys as $key => $value)
-        {
-            if ($value['type'] == 'all' or $value['type'] == $etlMethod){
-
-                if (($typeProcess == 'Original' and $value['external_incoming']) or ( $typeProcess == 'Filter' and $value['local_incoming'] ) or ( $value['key'])){
-                    $arr[$key] = $value;
-                }
-            }
+        foreach ($keys as $key => $value) {
+            if ($value['type'] == 'all' or $value['type'] == $etlMethod) { $arr[$key] = $value; }
         }
         return $arr;
     }
 
-    private function config($typeProcess,$etlMethod)
+    /**
+     * @param string $typeProcess
+     * @param string $etlMethod
+     * @param string $extractMethod
+     * @param string $extractType
+     */
+    public function config(string $typeProcess, string $etlMethod = null, string $extractMethod, string $extractType = null)
     {
+        #dd($typeProcess,$etlMethod,$extractMethod,$extractType);
         $temporalSelect = ' ';
         $temporalCastSelect = ' ';
         $temporalLocalMerge = ' ';
@@ -100,9 +103,10 @@ class PrimaryKeys
                 array_push($this->notExternalIncomingKeys,$key);
             }
 
-            if ($value['type'] == 'all' or $value['type'] == $etlMethod){
-
-                if ($typeProcess == 'Original' and $value['load_original']){
+            if ($value['type'] == 'all' or $value['type'] == $etlMethod)
+            {
+                if ($typeProcess == 'Original' and $value['load_original'])
+                {
                     $this->loadCastKey  .= ' '.$value['local_name'].' ,';
                     array_push($this->load,$value['local_name']);
                 }
@@ -113,6 +117,15 @@ class PrimaryKeys
                 }
             }
 
+            if ($extractMethod == 'Database' and  $extractType == 'External' and $value['external_incoming'] and !is_null($value['cast_name'])){
+                $this->extractConsult .= $value['external_name']. ' as '. $value['cast_name'].' ,';
+                array_push($this->extractColumns,$value['cast_name']);
+            }
+
+            if ($extractMethod == 'Database' and  $extractType == 'Local' and $value['local_incoming']){
+                $this->extractConsult .= $value['local_name'].' ,';
+                array_push($this->extractColumns,$value['local_name']);
+            }
         }
 
         $this->selectKey = $temporalSelect;

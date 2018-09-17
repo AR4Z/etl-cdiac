@@ -46,9 +46,9 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
      */
     public function setSelect($variables,$keys)
     {
-        $temporalSelect = $keys->selectCastKey;
+        $temporalSelect = $keys->extractConsult;
 
-        $this->columns= array_merge($this->columns,$keys->castKeys);
+        $this->columns= array_merge($this->columns,$keys->extractColumns);
         $this->columns= array_unique($this->columns);
 
         foreach ($variables as $variable){

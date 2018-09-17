@@ -66,6 +66,15 @@ class Csv extends ExtractorBase implements ExtractorInterface
      */
     public function run()
     {
+        # Configurar las consultas para la extraccion de los datos
+        ($this->etlConfig->getKeys())->config(
+            $this->etlConfig->getTypeProcess(),
+            $this->etlConfig->getStation()->typeStation->etl_method,
+            'Plane',
+            null
+        );
+
+
         if ($this->truncateTemporal){
             # Truncar la tabla de trabajo
             $this->configureSpaceWork();

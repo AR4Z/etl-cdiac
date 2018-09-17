@@ -78,6 +78,8 @@ class EtlConfig
 
   private $trustProcess = false;
 
+  private $calculateDateTime = true;
+
     /**
      * EtlConfig constructor.
      * @param String $typeProcess
@@ -595,6 +597,25 @@ class EtlConfig
     public function setConfig($config)
     {
         $this->config = $config;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCalculateDateTime(): bool
+    {
+        return $this->calculateDateTime;
+    }
+
+    /**
+     * @param bool $calculateDateTime
+     * @return EtlConfig
+     */
+    public function setCalculateDateTime(bool $calculateDateTime)
+    {
+        $this->calculateDateTime = $calculateDateTime;
+
         return $this;
     }
 

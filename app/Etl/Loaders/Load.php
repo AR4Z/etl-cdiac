@@ -4,6 +4,7 @@
 namespace App\Etl\Loaders;
 
 use App\Etl\EtlConfig;
+use function Couchbase\defaultDecoder;
 
 class Load extends LoadBase implements LoadInterface
 {
@@ -14,6 +15,8 @@ class Load extends LoadBase implements LoadInterface
     public $select = '';
 
     public  $columns = [];
+
+    public $deleteDuplicates = true;
 
     /**
      * @param EtlConfig $etlConfig
@@ -42,10 +45,20 @@ class Load extends LoadBase implements LoadInterface
         # Direccionar los datos existentes a la tabla de existentes
         $this->redirectExisting();
 
-        # Eliminar datos duplicados TODO
+        # Eliminar los duplicados
+        $this->deleteDuplicates();
 
-        # Calcular date_time
-        $this->InsertDateTime();
+        if ($this->etlConfig->isCalculateDateTime())
+        {
+            # Se calcula la fechas cuando son null
+            $this->completeDateNull();
+
+            # Se calcula la hora cuando es null
+            $this->completeTimeNull();
+
+            # Se calcula el date_time
+            $this->InsertDateTime();
+        }
 
         # Extraer valores de la tabla temporal
         $values = $this->selectTemporalTable();
@@ -135,8 +148,6 @@ class Load extends LoadBase implements LoadInterface
      */
     public function InsertDateTime()
     {
-        # TODO => calcular cuando la fecha y la hora son null
-
         $val = $this->getIdAndDateTime($this->etlConfig->getTableSpaceWork());
 
         foreach ($val as $item)
@@ -144,8 +155,51 @@ class Load extends LoadBase implements LoadInterface
             $this->updateDateTimeFromId(
                 $this->etlConfig->getTableSpaceWork(),
                 $item->id,
-                [ 'date_time'=> $item->date.' '.$item->time ]
+                [ 'date_time'=> $item->date.''. (is_null($item->time) ? '' : ' '.$item->time ) ]
             );
+        }
+    }
+
+    public function completeDateNull()
+    {
+        $datesNull = $this->selectColumnWhereNull(    $this->etlConfig->getTableSpaceWork(),'date_sk','date');
+
+        foreach ($datesNull as $dates) {
+            $this->updateDateFromDateSk(
+                $this->etlConfig->getTableSpaceWork(),
+                $dates->date_sk,
+                $this->calculateDateFromDateSk($dates->date_sk)
+            );
+        }
+    }
+
+    public function completeTimeNull()
+    {
+        $timesNull = $this->selectColumnWhereNull(    $this->etlConfig->getTableSpaceWork(),'time_sk','time');
+
+        foreach ($timesNull as $time) {
+            if($time->time_sk < $this->maxValueSk){
+                $this->updateTimeFromTimeSk(
+                    $this->etlConfig->getTableSpaceWork(),
+                    $time->time_sk,
+                    $this->calculateTimeFromTimeSk($time->time_sk)
+                );
+            }
+        }
+    }
+
+    /**
+     * Se el ultimo dato entrante cuando se ingresan datos duplicados
+     */
+    public function deleteDuplicates()
+    {
+        if ($this->deleteDuplicates) {
+
+            # se extrae el maximo id cuando existen datos duplicados
+            $result = $this->getDuplicates($this->etlConfig->getTableSpaceWork());
+
+            # se eliminan los id's duplicados
+            if (count($result) > 0){ $this->deleteWhereInVariable($this->etlConfig->getTableSpaceWork(),'id', array_column($result,'max')); }
         }
     }
 

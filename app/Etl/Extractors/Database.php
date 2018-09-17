@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\EtlConfig;
+use function Couchbase\defaultDecoder;
 
 class Database extends ExtractorBase implements ExtractorInterface
 {
@@ -38,6 +39,14 @@ class Database extends ExtractorBase implements ExtractorInterface
     {
         # Truncar la tabla de trabajo
         $this->configureSpaceWork();
+
+        # Configurar las consultas para la extraccion de los datos
+        ($this->etlConfig->getKeys())->config(
+            $this->etlConfig->getTypeProcess(),
+            $this->etlConfig->getStation()->typeStation->etl_method,
+            $this->method,
+            $this->extractType
+        );
 
         # Crear el objeto de extraccion /ExtracType (este posee configuraciones diferentes para local y externa)
         $this->extractTypeObject = $this->createExtractType($this->extractType,$this->etlConfig);
