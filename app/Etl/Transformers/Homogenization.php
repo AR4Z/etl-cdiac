@@ -22,6 +22,7 @@ class Homogenization extends TransformBase implements TransformInterface
 
     public $updates = []; # array de valores para editar
 
+    public $previousData = null; # dato anterior al inicio del proceso por fecha
 
     /**
      * @param EtlConfig $etlConfig
@@ -77,9 +78,18 @@ class Homogenization extends TransformBase implements TransformInterface
      */
     public function homogenization()
     {
+        $iterations = 1;
+
+        # Se extrae de la bodega de datos el elemento exactamente anteior a la fecha de migracion
+        $this->previousData = $this->getElementInFact($this->arrayDate[0]->date_sk -1 , $this->maxValueSk - $this->timeSpace + 1);
+
         #Se hace ciclo por cada dia en las fechas ingresadas
         foreach ($this->arrayDate as $date)
         {
+            if ($iterations > 1){
+               $this->previousData = $this->getElementInTemporal($date->date_sk -1 , $this->maxValueSk - $this->timeSpace + 1);
+            }
+
             #contar la cantidad de horas en un dia
             $count = $this->countRowForDate($this->etlConfig->getTableSpaceWork(),$date->date_sk);
 
@@ -88,6 +98,8 @@ class Homogenization extends TransformBase implements TransformInterface
             }else{
                 $this->cycleForTime($date); #Evaluar las diferentes opciones de cada hora
             }
+
+            $iterations++;
         }
     }
 
@@ -97,8 +109,7 @@ class Homogenization extends TransformBase implements TransformInterface
      */
     public function pushAllInserts($date)
     {
-        foreach ($this->arrayTime as $time)
-        {
+        foreach ($this->arrayTime as $time) {
             array_push($this->inserts,['station_sk' => $this->etlConfig->getStation()->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time]);
         }
     }
@@ -116,9 +127,17 @@ class Homogenization extends TransformBase implements TransformInterface
             #Evaluar cantidad en el rango actual
             $valInRangeActual = $this->getValInRange($this->etlConfig->getTableSpaceWork(),$date->date_sk,$lowerLimit,$upperLimit);
 
+            if ($time->time_sk == 1 and !is_null($this->previousData)){
+                $temporalValInRange = [];
+                array_push($temporalValInRange,$this->previousData);
+                foreach ($valInRangeActual as $value){ array_push($temporalValInRange,$value); }
+                $valInRangeActual = $temporalValInRange;
+            }
+
             if (!is_null($valInRangeActual)) {
                 # se evalua si el tiempo esta mal posicionado.
-                if (!(in_array((array)$time,array_column(  $valInRangeActual->toArray(),'time_sk')))){
+                if (!(in_array((array)$time,array_column( (!is_array($valInRangeActual)) ? $valInRangeActual->toArray() : $valInRangeActual,'time_sk')))){
+
                     switch (count($valInRangeActual)) {
                         case 0:
                             $this->homogenizationNotElements($date,$time);

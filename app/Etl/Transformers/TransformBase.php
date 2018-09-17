@@ -272,7 +272,7 @@ abstract class TransformBase extends EtlBase
     }
 
     /**
-     * @param $variable
+     * @param $variables
      * @return bool
      */
     public function filterCappedRainGauge($variables)
@@ -315,5 +315,35 @@ abstract class TransformBase extends EtlBase
        }
 
        return true;
+    }
+
+    /**
+     * @param $date
+     * @param $time
+     * @return mixed
+     */
+    public function getElementInFact($date, $time)
+    {
+        return DB::connection('data_warehouse')
+            ->table($this->etlConfig->getTableDestination())
+            ->select('*')
+            ->where('date_sk','=',$date)
+            ->where('time_sk','>=',$time)
+            ->first();
+    }
+
+    /**
+     * @param $date
+     * @param $time
+     * @return mixed
+     */
+    public function getElementInTemporal($date, $time)
+    {
+        return DB::connection('temporary_work')
+            ->table($this->etlConfig->getTableSpaceWork())
+            ->select('*')
+            ->where('date_sk','=',$date)
+            ->where('time_sk','>=',$time)
+            ->first();
     }
 }
