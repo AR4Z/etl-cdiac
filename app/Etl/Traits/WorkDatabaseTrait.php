@@ -127,13 +127,13 @@ trait WorkDatabaseTrait
      * @param $data
      * @return bool
      */
-    public function evaluateExistence($repository, $data)
+    public function evaluateExistence($repository, $data) : bool
     {
-        $count = ($repository)::selectRaw('count(station_sk) AS count')
-                                ->where('date_sk','=',$data->date_sk)
-                                ->where('station_sk','=',$data->station_sk)
-                                ->where('time_sk','=',$data->time_sk)
-                                ->get()->toArray()[0]['count'];
+        $count = $repository->selectRaw('count(station_sk) AS count')
+                            ->where('date_sk','=',$data->date_sk)
+                            ->where('station_sk','=',$data->station_sk)
+                            ->where('time_sk','=',$data->time_sk)
+                            ->get()->toArray()[0]['count'];
 
         return ($count == 0) ? false : true;
     }
@@ -214,15 +214,14 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $repositorySpaceWork
      * @param $value
      * @param $date
      * @param $time
      * @return mixed
      */
-    public function serializationUpdate($repositorySpaceWork, $value, $date, $time)
+    public function serializationUpdate($value, $date, $time)
     {
-        $data = ($repositorySpaceWork)::select('*')->where('date_sk',$value->date_sk)->where('time_sk',$value->time_sk)->first();
+        $data = $this->etlConfig->repositorySpaceWork->select('*')->where('date_sk',$value->date_sk)->where('time_sk',$value->time_sk)->first();
         $data->date_sk = $date;
         $data->time_sk = $time;
         return $data->update();
@@ -326,21 +325,19 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $repository
      * @return mixed
      */
-    public function getInitialDataInSpaceWork($repository)
+    public function getInitialDataInSpaceWork()
     {
-        return ($repository)::select('*')->orderByRaw("date_sk ASC, time_sk ASC")->first();
+        return $this->etlConfig->repositorySpaceWork->select('*')->orderByRaw("date_sk ASC, time_sk ASC")->first();
     }
 
     /**
-     * @param $repository
      * @return mixed
      */
-    public function getFinalDataInSpaceWork($repository)
+    public function getFinalDataInSpaceWork()
     {
-        return ($repository)::select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
+        return $this->etlConfig->repositorySpaceWork->select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
     }
 
     /**

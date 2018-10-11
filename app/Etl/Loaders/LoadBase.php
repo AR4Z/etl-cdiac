@@ -18,17 +18,17 @@ abstract class LoadBase extends EtlBase
         $this->redirectExist = [];
 
         #Obtener los valores de la tabla te trabajo temporal
-        $values = ($this->etlConfig->getRepositorySpaceWork())::all();
+        $values = $this->etlConfig->repositorySpaceWork->all();
 
         foreach ($values as $value)
         {
             #Evaluar la existencia de los valores en su respectiva fact
-            if ($this->evaluateExistence($this->etlConfig->getRepositoryDestination(),$value))
+            if ($this->evaluateExistence($this->etlConfig->repositoryDestination,$value))
             {
                 #Extraer Dato existente en la fact respectiva
-                $exist = ($this->etlConfig->getRepositoryExist())::fill($value->toArray())->toArray();
+                $exist = $this->etlConfig->repositoryExist->fill($value->toArray())->toArray();
 
-                if (!$this->evaluateExistence($this->etlConfig->getRepositoryExist(),$value))
+                if (!$this->evaluateExistence($this->etlConfig->repositoryExist,$value))
                 {
                     #Insertar dato existente en la fact de existentes respectiva
                     $this->insertExistTable($this->etlConfig->getTableExist(),$exist);

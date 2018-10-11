@@ -3,22 +3,22 @@
 namespace App\Etl;
 
 use App\Etl\Traits\RemoveAccents;
-use Facades\App\Repositories\Administrator\NetRepository;
-use Facades\App\Repositories\Administrator\ConnectionRepository;
-use Facades\App\Repositories\Administrator\StationRepository;
+use Facades\App\Repositories\Administrator\{NetRepository,ConnectionRepository,StationRepository};
 use App\Etl\Config\PrimaryKeys;
 use Config;
 
-/**
- *
- */
-class EtlConfig 
+class EtlConfig
 {
     use RemoveAccents;
-  /**
-   * $typeProcess is option variable: 'Original' - 'Filter' - null
-   */
-  private $typeProcess = null;
+
+    /**
+     * $typeProcess is option variable: 'Original' - 'Filter' - null
+     */
+    private $typeProcess = null;
+
+    private $processId = null;
+
+    public $processState = null;
 
   /**
    * $net is dependence for: App\Repositories\Config\ConnectionRepository
@@ -44,19 +44,19 @@ class EtlConfig
 
   private $tableTrust = null;
 
-  private $tableSpaceWork = null;
+  public $tableSpaceWork = null;
 
   private $tableDestination = null;
 
   private $tableExist = null;
 
-  private $repositoryDestination = null;
+  public $repositoryDestination = null;
 
-  private $repositorySpaceWork = null;
+  public $repositorySpaceWork = null;
 
-  private $repositoryExist = null;
+  public $repositoryExist = null;
 
-  private $trustRepository = null;
+  public $trustRepository = null;
 
   private $stateTable = null;
 
@@ -91,18 +91,19 @@ class EtlConfig
 
     function __construct(String $typeProcess, $netId = null,$connection = null, int $stationId,bool $sequence= false)
     {
+        $this->setProcessId(time());
+        $this->setProcessState(new EtlState());
+
         $this->setTypeProcess($typeProcess);
         $this->setStation($stationId);
         $this->setNet($netId);
         $this->setConnection($connection);
         $this->setVarForFilter($stationId);
+
         $this->config();
 
-        $initialDate = (is_null($this->station->{$this->stateTable})) ? '1990-01-01' : $this->station->{$this->stateTable}->current_date;
-        $this->setInitialDate($initialDate);
-
-        $initialTime = (is_null($this->station->{$this->stateTable})) ? '00:00:00' : $this->station->{$this->stateTable}->current_time;
-        $this->setInitialTime($initialTime);
+        $this->setInitialDate((is_null($this->station->{$this->stateTable})) ? '1990-01-01' : $this->station->{$this->stateTable}->current_date);
+        $this->setInitialTime((is_null($this->station->{$this->stateTable})) ? '00:00:00' : $this->station->{$this->stateTable}->current_time);
 
         $this->setFinalDate(gmdate("Y-m-d",time()));
         $this->setFinalTime('23:55:00');
@@ -115,7 +116,6 @@ class EtlConfig
     public function setStation(int $stationId)
     {
         $this->station= StationRepository::findRelationship($stationId);
-        return $this;
     }
 
     /**
@@ -150,46 +150,37 @@ class EtlConfig
         $this->setTableExist((array_key_exists('tableExist',$config)) ? $config->tableExist : false);
         $this->setTableTrust((array_key_exists('tableTrust',$config)) ? $config->tableTrust : false);
         $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
-
-
-        return $this;
     }
 
     /**
      * @param $spaceWorkTable
-     * @return $this
      */
 
   public function setTableSpaceWork($spaceWorkTable)
   {
       $this->tableSpaceWork = $spaceWorkTable;
-      return $this;
   }
 
     /**
      * @param $destinationTable
-     * @return $this
      */
   public function setTableDestination($destinationTable)
   {
       $this->tableDestination = $destinationTable;
-      return $this;
   }
 
 
     /**
      * @param String $typeProcess
-     * @return $this
+
      */
     public function setTypeProcess(String $typeProcess)
   {
     $this->typeProcess  = $typeProcess;
-    return $this;
   }
 
     /**
      * @param $net
-     * @return $this
      * @internal param int $netId
      */
 
@@ -197,7 +188,6 @@ class EtlConfig
   {
       $netId = (is_null($net)) ?  $this->station->net_id : $net;
       $this->net = NetRepository::find($netId);
-      return $this;
   }
 
 
@@ -219,7 +209,7 @@ class EtlConfig
   }
 
     /**
-     * @return $this_typeProcess
+     * @return null $this_typeProcess
      */
     public function getTypeProcess()
   {
@@ -253,13 +243,11 @@ class EtlConfig
 
     /**
      * @param null $repositorySpaceWork
-     * @return $this
      */
     public function setRepositorySpaceWork($repositorySpaceWork)
     {
-        $this->repositorySpaceWork = $repositorySpaceWork;
-
-        return $this;
+        $routeRepository = "App\\Repositories\\TemporaryWork\\".$repositorySpaceWork;
+        $this->repositorySpaceWork = new $routeRepository;
     }
 
     /**
@@ -290,12 +278,10 @@ class EtlConfig
 
     /**
      * @param null $stateTable
-     * @return $this
      */
     public function setStateTable($stateTable)
     {
         $this->stateTable = $stateTable;
-        return $this;
     }
 
     /**
@@ -308,7 +294,6 @@ class EtlConfig
 
     /**
      * @param null $initialDate
-     * @return $this
      */
     public function setInitialDate($initialDate)
     {
@@ -321,7 +306,6 @@ class EtlConfig
         }
 
         $this->initialDate = $initialDate;
-        return $this;
     }
 
     /**
@@ -339,7 +323,6 @@ class EtlConfig
     public function setFinalDate($finalDate)
     {
         $this->finalDate = $finalDate;
-        return $this;
     }
 
     /**
@@ -360,7 +343,6 @@ class EtlConfig
             //TODO
         }
         $this->initialTime = $initialTime;
-        return $this;
     }
 
     /**
@@ -373,12 +355,10 @@ class EtlConfig
 
     /**
      * @param null $finalTime
-     * @return $this
      */
     public function setFinalTime($finalTime)
     {
         $this->finalTime = $finalTime;
-        return $this;
     }
 
     /**
@@ -390,13 +370,12 @@ class EtlConfig
     }
 
     /**
-     * @param null $repositoryDestination
-     * @return $this
+     * @param string $repositoryDestination
      */
-    public function setRepositoryDestination($repositoryDestination)
+    public function setRepositoryDestination(string $repositoryDestination)
     {
-        $this->repositoryDestination = $repositoryDestination;
-        return $this;
+        $routeRepository = "App\\Repositories\\DataWareHouse\\".$repositoryDestination;
+        $this->repositoryDestination = new $routeRepository;
     }
 
     /**
@@ -408,13 +387,12 @@ class EtlConfig
     }
 
     /**
-     * @param null $repositoryExist
-     * @return $this
+     * @param string $repositoryExist
      */
-    public function setRepositoryExist($repositoryExist)
+    public function setRepositoryExist(string $repositoryExist)
     {
-        $this->repositoryExist = $repositoryExist;
-        return $this;
+        $routeRepository = "App\\Repositories\\TemporaryWork\\".$repositoryExist;
+        $this->repositoryExist = new $routeRepository;
     }
 
     /**
@@ -427,12 +405,10 @@ class EtlConfig
 
     /**
      * @param null $tableExist
-     * @return $this
      */
     public function setTableExist($tableExist)
     {
         $this->tableExist = $tableExist;
-        return $this;
     }
 
     /**
@@ -463,14 +439,13 @@ class EtlConfig
     }
 
     /**
-     * @param $trustRepository
-     * @return $this
+     * @param string $trustRepository
+     * @return void
      */
-    public function setTrustRepository($trustRepository)
+    public function setTrustRepository(string $trustRepository)
     {
-        $this->trustRepository = $trustRepository;
-
-        return $this;
+        $routeRepository = "App\\Repositories\\DataWareHouse\\".$trustRepository;
+        $this->trustRepository = new $routeRepository;
     }
 
     /**
@@ -521,13 +496,11 @@ class EtlConfig
 
     /**
      * @param null $connection
-     * @return $this
      */
     public function setConnection($connection)
     {
         $connectionId = (is_null($connection)) ?  $this->net->connection_id : $connection;
         $this->connection = ConnectionRepository::find($connectionId);
-        return $this;
     }
 
     /**
@@ -540,13 +513,11 @@ class EtlConfig
 
     /**
      * @param $stationId
-     * @return $this
      * @internal param null $varForFilter
      */
     public function setVarForFilter($stationId)
     {
         $this->varForFilter = StationRepository::findVarForFilter($stationId);
-        return $this;
     }
 
     /**
@@ -559,22 +530,18 @@ class EtlConfig
 
     /**
      * @param bool $trustProcess
-     * @return $this
      */
     public function setTrustProcess(bool $trustProcess)
     {
         $this->trustProcess = $trustProcess;
-        return $this;
     }
 
     /**
      * @param $keys
-     * @return $this
      */
     public function setKeys($keys)
     {
         $this->keys = new PrimaryKeys($this->typeProcess,$this->station->typeStation->etl_method,$keys) ;
-        return $this;
     }
 
     /**
@@ -597,7 +564,6 @@ class EtlConfig
     public function setConfig($config)
     {
         $this->config = $config;
-        return $this;
     }
 
     /**
@@ -610,13 +576,26 @@ class EtlConfig
 
     /**
      * @param bool $calculateDateTime
-     * @return EtlConfig
      */
     public function setCalculateDateTime(bool $calculateDateTime)
     {
         $this->calculateDateTime = $calculateDateTime;
+    }
 
-        return $this;
+    /**
+     * @param int $processId
+     */
+    public function setProcessId(int $processId)
+    {
+        $this->processId = $processId;
+    }
+
+    /**
+     * @param null $processState
+     */
+    public function setProcessState($processState)
+    {
+        $this->processState = $processState;
     }
 
 }

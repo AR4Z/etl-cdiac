@@ -21,7 +21,7 @@ trait TrustTrait
      * @param $variables
      * @return array
      */
-    public function incomingCalculation($trustRepository,$temporalTable,$tableTrust,$variables)
+    public function incomingCalculation($temporalTable,$tableTrust,$variables)
     {
         $values = $this->consultValues($temporalTable,$this->generateSelect($variables));
 
@@ -31,9 +31,9 @@ trait TrustTrait
             $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('station_sk','=',$value->station_sk)->where('date_sk','=',$value->date_sk)->first();
 
             if (empty($actualTrust)){
-                $trust = $this->createModel($trustRepository,$value);
+                $trust = $this->createModel($this->etlConfig->trustRepository,$value);
             }else{
-                $trust = $this->updateModel($trustRepository,$actualTrust,$value);
+                $trust = $this->updateModel($this->etlConfig->trustRepository,$actualTrust,$value);
             }
             array_push($trustActuality,$trust);
         }
@@ -41,14 +41,13 @@ trait TrustTrait
     }
 
     /**
-     * @param $trustRepository
      * @param $temporalTable
      * @param $tableTrust
      * @param $variable
      * @param $reliability_name
      * @return void
      */
-    public function insertGoods($trustRepository, $temporalTable, $tableTrust, $variable,$reliability_name)
+    public function insertGoods($temporalTable, $tableTrust, $variable,$reliability_name)
     {
         $values = DB::connection('temporary_work')
                     ->table($temporalTable)
@@ -59,7 +58,7 @@ trait TrustTrait
 
         foreach ($values as $value ){
             $actualTrust = (array)DB::connection('data_warehouse')->table($tableTrust)->where('station_sk','=',$value->station_sk)->where('date_sk','=',$value->date_sk)->first();
-            if ($actualTrust){$this->updateModel($trustRepository, $actualTrust, $value,'insertGoods');}
+            if ($actualTrust){$this->updateModel($this->etlConfig->trustRepository, $actualTrust, $value,'insertGoods');}
         }
 
     }
@@ -72,7 +71,7 @@ trait TrustTrait
     public function generateTrustAndSupport($columns, $variables, $measurementsPerDay)
     {
         foreach ($columns as $column){
-            $value = ($this->etlConfig->getTrustRepository())::where('station_sk',$column['station_sk'])->where('date_sk' , $column['date_sk'])->first();
+            $value = $this->etlConfig->trustRepository->where('station_sk',$column['station_sk'])->where('date_sk' , $column['date_sk'])->first();
             foreach ($variables as $variable){
                 if (!is_null($variable->reliability_name)){
 
@@ -136,30 +135,30 @@ trait TrustTrait
 
 
     /**
-     * @param $trustRepository
+     * @param $repository
      * @param $actualTrust
      * @param $value
      * @return array
      */
-    private function updateModel($trustRepository, $actualTrust, $value,$ban = null)
+    private function updateModel($repository, $actualTrust, $value,$ban = null) : array
     {
-        $trustModel = ($trustRepository)::createModel()->fill($actualTrust);
+        $trustModel = $repository->createModel()->fill($actualTrust);
         foreach ($value as $key => $val){if (!($key == 'station_sk' || $key == 'date_sk')){($trustModel->$key += $val);}}
 
-        ($trustRepository)::find($trustModel->id)->fill($trustModel->toArray())->save();
+        $repository->find($trustModel->id)->fill($trustModel->toArray())->save();
 
         return ['station_sk' => $value->station_sk,'date_sk' => $value->date_sk];
     }
 
     /**
     /**
-     * @param $trustRepository
+     * @param $repository
      * @param $value
      * @return array
      */
-    private function createModel($trustRepository, $value)
+    private function createModel($repository, $value) : array
     {
-        $trustModel = ($trustRepository)::createModel();
+        $trustModel = $repository->createModel();
         foreach ($value as $key => $val){$trustModel->$key = $val;}
         $trustModel->save();
 

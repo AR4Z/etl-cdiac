@@ -10,9 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class Csv extends ExtractorBase implements ExtractorInterface
 {
-  /**
-   * $method is the data type incoming
-   */
+
     private $method = 'Csv';
 
     public $extension = 'csv';
@@ -85,7 +83,7 @@ class Csv extends ExtractorBase implements ExtractorInterface
 
         if ($this->dateTime){
             # Calcular la fecha y la hora dependiendo de un DateTime
-            $this->getCalculateDateAndTime($this->etlConfig->getRepositorySpaceWork(),$this->etlConfig->getTableSpaceWork());
+            $this->getCalculateDateAndTime($this->etlConfig->getTableSpaceWork());
         }
 
         # Eliminar cambos no deseados en las llaves primarias
@@ -96,13 +94,13 @@ class Csv extends ExtractorBase implements ExtractorInterface
         $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'00:00:00');
 
         # Ingresar la llave subrrogada de la estacion
-        if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
+        if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation()->id);}
 
         # Ingresar la llave subrrogada de la fecha
-        if (!$this->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
+        if (!$this->flagDateSk){$this->updateDateSk();}
 
         # Ingresar la llave subrrogada de la tiempo
-        if (!$this->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
+        if (!$this->flagTimeSk){$this->updateTimeSk();}
 
         # Editar las fechas y horas iniciales y finales dependiendo de los registros engresados por archivo plano
         $this->configureDateTimes();
@@ -147,9 +145,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
      */
     private function configureDateTimes()
     {
-        $repository = $this->etlConfig->getRepositorySpaceWork();
-        $initVal = $this->getInitialDataInSpaceWork($repository);
-        $finalVal = $this->getFinalDataInSpaceWork($repository);
+        $initVal = $this->getInitialDataInSpaceWork();
+        $finalVal = $this->getFinalDataInSpaceWork();
 
         if (!is_null($initVal)){
             $this->etlConfig->setInitialDate(
@@ -198,7 +195,7 @@ class Csv extends ExtractorBase implements ExtractorInterface
                         $val[$variablesName[$inputVariable]] = $values[$inputVariable];
                     }
                 }
-                ($this->etlConfig->getRepositorySpaceWork())::create($val);
+                $this->etlConfig->repositorySpaceWork->create($val);
             }
         });
         # cambiar de comas a puntos los datos de las variables

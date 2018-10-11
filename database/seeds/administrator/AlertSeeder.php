@@ -17,6 +17,7 @@ class AlertSeeder extends Seeder
                     # id => 1
                     'name'          => 'Alerta por deslizamientos',
                     'code'          => 'alert-a25',
+                    'table'         => 'landslide',
                     'description'   => 'El Alerta por deslizamientos se calcula en base al indicador a25',
                     'icon'          => 'station-marker.svg',
                     'active'        => true,
@@ -25,6 +26,7 @@ class AlertSeeder extends Seeder
                     # id => 2
                     'name'          => 'Alerta por Inundación',
                     'code'          => 'alert-a10',
+                    'table'         => 'flood',
                     'icon'          => 'station-marker.svg',
                     'description'   => 'El Alerta por Inundación se calcula en a la precipitacion acumulada en una ventana de 10 minutos',
                     'active'        => true,

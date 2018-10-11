@@ -149,7 +149,6 @@ abstract class TransformBase extends EtlBase
         if (is_null($variables->reliability_name)){return false;}
 
         $this->insertGoods(
-            $this->etlConfig->getTrustRepository(),
             $this->etlConfig->getTableSpaceWork(),
             $this->etlConfig->getTableTrust(),
             $variables->local_name,

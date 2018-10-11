@@ -1,8 +1,6 @@
 <?php
+
 namespace App\Etl;
-
-use App\Jobs\EtlStationJob;
-
 
 class Etl
 {
@@ -25,11 +23,14 @@ class Etl
      * @return Etl
      */
 
-  public static function start(String $typeProcess, $net = null,$connection = null, int $station,bool $sequence = true)
+  public static function start(String $typeProcess, $net = null,$connection = null, int $station,bool $sequence = true) : Etl
   {
-    $etl = new Etl();
-    $etl->etlConfig($etl, $typeProcess, $net, $connection, $station, $sequence);
-    return $etl;
+      $etl = new Etl();
+
+      # Se crea la configuración inicial del proceso.
+      $etl->etlConfig($etl, $typeProcess, $net, $connection, $station, $sequence);
+
+      return $etl;
   }
 
 
@@ -43,10 +44,17 @@ class Etl
      * @return Etl
      */
 
-  public function etlConfig(Etl $etl, String $typeProcess, $net = null,$connection = null, int $station, bool $sequence)
+  public function etlConfig(Etl $etl, String $typeProcess, $net = null,$connection = null, int $station, bool $sequence) : Etl
   {
-    $etl->etlConfig = new EtlConfig($typeProcess, $net,$connection, $station,$sequence);
-    return $etl;
+      # Se crean las configuraciones necesatias para realizar el proceso.
+      $etl->etlConfig = new EtlConfig($typeProcess, $net,$connection, $station,$sequence);
+
+      # Se evalua si se realizó la configuración.
+      if (empty($this->etlConfig)) {
+          dd('TODO: error no fue posible realizar las configuraciones necesarias'); # TODO: etl config not define
+      }
+
+      return $etl;
   }
 
     /**
@@ -55,13 +63,17 @@ class Etl
      * @return $this
      */
 
-  public function extract(string $method = 'Database', $options = [])
+  public function extract(string $method = 'Database', $options = []) : Etl
   {
-      if (!empty($this->etlConfig)) {
-            //etl config not define TODO
+      # Se evalua que los procesos anteriores no conengan errores fatales.
+      if ($this->etlConfig->processState->stopProcessState){
+          dd('TODO: error no fue posible realizar las configuraciones necesarias. Etl.php method extract'); # TODO
       }
 
+      # Se ingrega el metodo de extracción en el array de ejecusión.
       array_push($this->etlObject,$this->factory($method,'Extractors',$options));
+
+      # Se aumenta el contados de procesos a ejecutar.
       $this->flagEtl++;
 
       return $this;
@@ -72,56 +84,58 @@ class Etl
      * @param array $options
      * @return $this
      */
-    public function transform(string $method = 'Original', $options = [])
+    public function transform(string $method = 'Original', $options = []) : Etl
   {
-      array_push($this->etlObject,$this->factory($method,'Transformers',$options));
-      $this->flagEtl++;
-
-      return $this;
-  }
-
-    /**
-     * @param string $method
-     * @param array $options
-     * @return $this
-     */
-
-  public function load(string $method = 'Load', $options = [])
-  {
-      array_push($this->etlObject,$this->factory($method, 'Loaders',$options));
-      $this->flagEtl++;
-      //$this->reloadPrecess();
-
-      return $this;
-  }
-
-  public function run(){
-        foreach ($this->etlObject as $object){
-            $object->run();
-        }
-        return $this;
-  }
-
-    /**
-     *
-     */
-    public function reloadPrecess()
-  {
-      if (
-          $this->etlConfig->getSequence() and
-          !($this->etlConfig->getStation()->{$this->etlConfig->getStateTable()}->it_update)
-      )
-      {
-          dispatch(
-              new EtlStationJob(
-                  $this->etlConfig->getTypeProcess(),
-                  $this->etlConfig->getNet()->id,
-                  $this->etlConfig->getStation()->id,
-                  $this->etlConfig->getSequence()
-              )
-          );
+      # Se evalua que los procesos anteriores no conengan errores fatales.
+      if ($this->etlConfig->processState->stopProcessState){
+          dd('TODO: error no fue posible realizar las configuraciones necesarias. Etl.php method transform'); # TODO
       }
-      return;
+
+      # Se ingrega el metodo de extracción en el array de ejecusión.
+      array_push($this->etlObject,$this->factory($method,'Transformers',$options));
+
+      # Se aumenta el contados de procesos a ejecutar.
+      $this->flagEtl++;
+
+      return $this;
+  }
+
+    /**
+     * @param string $method
+     * @param array $options
+     * @return $this
+     */
+
+  public function load(string $method = 'Load', $options = []) : Etl
+  {
+      # Se evalua que los procesos anteriores no conengan errores fatales.
+      if ($this->etlConfig->processState->stopProcessState){
+          dd('TODO: error no fue posible realizar las configuraciones necesarias. Etl.php method load'); # TODO
+      }
+
+      # Se ingrega el metodo de extracción en el array de ejecusión.
+      array_push($this->etlObject,$this->factory($method, 'Loaders',$options));
+
+      # Se aumenta el contados de procesos a ejecutar.
+      $this->flagEtl++;
+
+      return $this;
+  }
+
+    /**
+     * @return $this
+     */
+    public function run() : Etl
+  {
+      # Se evalua que los procesos anteriores no conengan errores fatales.
+      if ($this->etlConfig->processState->stopProcessState){
+          dd('TODO: error no fue posible realizar las configuraciones necesarias. Etl.php method run'); # TODO
+      }
+
+      # Se ejecuta cada una de los metodos run detro de los procesos en cola de ejecusión.
+      foreach ($this->etlObject as $object){$object->run();}
+
+      return $this;
   }
 
     /**
@@ -147,6 +161,7 @@ class Etl
     if (!empty($options)){
         $class = $this->setOptions($class, $options);
     }
+
     return $class;
 
   }

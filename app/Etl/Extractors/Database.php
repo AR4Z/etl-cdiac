@@ -3,7 +3,6 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\EtlConfig;
-use function Couchbase\defaultDecoder;
 
 class Database extends ExtractorBase implements ExtractorInterface
 {
@@ -64,11 +63,13 @@ class Database extends ExtractorBase implements ExtractorInterface
         );
 
         # Ingresar la llave subrrogada de la estacion
-        if (($this->extractTypeObject)->flagStationSk){$this->updateStationSk($this->etlConfig->getStation(),$this->etlConfig->getRepositorySpaceWork());}
+        if ($this->extractTypeObject->flagStationSk){$this->updateStationSk($this->etlConfig->getStation()->id);}
+
         # Ingresar la llave subrrogada de la fecha
-        if (($this->extractTypeObject)->flagDateSk){$this->updateDateSk($this->etlConfig->getRepositorySpaceWork());}
+        if ($this->extractTypeObject->flagDateSk){$this->updateDateSk();}
+
         # Ingresar la llave subrrogada de la tiempo
-        if (($this->extractTypeObject)->flagTimeSk){$this->updateTimeSk($this->etlConfig->getRepositorySpaceWork());}
+        if ($this->extractTypeObject->flagTimeSk){$this->updateTimeSk();}
 
         # Ejecutar el proceso de confianza y soporte de los datos
         $trustProccess = $this->trustProcess();

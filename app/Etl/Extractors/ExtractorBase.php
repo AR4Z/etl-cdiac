@@ -7,56 +7,49 @@ use Carbon\Carbon;
 use DB;
 use Exception;
 
-/**
- * @property bool flagTimeSk
- * @property bool flagDateSk
- * @property bool flagStationSk
- * @property  object etlConfig
- */
 abstract class ExtractorBase extends EtlBase
 {
     public $keyErrors = ['_','Min','Date','Time','Max','Date','Time','AVG','Num','Data[%]'];
 
     /**
-     * @param $repository
      * @return void
      */
-    public function updateDateSk($repository)
+    public function updateDateSk()
     {
-        $dates = ($repository)::getDatesDistinct();
+        $dates = $this->etlConfig->repositorySpaceWork->getDatesDistinct();
+
+
         foreach ($dates as $date){
-            ($repository)::updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);
+            $this->etlConfig->repositorySpaceWork->updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);
         }
-        $this->flagDateSk = true;
+        $this->flagDateSk = true; # TODO es posible quitar esto ?
     }
 
     /**
-     * @param $repository
      * @return void
      */
-    public  function updateTimeSk($repository)
+    public  function updateTimeSk()
     {
-        $times = ($repository)::getTimesDistinct();
+        $times = $this->etlConfig->repositorySpaceWork->getTimesDistinct();
         foreach ($times as $time){
             if($time->time == '24:00:00'){
-                ($repository)::incrementDateSk($time->id,1);
-                ($repository)::updateTimeSkFromStationSk($time->id,$this->calculateTimeSk('00:00:00'));
+                $this->etlConfig->repositorySpaceWork->incrementDateSk($time->id,1);
+                $this->etlConfig->repositorySpaceWork->updateTimeSkFromStationSk($time->id,$this->calculateTimeSk('00:00:00'));
             }else{
-                ($repository)::updateTimeSk($this->calculateTimeSk($time->time),$time->time);
+                $this->etlConfig->repositorySpaceWork->updateTimeSk($this->calculateTimeSk($time->time),$time->time);
             }
         }
-        $this->flagTimeSk = true;
+        $this->flagTimeSk = true; # TODO es posible quitar esto ?
     }
 
     /**
-     * @param $station
-     * @param $repository
-     * @return bool
+     * @param int $stationId
      */
-    public function updateStationSk($station, $repository)
+    public function updateStationSk(int $stationId)
     {
-        ($repository)::updateStationSk($station->id);
-        $this->flagStationSk = true;
+        $this->etlConfig->repositorySpaceWork->updateStationSk($stationId);
+
+        $this->flagStationSk = true; # TODO es posible quitar esto ?
     }
 
     /**
@@ -69,7 +62,6 @@ abstract class ExtractorBase extends EtlBase
         # Calcular los datos entrantes para el preceso de confianza
 
         $trust= $this->incomingCalculation(
-                            $this->etlConfig->getTrustRepository(),
                             $this->etlConfig->getTableSpaceWork(),
                             $this->etlConfig->getTableTrust(),
                             $this->etlConfig->getVarForFilter()->toArray()
@@ -93,7 +85,8 @@ abstract class ExtractorBase extends EtlBase
      */
     public function configureSpaceWork()
     {
-        ($this->etlConfig->getRepositorySpaceWork())::truncate();
+        $this->etlConfig->repositorySpaceWork->truncate();
+
         $this->truncateCorrectionTable();
     }
 
@@ -114,12 +107,11 @@ abstract class ExtractorBase extends EtlBase
     }
 
     /**
-     * @param $repository
      * @param $tableSpaceWork
      */
-    public function getCalculateDateAndTime($repository, $tableSpaceWork)
+    public function getCalculateDateAndTime($tableSpaceWork)
     {
-        $values = ($repository)::getDateTime();
+        $values = $this->etlConfig->repositorySpaceWork->getDateTime();
 
         foreach ($values as $value)
         {

@@ -126,17 +126,17 @@ class Serialization extends TransformBase implements TransformInterface
             }
             else{
                 #cambiar primero de next a actual
-                $this->serializationUpdate($this->etlConfig->getRepositorySpaceWork(), $valInRangeNext[0],$date,$time);
+                $this->serializationUpdate($valInRangeNext[0],$date,$time);
             }
         }else{
             if ($countActual == 1){
                 #Corregir fecha y hora en actual
-                $this->serializationUpdate($this->etlConfig->getRepositorySpaceWork(), $valInRangeActual[0],$date,$time);
+                $this->serializationUpdate($valInRangeActual[0],$date,$time);
             }
             else{
                 if ($countNext == 0){
                     #pasar ultimo actual a next
-                    $this->serializationUpdate($this->etlConfig->getRepositorySpaceWork(), $valInRangeActual[$countActual-1],$date,$intervalActual + 1);
+                    $this->serializationUpdate($valInRangeActual[$countActual-1],$date,$intervalActual + 1);
                     unset($valInRangeActual[$countActual-1]);
                 }
                 #Promediar en anterior
