@@ -2,7 +2,6 @@
 
 namespace App\Etl\Traits;
 
-use function Couchbase\defaultDecoder;
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use App\Etl\Database\Query;

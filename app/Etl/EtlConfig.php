@@ -2,10 +2,12 @@
 
 namespace App\Etl;
 
+use App\Entities\Administrator\{Connection, Net, Station };
 use App\Etl\Traits\RemoveAccents;
 use Facades\App\Repositories\Administrator\{NetRepository,ConnectionRepository,StationRepository};
 use App\Etl\Config\PrimaryKeys;
-use Config;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Collection;
 
 class EtlConfig
 {
@@ -13,72 +15,124 @@ class EtlConfig
 
     /**
      * $typeProcess is option variable: 'Original' - 'Filter' - null
+     * @var string
      */
     private $typeProcess = null;
 
+    /**
+     * @var integer
+     */
     private $processId = null;
 
+    /**
+     * @var EtlState
+     */
     public $processState = null;
 
   /**
    * $net is dependence for: App\Repositories\Config\ConnectionRepository
    * $net indicates the station for work
+   *  @var Net
    */
-  private $net = null;
-
-  private $connection = null;
-
-  private $varForFilter = null;
-  /**
-   * $station is dependence for: App\Repositories\Config\Station
-   * $station indicates the station for work
-   */
-  private $station = null;
+    private $net = null;
 
     /**
-   * $tableSpaceWork is optional: 'temporal_clima' - 'temporal_aire' - null
-   * $tableSpaceWork indicates the temporal space work
-   */
+     * @var Connection
+     */
+    private $connection = null;
 
-  private $config = null;
+    /**
+     * @var Collection
+     */
+    private $varForFilter = null;
 
-  private $tableTrust = null;
+    /**
+     * $station is dependence for: App\Repositories\Config\Station
+     * $station indicates the station for work
+     * @var Station
+     */
+    private $station = null;
 
-  public $tableSpaceWork = null;
+    /**
+     * @var array
+     */
+    private $config = null;
 
-  private $tableDestination = null;
+    /**
+     * @var string
+     */
+    private $tableTrust = null;
 
-  private $tableExist = null;
+    /**
+     * @var string
+     */
+    public $tableSpaceWork = null;
 
-  public $repositoryDestination = null;
+    /**
+     * @var string
+     */
+    private $tableDestination = null;
 
-  public $repositorySpaceWork = null;
+    /**
+     * @var string
+     */
+    private $tableExist = null;
 
-  public $repositoryExist = null;
+    /**
+     * @var string
+     */
+    private $stateTable = null;
 
-  public $trustRepository = null;
+    /**
+     * @var string
+     */
+    private $initialDate = null;
 
-  private $stateTable = null;
+    /**
+     * @var string
+     */
+    private $finalDate = null;
 
-  private $sequence = null;
+    /**
+     * @var string
+     */
+    private $initialTime = '00:00:00';
 
-  private $initialDate = null;
+    /**
+     * @var string
+     */
+    private $finalTime = '23:59:59';
 
-  private $finalDate = null;
+    /**
+     * @var array
+     */
+    private $trustColumns = [];
 
-  private $initialTime = '00:00:00';
+    /**
+     * @var integer
+     */
+    private $incomingAmount = 0;
 
-  private $finalTime = '23:59:59';
+    /**
+     * @var PrimaryKeys
+     */
+    private $keys = null;
 
-  private $trustColumns = [];
+    /**
+     * @var bool
+     */
+    private $trustProcess = false;
 
-  private $incomingAmount = 0;
+    /**
+     * @var bool
+     */
+    private $calculateDateTime = true;
 
-  private $keys = null;
-
-  private $trustProcess = false;
-
-  private $calculateDateTime = true;
+    public $repositoryDestination = null;
+    public $repositorySpaceWork = null;
+    public $repositoryExist = null;
+    public $trustRepository = null;
+    private $sequence = null;
 
     /**
      * EtlConfig constructor.
@@ -119,7 +173,7 @@ class EtlConfig
     }
 
     /**
-     * @return $this
+     *
      */
     public function config()
     {
@@ -192,9 +246,9 @@ class EtlConfig
 
 
     /**
-     * @return $this->tableSpaceWork
+     * @return string $this->tableSpaceWork
      */
-    public function getTableSpaceWork()
+    public function getTableSpaceWork() : string
   {
     return $this->tableSpaceWork;
   }
@@ -209,26 +263,26 @@ class EtlConfig
   }
 
     /**
-     * @return null $this_typeProcess
+     * @return string $this_typeProcess
      */
-    public function getTypeProcess()
+    public function getTypeProcess() : string
   {
     return $this->typeProcess;
   }
 
 
     /**
-     * @return $this->net
+     * @return Net
      */
-    public function getNet()
+    public function getNet() : Net
   {
     return $this->net;
   }
 
     /**
-     * @return $this->station
+     * @return Station
      */
-    public function getStation()
+    public function getStation() : Station
   {
     return $this->station;
   }
@@ -487,9 +541,9 @@ class EtlConfig
     }
 
     /**
-     * @return null
+     * @return Connection
      */
-    public function getConnection()
+    public function getConnection() : Connection
     {
         return $this->connection;
     }
@@ -545,9 +599,9 @@ class EtlConfig
     }
 
     /**
-     * @return null
+     * @return PrimaryKeys
      */
-    public function getKeys()
+    public function getKeys() : PrimaryKeys
     {
         return $this->keys;
     }

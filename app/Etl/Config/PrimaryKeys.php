@@ -132,6 +132,7 @@ class PrimaryKeys
         $this->selectCastKey = $temporalCastSelect;
         $this->mergeLocalIncomingKeys = substr($temporalLocalMerge, 0, -1);
         $this->mergeExternalIncomingKeys = substr($temporalExternalMerge, 0, -1);
+
     }
 
 }

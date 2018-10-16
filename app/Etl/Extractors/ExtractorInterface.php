@@ -14,6 +14,7 @@ interface ExtractorInterface
     public function setOptions(EtlConfig $etlConfig);
 
     /**
+     * Punto de acceso para ejecutar funcionalidad
      * @return mixed
      */
     public function run();

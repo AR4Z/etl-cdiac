@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\EtlBase;
+use App\Etl\EtlConfig;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -12,16 +13,17 @@ abstract class ExtractorBase extends EtlBase
     public $keyErrors = ['_','Min','Date','Time','Max','Date','Time','AVG','Num','Data[%]'];
 
     /**
+     * @var EtlConfig etlConfig
      * @return void
      */
     public function updateDateSk()
     {
         $dates = $this->etlConfig->repositorySpaceWork->getDatesDistinct();
 
-
         foreach ($dates as $date){
             $this->etlConfig->repositorySpaceWork->updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);
         }
+
         $this->flagDateSk = true; # TODO es posible quitar esto ?
     }
 
@@ -85,9 +87,16 @@ abstract class ExtractorBase extends EtlBase
      */
     public function configureSpaceWork()
     {
-        $this->etlConfig->repositorySpaceWork->truncate();
+        try {
+            $this->etlConfig->repositorySpaceWork->truncate();
+            $this->truncateCorrectionTable();
 
-        $this->truncateCorrectionTable();
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
     }
 
     /**

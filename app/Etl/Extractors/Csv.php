@@ -3,12 +3,16 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\EtlConfig;
+use App\Etl\Steps\Step;
+use App\Etl\Steps\StepContract;
+use App\Etl\Steps\StepList;
 use function Couchbase\defaultDecoder;
+use Exception;
 use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Facades\Excel;
 
 
-class Csv extends ExtractorBase implements ExtractorInterface
+class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 {
 
     private $method = 'Csv';
@@ -41,6 +45,8 @@ class Csv extends ExtractorBase implements ExtractorInterface
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
+
+
         return $this;
     }
     /**
@@ -64,52 +70,195 @@ class Csv extends ExtractorBase implements ExtractorInterface
      */
     public function run()
     {
-        # Configurar las consultas para la extraccion de los datos
-        ($this->etlConfig->getKeys())->config(
-            $this->etlConfig->getTypeProcess(),
-            $this->etlConfig->getStation()->typeStation->etl_method,
-            'Plane',
-            null
-        );
-
-
-        if ($this->truncateTemporal){
-            # Truncar la tabla de trabajo
-            $this->configureSpaceWork();
-
-            #Leer e insertar datos en base de datos
-            $this->loadFile();
-        }
-
-        if ($this->dateTime){
-            # Calcular la fecha y la hora dependiendo de un DateTime
-            $this->getCalculateDateAndTime($this->etlConfig->getTableSpaceWork());
-        }
-
-        # Eliminar cambos no deseados en las llaves primarias
-        $this->deleteTimeAndDateNull($this->etlConfig->getTableSpaceWork());
-
-        # Eliminar Ultimo dato el cual es erroneo por definicion
-        $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'24:00:00');
-        $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'00:00:00');
-
-        # Ingresar la llave subrrogada de la estacion
-        if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation()->id);}
-
-        # Ingresar la llave subrrogada de la fecha
-        if (!$this->flagDateSk){$this->updateDateSk();}
-
-        # Ingresar la llave subrrogada de la tiempo
-        if (!$this->flagTimeSk){$this->updateTimeSk();}
-
-        # Editar las fechas y horas iniciales y finales dependiendo de los registros engresados por archivo plano
-        $this->configureDateTimes();
-
-        # Ejecutar el proceso de confianza y soporte de los datos
-        $trustProcess = $this->trustProcess();
 
         return $this;
     }
+
+    /**
+     * Es muy importante el orden de los pasos
+     * @param StepList $stepList
+     * @return StepList
+     */
+    public function startSteps(StepList $stepList): StepList
+    {
+        $controlState = $this->etlConfig->processState;
+
+        $stepList->addStep( new Step($controlState,'stepConfigureSpaceWork'));
+        $stepList->addStep( new Step($controlState,'stepConfigureConsults'));
+        $stepList->addStep( new Step($controlState,'stepLoadFile'));
+        $stepList->addStep( new Step($controlState,'stepCalculateDateTime'));
+        $stepList->addStep( new Step($controlState,'stepDeleteUnwantedFieldsKeys'));
+        $stepList->addStep( new Step($controlState,'stepDeleteExpectedErrorsKeys'));
+        $stepList->addStep( new Step($controlState,'stepUpdateKeys'));
+        $stepList->addStep( new Step($controlState,'stepTrustProcess'));
+
+        return $stepList;
+    }
+
+    /**
+     * STEP
+     * Truncar la tabla de trabajo
+     * @return array
+     */
+    public function stepConfigureSpaceWork() : array
+    {
+        try {
+            if ($this->truncateTemporal){ $this->configureSpaceWork(); }
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
+    /**
+     * STEP
+     * Configurar las consultas para la extraccion de los datos
+     * @return array
+     */
+    public function stepConfigureConsults() : array
+    {
+        try {
+
+            ($this->etlConfig->getKeys())->config(
+                $this->etlConfig->getTypeProcess(),
+                $this->etlConfig->getStation()->typeStation->etl_method,
+                'Plane',
+                null
+            );
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
+    /**
+     * STEP
+     * Leer e insertar datos en base de datos
+     * @return array
+     */
+    public function stepLoadFile() : array
+    {
+        try {
+
+            $this->loadFile();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
+    /**
+     * STEP
+     * Calcular la fecha y la hora dependiendo de un DateTime
+     * @return array
+     */
+    public function stepCalculateDateTime() : array
+    {
+        try {
+
+            if ($this->dateTime){ $this->getCalculateDateAndTime($this->etlConfig->getTableSpaceWork()); }
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
+    /**
+     * STEP
+     * Eliminar campos no deseados en las llaves primarias
+     * @return array
+     */
+    public function stepDeleteUnwantedFieldsKeys() : array
+    {
+        try {
+
+            $this->deleteTimeAndDateNull($this->etlConfig->getTableSpaceWork());
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
+    /**
+     * STEP
+     * Eliminar Ultimo dato el cual es erroneo por definicion
+     * @return array
+     */
+    public function stepDeleteExpectedErrorsKeys() : array
+    {
+        try {
+
+            $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'24:00:00');
+            $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'00:00:00');
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
+    /**
+     * STEP
+     * Ingresar la llave subrrogada de la estacion
+     * Ingresar la llave subrrogada de la fecha
+     * Ingresar la llave subrrogada de la tiempo
+     * Editar las fechas y horas iniciales y finales dependiendo de los registros engresados por archivo plano
+     * @return array
+     */
+    public function stepUpdateKeys() : array
+    {
+        try {
+            if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation()->id);}
+
+            if (!$this->flagDateSk){$this->updateDateSk();}
+
+            if (!$this->flagTimeSk){$this->updateTimeSk();}
+
+            $this->configureDateTimes();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
+    /**
+     * STEP
+     * @return array
+     */
+    public function stepTrustProcess() : array
+    {
+        try {
+
+            $this->trustProcess();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) {
+
+            return ['resultExecution' => false , 'data' => null, 'exception' => $e];
+        }
+    }
+
 
     /**
      *
@@ -254,4 +403,5 @@ class Csv extends ExtractorBase implements ExtractorInterface
 
         return true;
     }
+
 }

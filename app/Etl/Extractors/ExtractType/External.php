@@ -7,24 +7,54 @@ use function Couchbase\defaultDecoder;
 
 class External extends ExtractTypeBase implements ExtractTypeInterface
 {
+    /**
+     * @var string
+     */
     public $extractType = 'External';
 
+    /**
+     * @var string
+     */
     public $extractConnection = 'external_connection';
 
+    /**
+     * @var string
+     */
     public $select = null;
 
+    /**
+     * @var array
+     */
     public $columns = [];
 
+    /**
+     * @var string
+     */
     public $extractTable = null;
 
+    /**
+     * @var string
+     */
     public $colOrigin = 'database_field_name';
 
+    /**
+     * @var string
+     */
     public $colDestination = 'local_name';
 
+    /**
+     * @var bool
+     */
     public $flagStationSk = true;
 
+    /**
+     * @var bool
+     */
     public $flagDateSk = true;
 
+    /**
+     * @var bool
+     */
     public $flagTimeSk = true;
 
     /**
