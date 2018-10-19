@@ -4,83 +4,249 @@
 namespace App\Etl\Loaders;
 
 use App\Etl\EtlConfig;
-use function Couchbase\defaultDecoder;
+use App\Etl\Steps\{StepList,Step,StepContract};
+use Exception;
 
-class Load extends LoadBase implements LoadInterface
+class Load extends LoadBase implements LoadInterface,StepContract
 {
-    private $method = 'General';
+    /**
+     * @var string
+     */
+    public $method = 'General';
 
+    /**
+     * @var EtlConfig
+     */
     public  $etlConfig = null;
 
+    /**
+     * @var StepList
+     */
+    public $stepsList = null;
+
+    /**
+     * @var string
+     */
     public $select = '';
 
+    /**
+     * @var array
+     */
     public  $columns = [];
 
+    /**
+     * @var bool
+     */
     public $deleteDuplicates = true;
 
     /**
      * @param EtlConfig $etlConfig
-     * @return mixed
      */
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-        return $this;
+
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
     }
 
     /**
-     * @return $this
+     *
      */
     public function run()
     {
-        # Extraer las configuraciones de llaves perimarias
-        $this->select = $this->etlConfig->getKeys()->loadCastKey;
-
-        # Extraer las columnas que se deben ingrear que no estan el base de datos (keys and comment and etc)
-        $this->columns = $this->etlConfig->getKeys()->load;
-
-        # Configuración de la consulta para extraer los datos de temporal_work
-        $this->setSelect('local_name','local_name');
-
-        # Direccionar los datos existentes a la tabla de existentes
-        $this->redirectExisting();
-
-        # Eliminar los duplicados
-        $this->deleteDuplicates();
-
-        if ($this->etlConfig->isCalculateDateTime())
-        {
-            # Se calcula la fechas cuando son null
-            $this->completeDateNull();
-
-            # Se calcula la hora cuando es null
-            $this->completeTimeNull();
-
-            # Se calcula el date_time
-            $this->InsertDateTime();
-        }
-
-        # Extraer valores de la tabla temporal
-        $values = $this->selectTemporalTable();
-
-        if (!empty($values)){
-            #Insertar datos en en su respectiva fact
-            $this->insertAllDataInFact($values);
-        }
-
-        # Calcular la confienza y el soporte
-        $this->trustProcess();
-
-        # Migrar los datos de correccion a historial de correccion
-        if ($this->etlConfig->getTypeProcess() != "Original"){
-            $this->migrateHistoricCorrection();
-        }
-
-        # Actualizar las fechas y horas del migrado
-        $this->calculateSequence();
-
-        return $this;
+        # Se ejecutan los pasos que se requieren para el proceso
+        $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }
+
+    /**
+     * EL ORDEN DE LOS PASOS ES MUY IMPORTANTE
+     * @param StepList $stepList
+     * @return StepList
+     */
+    public function startSteps(StepList $stepList) : StepList
+    {
+        $stepList->addStep( new Step('stepExtractConfigurationPrimaryKeys'));
+        $stepList->addStep( new Step('stepExtractColumnsExtra'));
+        $stepList->addStep( new Step('stepConfigureSelect'));
+        $stepList->addStep( new Step('stepRedirectExisting'));
+        $stepList->addStep( new Step('stepDeleteDuplicates'));
+        $stepList->addStep( new Step('stepCalculateDateTime'));
+        $stepList->addStep( new Step('stepExtractTemporalAndInsertFact'));
+        $stepList->addStep( new Step('stepTrustProcess'));
+        $stepList->addStep( new Step('stepMigrateHistoryCorrection'));
+        $stepList->addStep( new Step('stepUpdateSequence'));
+
+        return $stepList;
+    }
+
+    /**
+     * STEP
+     * Extraer las configuraciones de llaves perimarias
+     * @return array
+     */
+    public function stepExtractConfigurationPrimaryKeys()
+    {
+        try {
+            $this->select = $this->etlConfig->getKeys()->loadCastKey;
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Extraer las columnas que se deben ingrear que no estan el base de datos (keys and comment and etc)
+     * @return array
+     */
+    public function stepExtractColumnsExtra()
+    {
+        try {
+            $this->columns = $this->etlConfig->getKeys()->load;
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Configuración de la consulta para extraer los datos de temporal_work
+     * @return array
+     */
+    public function stepConfigureSelect()
+    {
+        try {
+            $this->setSelect('local_name','local_name');
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Direccionar los datos existentes a la tabla de existentes
+     * @return array
+     */
+    public function stepRedirectExisting()
+    {
+        try {
+            $this->redirectExisting();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Eliminar los duplicados
+     * @return array
+     */
+    public function stepDeleteDuplicates()
+    {
+        try {
+            $this->deleteDuplicates();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Se calcula la fechas cuando son null
+     * Se calcula la hora cuando es null
+     * Se calcula el date_time
+     * @return array
+     */
+    public function stepCalculateDateTime()
+    {
+        try {
+            if ($this->etlConfig->isCalculateDateTime()) {
+                # Se calcula la fechas cuando son null
+                $this->completeDateNull();
+
+                # Se calcula la hora cuando es null
+                $this->completeTimeNull();
+
+                # Se calcula el date_time
+                $this->InsertDateTime();
+            }
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Extraer valores de la tabla temporal
+     * Insertar datos en en su respectiva fact
+     * @return array
+     */
+    public function stepExtractTemporalAndInsertFact()
+    {
+        try {
+            # Extraer valores de la tabla temporal
+            $values = $this->selectTemporalTable();
+
+            # Insertar datos en en su respectiva fact
+            if (!empty($values)){ $this->insertAllDataInFact($values); }
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Calcular la confienza y el soporte
+     * @return array
+     */
+    public function stepTrustProcess()
+    {
+        try {
+            $this->trustProcess();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Migrar los datos de correccion a historial de correccion
+     * @return array
+     */
+    public function stepMigrateHistoryCorrection()
+    {
+        try {
+            if ($this->etlConfig->getTypeProcess() != "Original"){ $this->migrateHistoricCorrection();}
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+
+    /**
+     * STEP
+     * Actualizar las fechas y horas del migrado
+     * @return array
+     */
+    public function stepUpdateSequence()
+    {
+        try {
+            $this->calculateSequence();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
 
     /**
      * @param $colOrigin

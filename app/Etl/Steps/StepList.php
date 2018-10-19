@@ -2,6 +2,8 @@
 
 namespace App\Etl\Steps;
 
+use App\Etl\EtlState;
+
 class StepList
 {
     /**
@@ -34,9 +36,13 @@ class StepList
         return $this->steps;
     }
 
-    public function runStartList($process)
+    /**
+     * @param EtlState $etlState
+     * @param $process
+     */
+    public function runStartList(EtlState $etlState, $process)
     {
-        foreach ( $this->steps as $step){ $step->start($process); }
+        foreach ( $this->steps as $step){ $step->start($etlState,$process); }
     }
 
 }

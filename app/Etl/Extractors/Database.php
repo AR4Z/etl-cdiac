@@ -4,9 +4,7 @@ namespace App\Etl\Extractors;
 
 use App\Etl\EtlConfig;
 use App\Etl\Extractors\ExtractType\External;
-use App\Etl\Steps\StepList;
-use App\Etl\Steps\Step;
-use App\Etl\Steps\StepContract;
+use App\Etl\Steps\{StepList,Step,StepContract};
 use Exception;
 
 class Database extends ExtractorBase implements ExtractorInterface, StepContract
@@ -36,6 +34,7 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
      * @var string
      */
     public $extractType = null;
+
     /**
      * @var bool
      */
@@ -55,12 +54,11 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
 
     /**
      * Punto de acceso para ejecutar funcionalidad
-     * @return mixed
      */
     public function run()
     {
         # Se ejecutan los pasos que se requieren para el proceso
-        $this->stepsList->runStartList($this);
+        $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }
 
     /**
@@ -70,14 +68,12 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
      */
     public function startSteps(StepList $stepList) : StepList
     {
-        $controlState = $this->etlConfig->processState;
-
-        $stepList->addStep( new Step($controlState,'configureSpaceWork'));
-        $stepList->addStep( new Step($controlState,'stepCreateExtractType'));
-        $stepList->addStep( new Step($controlState,'stepConfigureConsults'));
-        $stepList->addStep( new Step($controlState,'stepIncludeDataInSpaceWork'));
-        $stepList->addStep( new Step($controlState,'stepUpdateKeys'));
-        $stepList->addStep( new Step($controlState,'stepTrustProcess'));
+        $stepList->addStep( new Step('configureSpaceWork'));
+        $stepList->addStep( new Step('stepCreateExtractType'));
+        $stepList->addStep( new Step('stepConfigureConsults'));
+        $stepList->addStep( new Step('stepIncludeDataInSpaceWork'));
+        $stepList->addStep( new Step('stepUpdateKeys'));
+        $stepList->addStep( new Step('stepTrustProcess'));
 
         return $stepList;
     }

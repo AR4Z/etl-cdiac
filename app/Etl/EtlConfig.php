@@ -29,11 +29,11 @@ class EtlConfig
      */
     public $processState = null;
 
-  /**
-   * $net is dependence for: App\Repositories\Config\ConnectionRepository
-   * $net indicates the station for work
-   *  @var Net
-   */
+    /**
+     * $net is dependence for: App\Repositories\Config\ConnectionRepository
+     * $net indicates the station for work
+     *  @var Net
+     */
     private $net = null;
 
     /**
@@ -206,22 +206,31 @@ class EtlConfig
         $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
     }
 
+
+    /**
+     * @param bool $debug
+     */
+    public function setDebug(bool $debug = false)
+    {
+        $this->processState->debug = $debug;
+    }
+
     /**
      * @param $spaceWorkTable
      */
 
-  public function setTableSpaceWork($spaceWorkTable)
-  {
-      $this->tableSpaceWork = $spaceWorkTable;
-  }
+    public function setTableSpaceWork($spaceWorkTable)
+    {
+        $this->tableSpaceWork = $spaceWorkTable;
+    }
 
     /**
      * @param $destinationTable
      */
-  public function setTableDestination($destinationTable)
-  {
-      $this->tableDestination = $destinationTable;
-  }
+    public function setTableDestination($destinationTable)
+    {
+        $this->tableDestination = $destinationTable;
+    }
 
 
     /**
@@ -229,63 +238,63 @@ class EtlConfig
 
      */
     public function setTypeProcess(String $typeProcess)
-  {
-    $this->typeProcess  = $typeProcess;
-  }
+    {
+        $this->typeProcess  = $typeProcess;
+    }
 
     /**
      * @param $net
      * @internal param int $netId
      */
 
-  public function setNet($net)
-  {
-      $netId = (is_null($net)) ?  $this->station->net_id : $net;
-      $this->net = NetRepository::find($netId);
-  }
+    public function setNet($net)
+    {
+        $netId = (is_null($net)) ?  $this->station->net_id : $net;
+        $this->net = NetRepository::find($netId);
+    }
 
 
     /**
      * @return string $this->tableSpaceWork
      */
     public function getTableSpaceWork() : string
-  {
-    return $this->tableSpaceWork;
-  }
+    {
+        return $this->tableSpaceWork;
+    }
 
     /**
      * @return $this|string ->tableDestination
      */
 
     public function getTableDestination(): string
-  {
-    return $this->tableDestination;
-  }
+    {
+        return $this->tableDestination;
+    }
 
     /**
      * @return string $this_typeProcess
      */
     public function getTypeProcess() : string
-  {
-    return $this->typeProcess;
-  }
+    {
+        return $this->typeProcess;
+    }
 
 
     /**
      * @return Net
      */
     public function getNet() : Net
-  {
-    return $this->net;
-  }
+    {
+        return $this->net;
+    }
 
     /**
      * @return Station
      */
     public function getStation() : Station
-  {
-    return $this->station;
-  }
+    {
+        return $this->station;
+    }
 
     /**
      * @return null
@@ -560,7 +569,7 @@ class EtlConfig
     /**
      * @return null
      */
-    public function getVarForFilter()
+    public function getVarForFilter() : Collection
     {
         return $this->varForFilter;
     }

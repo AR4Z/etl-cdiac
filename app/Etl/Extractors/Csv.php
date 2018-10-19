@@ -3,52 +3,97 @@
 namespace App\Etl\Extractors;
 
 use App\Etl\EtlConfig;
-use App\Etl\Steps\Step;
-use App\Etl\Steps\StepContract;
-use App\Etl\Steps\StepList;
-use function Couchbase\defaultDecoder;
-use Exception;
+use App\Etl\Extractors\ExtractType\ExtractTypeInterface;
+use App\Etl\Steps\{StepList,Step,StepContract};
 use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Exception;
 
 class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 {
-
+    /**
+     * @var string
+     */
     private $method = 'Csv';
 
+    /**
+     * @var string
+     */
     public $extension = 'csv';
 
+    /**
+     * @var EtlConfig
+     */
     public $etlConfig = null;
 
+    /**
+     * @var string
+     */
     public $fileName = null;
 
+    /**
+     * @var ExtractTypeInterface
+     */
     public $extractTypeObject = null;
 
+    /**
+     * @var string
+     */
     public $extractType = null;
 
+    /**
+     * @var bool
+     */
     public $truncateTemporal = true;
 
+    /**
+     * @var bool
+     */
     public $flagStationSk = false;
 
+    /**
+     * @var bool
+     */
     public $flagDateSk = false;
 
+    /**
+     * @var bool
+     */
     public $flagTimeSk = false;
 
+    /**
+     * @var bool
+     */
     public $dateTime = false;
+
+    /**
+     * @var StepList
+     */
+    public $stepsList = null;
 
     /**
      * Csv constructor.
      * @param $etlConfig
-     * @return $this|mixed
      */
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
 
-
-        return $this;
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
     }
+
+    /**
+     * @return $this|mixed
+     */
+    public function run()
+    {
+        # Se ejecutan los pasos que se requieren para el proceso
+        $this->stepsList->runStartList($this->etlConfig->processState,$this);
+
+        dd('stop in database extractor',$this);
+    }
+
     /**
      * @return mixed
      */
@@ -66,31 +111,20 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     }
 
     /**
-     * @return $this|mixed
-     */
-    public function run()
-    {
-
-        return $this;
-    }
-
-    /**
      * Es muy importante el orden de los pasos
      * @param StepList $stepList
      * @return StepList
      */
     public function startSteps(StepList $stepList): StepList
     {
-        $controlState = $this->etlConfig->processState;
-
-        $stepList->addStep( new Step($controlState,'stepConfigureSpaceWork'));
-        $stepList->addStep( new Step($controlState,'stepConfigureConsults'));
-        $stepList->addStep( new Step($controlState,'stepLoadFile'));
-        $stepList->addStep( new Step($controlState,'stepCalculateDateTime'));
-        $stepList->addStep( new Step($controlState,'stepDeleteUnwantedFieldsKeys'));
-        $stepList->addStep( new Step($controlState,'stepDeleteExpectedErrorsKeys'));
-        $stepList->addStep( new Step($controlState,'stepUpdateKeys'));
-        $stepList->addStep( new Step($controlState,'stepTrustProcess'));
+        $stepList->addStep( new Step('stepConfigureSpaceWork'));
+        $stepList->addStep( new Step('stepConfigureConsults'));
+        $stepList->addStep( new Step('stepLoadFile'));
+        $stepList->addStep( new Step('stepCalculateDateTime'));
+        $stepList->addStep( new Step('stepDeleteUnwantedFieldsKeys'));
+        $stepList->addStep( new Step('stepDeleteExpectedErrorsKeys'));
+        $stepList->addStep( new Step('stepUpdateKeys'));
+        $stepList->addStep( new Step('stepTrustProcess'));
 
         return $stepList;
     }

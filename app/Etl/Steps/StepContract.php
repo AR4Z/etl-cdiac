@@ -2,7 +2,6 @@
 
 namespace App\Etl\Steps;
 
-
 interface StepContract
 {
     /**

@@ -2,17 +2,39 @@
 
 namespace App\Etl;
 
+use Exception;
+
 class EtlState
 {
+    /**
+     * @var array
+     */
     public $errorsState = [];
 
+    /**
+     * @var array
+     */
     public $warningsState = [];
 
+    /**
+     * @var array
+     */
     public $infoState = [];
 
+    /**
+     * @var array
+     */
     public $successState = [];
 
+    /**
+     * @var bool
+     */
     public $stopProcessState = false;
+
+    /**
+     * @var bool
+     */
+    public $debug = true;
 
     /**
      * @param array $newError
@@ -46,12 +68,17 @@ class EtlState
         array_push($this->successState, $newSuccess);
     }
 
+    /**
+     * @throws Exception
+     */
     public function terminateProcessState()
     {
         $this->stopProcessState = true;
 
+        if ($this->debug){ throw new Exception($this->warningsState[count($this->warningsState) -1 ]['exception']); }
+
         // TODO : metodo para terminar el proceso una vez que se a encontrado un error fatal
 
-        dd('TODO: Terminar proceso EtlState.php');
+        dd('TODO: Terminar proceso EtlState.php',$this);
     }
 }

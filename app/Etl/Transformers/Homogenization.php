@@ -3,74 +3,214 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlConfig;
+use App\Etl\Steps\{StepList,Step,StepContract};
+use Exception;
 
-class Homogenization extends TransformBase implements TransformInterface
+class Homogenization extends TransformBase implements TransformInterface, StepContract
 {
+    /**
+     * @var string
+     */
+    public $method = 'Homogenization';
+
+    /**
+     * @var EtlConfig
+     */
     public $etlConfig = null;
 
-    public $station_sk = null;
+    /**
+     * @var StepList
+     */
+    public $stepsList = null;
 
-    public $dateSpace = 1; #intervalo de serialización (date) en numero de dias
+    /**
+     * Intervalo de serialización (date) en numero de dias
+     * @var int
+     */
+    public $dateSpace = 1;
 
-    public $timeSpace = 300; #intervalo de Serialización (time) en segundos
+    /**
+     * Intervalo de Serialización (time) en segundos
+     * @var int
+     */
+    public $timeSpace = 300;
 
-    public $arrayDate = []; #array de fechas posibles
+    /**
+     * Array de fechas posibles
+     * @var array
+     */
+    public $arrayDate = [];
 
-    public $arrayTime = []; #array de horas posibles
+    /**
+     * Array de horas posibles
+     * @var array
+     */
+    public $arrayTime = [];
 
-    public $inserts = []; #array de valores/inexistentes -> para ingresar
+    /**
+     * Array de valores/inexistentes -> para ingresar
+     * @var array
+     */
+    public $inserts = [];
 
-    public $updates = []; # array de valores para editar
+    /**
+     * Array de valores para editar
+     * @var array
+     */
+    public $updates = [];
 
-    public $previousData = null; # dato anterior al inicio del proceso por fecha
+    /**
+     * Dato anterior al inicio del proceso por fecha
+     * @var
+     */
+    public $previousData = null;
 
     /**
      * @param EtlConfig $etlConfig
-     * @return mixed
      */
     public function setOptions(EtlConfig $etlConfig)
     {
         $this->etlConfig = $etlConfig;
-        return $this;
+
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
     }
 
     /**
-     * @return $this
+     * Punto de acceso para ejecutar funcionalidad
      */
     public function run()
     {
-        $this->arrayTime = $this->getStandardDataTime($this->timeSpace);
+        # Se ejecutan los pasos que se requieren para el proceso
+        $this->stepsList->runStartList($this->etlConfig->processState,$this);
+    }
 
-        $this->arrayDate = $this->getDateAndDateSk($this->getSerializationDate($this->etlConfig->getInitialDate(),$this->etlConfig->getFinalDate(), $this->dateSpace));
+    /**
+     * EL ORDEN DE LOS PASOS ES MUY IMPORTANTE
+     * @param StepList $stepList
+     * @return StepList
+     */
+    public function startSteps(StepList $stepList) : StepList
+    {
+        $stepList->addStep( new Step('stepConfigureArrayTime'));
+        $stepList->addStep( new Step('stepConfigureArrayDate'));
+        $stepList->addStep( new Step('stepExecuteHomogenization'));
+        $stepList->addStep( new Step('stepUpdateElements'));
+        $stepList->addStep( new Step('stepInsertElements'));
+        $stepList->addStep( new Step('stepDeleteElements'));
 
-        $this->homogenization();
+        return $stepList;
+    }
 
-        # editar elementos
-        foreach ($this->updates as $update) {
-            $this->updateDateTimeFromId(
-                $this->etlConfig->getTableSpaceWork(),
-                $update['value']->id,
-                [
-                    'date_sk'   => $update['date_sk'],
-                    'date'      => $update['date'],
-                    'time_sk'   => $update['time_sk'],
-                    'time'      => $update['time']
-                ]
+    /**
+     * STEP
+     * Se configuran los tiempos en los cuales se va a trabajar
+     * @return array
+     */
+    public function stepConfigureArrayTime()
+    {
+        try {
+            $this->arrayTime = $this->getStandardDataTime($this->timeSpace);
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * Se configuran las fechas en los cuales se va a trabajar
+     * @return array
+     */
+    public function stepConfigureArrayDate()
+    {
+        try {
+
+            $this->arrayDate = $this->getDateAndDateSk(
+                $this->getSerializationDate(
+                    $this->etlConfig->getInitialDate(),
+                    $this->etlConfig->getFinalDate(),
+                    $this->dateSpace
+                )
             );
-        }
 
-        # insertar elementos
-        foreach ($this->inserts as $insert){
-            $this->insertDataArray($this->etlConfig->getTableSpaceWork(),$insert);
-        }
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
-        # eliminar elementos nos pertenecientes a las series homogenizadas
-        $this->deleteEldestHomogenization(
-            $this->etlConfig->getTableSpaceWork(),
-            array_column($this->arrayTime,'time_sk')
-        );
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
 
-        return $this;
+    /**
+     * STEP
+     * Se ejecuta el algoritmo de homogenización
+     * @return array
+     */
+    public function stepExecuteHomogenization()
+    {
+        try {
+            $this->homogenization();
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * @return array
+     */
+    public function stepUpdateElements()
+    {
+        try {
+            foreach ($this->updates as $update) {
+                $this->updateDateTimeFromId(
+                    $this->etlConfig->getTableSpaceWork(),
+                    $update['value']->id,
+                    [
+                        'date_sk'   => $update['date_sk'],
+                        'date'      => $update['date'],
+                        'time_sk'   => $update['time_sk'],
+                        'time'      => $update['time']
+                    ]
+                );
+            }
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * @return array
+     */
+    public function stepInsertElements()
+    {
+        try {
+
+            foreach ($this->inserts as $insert){ $this->insertDataArray($this->etlConfig->getTableSpaceWork(),$insert);}
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
+    }
+
+    /**
+     * STEP
+     * eliminar elementos no pertenecientes a las series homogenizadas
+     * @return array
+     */
+    public function stepDeleteElements()
+    {
+        try {
+
+            $this->deleteEldestHomogenization(
+                $this->etlConfig->getTableSpaceWork(),
+                array_column($this->arrayTime,'time_sk')
+            );
+
+            return ['resultExecution' => true , 'data' => null, 'exception' => null];
+
+        } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
     }
 
     /**

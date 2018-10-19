@@ -3,10 +3,25 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlConfig;
+use App\Etl\Steps\{StepList,Step,StepContract};
 
-class Original extends TransformBase implements TransformInterface
+class Original extends TransformBase implements TransformInterface, StepContract
 {
-    private $method = 'Original';
+    /**
+     * @var string
+     */
+    public $method = 'Original';
+
+    /**
+     * @var EtlConfig
+     */
+    public $etlConfig = null;
+
+    /**
+     * @var StepList
+     */
+    public $stepsList = null;
+
 
     /**
      * @param EtlConfig $etlConfig
@@ -14,27 +29,28 @@ class Original extends TransformBase implements TransformInterface
      */
     public function setOptions(EtlConfig $etlConfig)
     {
-        return $this;
+        $this->etlConfig = $etlConfig;
+
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
     }
 
+    /**
+     *
+     */
     public function run()
     {
-        return $this;
+        # Se ejecutan los pasos que se requieren para el proceso (Actualmente ho hay steps)
+        # $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }
 
     /**
-     * @return string
+     * @param StepList $stepList
+     * @return StepList
      */
-    public function getMethod(): string
+    public function startSteps(StepList $stepList): StepList
     {
-        return $this->method;
-    }
-
-    /**
-     * @param string $method
-     */
-    public function setMethod(string $method)
-    {
-        $this->method = $method;
+        # $stepList->addStep( new Step('nameStep')); Actaumente ho hay Steps
+        return $stepList;
     }
 }
