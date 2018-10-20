@@ -4,11 +4,15 @@ namespace App\Etl\Traits;
 
 use DB;
 
-
 trait CorrectMethod
 {
 
-    public function correctControl($spaceTable,$variable,$latestData)
+    /**
+     * @param $spaceTable
+     * @param $variable
+     * @param $latestData
+     */
+    public function correctControl($spaceTable, $variable, $latestData)
     {
         $data = $this->getDataInNull($spaceTable,$variable->local_name,$latestData);
 
@@ -32,20 +36,41 @@ trait CorrectMethod
         }
         return;
     }
-    public function correctPreviousData($spaceTable,$variable,$value,$previousData)
+
+    /**
+     * @param $spaceTable
+     * @param $variable
+     * @param $value
+     * @param $previousData
+     */
+    public function correctPreviousData($spaceTable, $variable, $value, $previousData)
     {
         $this->updateSpecificData($spaceTable,$variable,$value->id,$previousData);
         $this->updateHistoryCorrect($value,$variable,$previousData,'correct_previous_data');
     }
-    
-    public function correctAverageData($spaceTable,$variable,$value,$previousData,$nextData)
+
+    /**
+     * @param $spaceTable
+     * @param $variable
+     * @param $value
+     * @param $previousData
+     * @param $nextData
+     */
+    public function correctAverageData($spaceTable, $variable, $value, $previousData, $nextData)
     {
         $avg = ($previousData + $nextData )/2;
         $this->updateSpecificData($spaceTable,$variable,$value->id,$avg);
         $this->updateHistoryCorrect($value,$variable,$avg,'correct_average_data');
     }
-    
-    public function correctDifferenceData($spaceTable,$variable,$value,$previousData,$nextData)
+
+    /**
+     * @param $spaceTable
+     * @param $variable
+     * @param $value
+     * @param $previousData
+     * @param $nextData
+     */
+    public function correctDifferenceData($spaceTable, $variable, $value, $previousData, $nextData)
     {
        $new = abs($previousData - $nextData);
        if ($new > 0.2){
@@ -56,12 +81,23 @@ trait CorrectMethod
        }
     }
 
+    /**
+     *
+     */
     public function correctToZeroData()
     {
         // TODO: fill correct to zero data
     }
 
-    private function directionCorrect($correctionType,$spaceTable,$variable,$value,$previousData,$nextData)
+    /**
+     * @param $correctionType
+     * @param $spaceTable
+     * @param $variable
+     * @param $value
+     * @param $previousData
+     * @param $nextData
+     */
+    private function directionCorrect($correctionType, $spaceTable, $variable, $value, $previousData, $nextData)
     {
 
         switch ($correctionType){
@@ -82,12 +118,25 @@ trait CorrectMethod
         }
     }
 
-    private function updateSpecificData($spaceTable,$variable,$id,$value)
+    /**
+     * @param $spaceTable
+     * @param $variable
+     * @param $id
+     * @param $value
+     * @return mixed
+     */
+    private function updateSpecificData($spaceTable, $variable, $id, $value)
     {
         return DB::connection('temporary_work')->table($spaceTable)->where('id', '=', $id)->update([$variable => $value]);
     }
 
-    private function getSpecificData($spaceTable,$variable,$id)
+    /**
+     * @param $spaceTable
+     * @param $variable
+     * @param $id
+     * @return mixed
+     */
+    private function getSpecificData($spaceTable, $variable, $id)
     {
         return DB::connection('temporary_work')->table($spaceTable)->select('id','station_sk','date_sk','time_sk',$variable)->find($id);
     }

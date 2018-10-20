@@ -63,9 +63,9 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
      */
     public function __construct(EtlConfig $etlConfig)
     {
-        $this->extractTable = $this->setExtractTable($etlConfig->getStation()->table_db_name);
-        $this->settingConnection($etlConfig->getConnection());
-        $this->setSelect($etlConfig->getVarForFilter(),$etlConfig->getKeys());
+        $this->extractTable = $this->setExtractTable(($etlConfig->station)->table_db_name);
+        $this->settingConnection($etlConfig->connection);
+        $this->setSelect($etlConfig->varForFilter,$etlConfig->keys);
     }
 
     /**

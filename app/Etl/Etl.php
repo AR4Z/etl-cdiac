@@ -171,8 +171,6 @@ class Etl
 
         if (!empty($options)){ $this->setOptions($class, $options); }
 
-        dd($class);
-
         return $class;
     }
 

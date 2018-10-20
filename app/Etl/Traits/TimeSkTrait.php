@@ -6,6 +6,9 @@ use Facades\App\Repositories\DataWareHouse\TimeDimRepository;
 
 trait TimeSkTrait
 {
+    /**
+     * @var int
+     */
     public $maxValueSk = 86400;
 
     /**

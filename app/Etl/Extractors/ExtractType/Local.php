@@ -7,24 +7,54 @@ use Carbon\Carbon;
 
 class Local extends ExtractTypeBase implements ExtractTypeInterface
 {
+    /**
+     * @var string
+     */
     public $extractType = 'Local';
 
+    /**
+     * @var string
+     */
     public $extractConnection = 'data_warehouse';
 
+    /**
+     * @var string
+     */
     public $select = null;
 
+    /**
+     * @var array
+     */
     public $columns = [];
 
+    /**
+     * @var string
+     */
     public $extractTable = 'original_';
 
+    /**
+     * @var string
+     */
     public $colOrigin = 'database_field_name';
 
+    /**
+     * @var string
+     */
     public $colDestination = 'local_name';
 
+    /**
+     * @var bool
+     */
     public $flagStationSk = false;
 
+    /**
+     * @var bool
+     */
     public $flagDateSk = false;
 
+    /**
+     * @var bool
+     */
     public $flagTimeSk = false;
 
     /**
@@ -33,8 +63,8 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
      */
     public function __construct(EtlConfig $etlConfig)
     {
-        $this->extractTable .= $etlConfig->getTableDestination();
-        $this->setSelect($etlConfig->getVarForFilter(),$etlConfig->getKeys());
+        $this->extractTable .= $etlConfig->tableDestination;
+        $this->setSelect($etlConfig->varForFilter,$etlConfig->keys);
     }
 
     /**

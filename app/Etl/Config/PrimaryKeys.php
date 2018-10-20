@@ -4,43 +4,103 @@ namespace App\Etl\Config;
 
 class PrimaryKeys
 {
+    /**
+     * @var array
+     */
     public $globalKeys = [];
 
+    /**
+     * @var array
+     */
     public $global  = [];
 
+    /**
+     * @var array
+     */
     public $load = [];
 
+    /**
+     * @var array
+     */
     public $keys = [];
 
+    /**
+     * @var array
+     */
     public $castKeys = [];
 
+    /**
+     * @var array
+     */
     public $extractColumns = [];
 
+    /**
+     * @var array
+     */
     public $localCalculatedKeys = [];
 
+    /**
+     * @var array
+     */
     public $externalCalculatedKeys = [];
 
+    /**
+     * @var array
+     */
     public $notLocalIncomingKeys = [];
 
+    /**
+     * @var array
+     */
     public $notExternalIncomingKeys = [];
 
+    /**
+     * @var array
+     */
     public $notCalculatedColumns = [];
 
+    /**
+     * @var string
+     */
     public $globalCastKey = '';
 
+    /**
+     * @var string
+     */
     public $loadCastKey = '';
 
+    /**
+     * @var string
+     */
     public $selectCastKey = '';
 
+    /**
+     * @var string
+     */
     public $selectKey = '';
 
+    /**
+     * @var string
+     */
     public $mergeLocalIncomingKeys = '';
 
+    /**
+     * @var string
+     */
     public $mergeExternalIncomingKeys = '';
 
+    /**
+     * @var string
+     */
     public $extractConsult = '';
 
-    function __construct($typeProcess, $etlMethod, $keys)
+    /**
+     * PrimaryKeys constructor.
+     * @param $typeProcess
+     * @param $etlMethod
+     * @param $keys
+     */
+    function __construct(string $typeProcess, string $etlMethod, array $keys)
     {
         $this->globalKeys = $this->getReactiveKeys($etlMethod,$keys);
 
@@ -49,7 +109,12 @@ class PrimaryKeys
         #$this->config($typeProcess,$etlMethod);
     }
 
-    private function getReactiveKeys($etlMethod,$keys)
+    /**
+     * @param $etlMethod
+     * @param $keys
+     * @return array
+     */
+    private function getReactiveKeys(string $etlMethod, array $keys) : array
     {
         $arr = [];
         foreach ($keys as $key => $value) {

@@ -7,6 +7,9 @@ use DB;
 
 abstract class LoadBase extends EtlBase
 {
+    /**
+     * @var array
+     */
     public $redirectExist = [];
 
     /**
@@ -31,13 +34,13 @@ abstract class LoadBase extends EtlBase
                 if (!$this->evaluateExistence($this->etlConfig->repositoryExist,$value))
                 {
                     #Insertar dato existente en la fact de existentes respectiva
-                    $this->insertExistTable($this->etlConfig->getTableExist(),$exist);
+                    $this->insertExistTable($exist);
 
                     # Documentar los valores existentes en el array de control
                     array_push($this->redirectExist, $exist);
                 }
                 #Eliminar los valores existentes de la tabla tenporal de trabajo
-                $this->deleteFromDateAndTime($this->etlConfig->getTableSpaceWork(),$value->date_sk,$value->time_sk);
+                $this->deleteFromDateAndTime($value->date_sk,$value->time_sk);
             }
         }
     }
@@ -66,16 +69,16 @@ abstract class LoadBase extends EtlBase
      */
     public function calculateSequence()
     {
-        if ($this->etlConfig->getSequence()){
+        if ($this->etlConfig->sequence){
 
-            $data = $this->getLastMigrateData($this->etlConfig->geTtableSpaceWork());
+            $data = $this->getLastMigrateData();
 
             if (!is_null($data))
             {
-                $response =  ($this->etlConfig->getSequence() and Carbon::parse($this->etlConfig->getFinalDate()) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
+                $response =  ($this->etlConfig->sequence and Carbon::parse($this->etlConfig->finalDate) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
 
                 $this->updateDateAndTime(
-                    $this->etlConfig->getStation()->{$this->etlConfig->getStateTable()},
+                    ($this->etlConfig->station)->{$this->etlConfig->stateTable},
                     $this->calculateDateFromDateSk($data->date_sk),
                     $this->calculateTimeFromTimeSk($data->time_sk),
                     $response
@@ -84,14 +87,17 @@ abstract class LoadBase extends EtlBase
         }
     }
 
+    /**
+     * @return bool
+     */
     public function trustProcess()
     {
         if (!$this->etlConfig->isTrustProcess()){ return false;}
 
         $this->generateTrustAndSupport(
-            $this->etlConfig->getTrustColumns(),
-            $this->etlConfig->getVarForFilter(),
-            $this->etlConfig->getStation()->measurements_per_day
+            $this->etlConfig->trustColumns,
+            $this->etlConfig->varForFilter,
+            ($this->etlConfig->station)->measurements_per_day
         );
     }
 }

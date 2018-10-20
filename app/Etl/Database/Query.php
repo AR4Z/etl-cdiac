@@ -4,15 +4,28 @@ namespace App\Etl\Database;
 
 use Carbon\Carbon;
 use DB;
+use Illuminate\Database\Eloquent\Collection;
 
 class Query
 {
+    /**
+     * @var DB
+     */
     public $query = null;
 
+    /**
+     * @var Collection
+     */
     public $data = null;
 
+    /**
+     * @var bool
+     */
     private $init = false;
 
+    /**
+     * @var bool
+     */
     private $select = false;
 
 

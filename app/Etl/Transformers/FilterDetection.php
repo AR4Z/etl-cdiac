@@ -20,6 +20,11 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     public $etlConfig = null;
 
     /**
+     * @var StepList
+     */
+    public $stepsList = null;
+
+    /**
      * @var array
      */
     public $paramSearch = ['-'];
@@ -43,11 +48,6 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
      * @var int
      */
     public $changeOverflowPreviousDeference = null;
-
-    /**
-     * @var StepList
-     */
-    public $stepsList = null;
 
     /**
      * @param EtlConfig $etlConfig
@@ -102,7 +102,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     {
         try {
             # Se extraen las variables a evaluar
-            $varFilter = $this->etlConfig->getVarForFilter()->toArray();
+            $varFilter = $this->etlConfig->varForFilter->toArray();
 
             # Se evaluan los filtros registrados para el campo de comentarios.
             foreach ($this->commentFilters as $filter){ $this->{'ExecuteFilter'.$filter}($varFilter); }
@@ -122,17 +122,14 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     public function stepTraverseDynamicVariablesToFilter()
     {
         try {
-            # Se extraen las variables a recorrer
-            $varFilter = $this->etlConfig->getVarForFilter();
 
-            foreach ($varFilter as $value){
+            foreach ($this->etlConfig->varForFilter as $value){
 
                 # Convertir valores extraños a null
-                $this->updateForNull($this->etlConfig->getTableSpaceWork(),$value->local_name,$this->paramSearch);
+                $this->updateForNull($value->local_name,$this->paramSearch);
 
                 # Detectar los valores que sobrepasan los limites
                 $this->overflow(
-                    $this->etlConfig->getTableSpaceWork(),
                     $value->local_name,
                     $value->maximum,
                     $value->minimum,
@@ -151,19 +148,62 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
         } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e]; }
     }
 
+    /**
+     * STEP
+     *
+     * @return array
+     */
     public function stepTraverseStaticVariablesToFilter()
     {
         try {
             # se extraen las variables estaticas
-            $staticVariables = $this->etlConfig->getKeys()->notCalculatedColumns;
+            $staticVariables = $this->etlConfig->keys->notCalculatedColumns;
 
-            foreach ($staticVariables as $variable){
-                $this->updateForNull($this->etlConfig->getTableSpaceWork(),$variable,$this->paramSearch);
-            }
+            foreach ($staticVariables as $variable){ $this->updateForNull($variable,$this->paramSearch);}
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
         } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e]; }
+    }
+
+    /**
+     * @param array $paramSearch
+     */
+    public function setParamSearch(array $paramSearch = [])
+    {
+        foreach ($paramSearch as $value){ array_push($this->paramSearch,$value);}
+    }
+
+    /**
+     * @param array $commentFilters
+     */
+    public function setCommentFilters(array $commentFilters = [])
+    {
+        foreach ($commentFilters as $value){ array_push($this->commentFilters,$value);}
+    }
+
+    /**
+     * @param int $changeOverflowLower
+     */
+    public function setChangeOverflowLower(int $changeOverflowLower)
+    {
+        $this->changeOverflowLower = $changeOverflowLower;
+    }
+
+    /**
+     * @param int $changeOverflowHigher
+     */
+    public function setChangeOverflowHigher(int $changeOverflowHigher)
+    {
+        $this->changeOverflowHigher = $changeOverflowHigher;
+    }
+
+    /**
+     * @param int $changeOverflowPreviousDeference
+     */
+    public function setChangeOverflowPreviousDeference(int $changeOverflowPreviousDeference)
+    {
+        $this->changeOverflowPreviousDeference = $changeOverflowPreviousDeference;
     }
 
 }

@@ -88,7 +88,7 @@ class Load extends LoadBase implements LoadInterface,StepContract
     public function stepExtractConfigurationPrimaryKeys()
     {
         try {
-            $this->select = $this->etlConfig->getKeys()->loadCastKey;
+            $this->select = $this->etlConfig->keys->loadCastKey;
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -103,7 +103,7 @@ class Load extends LoadBase implements LoadInterface,StepContract
     public function stepExtractColumnsExtra()
     {
         try {
-            $this->columns = $this->etlConfig->getKeys()->load;
+            $this->columns = $this->etlConfig->keys->load;
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -224,7 +224,7 @@ class Load extends LoadBase implements LoadInterface,StepContract
     public function stepMigrateHistoryCorrection()
     {
         try {
-            if ($this->etlConfig->getTypeProcess() != "Original"){ $this->migrateHistoricCorrection();}
+            if ($this->etlConfig->typeProcess != "Original"){ $this->migrateHistoricCorrection();}
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -255,10 +255,10 @@ class Load extends LoadBase implements LoadInterface,StepContract
      */
     public function setSelect($colOrigin, $colDestination)
     {
-        $variables= $this->etlConfig->getVarForFilter();
+        $variables= $this->etlConfig->varForFilter;
         $temporalSelect = '';
 
-        if ($this->etlConfig->getTypeProcess() !== "Original"){
+        if ($this->etlConfig->typeProcess !== "Original"){
             foreach ($variables as $variable){
                 $temporalSelect .= 'CAST('.$variable->$colOrigin.' AS float) AS '. $variable->$colDestination.', ';
                 array_push($this->columns,$variable->$colDestination);
@@ -281,7 +281,7 @@ class Load extends LoadBase implements LoadInterface,StepContract
      */
     public function selectTemporalTable()
     {
-        return $this->getAllData('temporary_work',$this->etlConfig->getTableSpaceWork(),$this->select);
+        return $this->getAllData($this->select);
     }
 
     /**
@@ -290,7 +290,7 @@ class Load extends LoadBase implements LoadInterface,StepContract
      */
     public function insertAllDataInFact($data)
     {
-       return $this->insertDataEncode('data_warehouse',$this->etlConfig->getTableDestination(),$data);
+       return $this->insertDataEncode('data_warehouse',$this->etlConfig->tableDestination,$data);
     }
 
     /**
@@ -314,42 +314,40 @@ class Load extends LoadBase implements LoadInterface,StepContract
      */
     public function InsertDateTime()
     {
-        $val = $this->getIdAndDateTime($this->etlConfig->getTableSpaceWork());
+        $val = $this->getIdAndDateTime();
 
         foreach ($val as $item)
         {
             $this->updateDateTimeFromId(
-                $this->etlConfig->getTableSpaceWork(),
                 $item->id,
                 [ 'date_time'=> $item->date.''. (is_null($item->time) ? '' : ' '.$item->time ) ]
             );
         }
     }
 
+    /**
+     *
+     */
     public function completeDateNull()
     {
-        $datesNull = $this->selectColumnWhereNull(    $this->etlConfig->getTableSpaceWork(),'date_sk','date');
+        $datesNull = $this->selectColumnWhereNull('date_sk','date');
 
         foreach ($datesNull as $dates) {
-            $this->updateDateFromDateSk(
-                $this->etlConfig->getTableSpaceWork(),
-                $dates->date_sk,
-                $this->calculateDateFromDateSk($dates->date_sk)
+            $this->updateDateFromDateSk($dates->date_sk, $this->calculateDateFromDateSk($dates->date_sk)
             );
         }
     }
 
+    /**
+     *
+     */
     public function completeTimeNull()
     {
-        $timesNull = $this->selectColumnWhereNull(    $this->etlConfig->getTableSpaceWork(),'time_sk','time');
+        $timesNull = $this->selectColumnWhereNull('time_sk','time');
 
         foreach ($timesNull as $time) {
             if($time->time_sk < $this->maxValueSk){
-                $this->updateTimeFromTimeSk(
-                    $this->etlConfig->getTableSpaceWork(),
-                    $time->time_sk,
-                    $this->calculateTimeFromTimeSk($time->time_sk)
-                );
+                $this->updateTimeFromTimeSk($time->time_sk, $this->calculateTimeFromTimeSk($time->time_sk));
             }
         }
     }
@@ -362,11 +360,19 @@ class Load extends LoadBase implements LoadInterface,StepContract
         if ($this->deleteDuplicates) {
 
             # se extrae el maximo id cuando existen datos duplicados
-            $result = $this->getDuplicates($this->etlConfig->getTableSpaceWork());
+            $result = $this->getDuplicates();
 
             # se eliminan los id's duplicados
-            if (count($result) > 0){ $this->deleteWhereInVariable($this->etlConfig->getTableSpaceWork(),'id', array_column($result,'max')); }
+            if (count($result) > 0){ $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'id', array_column($result,'max')); }
         }
+    }
+
+    /**
+     * @param bool $deleteDuplicates
+     */
+    public function setDeleteDuplicates(bool $deleteDuplicates)
+    {
+        $this->deleteDuplicates = $deleteDuplicates;
     }
 
 

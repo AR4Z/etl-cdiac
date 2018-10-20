@@ -63,21 +63,13 @@ abstract class ExtractorBase extends EtlBase
 
         # Calcular los datos entrantes para el preceso de confianza
 
-        $trust= $this->incomingCalculation(
-                            $this->etlConfig->getTableSpaceWork(),
-                            $this->etlConfig->getTableTrust(),
-                            $this->etlConfig->getVarForFilter()->toArray()
-                        );
+        $trust= $this->incomingCalculation($this->etlConfig->varForFilter->toArray());
 
         # Actualizar el estado del proceso de confianza
         $this->etlConfig->setTrustColumns($trust);
 
         # Calcular la Cantidad de datos entrante
-        $this->etlConfig->setIncomingAmount(
-            $this->getIncomingAmount(
-                $this->etlConfig->getTableSpaceWork()
-            )
-        );
+        $this->etlConfig->setIncomingAmount($this->getIncomingAmount());
 
         return true;
     }
@@ -118,7 +110,7 @@ abstract class ExtractorBase extends EtlBase
     /**
      * @param $tableSpaceWork
      */
-    public function getCalculateDateAndTime($tableSpaceWork)
+    public function getCalculateDateAndTime()
     {
         $values = $this->etlConfig->repositorySpaceWork->getDateTime();
 
@@ -127,7 +119,7 @@ abstract class ExtractorBase extends EtlBase
             $dateTime = $this->parseCarbonDateTime(trim($value->date_time));
 
             if (!is_null($dateTime)){
-                $this->updateDateTimeFromId($tableSpaceWork,$value->id,[ 'date' => $dateTime->format('Y-m-d'),'time' =>$dateTime->format('H:i:s')]);
+                $this->updateDateTimeFromId($value->id,[ 'date' => $dateTime->format('Y-m-d'),'time' =>$dateTime->format('H:i:s')]);
             }
         }
     }
@@ -150,16 +142,15 @@ abstract class ExtractorBase extends EtlBase
     }
 
     /**
-     * @param $tableSpaceWork
      * @return bool
      */
-    public function deleteTimeAndDateNull($tableSpaceWork)
+    public function deleteTimeAndDateNull()
     {
-        $this->deleteWhereInVariable($tableSpaceWork,'date_time',$this->keyErrors);
-        $this->deleteWhereInVariable($tableSpaceWork,'date',$this->keyErrors);
-        $this->deleteWhereInVariable($tableSpaceWork,'time',$this->keyErrors);
+        $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'date_time',$this->keyErrors);
+        $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'date',$this->keyErrors);
+        $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'time',$this->keyErrors);
 
-        $this->deleteNullVariable($tableSpaceWork,'date');
+        $this->deleteNullVariable($this->etlConfig->tableSpaceWork,'date');
 
         return true;
     }

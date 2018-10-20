@@ -128,8 +128,8 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
 
             $this->arrayDate = $this->getDateAndDateSk(
                 $this->getSerializationDate(
-                    $this->etlConfig->getInitialDate(),
-                    $this->etlConfig->getFinalDate(),
+                    $this->etlConfig->initialDate,
+                    $this->etlConfig->finalDate,
                     $this->dateSpace
                 )
             );
@@ -163,7 +163,6 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
         try {
             foreach ($this->updates as $update) {
                 $this->updateDateTimeFromId(
-                    $this->etlConfig->getTableSpaceWork(),
                     $update['value']->id,
                     [
                         'date_sk'   => $update['date_sk'],
@@ -187,7 +186,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     {
         try {
 
-            foreach ($this->inserts as $insert){ $this->insertDataArray($this->etlConfig->getTableSpaceWork(),$insert);}
+            foreach ($this->inserts as $insert){ $this->insertDataArray($insert);}
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -203,10 +202,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     {
         try {
 
-            $this->deleteEldestHomogenization(
-                $this->etlConfig->getTableSpaceWork(),
-                array_column($this->arrayTime,'time_sk')
-            );
+            $this->deleteEldestHomogenization(array_column($this->arrayTime,'time_sk'));
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -231,7 +227,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
             }
 
             #contar la cantidad de horas en un dia
-            $count = $this->countRowForDate($this->etlConfig->getTableSpaceWork(),$date->date_sk);
+            $count = $this->countRowForDate($date->date_sk);
 
             if($count == 0){
                 $this->pushAllInserts($date); #insertar todas las horas para una fecha que no trae nunguna hora
@@ -250,7 +246,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public function pushAllInserts($date)
     {
         foreach ($this->arrayTime as $time) {
-            array_push($this->inserts,['station_sk' => $this->etlConfig->getStation()->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time]);
+            array_push($this->inserts,['station_sk' => ($this->etlConfig->station)->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time]);
         }
     }
 
@@ -265,7 +261,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
            $lowerLimit = (($time->time_sk - $this->timeSpace) <= 0 ) ? 1 : $time->time_sk - $this->timeSpace;
 
             #Evaluar cantidad en el rango actual
-            $valInRangeActual = $this->getValInRange($this->etlConfig->getTableSpaceWork(),$date->date_sk,$lowerLimit,$upperLimit);
+            $valInRangeActual = $this->getValInRange($date->date_sk,$lowerLimit,$upperLimit);
 
             if ($time->time_sk == 1 and !is_null($this->previousData)){
                 $temporalValInRange = [];
@@ -333,8 +329,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
         $arr['time_sk'] = $time->time_sk;
         $arr['time'] = $time->time;
 
-        foreach ($this->etlConfig->getVarForFilter() as $variable)
-        {
+        foreach ($this->etlConfig->varForFilter as $variable) {
             $arr[$variable->local_name] = $this->directionElements($variable->local_name,$valueOne,$valueTwo,$time->time_sk,$variable->decimal_precision);
         }
         array_push($this->inserts,$arr);
@@ -360,7 +355,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
         # se particionan dependiendo de si son mayores o menores.
         foreach ($valInRangeActual as $value){array_push(${($value->time_sk <= $time->time_sk) ? 'arrLower' : 'arrHigher' } , $value);}
 
-        foreach ($this->etlConfig->getVarForFilter() as $variable)
+        foreach ($this->etlConfig->varForFilter as $variable)
         {
             $arr[$variable->local_name] = $this->directionElements(
                 $variable->local_name,
@@ -442,5 +437,21 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
         }
 
         return $value;
+    }
+
+    /**
+     * @param int $dateSpace
+     */
+    public function setDateSpace(int $dateSpace)
+    {
+        $this->dateSpace = $dateSpace;
+    }
+
+    /**
+     * @param int $timeSpace
+     */
+    public function setTimeSpace(int $timeSpace)
+    {
+        $this->timeSpace = $timeSpace;
     }
 }

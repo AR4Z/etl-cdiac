@@ -53,9 +53,10 @@ class ExternalConnectionController extends Controller
         //dd($this->connectionRepository->getCacheLifetime());
         //dd($this->connectionRepository->where('id', 1)->first());
 
-        $jobEtl = Etl::start('Original', null, null,19,['sequence' => false, 'debug'=> true ]) // sequense true
-                        ->extract('Database',['trustProcess'=> false,'extractType' => 'External', 'initialDate' => '2017-06-13','initialTime' => '00:00:00','finalDate' => '2017-06-15','finalTime' => '23:59:59']) //'initialTime' => '05:00:00','finalTime' => '10:59:59'
+        $jobEtl = Etl::start('Filter', null, null,19,['sequence' => false, 'debug'=> true ]) // sequense true
+                        ->extract('Database',['trustProcess'=> true,'extractType' => 'Local', 'initialDate' => '2017-06-13','initialTime' => '00:00:00','finalDate' => '2017-06-15','finalTime' => '23:59:59']) //'initialTime' => '05:00:00','finalTime' => '10:59:59'
                         ->transform('FilterDetection')  #['paramSearch'=> ['r','j']] parametro opcional de valores de busqueda
+                        ->transform('FilterCorrection')
                         ->transform('Homogenization')
                         //->transform('FilterCorrection')
                         ->load()

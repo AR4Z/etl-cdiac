@@ -112,32 +112,84 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
         } catch (Exception $e) { return ['resultExecution' => false , 'data' => null, 'exception' => $e];}
     }
 
+    /**
+     * @param array $paramSearch
+     */
+    public function setParamSearch(array $paramSearch = [])
+    {
+        foreach ($paramSearch as $param){ array_push($this->paramSearch,$param); }
+    }
+
+    /**
+     * @param array $deleteLastHour
+     */
+    public function setDeleteLastHour(array $deleteLastHour = [])
+    {
+        foreach ($deleteLastHour as $param){ array_push($this->deleteLastHour,$param); }
+    }
+
+    /**
+     * @param int $spaceTimeDelete
+     */
+    public function setSpaceTimeDelete(int $spaceTimeDelete = 3600)
+    {
+        $this->spaceTimeDelete = $spaceTimeDelete;
+    }
+
+    /**
+     * @param int $changeOverflowLower
+     */
+    public function setChangeOverflowLower(int $changeOverflowLower = null)
+    {
+        $this->changeOverflowLower = $changeOverflowLower;
+    }
+
+    /**
+     * @param int $changeOverflowPreviousDeference
+     */
+    public function setChangeOverflowPreviousDeference(int $changeOverflowPreviousDeference = null)
+    {
+        $this->changeOverflowPreviousDeference = $changeOverflowPreviousDeference;
+    }
+
+    /**
+     * @param array $variablesCalculated
+     */
+    public function setVariablesCalculated(array $variablesCalculated = [])
+    {
+        foreach ($variablesCalculated as $key => $value){ array_push($this->variablesCalculated,[$key => $value]); }
+    }
 
 
-    public function insertCalculateData(string $localName, array $variablesCalculatedName)
+    /**
+     * @param string $localName
+     * @param array $variablesCalculatedName
+     */
+    private function insertCalculateData(string $localName, array $variablesCalculatedName)
     {
         if (in_array($localName,$variablesCalculatedName)){
             $this->generateVariableCalculated(
-                $this->etlConfig->getTableSpaceWork(),
                 $localName,
                 $this->variablesCalculated[$localName]
             );
         }
     }
 
-    public function goFilters()
+    /**
+     *
+     */
+    private function goFilters()
     {
-        $varFilter = $this->etlConfig->getVarForFilter();
+        $varFilter = $this->etlConfig->varForFilter;
         $variablesCalculatedName = array_keys($this->variablesCalculated);
 
         foreach ($varFilter as $value)
         {
             # Convertir valores extraños a null
-            $this->updateForNull($this->etlConfig->getTableSpaceWork(),$value->local_name,$this->paramSearch);
+            $this->updateForNull($value->local_name,$this->paramSearch);
 
             # Eliminar los datos por una hora despues $deleteLastHour
             $this->updateRageTime(
-                $this->etlConfig->getTableSpaceWork(),
                 $value->local_name,
                 $this->deleteLastHour,
                 $this->spaceTimeDelete
@@ -145,7 +197,6 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
 
             # Detectar los valores que sobrepasan los limites
             $this->overflow(
-                $this->etlConfig->getTableSpaceWork(),
                 $value->local_name,
                 $value->maximum,
                 $value->minimum,

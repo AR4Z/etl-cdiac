@@ -6,6 +6,10 @@ namespace app\Etl\Traits;
 trait RemoveAccents
 {
 
+    /**
+     * @param $text
+     * @return null|string|string[]
+     */
     public function removeAccents($text)
     {
         $text = htmlentities($text, ENT_QUOTES, 'UTF-8');

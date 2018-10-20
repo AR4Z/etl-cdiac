@@ -8,7 +8,6 @@ use DB;
 abstract class TransformBase extends EtlBase
 {
     /**
-     * @param string $tableSpaceWork
      * @param string $variable
      * @param null $overflowMaximum
      * @param null $overflowMinimum
@@ -18,7 +17,6 @@ abstract class TransformBase extends EtlBase
      * @param null $changeOverflowPreviousDeference
      */
     public function overflow(
-        string $tableSpaceWork,
         string $variable,
         $overflowMaximum = null,
         $overflowMinimum = null,
@@ -28,7 +26,7 @@ abstract class TransformBase extends EtlBase
         $changeOverflowPreviousDeference = null
     )
     {
-        $values =DB::connection('temporary_work')->table($tableSpaceWork)
+        $values =DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)
                     ->select('id','station_sk','date_sk','time_sk',DB::raw("CAST($variable AS double precision)"))
                     ->whereNotNull($variable)
                     ->orderby('id','DESC')
@@ -40,12 +38,12 @@ abstract class TransformBase extends EtlBase
 
             if(!is_null($overflowMaximum) and $floatValue > $overflowMaximum){
                 $this->insertInCorrectionTable($value,$variable,$changeOverflowHigher,'outside_maximum_rank');
-                DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '=', $value->id)->update([$variable => $changeOverflowHigher]);
+                DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('id', '=', $value->id)->update([$variable => $changeOverflowHigher]);
                 unset($values[$key]);
             }
             if (!is_null($overflowMinimum) and $floatValue < $overflowMinimum){
                 $this->insertInCorrectionTable($value,$variable,$changeOverflowLower,'outside_minimum_rank');
-                DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '=', $value->id)->update([$variable => $changeOverflowLower]);
+                DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('id', '=', $value->id)->update([$variable => $changeOverflowLower]);
                 unset($values[$key]);
             }
         }
@@ -55,7 +53,7 @@ abstract class TransformBase extends EtlBase
                 foreach ($values as $key =>$value){
 
                     $previous_value = DB::connection('temporary_work')
-                        ->table($tableSpaceWork)
+                        ->table($this->etlConfig->tableSpaceWork)
                         ->select('id',DB::raw("CAST($variable AS double precision)"))
                         ->where('date_sk', '<=' ,$value->date_sk)
                         ->where('time_sk', '<' ,$value->time_sk)
@@ -68,7 +66,7 @@ abstract class TransformBase extends EtlBase
                             $deference = abs($value->$variable - $previous_value->$variable);
                             if ($deference > $overflowPreviousDeference){
                                 $this->insertInCorrectionTable($value,$variable,$changeOverflowPreviousDeference,'outside_previous_deference');
-                                DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '=', $value->id)->update([$variable => $changeOverflowPreviousDeference]);
+                                DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('id', '=', $value->id)->update([$variable => $changeOverflowPreviousDeference]);
                                 unset($values[$key]);
                             }
                         }
@@ -81,15 +79,14 @@ abstract class TransformBase extends EtlBase
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param string $variable
      * @param $deleteLastHour
      * @param $spaceTimeDelete
      * @return bool
      */
-    public function updateRageTime(string $tableSpaceWork, string $variable, $deleteLastHour, $spaceTimeDelete)
+    public function updateRageTime(string $variable, $deleteLastHour, $spaceTimeDelete)
     {
-        $values = $this->getWhereIn($tableSpaceWork,$variable,$deleteLastHour);
+        $values = $this->getWhereIn($variable,$deleteLastHour);
 
         if (is_null($values)){ return false;}
 
@@ -103,10 +100,10 @@ abstract class TransformBase extends EtlBase
             if ($limit <= $value->time_sk){ $secondTimeSk = $value->time_sk - $limit; $secondDateSk += 1; }
 
             if ($value->date_sk = $secondDateSk){
-                $this->updateInRange($tableSpaceWork,$variable,$value->date_sk,$value->time_sk,$secondTimeSk,null);
+                $this->updateInRange($variable,$value->date_sk,$value->time_sk,$secondTimeSk,null);
             }else{
-                $this->updateInRange($tableSpaceWork,$variable,$value->date_sk,$value->time_sk,$limit,null);
-                $this->updateInRange($tableSpaceWork,$variable,$secondDateSk,$value->time_sk,$limit,null);
+                $this->updateInRange($variable,$value->date_sk,$value->time_sk,$limit,null);
+                $this->updateInRange($variable,$secondDateSk,$value->time_sk,$limit,null);
             }
         }
 
@@ -114,7 +111,6 @@ abstract class TransformBase extends EtlBase
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param string $variable
      * @param $initDateSk
      * @param $initTimeSk
@@ -122,9 +118,9 @@ abstract class TransformBase extends EtlBase
      * @param null $valueForChange
      * @return bool
      */
-    public function updateInRange(string $tableSpaceWork, string $variable, $initDateSk, $initTimeSk, $finalTimeSk, $valueForChange = null)
+    public function updateInRange(string $variable, $initDateSk, $initTimeSk, $finalTimeSk, $valueForChange = null)
     {
-        $query  = DB::connection('temporary_work')->table($tableSpaceWork)->where('date_sk','=',$initDateSk)->where('time_sk','>=', $initTimeSk)->where('time_sk', '<=', $finalTimeSk);
+        $query  = DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('date_sk','=',$initDateSk)->where('time_sk','>=', $initTimeSk)->where('time_sk', '<=', $finalTimeSk);
 
         # Extraer todos los campos que cumplen las condiciones
         $values = $query->get();
@@ -148,24 +144,18 @@ abstract class TransformBase extends EtlBase
 
         if (is_null($variables->reliability_name)){return false;}
 
-        $this->insertGoods(
-            $this->etlConfig->getTableSpaceWork(),
-            $this->etlConfig->getTableTrust(),
-            $variables->local_name,
-            $variables->reliability_name
-        );
+        $this->insertGoods($variables->local_name, $variables->reliability_name);
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param string $variable
      * @param array $searchParams
      * @return bool
      */
-    public function updateForNull(string $tableSpaceWork, string $variable, array $searchParams = ['-'])
+    public function updateForNull(string $variable, array $searchParams = ['-'])
     {
        $values =  DB::connection('temporary_work')
-                       ->table($tableSpaceWork)
+                       ->table($this->etlConfig->tableSpaceWork)
                        ->select('id','station_sk','date_sk','time_sk',$variable)
                        ->whereIn($variable,$searchParams)
                        ->get();
@@ -174,7 +164,7 @@ abstract class TransformBase extends EtlBase
 
        foreach ($values as $value ) {$this->insertInCorrectionTable($value,$variable,null,'known_error_value');}
 
-        DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$searchParams)->update([$variable => null]);
+        DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->whereIn($variable,$searchParams)->update([$variable => null]);
 
        return true;
 
@@ -264,7 +254,7 @@ abstract class TransformBase extends EtlBase
     public function filterWindSpeedZero()
     {
         return DB::connection('temporary_work')
-            ->table($this->etlConfig->getTableSpaceWork())
+            ->table($this->etlConfig->tableSpaceWork)
             ->whereNotNull('wind_direction')
             ->where(function ($query){$query->whereRaw('CAST(wind_speed AS FLOAT) = 0')->orWhere('wind_speed','=',null);})
             ->update(['wind_direction' => null, 'comment' => DB::raw("CONCAT(comment,  ' filterWindSpeedZero -' )")]);
@@ -277,7 +267,7 @@ abstract class TransformBase extends EtlBase
     public function filterCappedRainGauge($variables)
     {
        $result =  DB::connection('temporary_work')
-                     ->table($this->etlConfig->getTableSpaceWork())
+                    ->table($this->etlConfig->tableSpaceWork)
                     ->select('id','comment')
                     ->where('comment','like','% PTI %')
                     ->orWhere('comment','like','% PTF %')
@@ -300,16 +290,16 @@ abstract class TransformBase extends EtlBase
        $countData = count($result);
 
        if ($countData == 1){
-          $this->deleteAfterIdVariable($this->etlConfig->getTableSpaceWork(),$result[0]->id,$variables);
+          $this->deleteAfterIdVariable($result[0]->id,$variables);
        }else{
            if ($countData % 2 !== 0){
-               $this->deleteAfterIdVariable($this->etlConfig->getTableSpaceWork(),$result[$countData - 1]->id,$variables);
+               $this->deleteAfterIdVariable($result[$countData - 1]->id,$variables);
                unset($result[$countData - 1]);
                $countData -= 1;
            }
 
            for( $i = 0; $i < $countData; $i += 2){
-               $this->deleteInRangeIdVariable($this->etlConfig->getTableSpaceWork(),$result[$i]->id,$result[$i + 1]->id,$variables);
+               $this->deleteInRangeIdVariable($result[$i]->id,$result[$i + 1]->id,$variables);
            }
        }
 
@@ -324,7 +314,7 @@ abstract class TransformBase extends EtlBase
     public function getElementInFact($date, $time)
     {
         return DB::connection('data_warehouse')
-            ->table($this->etlConfig->getTableDestination())
+            ->table($this->etlConfig->tableDestination)
             ->select('*')
             ->where('date_sk','=',$date)
             ->where('time_sk','>=',$time)
@@ -339,7 +329,7 @@ abstract class TransformBase extends EtlBase
     public function getElementInTemporal($date, $time)
     {
         return DB::connection('temporary_work')
-            ->table($this->etlConfig->getTableSpaceWork())
+            ->table($this->etlConfig->tableSpaceWork)
             ->select('*')
             ->where('date_sk','=',$date)
             ->where('time_sk','>=',$time)

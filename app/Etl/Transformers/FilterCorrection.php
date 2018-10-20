@@ -9,6 +9,9 @@ use Exception;
 
 class FilterCorrection extends TransformBase implements TransformInterface, StepContract
 {
+    /**
+     * @var string
+     */
     public $method = 'Correction';
 
     /**
@@ -64,14 +67,12 @@ class FilterCorrection extends TransformBase implements TransformInterface, Step
     {
         try {
 
-            $varFilter = $this->etlConfig->getVarForFilter();
-
-            foreach ($varFilter as $variable){
+            foreach ($this->etlConfig->varForFilter as $variable){
                 if ($variable->correction_type){
                     $this->correctControl(
-                        $this->etlConfig->getTableSpaceWork(),
+                        $this->etlConfig->tableSpaceWork,
                         $variable,
-                        $this->etlConfig->getIncomingAmount()
+                        $this->etlConfig->incomingAmount
                     );
                 }
             }
@@ -90,7 +91,7 @@ class FilterCorrection extends TransformBase implements TransformInterface, Step
     {
         try {
 
-            if (is_numeric (array_search('wind_speed', array_column($this->etlConfig->getVarForFilter()->toArray(),'local_name')))){
+            if (is_numeric (array_search('wind_speed', array_column($this->etlConfig->varForFilter->toArray(),'local_name')))){
                 $this->filterWindSpeedZero();
             }
 

@@ -14,7 +14,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     /**
      * @var string
      */
-    private $method = 'Csv';
+    public $method = 'Csv';
 
     /**
      * @var string
@@ -25,6 +25,11 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
      * @var EtlConfig
      */
     public $etlConfig = null;
+
+    /**
+     * @var StepList
+     */
+    public $stepsList = null;
 
     /**
      * @var string
@@ -67,11 +72,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public $dateTime = false;
 
     /**
-     * @var StepList
-     */
-    public $stepsList = null;
-
-    /**
      * Csv constructor.
      * @param $etlConfig
      */
@@ -91,23 +91,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
         # Se ejecutan los pasos que se requieren para el proceso
         $this->stepsList->runStartList($this->etlConfig->processState,$this);
 
-        dd('stop in database extractor',$this);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * @param mixed $method
-     */
-    public function setMethod($method)
-    {
-        $this->method = $method;
+        dd('stop in csv plane extractor',$this);
     }
 
     /**
@@ -128,6 +112,8 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 
         return $stepList;
     }
+
+    /**############################################ STEP SECTION ################################################### **/
 
     /**
      * STEP
@@ -156,9 +142,9 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
 
-            ($this->etlConfig->getKeys())->config(
-                $this->etlConfig->getTypeProcess(),
-                $this->etlConfig->getStation()->typeStation->etl_method,
+            ($this->etlConfig->keys)->config(
+                $this->etlConfig->typeProcess,
+                ($this->etlConfig->station)->typeStation->etl_method,
                 'Plane',
                 null
             );
@@ -199,7 +185,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
 
-            if ($this->dateTime){ $this->getCalculateDateAndTime($this->etlConfig->getTableSpaceWork()); }
+            if ($this->dateTime){ $this->getCalculateDateAndTime(); }
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -218,7 +204,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
 
-            $this->deleteTimeAndDateNull($this->etlConfig->getTableSpaceWork());
+            $this->deleteTimeAndDateNull();
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -237,8 +223,8 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
 
-            $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'24:00:00');
-            $this->deleteLastDate($this->etlConfig->getTableSpaceWork(),'00:00:00');
+            $this->deleteLastDate('24:00:00');
+            $this->deleteLastDate('00:00:00');
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -259,7 +245,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepUpdateKeys() : array
     {
         try {
-            if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->getStation()->id);}
+            if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->station->id);}
 
             if (!$this->flagDateSk){$this->updateDateSk();}
 
@@ -293,6 +279,63 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
         }
     }
 
+    /**######################################## END STEP SECTION ################################################### **/
+
+
+    /**########################################## SETTERS SECTION ################################################### **/
+
+    /**
+     * @param string $extension
+     */
+    public function setExtension(string $extension = 'csv')
+    {
+        $this->extension = $extension;
+    }
+
+    /**
+     * @param string $fileName
+     */
+    public function setFileName(string $fileName)
+    {
+        $this->fileName = $fileName;
+    }
+
+    /**
+     * @param bool $flagDateSk
+     */
+    public function setFlagDateSk(bool $flagDateSk = false)
+    {
+        $this->flagDateSk = $flagDateSk;
+    }
+
+    /**
+     * @param bool $flagTimeSk
+     */
+    public function setFlagTimeSk(bool $flagTimeSk = false)
+    {
+        $this->flagTimeSk = $flagTimeSk;
+    }
+
+    /**
+     * @param bool $dateTime
+     */
+    public function setDateTime(bool $dateTime = false)
+    {
+        $this->dateTime = $dateTime;
+    }
+
+    /**
+     * @param array $inputVariables # TODO ESTE METODO HAY QUE QUITARLO ?? O CREAR OTRA PROPIEDAD
+     */
+    private function setDateTimeProperty(array $inputVariables)
+    {
+        $this->dateTime = in_array('date_time',$inputVariables);
+    }
+
+    /**####################################### END SETTERS SECTION ################################################## **/
+
+
+    /**######################################### PRIVATE SECTION ################################################### **/
 
     /**
      *
@@ -310,11 +353,11 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     private function getVariablesName($inputVariables)
     {
         $arr = [];
-        $configCsv = (object)Config::get('etl')['csv_keys'][$this->etlConfig->getStation()->typeStation->etl_method];
+        $configCsv = (object)Config::get('etl')['csv_keys'][$this->etlConfig->station->typeStation->etl_method];
         foreach ($configCsv as $key => $value){
             if (in_array($value['incoming_name'],$inputVariables)){$arr[$value['incoming_name']] = $value['local_name'];}
         }
-        foreach ($this->etlConfig->getVarForFilter() as $value)
+        foreach ($this->etlConfig->varForFilter as $value)
         {
             if (in_array($value->excel_name,$inputVariables)){
                 $arr[$value->excel_name] = $value->local_name ;
@@ -350,17 +393,23 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     }
 
     /**
-     * @param array $inputVariables
+     * @return bool
      */
-    private function setDateTimeProperty(array $inputVariables)
+    private function changeCommaForPointAllVariables() : bool
     {
-        $this->dateTime = in_array('date_time',$inputVariables);
+        # Extraer variables para el proceso
+        $varFilter = $this->etlConfig->varForFilter;
+
+        #Cambiar comas por puntos en los decimales.
+        foreach ($varFilter as $value) { $this->changeCommaForPoint($value->local_name);}
+
+        return true;
     }
 
     /**
      * @return bool
      */
-    private function csv()
+    protected function csv()
     {
         Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
 
@@ -368,7 +417,8 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
             $variablesName = $this->getVariablesName($inputVariables);
             $variablesNameExcel = array_keys($variablesName);
 
-            $this->setDateTimeProperty($inputVariables);
+            # Se edita la propiedad data time TODO porque se entrega esta variable a el date time ?? esta variables es bool
+            #$this->setDateTimeProperty($inputVariables);
 
             foreach ($reader->get() as $values){
                 $val = [];
@@ -390,7 +440,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     /**
      * @return bool
      */
-    private function txt()
+    protected function txt()
     {
         # Se lee el archivo
         $file = file(storage_path().'/app/public/'. $this->fileName,FILE_IGNORE_NEW_LINES);
@@ -404,8 +454,8 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
         # Se cargan las variables dependiendo de las variables cargadas
         $variablesName = $this->getVariablesName($inputVariables);
 
-        # Se edita la propiedad data time
-        $this->setDateTimeProperty($inputVariables);
+        # Se edita la propiedad data time TODO porque se entrega esta variable a el date time ?? esta variables es bool
+        # $this->setDateTimeProperty($inputVariables);
 
         # Se buscan los encabezados entrantes y se obtiene el nombre en la tabla temporal
         $headers = [];
@@ -422,20 +472,10 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
         }
 
         # Se inserta el array en a tabla temporal
-        $this->insertDataArray($this->etlConfig->getTableSpaceWork(),$data);
+        $this->insertDataArray($data);
 
         return true;
     }
 
-    public function changeCommaForPointAllVariables()
-    {
-        #Cambiar comas por puntos en los decimales.
-        $varFilter = $this->etlConfig->getVarForFilter();
-        foreach ($varFilter as $value) {
-            $this->changeCommaForPoint($this->etlConfig->getTableSpaceWork(), $value->local_name);
-        }
-
-        return true;
-    }
-
+    /**####################################### END PRIVATE SECTION ################################################# **/
 }

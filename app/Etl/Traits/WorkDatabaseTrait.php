@@ -70,27 +70,24 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param string $connection
-     * @param string $table
      * @param string $select
      * @return mixed
      */
-    public function getAllData(string $connection, string $table, string $select)
+    public function getAllData(string $select)
     {
-        return DB::connection($connection)->table($table)->select(DB::raw($select))
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select(DB::raw($select))
             ->whereNotNull('station_sk')->whereNotNull('date_sk')->whereNotNull('time_sk')
             ->get()->toArray();
     }
 
     /**
      * @param string $connection
-     * @param string $table
      * @param array $columns
      * @param array $data
      */
-    public function insertData(string $connection, string $table, $columns = [], $data = [])
+    public function insertData(string $connection, $columns = [], $data = [])
     {
-        $insert = "INSERT INTO ".$table." (".implode(',',$columns).") values ";
+        $insert = "INSERT INTO ".$this->etlConfig->tableSpaceWork." (".implode(',',$columns).") values ";
 
         foreach ($data as $can){
             $insert .= "( ";
@@ -138,53 +135,48 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $table
      * @param $data
      * @return mixed
      */
-    public function insertExistTable($table, $data)
+    public function insertExistTable($data)
     {
-        return DB::connection('temporary_work')->table($table)->insert($data);
+        return DB::connection('temporary_work')->table($this->etlConfig->tableExist)->insert($data);
     }
 
     /**
-     * @param $tableSpaceWork
      * @return mixed
      */
-    public function getIncomingAmount($tableSpaceWork)
+    public function getIncomingAmount()
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->select(DB::raw('COUNT(id) AS count'))->get()->toArray()[0]->count;
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select(DB::raw('COUNT(id) AS count'))->get()->toArray()[0]->count;
     }
 
     /**
-     * @param $tableSpaceWork
      * @return mixed
      */
-    public function getLastMigrateData($tableSpaceWork)
+    public function getLastMigrateData()
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->orderby('id','DESC')->first();
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->orderby('id','DESC')->first();
     }
 
     /**
-     * @param $tableSpaceWork
      * @return mixed
      */
-    public function listDateAndTimeFromSpaceWork($tableSpaceWork)
+    public function listDateAndTimeFromSpaceWork()
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->select('date_sk','time_sk')->orderby('date_sk','ASC')->orderby('time_sk','ASC')->get();
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('date_sk','time_sk')->orderby('date_sk','ASC')->orderby('time_sk','ASC')->get();
     }
 
     /**
-     * @param $tableSpaceWork
      * @param $date_sk
      * @param $time
      * @param $interval
      * @return mixed
      */
-    public function getValInRange($tableSpaceWork, $date_sk, $time, $interval)
+    public function getValInRange($date_sk, $time, $interval)
     {
         return DB::connection('temporary_work')
-                    ->table($tableSpaceWork)
+                    ->table($this->etlConfig->tableSpaceWork)
                     ->select('*')
                     ->where('date_sk', $date_sk)
                     ->whereBetween('time_sk',[$time,$interval])
@@ -203,13 +195,12 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $tableSpaceWork
      * @param $date
      * @return mixed
      */
-    public function countRowForDate(string $tableSpaceWork,$date)
+    public function countRowForDate($date)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->select('*')->where('date_sk',$date)->count();
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('*')->where('date_sk',$date)->count();
     }
 
     /**
@@ -249,7 +240,7 @@ trait WorkDatabaseTrait
         }
 
         #Eliminar los valores actuales en el espacio de trabajo
-        foreach ($arrayValue as $value){$this->deleteFromDateAndTime($tableSpaceWork,$value->date_sk,$value->time_sk);}
+        foreach ($arrayValue as $value){$this->deleteFromDateAndTime($value->date_sk,$value->time_sk);}
 
         #Insertar la Correcion en el espacio de trabajo
         $this->serializationInsert($tableSpaceWork,$arr);
@@ -257,15 +248,14 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $tableSpaceWork
      * @param $date_sk
      * @param $time_sk
      * @return mixed
      */
-    public function deleteFromDateAndTime($tableSpaceWork, $date_sk, $time_sk)
+    public function deleteFromDateAndTime($date_sk, $time_sk)
     {
         return DB::connection('temporary_work')
-                    ->table($tableSpaceWork)
+                    ->table($this->etlConfig->tableSpaceWork)
                     ->where('date_sk',$date_sk)
                     ->where('time_sk',$time_sk)
                     ->delete();
@@ -340,14 +330,13 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $tableSpaceWork
      * @param $variable
      * @param array $search
      * @return mixed
      */
-    public function getWhereIn($tableSpaceWork, $variable, array $search)
+    public function getWhereIn($variable, array $search)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)
                     ->select('id','station_sk','date_sk','time_sk',$variable)
                     ->whereIn($variable,$search)
                     ->orderby('id')
@@ -355,17 +344,16 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $tableSpaceWork
      * @param $time
      * @return bool
      */
-    public function deleteLastDate($tableSpaceWork, $time)
+    public function deleteLastDate($time)
     {
-        $value = DB::connection('temporary_work')->table($tableSpaceWork)->select('id','time')->orderby('id','DESC')->first();
+        $value = DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('id','time')->orderby('id','DESC')->first();
 
         if (!empty($value)){
             if ($value->time == $time){
-                DB::connection('temporary_work')->table($tableSpaceWork)->where('id',$value->id)->delete();
+                DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('id',$value->id)->delete();
             }
         }
 
@@ -374,18 +362,17 @@ trait WorkDatabaseTrait
 
 
     /**
-     * @param string $tableSpaceWork
      * @param string $variableName
      * @param array $infoCalculation
      * @return bool
      */
-    public function generateVariableCalculated(string $tableSpaceWork, string $variableName, array $infoCalculation)
+    public function generateVariableCalculated(string $variableName, array $infoCalculation)
     {
-        $values = DB::connection('temporary_work')->table($tableSpaceWork)->select('id',$variableName)->whereNotNull($variableName)->get();
+        $values = DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('id',$variableName)->whereNotNull($variableName)->get();
 
         foreach ($values as $value) {
             DB::connection('temporary_work')
-                ->table($tableSpaceWork)
+                ->table($this->etlConfig->tableSpaceWork)
                 ->where('id',$value->id)
                 ->update([
                         $infoCalculation['destiny'] => round(((double)$value->{$variableName}) *  $infoCalculation['factor'],2)
@@ -396,14 +383,13 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param int $id
      * @param array $updates
      * @return mixed
      */
-    public function updateDateTimeFromId(string $tableSpaceWork, int $id, array $updates)
+    public function updateDateTimeFromId(int $id, array $updates)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->where('id','=',$id)->update($updates);
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('id','=',$id)->update($updates);
     }
 
     /**
@@ -428,77 +414,70 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param array $inserts
      * @return mixed
      */
-    public function insertDataArray(string $tableSpaceWork, array $inserts)
+    public function insertDataArray(array $inserts)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->insert($inserts);
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->insert($inserts);
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param string $variable
      * @return bool
      */
-    public function changeCommaForPoint(string $tableSpaceWork, string $variable)
+    public function changeCommaForPoint(string $variable)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->update([ $variable => DB::raw( " REGEXP_REPLACE($variable,',','.') " )]);
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->update([ $variable => DB::raw( " REGEXP_REPLACE($variable,',','.') " )]);
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param int $id
      * @param array $variables
      * @return mixed
      */
-    public function deleteAfterIdVariable(string $tableSpaceWork, int $id, array $variables)
+    public function deleteAfterIdVariable(int $id, array $variables)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->where('id', '>=' ,$id)->update($variables);
+        return DB::connection('temporary_work')->table($this->etlConfig->TableSpaceWork)->where('id', '>=' ,$id)->update($variables);
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param int $initialId
      * @param int $finalId
      * @param array $variables
      * @return mixed
      */
-    public function deleteInRangeIdVariable(string $tableSpaceWork, int $initialId, int $finalId, array $variables)
+    public function deleteInRangeIdVariable(int $initialId, int $finalId, array $variables)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->whereBetween('id', [$initialId, $finalId])->update($variables);
+        return DB::connection('temporary_work')->table($this->etlConfig->TableSpaceWork)->whereBetween('id', [$initialId, $finalId])->update($variables);
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param array $times
      * @return mixed
      */
-    public function deleteEldestHomogenization(string $tableSpaceWork, $times)
+    public function deleteEldestHomogenization($times)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->whereNotIn('time_sk',(array)$times)->delete();
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->whereNotIn('time_sk',(array)$times)->delete();
     }
 
     /**
-     * @param string $tableSpaceWork
      * @return mixed
      */
-    public function getIdAndDateTime(string $tableSpaceWork)
+    public function getIdAndDateTime()
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->select('id','date','time')->get();
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('id','date','time')->get();
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param string $key
      * @param string $column
      * @return mixed
      */
-    public function selectColumnWhereNull(string $tableSpaceWork, string $key, string $column)
+    public function selectColumnWhereNull(string $key, string $column)
     {
         return DB::connection('temporary_work')
-            ->table($tableSpaceWork)
+            ->table($this->etlConfig->tableSpaceWork)
             ->select($key)
             ->distinct($column)
             ->whereNull($column)
@@ -508,34 +487,35 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param $dateSk
      * @param null $date
      * @return mixed
      */
-    public function updateDateFromDateSk(string $tableSpaceWork, $dateSk, $date = null)
+    public function updateDateFromDateSk($dateSk, $date = null)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->where('date_sk', '=',$dateSk)->update(['date'=> $date]);
+        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('date_sk', '=',$dateSk)->update(['date'=> $date]);
     }
 
     /**
-     * @param string $tableSpaceWork
      * @param $timeSk
      * @param null $time
      * @return mixed
      */
-    public function updateTimeFromTimeSk(string $tableSpaceWork, $timeSk, $time = null)
+    public function updateTimeFromTimeSk($timeSk, $time = null)
     {
         return DB::connection('temporary_work')
-            ->table($tableSpaceWork)
+            ->table($this->etlConfig->tableSpaceWork)
             ->where('time_sk', '=',$timeSk)
             ->update(['time'=> $time]);
     }
 
-    public function getDuplicates(string $tableSpaceWork)
+    /**
+     * @return mixed
+     */
+    public function getDuplicates()
     {
         return DB::connection('temporary_work')
-            ->table($tableSpaceWork)
+            ->table($this->etlConfig->tableSpaceWork)
             ->selectRaw('station_sk,date_sk,time_sk, max(id)')
             ->groupBy('station_sk','date_sk','time_sk')
             ->havingRaw('count(station_sk) > 1')

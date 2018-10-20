@@ -267,9 +267,9 @@ class PlaneEtlController extends Controller
                 'optionExtract' =>[
                     'trustProcess'=> $options->trust_process,
                     'extractType' => 'Local',
-                    'initialDate' => $etlConfig->getInitialDate(),
+                    'initialDate' => $etlConfig->initialDate,
                     'initialTime' => '00:00:00',
-                    'finalDate' =>  $etlConfig->getFinalDate(),
+                    'finalDate' =>  $etlConfig->finalDate,
                     'finalTime' => '23:59:59'
                 ]
             ];
@@ -291,9 +291,9 @@ class PlaneEtlController extends Controller
             'optionExtract' =>[
                 'trustProcess'  => $options->trust_process,
                 'extractType'   => 'Local',
-                'initialDate'   => $etlConfig->getInitialDate(),
+                'initialDate'   => $etlConfig->initialDate,
                 'initialTime'   => '00:00:00',
-                'finalDate'     => $etlConfig->getFinalDate(),
+                'finalDate'     => $etlConfig->finalDate,
                 'finalTime'     => '23:59:59'
             ]
         ];

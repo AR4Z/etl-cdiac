@@ -78,6 +78,8 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
         return $stepList;
     }
 
+    /**############################################ STEP SECTION ################################################### **/
+
     /**
      * STEP
      * Crear el objeto de extraccion /ExtracType (este posee configuraciones diferentes para local y externa)
@@ -104,9 +106,9 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepCreateExtractType() : array
     {
         try {
-            ($this->etlConfig->getKeys())->config(
-                $this->etlConfig->getTypeProcess(),
-                ($this->etlConfig->getStation())->typeStation->etl_method,
+            ($this->etlConfig->keys)->config(
+                $this->etlConfig->typeProcess,
+                ($this->etlConfig->station)->typeStation->etl_method,
                 $this->method,
                 $this->extractType
             );
@@ -128,11 +130,11 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
         try {
             $this->insertAllDataInTemporal(
                 ($this->extractTypeObject)->extractData(
-                    $this->etlConfig->getkeys(),
-                    $this->etlConfig->getInitialDate(),
-                    $this->etlConfig->getInitialTime(),
-                    $this->etlConfig->getFinalDate(),
-                    $this->etlConfig->getFinalTime(),
+                    $this->etlConfig->keys,
+                    $this->etlConfig->initialDate,
+                    $this->etlConfig->initialTime,
+                    $this->etlConfig->finalDate,
+                    $this->etlConfig->finalTime,
                     10000
                 )
             );
@@ -156,7 +158,7 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
             # Ingresar la llave subrrogada de la estacion
-            if ($this->extractTypeObject->flagStationSk){$this->updateStationSk($this->etlConfig->getStation()->id);}
+            if ($this->extractTypeObject->flagStationSk){$this->updateStationSk(($this->etlConfig->station)->id);}
 
             # Ingresar la llave subrrogada de la fecha
             if ($this->extractTypeObject->flagDateSk){$this->updateDateSk();}
@@ -190,6 +192,29 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
         }
     }
 
+    /**############################################ END STEP SECTION ################################################### **/
+
+    /**############################################ SET SECTION ################################################### **/
+
+    /**
+     * @param string $extractType
+     */
+    public function setExtractType(string $extractType = 'External')
+    {
+        $this->extractType = $extractType;
+    }
+
+    /**
+     * @param bool $truncateTemporal
+     */
+    public function setTruncateTemporal(bool $truncateTemporal = true)
+    {
+        $this->truncateTemporal = $truncateTemporal;
+    }
+
+    /**######################################### END  SET SECTION ################################################# **/
+
+    /**############################################ PRIVATE SECTION ################################################### **/
 
     /**
      * @param $data
@@ -198,7 +223,9 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
      */
     private function insertAllDataInTemporal($data)
     {
-        $this->insertData('temporary_work',$this->etlConfig->getTableSpaceWork(),($this->extractTypeObject)->columns, $data);
+        $this->insertData('temporary_work',($this->extractTypeObject)->columns, $data);
         return true;
     }
+
+    /**############################################ END PRIVATE SECTION ################################################### **/
 }
