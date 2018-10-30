@@ -69,8 +69,8 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     public function startSteps(StepList $stepList) : StepList
     {
         $stepList->addStep( new Step('configureSpaceWork'));
-        $stepList->addStep( new Step('stepCreateExtractType'));
         $stepList->addStep( new Step('stepConfigureConsults'));
+        $stepList->addStep( new Step('stepCreateExtractType'));
         $stepList->addStep( new Step('stepIncludeDataInSpaceWork'));
         $stepList->addStep( new Step('stepUpdateKeys'));
         $stepList->addStep( new Step('stepTrustProcess'));
@@ -128,16 +128,26 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepIncludeDataInSpaceWork() : array
     {
         try {
-            $this->insertAllDataInTemporal(
-                ($this->extractTypeObject)->extractData(
-                    $this->etlConfig->keys,
-                    $this->etlConfig->initialDate,
-                    $this->etlConfig->initialTime,
-                    $this->etlConfig->finalDate,
-                    $this->etlConfig->finalTime,
-                    10000
-                )
+
+            $values = ($this->extractTypeObject)->extractData(
+                $this->etlConfig->keys,
+                $this->etlConfig->initialDate,
+                $this->etlConfig->initialTime,
+                $this->etlConfig->finalDate,
+                $this->etlConfig->finalTime,
+                10000
             );
+
+            if (is_null($values) or count($values) ==  0){
+                return [
+                    'resultExecution'   => false,
+                    'data'              => null,
+                    'exception'         => null,
+                    'error'             => "Error : No hay Datos para esta estacion  en estas fechas: ".$this->etlConfig->initialDate." ". $this->etlConfig->initialTime." -- ".$this->etlConfig->finalDate." ".$this->etlConfig->finalTime
+                ];
+            }
+
+            $this->insertAllDataInTemporal($values);
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 

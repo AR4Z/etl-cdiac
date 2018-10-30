@@ -21,7 +21,7 @@ trait WorkDatabaseTrait
      * @param int $limit
      * @return mixed
      */
-    public function getExternalData(string $connection,string $table,string $keys,string $select,string $initialDate,string $initialTime,string $finalDate,string $finalTime,int $limit = null)
+    public function getExternalDataWDT(string $connection, string $table, string $keys, string $select, string $initialDate, string $initialTime, string $finalDate, string $finalTime, int $limit = null)
     {
         $query = new Query();
         return $query->init($connection,$table)->select($select)->externalWhereBetween($keys,$initialDate,$initialTime,$finalDate,$finalTime)->limit($limit)->execute()->data;
@@ -39,7 +39,7 @@ trait WorkDatabaseTrait
      * @param int $limit
      * @return mixed
      */
-    public function getLocalData(string $connection,string $table,string $keys,string $select,string $initialDate,string $initialTime,string $finalDate,string $finalTime,int $limit = null)
+    public function getLocalDataWDT(string $connection, string $table, string $keys, string $select, string $initialDate, string $initialTime, string $finalDate, string $finalTime, int $limit = null)
     {
         $query = new Query();
 
@@ -51,29 +51,15 @@ trait WorkDatabaseTrait
             ->execute();
 
         //TODO -- probar la funcionalidad de este metodo --
-
-        $data = $query->data;
-
-        if (is_null($data)){
-            echo ("Resultado de la consulta es null");
-            return false;
-        }
-
-        if (count($data) ==  0){
-            //dd('Error : No hay Datos para esta estacion en estas fechas');
-            echo ("Error : No hay Datos para esta estacion  en estas fechas: $initialDate $initialTime -- $finalDate $finalTime");
-            return false;
-        }
-
         //dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
-        return $data;
+        return $query->data;
     }
 
     /**
      * @param string $select
      * @return mixed
      */
-    public function getAllData(string $select)
+    public function getAllDataWDT(string $select)
     {
         return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select(DB::raw($select))
             ->whereNotNull('station_sk')->whereNotNull('date_sk')->whereNotNull('time_sk')

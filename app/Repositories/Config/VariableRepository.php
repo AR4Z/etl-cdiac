@@ -2,16 +2,32 @@
 
 namespace App\Repositories\Config;
 
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Config\Variable;
-/**
- *
- */
-class VariableRepository extends EloquentRepository
+use DB;
+
+class VariableRepository extends EloquentRepository implements RepositoriesContract
 {
-  protected $repositoryId = 'rinvex.repository.uniqueid';
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(Variable::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
 
-  protected $model = Variable::class;
+    /**
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function queryBuilder(): Builder
+    {
+        $model = $this->createModel();
 
-
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+    }
 }

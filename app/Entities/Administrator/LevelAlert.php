@@ -9,24 +9,43 @@
 namespace App\Entities\Administrator;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
 class LevelAlert extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'administrator';
 
+    /**
+     * @var string
+     */
     protected $table = 'level_alert';
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'alert_id','name','code','description','level','maximum','minimum'
     ];
 
+    /**
+     * @var array
+     */
     protected $hidden = [
         'id'
     ];
 
+    /**
+     * @var array
+     */
     protected $dates = [
         'created_at', 'updated_at'
     ];
@@ -34,7 +53,7 @@ class LevelAlert extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function alert()
+    public function alert() : BelongsTo
     {
         return $this->belongsTo(Alert::class,'alert_id');
     }

@@ -6,11 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExistFactWeather extends Model
 {
-
+    /**
+     * @var string
+     */
     protected $connection = 'temporary_work';
 
+    /**
+     * @var string
+     */
     protected $table = 'exist_fact_weather';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk','date_time',
         'rainfall',

@@ -3,17 +3,33 @@
 namespace App\Entities\DataWareHouse;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DateDim extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'data_warehouse';
 
+    /**
+     * @var string
+     */
     protected $table = 'date_dim';
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'date_sk';
 
+    /**
+     * @var bool
+     */
     public $timestamps = false;
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'date',
         'year',
@@ -28,31 +44,59 @@ class DateDim extends Model
         'day_name',
     ];
 
-    public function inventoryRows(){
+    /**
+     * @return HasMany
+     */
+    public function inventoryRows() : HasMany
+    {
         return $this->hasMany(InventoryFact::class, 'date_sk', 'date_sk');
     }
 
-    public function weatherRows(){
+    /**
+     * @return HasMany
+     */
+    public function weatherRows() : HasMany
+    {
         return $this->hasMany(WeatherFact::class, 'date_sk', 'date_sk');
     }
 
-    public function airRows(){
+    /**
+     * @return HasMany
+     */
+    public function airRows() : HasMany
+    {
         return $this->hasMany(AirFact::class, 'date_sk', 'date_sk');
     }
 
-    public function groundwaterRows(){
+    /**
+     * @return HasMany
+     */
+    public function groundwaterRows() : HasMany
+    {
         return $this->hasMany(GroundwaterFact::class, 'date_sk', 'date_sk');
     }
 
-    public function airReliabilityRows(){
+    /**
+     * @return HasMany
+     */
+    public function airReliabilityRows() : HasMany
+    {
         return $this->hasMany(AirReliability::class, 'date_sk', 'date_sk');
     }
 
-    public function correctionHistoryRows(){
+    /**
+     * @return HasMany
+     */
+    public function correctionHistoryRows() : HasMany
+    {
         return $this->hasMany(CorrectionHistory::class, 'date_sk', 'date_sk');
     }
 
-    public function weatherReliabilityRows(){
+    /**
+     * @return HasMany
+     */
+    public function weatherReliabilityRows() : HasMany
+    {
         return $this->hasMany(WeatherReliability::class, 'date_sk', 'date_sk');
     }
 }

@@ -3,19 +3,38 @@
 namespace App\Entities\DataWareHouse;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WeatherReliability extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'data_warehouse';
 
+    /**
+     * @var string
+     */
     protected $table = 'weather_reliability';
 
+    /**
+     * @var bool
+     */
     public $incrementing = false;
 
+    /**
+     * @var bool
+     */
     public $timestamps = false;
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'id','station_sk', 'date_sk',
         'rainfall_total_records',
@@ -74,11 +93,19 @@ class WeatherReliability extends Model
         'solar_radiation_trust',
     ];
 
-    public function station(){
+    /**
+     * @return BelongsTo
+     */
+    public function station() : BelongsTo
+    {
         return $this->belongsTo(StationDim::class, 'station_sk', 'station_sk');
     }
 
-    public function date(){
+    /**
+     * @return BelongsTo
+     */
+    public function date() : BelongsTo
+    {
         return $this->belongsTo(DateDim::class, 'date_sk', 'date_sk');
     }
 }

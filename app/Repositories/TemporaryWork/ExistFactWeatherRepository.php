@@ -2,11 +2,32 @@
 
 namespace App\Repositories\TemporaryWork;
 
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\ExistFactWeather;
+use DB;
 
-class ExistFactWeatherRepository extends EloquentRepository
+class ExistFactWeatherRepository extends EloquentRepository implements RepositoriesContract
 {
-    protected $repositoryId = 'rinvex.repository.uniqueid';
-    protected $model = ExistFactWeather::class;
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(ExistFactWeather::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
+
+    /**
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function queryBuilder(): Builder
+    {
+        $model = $this->createModel();
+
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+    }
 }

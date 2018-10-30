@@ -2,12 +2,32 @@
 
 namespace App\Repositories\Administrator;
 
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
+use DB;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Activity;
 
-class ActivityRepository extends EloquentRepository
+class ActivityRepository extends EloquentRepository implements RepositoriesContract
 {
-    protected $repositoryId = 'rinvex.repository.uniqueid';
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(Activity::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
 
-    protected $model = Activity::class;
+    /**
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function queryBuilder(): Builder
+    {
+        $model = $this->createModel();
+
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+    }
 }

@@ -2,32 +2,40 @@
 
 namespace App\Repositories\TemporaryWork;
 
+use Illuminate\Support\Collection;
+
 interface TemporaryInterface
 {
     /**
-     * @return mixed
+     * @return array
      */
-    public function getDatesDistinct();
+    public function getDatesDistinct() : array;
 
     /**
+     * @return array
+     */
+    public function getTimesDistinct() : array;
+
+
+    /**
+     * @param int $dateSk
+     * @param string $date
      * @return mixed
      */
-    public function getTimesDistinct();
-
-    public function updateDateSk($dateSk, $date);
+    public function updateDateSk(int $dateSk, string $date);
 
     /**
      * @param $timeSk
      * @param $time
      * @return mixed
      */
-    public function updateTimeSk($timeSk, $time);
+    public function updateTimeSk(int $timeSk, string $time);
 
     /**
      * @param $stationId
      * @return mixed
      */
-    public function UpdateStationSk($stationId);
+    public function UpdateStationSk(int $stationId);
 
     /**
      * @return mixed
@@ -39,17 +47,17 @@ interface TemporaryInterface
      * @param $value
      * @return mixed
      */
-    public function incrementDateSk($stationSk, $value);
+    public function incrementDateSk(int $stationSk, int $value);
 
     /**
      * @param $stationSk
      * @param $value
      * @return mixed
      */
-    public function updateTimeSkFromStationSk($stationSk, $value);
+    public function updateTimeSkFromStationSk(int $stationSk, int $value);
 
     /**
-     * @return mixed
+     * @return Collection
      */
-    public function getDateTime();
+    public function getDateTime() : Collection;
 }

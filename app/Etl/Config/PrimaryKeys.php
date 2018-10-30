@@ -146,7 +146,11 @@ class PrimaryKeys
 
             if ($value['key']){ array_push($this->keys,$key); }
 
-            if (!is_null($value['calculated']) and !$value['calculated']){ array_push($this->notCalculatedColumns,$key); }
+            if (!is_null($value['calculated'])){
+                if (!$value['calculated']){
+                    array_push($this->notCalculatedColumns,$key);
+                }
+            }
 
             if ($value['local_incoming']){
                 array_push($this->localCalculatedKeys,$key);

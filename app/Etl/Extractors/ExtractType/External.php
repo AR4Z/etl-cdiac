@@ -103,7 +103,7 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
 
     public function extractData($keys, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
     {
-        return $this->getExternalData(
+        return $this->getExternalDataWDT(
                 $this->extractConnection,
                 $this->extractTable,
                 $keys->mergeExternalIncomingKeys,

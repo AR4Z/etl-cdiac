@@ -2,24 +2,41 @@
 
 namespace App\Repositories\Config;
 
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Config\Connection;
+use DB;
 
-/**
- *
- */
-class ConnectionRepository extends EloquentRepository
+class ConnectionRepository extends EloquentRepository implements RepositoriesContract
 {
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(Connection::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
 
-  protected $repositoryId = 'rinvex.repository.uniqueid';
+    /**
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function queryBuilder(): Builder
+    {
+        $model = $this->createModel();
 
-  protected $model = Connection::class;
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+    }
 
-
-
-    public function getName($connectionName)
+    /**
+     * @param string $connectionName
+     * @return Connection
+     */
+    public function getName(string $connectionName) : Connection
     {
         return $this->where('name', $connectionName)->first();
     }
-
 }

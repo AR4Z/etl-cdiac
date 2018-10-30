@@ -3,17 +3,33 @@
 namespace App\Entities\DataWareHouse;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StationDim extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'data_warehouse';
-    
+
+    /**
+     * @var string
+     */
     protected $table = 'station_dim';
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'station_sk';
 
+    /**
+     * @var bool
+     */
     public $timestamps = false;
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'code',
         'name',
@@ -34,27 +50,51 @@ class StationDim extends Model
         'community_station',
     ];
 
-    public function weatherRows(){
+    /**
+     * @return HasMany
+     */
+    public function weatherRows() : HasMany
+    {
         return $this->hasMany(WeatherFact::class, 'station_sk', 'station_sk');
     }
 
-    public function airRows(){
+    /**
+     * @return HasMany
+     */
+    public function airRows() : HasMany
+    {
         return $this->hasMany(AirFact::class, 'station_sk', 'station_sk');
     }
 
-    public function groundwaterRows(){
+    /**
+     * @return HasMany
+     */
+    public function groundwaterRows() : HasMany
+    {
         return $this->hasMany(GroundwaterFact::class, 'station_sk', 'station_sk');
     }
 
-    public function airReliabilityRows(){
+    /**
+     * @return HasMany
+     */
+    public function airReliabilityRows() : HasMany
+    {
         return $this->hasMany(AirReliability::class, 'station_sk', 'station_sk');
     }
 
-    public function correctionHistoryRows(){
+    /**
+     * @return HasMany
+     */
+    public function correctionHistoryRows() : HasMany
+    {
         return $this->hasMany(CorrectionHistory::class, 'station_sk', 'station_sk');
     }
 
-    public function weatherReliabilityRows(){
+    /**
+     * @return HasMany
+     */
+    public function weatherReliabilityRows() : HasMany
+    {
         return $this->hasMany(WeatherReliability::class, 'station_sk', 'station_sk');
     }
 }

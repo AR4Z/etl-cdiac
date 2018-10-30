@@ -6,14 +6,15 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
+        "barryvdh/laravel-debugbar": "^3.0",
+        "barryvdh/laravel-ide-helper": "^2.5",
         "fideloper/proxy": "~3.3",
+        "jenssegers/date": "^3.2",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "barryvdh/laravel-debugbar": "^3.0",
-        "jenssegers/date": "^3.2",
         "laravelcollective/html": "^5.5.1",
-        "rinvex/repository": "dev-develop#29884f8cd9cd212ff30b1d52124fd3d1c040fda1",
-        "maatwebsite/excel": "~2.1.3"
+        "maatwebsite/excel": "~2.1.3",
+        "rinvex/repository": "dev-develop#29884f8cd9cd212ff30b1d52124fd3d1c040fda1"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
@@ -56,7 +57,10 @@
             "Illuminate\\Foundation\\ComposerScripts::postInstall"
         ],
         "post-update-cmd": [
-            "Illuminate\\Foundation\\ComposerScripts::postUpdate"
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "php artisan ide-helper:generate",
+            "php artisan ide-helper:meta",
+            "php artisan optimize"
         ]
     },
     "config": {

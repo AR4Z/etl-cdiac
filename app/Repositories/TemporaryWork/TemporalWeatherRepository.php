@@ -2,22 +2,40 @@
 
 namespace App\Repositories\TemporaryWork;
 
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporalWeather;
 use DB;
 
-
-class TemporalWeatherRepository extends EloquentRepository implements TemporaryInterface
+class TemporalWeatherRepository extends EloquentRepository implements RepositoriesContract,TemporaryInterface
 {
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(TemporalWeather::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
 
-    protected $repositoryId = 'rinvex.repository.uniqueid';
+    /**
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function queryBuilder(): Builder
+    {
+        $model = $this->createModel();
 
-    protected $model = TemporalWeather::class;
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+    }
 
     /**
      * @return mixed
      */
-    public function getDatesDistinct()
+    public function getDatesDistinct() : array
     {
         return $this->select('id','date')->distinct()->get()->all();
     }
@@ -25,78 +43,78 @@ class TemporalWeatherRepository extends EloquentRepository implements TemporaryI
     /**
      * @return mixed
      */
-    public function getTimesDistinct()
+    public function getTimesDistinct() : array
     {
         return $this->select('id','time')->distinct()->get()->all();
     }
 
     /**
-     * @param $dateSk
-     * @param $date
+     * @param int $dateSk
+     * @param string $date
      * @return mixed
      * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function updateDateSk($dateSk, $date)
+    public function updateDateSk(int $dateSk, string $date)
     {
         return $this->createModel()->where('date', 'LIKE', $date)->update(['date_sk' => $dateSk]);
     }
 
     /**
-     * @param $timeSk
-     * @param $time
+     * @param int $timeSk
+     * @param string $time
      * @return mixed
      * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function updateTimeSk($timeSk, $time)
+    public function updateTimeSk(int $timeSk, string $time)
     {
         return $this->createModel()->where('time', '=', $time)->update(['time_sk' => $timeSk]);
     }
 
     /**
-     * @param $stationId
+     * @param int $stationId
      * @return mixed
      * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function UpdateStationSk($stationId)
+    public function UpdateStationSk(int $stationId)
     {
         return $this->createModel()->query()->update(['station_sk' => $stationId]);
     }
 
     /**
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function truncate()
     {
-        return DB::Connection('temporary_work')->table('temporal_weather')->truncate();
+        $this->queryBuilder()->truncate();
     }
 
     /**
-     * @param $stationSk
-     * @param $value
+     * @param int $stationSk
+     * @param int $value
      * @return mixed
      */
-    public function incrementDateSk($stationSk, $value)
+    public function incrementDateSk(int $stationSk, int $value)
     {
         return $this->where('id', '=',$stationSk)->increment('date_sk',$value);
     }
 
     /**
-     * @param $stationSk
-     * @param $value
+     * @param int $stationSk
+     * @param int $value
      * @return mixed
      * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function updateTimeSkFromStationSk($stationSk, $value)
+    public function updateTimeSkFromStationSk(int $stationSk, int $value)
     {
         return $this->createModel()->where('id', '=', $stationSk)->update(['time_sk' => $value]);
     }
 
     /**
-     * @return mixed
+     * @return Collection
      */
-    public function getDateTime()
+    public function getDateTime() : Collection
     {
         return $this->select('id','date_time')->get();
     }
-
 }

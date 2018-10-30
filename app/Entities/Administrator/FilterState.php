@@ -3,23 +3,42 @@
 namespace App\Entities\Administrator;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FilterState extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'administrator';
 
+    /**
+     * @var string
+     */
     protected $table = 'filter_state';
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'station_id','current_date','current_time','updated'
     ];
 
+    /**
+     * @var array
+     */
     protected $hidden = [
         'id'
     ];
 
+    /**
+     * @var array
+     */
     protected $dates = [
         'created_at', 'updated_at'
     ];
@@ -27,7 +46,7 @@ class FilterState extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function station()
+    public function station() : BelongsTo
     {
         return $this->belongsTo(Station::class,'station_id');
     }

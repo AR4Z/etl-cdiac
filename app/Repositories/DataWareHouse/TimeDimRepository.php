@@ -2,22 +2,33 @@
 
 namespace App\Repositories\DataWareHouse;
 
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\TimeDim;
 use DB;
 
-class TimeDimRepository extends EloquentRepository
+class TimeDimRepository extends EloquentRepository implements RepositoriesContract
 {
-    protected $repositoryId = 'rinvex.repository.uniqueid';
-
-    protected $model = TimeDim::class;
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(TimeDim::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
 
     /**
-     * @return mixed
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    protected function queryBuilder()
+    public function queryBuilder(): Builder
     {
-        return DB::connection('data_warehouse')->table('time_dim');
+        $model = $this->createModel();
+
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
 
     /**
@@ -52,9 +63,12 @@ class TimeDimRepository extends EloquentRepository
     /**
      * @param $elements
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getStandardData($elements)
     {
         return $this->queryBuilder()->select('time_sk','time')->whereIn('time_sk', $elements)->orderBy('time_sk')->get()->toArray();
     }
+
+
 }

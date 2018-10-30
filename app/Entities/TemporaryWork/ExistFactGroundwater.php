@@ -6,10 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExistFactGroundwater extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'temporary_work';
 
+    /**
+     * @var string
+     */
     protected $table = 'exist_fact_groundwater';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk','date_time',
         'raw_air_pressure',

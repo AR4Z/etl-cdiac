@@ -2,18 +2,41 @@
 
 namespace App\Repositories\Administrator;
 
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Net;
+use DB;
 
-class NetRepository extends EloquentRepository
+class NetRepository extends EloquentRepository implements RepositoriesContract
 {
-    protected $repositoryId = 'rinvex.repository.uniqueid';
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(Net::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
 
-    protected $model = Net::class;
+    /**
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function queryBuilder(): Builder
+    {
+        $model = $this->createModel();
 
-    public function getNetName()
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getNetName() : Collection
     {
         return $this->select('id','name')->where('etl_active',true)->pluck('name','id');
     }
-
 }

@@ -3,19 +3,38 @@
 namespace App\Entities\DataWareHouse;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InventoryFact extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'data_warehouse';
-    
+
+    /**
+     * @var string
+     */
     protected $table = 'inventory_fact';
 
+    /**
+     * @var bool
+     */
     public $incrementing = false;
 
+    /**
+     * @var bool
+     */
     public $timestamps = false;
 
-    protected $primaryKey = ['source_sk', 'date_sk'];
+    /**
+     * @var string
+     */
+    protected $primaryKey = 'source_sk';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'source_sk', 'date_sk',
         'co',
@@ -32,11 +51,19 @@ class InventoryFact extends Model
         'comment',
     ];
 
-    public function source(){
+    /**
+     * @return BelongsTo
+     */
+    public function source() : BelongsTo
+    {
         return $this->belongsTo(SourceDim::class, 'source_sk', 'source_sk');
     }
 
-    public function date(){
+    /**
+     * @return BelongsTo
+     */
+    public function date() : BelongsTo
+    {
         return $this->belongsTo(DateDim::class, 'date_sk', 'date_sk');
     }
 }

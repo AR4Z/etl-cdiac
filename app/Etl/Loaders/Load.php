@@ -281,7 +281,7 @@ class Load extends LoadBase implements LoadInterface,StepContract
      */
     public function selectTemporalTable()
     {
-        return $this->getAllData($this->select);
+        return $this->getAllDataWDT($this->select);
     }
 
     /**

@@ -6,10 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class TemporalGroundwater extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'temporary_work';
 
+    /**
+     * @var string
+     */
     protected $table = 'temporal_groundwater';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'id','station_sk', 'date_sk', 'time_sk','date_time',
         'date','time',

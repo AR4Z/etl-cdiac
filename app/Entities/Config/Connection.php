@@ -3,6 +3,7 @@
 namespace App\Entities\Config;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Connection extends Model
 {
@@ -29,7 +30,11 @@ class Connection extends Model
       'id','name', 'driver', 'host','port','database','username', 'password', 'active', 'filtered'
   ];
 
-  public function stations(){
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function stations() : BelongsTo
+    {
       return $this->belongsTo('App\Entities\Config\Station', 'connection_id');
   }
 }

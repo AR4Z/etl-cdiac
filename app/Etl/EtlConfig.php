@@ -4,15 +4,15 @@ namespace App\Etl;
 
 use App\Entities\Administrator\{Connection, Net, Station };
 use App\Etl\Traits\RemoveAccents;
-use Carbon\Carbon;
+use App\Repositories\RepositoryFactoryTrait;
 use Facades\App\Repositories\Administrator\{NetRepository,ConnectionRepository,StationRepository};
 use App\Etl\Config\PrimaryKeys;
-use Illuminate\Support\Facades\Config;
+use Config;
 use Illuminate\Support\Collection;
 
 class EtlConfig
 {
-    use RemoveAccents;
+    use RemoveAccents,RepositoryFactoryTrait;
 
     /**
      * $typeProcess is option variable: 'Original' - 'Filter' - null
@@ -255,12 +255,11 @@ class EtlConfig
     }
 
     /**
-     * @param null $repositorySpaceWork
+     * @param string $repositorySpaceWork
      */
-    public function setRepositorySpaceWork($repositorySpaceWork)
+    public function setRepositorySpaceWork(string $repositorySpaceWork)
     {
-        $routeRepository = "App\\Repositories\\TemporaryWork\\".$repositorySpaceWork;
-        $this->repositorySpaceWork = new $routeRepository;
+        $this->repositorySpaceWork = $this->factoryRepositories("App\\Repositories\\TemporaryWork\\".$repositorySpaceWork);
     }
 
     /**
@@ -329,8 +328,7 @@ class EtlConfig
      */
     public function setRepositoryDestination(string $repositoryDestination)
     {
-        $routeRepository = "App\\Repositories\\DataWareHouse\\".$repositoryDestination;
-        $this->repositoryDestination = new $routeRepository;
+        $this->repositoryDestination = $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$repositoryDestination);
     }
 
     /**
@@ -338,8 +336,7 @@ class EtlConfig
      */
     public function setRepositoryExist(string $repositoryExist)
     {
-        $routeRepository = "App\\Repositories\\TemporaryWork\\".$repositoryExist;
-        $this->repositoryExist = new $routeRepository;
+        $this->repositoryExist = $this->factoryRepositories("App\\Repositories\\TemporaryWork\\".$repositoryExist);
     }
 
     /**
@@ -367,8 +364,7 @@ class EtlConfig
      */
     public function setTrustRepository(string $trustRepository)
     {
-        $routeRepository = "App\\Repositories\\DataWareHouse\\".$trustRepository;
-        $this->trustRepository = new $routeRepository;
+        $this->trustRepository = $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository);
     }
 
     /**
@@ -471,5 +467,4 @@ class EtlConfig
     {
         $this->processState = $processState;
     }
-
 }

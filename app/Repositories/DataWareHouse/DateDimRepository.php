@@ -2,24 +2,36 @@
 
 namespace App\Repositories\DataWareHouse;
 
-
+use App\Repositories\RepositoriesContract;
 use Carbon\Carbon;
+use Illuminate\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\DateDim;
 use DB;
 
-class DateDimRepository extends EloquentRepository
+class DateDimRepository extends EloquentRepository implements RepositoriesContract
 {
-    protected $repositoryId = 'rinvex.repository.uniqueid';
-
-    protected $model = DateDim::class;
     /**
-     * @return mixed
+     * RepositoriesContract constructor.
+     * @param Container $container
      */
-    protected function queryBuilder()
+    public function __construct(Container $container)
     {
-        return DB::connection('data_warehouse')->table('date_dim');
+        $this->setContainer($container)->setModel(DateDim::class)->setRepositoryId('rinvex.repository.uniqueid');
     }
+
+    /**
+     * @return Builder
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function queryBuilder(): Builder
+    {
+        $model = $this->createModel();
+
+        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+    }
+
 
     /**
      * @param Carbon $date
@@ -55,10 +67,10 @@ class DateDimRepository extends EloquentRepository
     /**
      * @param $datesSk
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getWhereInDateAndDateSk($datesSk)
     {
         return $this->queryBuilder()->select('date_sk','date')->whereIn('date_sk',$datesSk)->get()->toArray();
     }
-
 }

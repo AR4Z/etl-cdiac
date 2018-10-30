@@ -6,10 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExistFactAir extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'temporary_work';
 
+    /**
+     * @var string
+     */
     protected $table = 'exist_fact_air';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk','date_time',
         'so2_local_ppb',

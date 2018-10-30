@@ -3,19 +3,38 @@
 namespace App\Entities\DataWareHouse;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WeatherFact extends Model
 {
+    /**
+     * @var string
+     */
     protected $connection = 'data_warehouse';
-    
+
+    /**
+     * @var string
+     */
     protected $table = 'weather_fact';
 
+    /**
+     * @var bool
+     */
     public $incrementing = false;
 
+    /**
+     * @var bool
+     */
     public $timestamps = false;
 
-    protected $primaryKey = ['station_sk', 'date_sk', 'time_sk'];
+    /**
+     * @var string
+     */
+    protected $primaryKey = 'station_sk';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'station_sk', 'date_sk', 'time_sk','date_time',
         'rainfall',
@@ -35,15 +54,27 @@ class WeatherFact extends Model
         'comment',
     ];
 
-    public function station(){
+    /**
+     * @return BelongsTo
+     */
+    public function station() : BelongsTo
+    {
         return $this->belongsTo(StationDim::class, 'station_sk', 'station_sk');
     }
 
-    public function date(){
+    /**
+     * @return BelongsTo
+     */
+    public function date() : BelongsTo
+    {
         return $this->belongsTo(DateDim::class, 'date_sk', 'date_sk');
     }
 
-    public function time(){
+    /**
+     * @return BelongsTo
+     */
+    public function time() : BelongsTo
+    {
         return $this->belongsTo(TimeDim::class, 'time_sk', 'time_sk');
     }
 

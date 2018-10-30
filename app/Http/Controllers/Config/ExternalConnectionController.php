@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers\Config;
 
+use App\Entities\TemporaryWork\TemporalWeather;
 use App\Http\Controllers\Controller;
+use App\Repositories\Administrator\NetRepository;
+use App\Repositories\RepositoryFactoryTrait;
+use App\Repositories\TemporaryWork\TemporalAirRepository;
+use App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\Config\ConnectionRequest;
@@ -19,23 +24,51 @@ use App\Repositories\Administrator\StationRepository;
 
 class ExternalConnectionController extends Controller
 {
-    use BaseExecuteEtl;
+    use BaseExecuteEtl,RepositoryFactoryTrait;
 
+    /**
+     * @var ConnectionRepository
+     */
     private $connectionRepository;
     /**
      * @var StationRepository
      */
     private $stationRepository;
+    /**
+     * @var NetRepository
+     */
+    private $netRepository;
+    /**
+     * @var TemporalAirRepository
+     */
+    private $temporalAirRepository;
+
+    /**
+     * @var TemporalWeatherRepository
+     */
+    private $temporalWeatherRepository;
 
     /**
      * ExternalConnectionController constructor.
      * @param ConnectionRepository $connectionRepository
      * @param StationRepository $stationRepository
+     * @param NetRepository $netRepository
+     * @param TemporalAirRepository $temporalAirRepository
+     * @param TemporalWeatherRepository $temporalWeatherRepository
      */
-    function __construct(ConnectionRepository $connectionRepository,StationRepository $stationRepository)
+    function __construct(
+        ConnectionRepository $connectionRepository,
+        StationRepository $stationRepository,
+        NetRepository $netRepository,
+        TemporalAirRepository $temporalAirRepository,
+        TemporalWeatherRepository $temporalWeatherRepository
+    )
     {
         $this->connectionRepository = $connectionRepository;
         $this->stationRepository = $stationRepository;
+        $this->netRepository = $netRepository;
+        $this->temporalAirRepository = $temporalAirRepository;
+        $this->temporalWeatherRepository = $temporalWeatherRepository;
     }
 
     /**
@@ -43,11 +76,13 @@ class ExternalConnectionController extends Controller
      * @return \Illuminate\Http\Response
      * @internal param DatabaseConfig $databaseConfig
      * @throws \ReflectionException
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function index()
     {
         //$container = $this->stationRepository->getContainer();
         //dd($container);
+
         //$this->executeAllOriginalYesterday();
        // dd($this->stationRepository);
         //dd($this->connectionRepository->getCacheLifetime());

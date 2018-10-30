@@ -30,7 +30,7 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
     /**
      * @var string
      */
-    public $extractTable = 'original_';
+    public $extractTable = '';
 
     /**
      * @var string
@@ -63,7 +63,7 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
      */
     public function __construct(EtlConfig $etlConfig)
     {
-        $this->extractTable .= $etlConfig->tableDestination;
+        $this->extractTable = $etlConfig->tableDestination;
         $this->setSelect($etlConfig->varForFilter,$etlConfig->keys);
     }
 
@@ -106,7 +106,7 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
 
     public function extractData($keys, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
     {
-        return $this->getLocalData(
+        return $this->getLocalDataWDT(
             $this->extractConnection,
                 $this->extractTable,
                 $keys->mergeLocalIncomingKeys,
