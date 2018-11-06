@@ -4,6 +4,7 @@ namespace App\Etl\Extractors\ExtractType;
 
 use App\Etl\EtlConfig;
 use Carbon\Carbon;
+use function Couchbase\defaultDecoder;
 
 class Local extends ExtractTypeBase implements ExtractTypeInterface
 {
@@ -30,7 +31,7 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
     /**
      * @var string
      */
-    public $extractTable = '';
+    public $extractTable = 'original_';
 
     /**
      * @var string
@@ -63,7 +64,7 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
      */
     public function __construct(EtlConfig $etlConfig)
     {
-        $this->extractTable = $etlConfig->tableDestination;
+        $this->extractTable .= $etlConfig->tableDestination;
         $this->setSelect($etlConfig->varForFilter,$etlConfig->keys);
     }
 
@@ -92,7 +93,6 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
         return $this;
     }
 
-
     /**
      * @param $keys
      * @param $initialDate
@@ -118,6 +118,4 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
                 $limit
         );
     }
-
-
 }

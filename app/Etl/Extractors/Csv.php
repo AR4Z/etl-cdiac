@@ -223,8 +223,8 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
 
-            $this->deleteLastDate('24:00:00');
-            $this->deleteLastDate('00:00:00');
+            $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'24:00:00');
+            $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'00:00:00');
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -368,11 +368,12 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function configureDateTimes()
     {
-        $initVal = $this->getInitialDataInSpaceWork();
-        $finalVal = $this->getFinalDataInSpaceWork();
+        $initVal = $this->getInitialDataInSpaceWorkWDT($this->etlConfig->repositorySpaceWork);
+        $finalVal = $this->getFinalDataInSpaceWorkWDT($this->etlConfig->repositorySpaceWork);
 
         if (!is_null($initVal)){
             $this->etlConfig->setInitialDate(
@@ -394,6 +395,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 
     /**
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function changeCommaForPointAllVariables() : bool
     {
@@ -401,13 +403,14 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
         $varFilter = $this->etlConfig->varForFilter;
 
         #Cambiar comas por puntos en los decimales.
-        foreach ($varFilter as $value) { $this->changeCommaForPoint($value->local_name);}
+        foreach ($varFilter as $value) { $this->changeCommaForPointWDT($this->etlConfig->repositorySpaceWork,$value->local_name);}
 
         return true;
     }
 
     /**
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     protected function csv()
     {
@@ -439,6 +442,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 
     /**
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     protected function txt()
     {
@@ -472,7 +476,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
         }
 
         # Se inserta el array en a tabla temporal
-        $this->insertDataArray($data);
+        $this->insertDataArrayWDT($this->etlConfig->repositorySpaceWork,$data);
 
         return true;
     }

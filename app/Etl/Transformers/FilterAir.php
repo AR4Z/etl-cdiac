@@ -164,19 +164,18 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     /**
      * @param string $localName
      * @param array $variablesCalculatedName
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function insertCalculateData(string $localName, array $variablesCalculatedName)
     {
         if (in_array($localName,$variablesCalculatedName)){
-            $this->generateVariableCalculated(
-                $localName,
-                $this->variablesCalculated[$localName]
-            );
+            $this->generateVariableCalculatedWDT($this->etlConfig->repositorySpaceWork, $localName, $this->variablesCalculated[$localName]);
         }
     }
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function goFilters()
     {
@@ -189,11 +188,7 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
             $this->updateForNull($value->local_name,$this->paramSearch);
 
             # Eliminar los datos por una hora despues $deleteLastHour
-            $this->updateRageTime(
-                $value->local_name,
-                $this->deleteLastHour,
-                $this->spaceTimeDelete
-            );
+            $this->updateRageTime($value->local_name, $this->deleteLastHour, $this->spaceTimeDelete);
 
             # Detectar los valores que sobrepasan los limites
             $this->overflow(

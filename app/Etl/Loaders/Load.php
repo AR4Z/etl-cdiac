@@ -278,19 +278,21 @@ class Load extends LoadBase implements LoadInterface,StepContract
 
     /**
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function selectTemporalTable()
     {
-        return $this->getAllDataWDT($this->select);
+        return $this->getAllDataWDT($this->etlConfig->repositorySpaceWork,$this->select);
     }
 
     /**
      * @param $data
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function insertAllDataInFact($data)
     {
-       return $this->insertDataEncode('data_warehouse',$this->etlConfig->tableDestination,$data);
+       return $this->insertDataEncodeWDT($this->etlConfig->repositoryDestination,$data);
     }
 
     /**
@@ -311,14 +313,16 @@ class Load extends LoadBase implements LoadInterface,StepContract
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function InsertDateTime()
     {
-        $val = $this->getIdAndDateTime();
+        $val = $this->getIdAndDateTimeWDT($this->etlConfig->repositorySpaceWork);
 
         foreach ($val as $item)
         {
-            $this->updateDateTimeFromId(
+            $this->updateDateTimeFromIdWDT(
+                $this->etlConfig->repositorySpaceWork,
                 $item->id,
                 [ 'date_time'=> $item->date.''. (is_null($item->time) ? '' : ' '.$item->time ) ]
             );
@@ -327,43 +331,45 @@ class Load extends LoadBase implements LoadInterface,StepContract
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function completeDateNull()
     {
-        $datesNull = $this->selectColumnWhereNull('date_sk','date');
+        $datesNull = $this->selectColumnWhereNullWDT($this->etlConfig->repositorySpaceWork,'date_sk','date');
 
         foreach ($datesNull as $dates) {
-            $this->updateDateFromDateSk($dates->date_sk, $this->calculateDateFromDateSk($dates->date_sk)
-            );
+            $this->updateDateFromDateSkWDT($this->etlConfig->repositorySpaceWork,$dates->date_sk, $this->calculateDateFromDateSk($dates->date_sk));
         }
     }
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function completeTimeNull()
     {
-        $timesNull = $this->selectColumnWhereNull('time_sk','time');
+        $timesNull = $this->selectColumnWhereNullWDT($this->etlConfig->repositorySpaceWork,'time_sk','time');
 
         foreach ($timesNull as $time) {
             if($time->time_sk < $this->maxValueSk){
-                $this->updateTimeFromTimeSk($time->time_sk, $this->calculateTimeFromTimeSk($time->time_sk));
+                $this->updateTimeFromTimeSkWDT($this->etlConfig->repositorySpaceWork,$time->time_sk, $this->calculateTimeFromTimeSk($time->time_sk));
             }
         }
     }
 
     /**
      * Se el ultimo dato entrante cuando se ingresan datos duplicados
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteDuplicates()
     {
         if ($this->deleteDuplicates) {
 
             # se extrae el maximo id cuando existen datos duplicados
-            $result = $this->getDuplicates();
+            $result = $this->getDuplicatesWDT($this->etlConfig->repositorySpaceWork);
 
             # se eliminan los id's duplicados
-            if (count($result) > 0){ $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'id', array_column($result,'max')); }
+            if (count($result) > 0){ $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'id', array_column($result,'max')); }
         }
     }
 

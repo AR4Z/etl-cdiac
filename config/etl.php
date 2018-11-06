@@ -12,7 +12,6 @@ return [
             'tableDestination'      => 'weather_fact',
             'tableTrust'            => 'weather_reliability',
             'stateTable'            => 'filterState',
-
         ],
         'air' => [
             'tableSpaceWork'        => 'temporal_air',

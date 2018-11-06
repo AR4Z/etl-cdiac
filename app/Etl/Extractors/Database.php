@@ -69,8 +69,8 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     public function startSteps(StepList $stepList) : StepList
     {
         $stepList->addStep( new Step('configureSpaceWork'));
-        $stepList->addStep( new Step('stepConfigureConsults'));
         $stepList->addStep( new Step('stepCreateExtractType'));
+        $stepList->addStep( new Step('stepConfigureConsults'));
         $stepList->addStep( new Step('stepIncludeDataInSpaceWork'));
         $stepList->addStep( new Step('stepUpdateKeys'));
         $stepList->addStep( new Step('stepTrustProcess'));
@@ -233,7 +233,7 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
      */
     private function insertAllDataInTemporal($data)
     {
-        $this->insertData('temporary_work',($this->extractTypeObject)->columns, $data);
+        $this->insertDataWDT('temporary_work',($this->extractTypeObject)->columns, $data);
         return true;
     }
 

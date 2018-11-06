@@ -14,6 +14,7 @@ abstract class LoadBase extends EtlBase
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function redirectExisting()
     {
@@ -26,21 +27,21 @@ abstract class LoadBase extends EtlBase
         foreach ($values as $value)
         {
             #Evaluar la existencia de los valores en su respectiva fact
-            if ($this->evaluateExistence($this->etlConfig->repositoryDestination,$value))
+            if ($this->evaluateExistenceWDT($this->etlConfig->repositoryDestination,$value))
             {
                 #Extraer Dato existente en la fact respectiva
                 $exist = $this->etlConfig->repositoryExist->fill($value->toArray())->toArray();
 
-                if (!$this->evaluateExistence($this->etlConfig->repositoryExist,$value))
+                if (!$this->evaluateExistenceWDT($this->etlConfig->repositoryExist,$value))
                 {
                     #Insertar dato existente en la fact de existentes respectiva
-                    $this->insertExistTable($exist);
+                    $this->insertExistTableWDT($this->etlConfig->repositoryExist,$exist);
 
                     # Documentar los valores existentes en el array de control
                     array_push($this->redirectExist, $exist);
                 }
                 #Eliminar los valores existentes de la tabla tenporal de trabajo
-                $this->deleteFromDateAndTime($value->date_sk,$value->time_sk);
+                $this->deleteFromDateAndTimeWDT($this->etlConfig->repositorySpaceWork,$value->date_sk,$value->time_sk);
             }
         }
     }
@@ -66,12 +67,13 @@ abstract class LoadBase extends EtlBase
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function calculateSequence()
     {
         if ($this->etlConfig->sequence){
 
-            $data = $this->getLastMigrateData();
+            $data = $this->getLastMigrateDataWDT($this->etlConfig->repositorySpaceWork);
 
             if (!is_null($data))
             {

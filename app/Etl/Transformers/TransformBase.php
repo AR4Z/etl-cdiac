@@ -4,6 +4,7 @@ namespace App\Etl\Transformers;
 
 use App\Etl\EtlBase;
 use DB;
+use phpDocumentor\Reflection\Types\This;
 
 abstract class TransformBase extends EtlBase
 {
@@ -83,10 +84,11 @@ abstract class TransformBase extends EtlBase
      * @param $deleteLastHour
      * @param $spaceTimeDelete
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateRageTime(string $variable, $deleteLastHour, $spaceTimeDelete)
     {
-        $values = $this->getWhereIn($variable,$deleteLastHour);
+        $values = $this->getWhereInWDT($this->etlConfig->repositorySpaceWork,$variable,$deleteLastHour);
 
         if (is_null($values)){ return false;}
 
@@ -263,6 +265,7 @@ abstract class TransformBase extends EtlBase
     /**
      * @param $variables
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function filterCappedRainGauge($variables)
     {
@@ -290,16 +293,16 @@ abstract class TransformBase extends EtlBase
        $countData = count($result);
 
        if ($countData == 1){
-          $this->deleteAfterIdVariable($result[0]->id,$variables);
+          $this->deleteAfterIdVariableWDT($this->etlConfig->repositorySpaceWork,$result[0]->id,$variables);
        }else{
            if ($countData % 2 !== 0){
-               $this->deleteAfterIdVariable($result[$countData - 1]->id,$variables);
+               $this->deleteAfterIdVariableWDT($this->etlConfig->repositorySpaceWork,$result[$countData - 1]->id,$variables);
                unset($result[$countData - 1]);
                $countData -= 1;
            }
 
            for( $i = 0; $i < $countData; $i += 2){
-               $this->deleteInRangeIdVariable($result[$i]->id,$result[$i + 1]->id,$variables);
+               $this->deleteInRangeIdVariableWDT($this->etlConfig->repositorySpaceWork,$result[$i]->id,$result[$i + 1]->id,$variables);
            }
        }
 

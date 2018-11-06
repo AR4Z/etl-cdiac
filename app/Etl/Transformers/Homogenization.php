@@ -162,7 +162,8 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     {
         try {
             foreach ($this->updates as $update) {
-                $this->updateDateTimeFromId(
+                $this->updateDateTimeFromIdWDT(
+                    $this->etlConfig->repositorySpaceWork,
                     $update['value']->id,
                     [
                         'date_sk'   => $update['date_sk'],
@@ -186,7 +187,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     {
         try {
 
-            foreach ($this->inserts as $insert){ $this->insertDataArray($insert);}
+            foreach ($this->inserts as $insert){ $this->insertDataArrayWDT($this->etlConfig->repositorySpaceWork,$insert);}
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -202,7 +203,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     {
         try {
 
-            $this->deleteEldestHomogenization(array_column($this->arrayTime,'time_sk'));
+            $this->deleteEldestHomogenizationWDT($this->etlConfig->repositorySpaceWork,array_column($this->arrayTime,'time_sk'));
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -211,6 +212,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
 
     /**
      *
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function homogenization()
     {
@@ -227,7 +229,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
             }
 
             #contar la cantidad de horas en un dia
-            $count = $this->countRowForDate($date->date_sk);
+            $count = $this->countRowForDateWDT($this->etlConfig->repositorySpaceWork,$date->date_sk);
 
             if($count == 0){
                 $this->pushAllInserts($date); #insertar todas las horas para una fecha que no trae nunguna hora
@@ -252,6 +254,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
 
     /**
      * @param $date
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function cycleForTime($date)
     {
@@ -261,7 +264,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
            $lowerLimit = (($time->time_sk - $this->timeSpace) <= 0 ) ? 1 : $time->time_sk - $this->timeSpace;
 
             #Evaluar cantidad en el rango actual
-            $valInRangeActual = $this->getValInRange($date->date_sk,$lowerLimit,$upperLimit);
+            $valInRangeActual = $this->getValInRangeWDT($this->etlConfig->repositorySpaceWork,$date->date_sk,$lowerLimit,$upperLimit);
 
             if ($time->time_sk == 1 and !is_null($this->previousData)){
                 $temporalValInRange = [];

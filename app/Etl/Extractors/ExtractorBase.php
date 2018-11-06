@@ -56,6 +56,7 @@ abstract class ExtractorBase extends EtlBase
 
     /**
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function trustProcess()
     {
@@ -69,7 +70,7 @@ abstract class ExtractorBase extends EtlBase
         $this->etlConfig->setTrustColumns($trust);
 
         # Calcular la Cantidad de datos entrante
-        $this->etlConfig->setIncomingAmount($this->getIncomingAmount());
+        $this->etlConfig->setIncomingAmount($this->getIncomingAmountWDT($this->etlConfig->repositorySpaceWork));
 
         return true;
     }
@@ -109,6 +110,7 @@ abstract class ExtractorBase extends EtlBase
 
     /**
      * @param $tableSpaceWork
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getCalculateDateAndTime()
     {
@@ -119,7 +121,7 @@ abstract class ExtractorBase extends EtlBase
             $dateTime = $this->parseCarbonDateTime(trim($value->date_time));
 
             if (!is_null($dateTime)){
-                $this->updateDateTimeFromId($value->id,[ 'date' => $dateTime->format('Y-m-d'),'time' =>$dateTime->format('H:i:s')]);
+                $this->updateDateTimeFromIdWDT($this->etlConfig->repositorySpaceWork,$value->id,[ 'date' => $dateTime->format('Y-m-d'),'time' =>$dateTime->format('H:i:s')]);
             }
         }
     }
@@ -143,14 +145,15 @@ abstract class ExtractorBase extends EtlBase
 
     /**
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteTimeAndDateNull()
+    public function deleteTimeAndDateNull() : bool
     {
-        $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'date_time',$this->keyErrors);
-        $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'date',$this->keyErrors);
-        $this->deleteWhereInVariable($this->etlConfig->tableSpaceWork,'time',$this->keyErrors);
+        $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'date_time',$this->keyErrors);
+        $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'date',$this->keyErrors);
+        $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'time',$this->keyErrors);
 
-        $this->deleteNullVariable($this->etlConfig->tableSpaceWork,'date');
+        $this->deleteNullVariableWDT($this->etlConfig->repositorySpaceWork,'date');
 
         return true;
     }

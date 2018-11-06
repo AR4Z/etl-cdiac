@@ -2,10 +2,12 @@
 
 namespace App\Etl\Traits;
 
+use App\Repositories\RepositoriesContract;
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use App\Etl\Database\Query;
 use DB;
+use Illuminate\Support\Collection;
 
 trait WorkDatabaseTrait
 {
@@ -24,7 +26,13 @@ trait WorkDatabaseTrait
     public function getExternalDataWDT(string $connection, string $table, string $keys, string $select, string $initialDate, string $initialTime, string $finalDate, string $finalTime, int $limit = null)
     {
         $query = new Query();
-        return $query->init($connection,$table)->select($select)->externalWhereBetween($keys,$initialDate,$initialTime,$finalDate,$finalTime)->limit($limit)->execute()->data;
+
+        return $query->init($connection,$table)
+                    ->select($select)
+                    ->externalWhereBetween($keys,$initialDate,$initialTime,$finalDate,$finalTime)
+                    ->limit($limit)
+                    ->execute()
+                    ->data;
     }
 
     /**
@@ -52,18 +60,25 @@ trait WorkDatabaseTrait
 
         //TODO -- probar la funcionalidad de este metodo --
         //dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
+
         return $query->data;
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param string $select
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getAllDataWDT(string $select)
+    public function getAllDataWDT(RepositoriesContract $repository, string $select) : array
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select(DB::raw($select))
-            ->whereNotNull('station_sk')->whereNotNull('date_sk')->whereNotNull('time_sk')
-            ->get()->toArray();
+        return $repository->queryBuilder()
+                        ->select(DB::raw($select))
+                        ->whereNotNull('station_sk')
+                        ->whereNotNull('date_sk')
+                        ->whereNotNull('time_sk')
+                        ->get()
+                        ->toArray();
     }
 
     /**
@@ -71,7 +86,7 @@ trait WorkDatabaseTrait
      * @param array $columns
      * @param array $data
      */
-    public function insertData(string $connection, $columns = [], $data = [])
+    public function insertDataWDT(string $connection, array $columns = [], array $data = [])
     {
         $insert = "INSERT INTO ".$this->etlConfig->tableSpaceWork." (".implode(',',$columns).") values ";
 
@@ -88,18 +103,16 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param string $connection
-     * @param string $table
+     * @param RepositoriesContract $repository
      * @param array $data
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function insertDataEncode(string $connection, string $table, $data = [])
+    public function insertDataEncodeWDT(RepositoriesContract $repository, array $data = []) : bool
     {
         $localData =  array_chunk(json_decode(json_encode($data),true),5000,true);
 
-        foreach ($localData as $localValue){
-            DB::connection($connection)->table($table)->insert($localValue);
-        }
+        foreach ($localData as $localValue){ $repository->queryBuilder()->insert($localValue);}
 
         return true;
     }
@@ -109,7 +122,7 @@ trait WorkDatabaseTrait
      * @param $data
      * @return bool
      */
-    public function evaluateExistence($repository, $data) : bool
+    public function evaluateExistenceWDT(RepositoriesContract $repository, $data) : bool
     {
         $count = $repository->selectRaw('count(station_sk) AS count')
                             ->where('date_sk','=',$data->date_sk)
@@ -121,48 +134,47 @@ trait WorkDatabaseTrait
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param $data
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function insertExistTable($data)
+    public function insertExistTableWDT(RepositoriesContract $repository,array $data)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableExist)->insert($data);
+        return $repository->queryBuilder()->insert($data);
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getIncomingAmount()
+    public function getIncomingAmountWDT(RepositoriesContract $repository) : int
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select(DB::raw('COUNT(id) AS count'))->get()->toArray()[0]->count;
+        return $repository->queryBuilder()->select(DB::raw('COUNT(id) AS count'))->get()->toArray()[0]->count;
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getLastMigrateData()
+    public function getLastMigrateDataWDT(RepositoriesContract $repository)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->orderby('id','DESC')->first();
+        return $repository->queryBuilder()->orderby('id','DESC')->first();
     }
 
     /**
-     * @return mixed
-     */
-    public function listDateAndTimeFromSpaceWork()
-    {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('date_sk','time_sk')->orderby('date_sk','ASC')->orderby('time_sk','ASC')->get();
-    }
-
-    /**
+     * @param RepositoriesContract $repository
      * @param $date_sk
      * @param $time
      * @param $interval
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getValInRange($date_sk, $time, $interval)
+    public function getValInRangeWDT(RepositoriesContract $repository, $date_sk, $time, $interval) : Collection
     {
-        return DB::connection('temporary_work')
-                    ->table($this->etlConfig->tableSpaceWork)
+        return $repository->queryBuilder()
                     ->select('*')
                     ->where('date_sk', $date_sk)
                     ->whereBetween('time_sk',[$time,$interval])
@@ -172,114 +184,31 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param $tableSpaceWork
-     * @param $value
-     */
-    public function serializationInsert($tableSpaceWork, $value)
-    {
-       DB::connection('temporary_work')->table($tableSpaceWork)->insert($value);
-    }
-
-    /**
+     * @param RepositoriesContract $repository
      * @param $date
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function countRowForDate($date)
+    public function countRowForDateWDT(RepositoriesContract $repository, $date)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('*')->where('date_sk',$date)->count();
+        return $repository->queryBuilder()->select('*')->where('date_sk',$date)->count();
     }
 
     /**
-     * @param $value
-     * @param $date
-     * @param $time
-     * @return mixed
-     */
-    public function serializationUpdate($value, $date, $time)
-    {
-        $data = $this->etlConfig->repositorySpaceWork->select('*')->where('date_sk',$value->date_sk)->where('time_sk',$value->time_sk)->first();
-        $data->date_sk = $date;
-        $data->time_sk = $time;
-        return $data->update();
-    }
-
-    /**
-     * @param $tableSpaceWork
-     * @param $variables
-     * @param $stationSk
-     * @param $arrayValue
-     * @param $date
-     * @param $time
-     * @param $interval
-     */
-    public function serializationCorrect($tableSpaceWork, $variables, $stationSk, $arrayValue, $date, $time, $interval)
-    {
-        $arr = ['station_sk'=>$stationSk,'date_sk'=>$date,'time_sk'=>$time];
-
-        #hayar las variables de la estacion a corregir
-        foreach ($variables as $variable){
-            if (!is_null($variable->correct_serialization)){
-                $times = [];
-                foreach ($arrayValue as $value){array_push($times,$value->time_sk);}
-                $arr[$variable->local_name] = $this->{'Serialization'.ucwords($variable->correct_serialization)}($tableSpaceWork,$date,$times,$variable->local_name);
-            }
-        }
-
-        #Eliminar los valores actuales en el espacio de trabajo
-        foreach ($arrayValue as $value){$this->deleteFromDateAndTime($value->date_sk,$value->time_sk);}
-
-        #Insertar la Correcion en el espacio de trabajo
-        $this->serializationInsert($tableSpaceWork,$arr);
-
-    }
-
-    /**
+     * @param RepositoriesContract $repository
      * @param $date_sk
      * @param $time_sk
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteFromDateAndTime($date_sk, $time_sk)
+    public function deleteFromDateAndTimeWDT(RepositoriesContract $repository, $date_sk, $time_sk)
     {
-        return DB::connection('temporary_work')
-                    ->table($this->etlConfig->tableSpaceWork)
+        return $repository->queryBuilder()
                     ->where('date_sk',$date_sk)
                     ->where('time_sk',$time_sk)
                     ->delete();
     }
 
-    /**
-     * @param $tableSpaceWork
-     * @param $date
-     * @param $times
-     * @param $variableName
-     * @return mixed
-     */
-    public function SerializationSum($tableSpaceWork, $date, $times, $variableName)
-    {
-        return DB::connection('temporary_work')
-                    ->table($tableSpaceWork)
-                    ->select(DB::raw("sum(CAST(".$variableName." AS FLOAT))"))
-                    ->where('date_sk',$date)
-                    ->whereIn('time_sk',$times)
-                    ->get()[0]->sum;
-    }
-
-    /**
-     * @param $tableSpaceWork
-     * @param $date
-     * @param $times
-     * @param $variableName
-     * @return mixed
-     */
-    public function SerializationAverage($tableSpaceWork, $date, $times, $variableName)
-    {
-        return DB::connection('temporary_work')
-            ->table($tableSpaceWork)
-            ->select(DB::raw("avg(CAST(".$variableName." AS FLOAT))"))
-            ->where('date_sk',$date)
-            ->whereIn('time_sk',$times)
-            ->get()[0]->avg;
-    }
 
     /**
      *
@@ -287,7 +216,9 @@ trait WorkDatabaseTrait
     public  function migrateHistoricCorrection()
     {
         $temporaryCorrection = TemporaryCorrectionRepository::all();
-        foreach ($temporaryCorrection as $valueCorrection){CorrectionHistoryRepository::create($valueCorrection->toArray());}
+        foreach ($temporaryCorrection as $valueCorrection){
+            CorrectionHistoryRepository::create($valueCorrection->toArray());
+        }
         $this->truncateCorrectionTable();
     }
 
@@ -300,29 +231,35 @@ trait WorkDatabaseTrait
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getInitialDataInSpaceWork()
+    public function getInitialDataInSpaceWorkWDT(RepositoriesContract $repository)
     {
-        return $this->etlConfig->repositorySpaceWork->select('*')->orderByRaw("date_sk ASC, time_sk ASC")->first();
+        return $repository->queryBuilder()->select('*')->orderByRaw("date_sk ASC, time_sk ASC")->first();
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getFinalDataInSpaceWork()
+    public function getFinalDataInSpaceWorkWDT(RepositoriesContract $repository)
     {
-        return $this->etlConfig->repositorySpaceWork->select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
+        return $repository->queryBuilder()->select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param $variable
      * @param array $search
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getWhereIn($variable, array $search)
+    public function getWhereInWDT(RepositoriesContract $repository, $variable, array $search) : Collection
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)
+        return $repository->queryBuilder()
                     ->select('id','station_sk','date_sk','time_sk',$variable)
                     ->whereIn($variable,$search)
                     ->orderby('id')
@@ -330,142 +267,156 @@ trait WorkDatabaseTrait
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param $time
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteLastDate($time)
+    public function deleteLastDateWDT(RepositoriesContract $repository, $time) : bool
     {
-        $value = DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('id','time')->orderby('id','DESC')->first();
+        $value = $repository->queryBuilder()->select('id','time')->orderby('id','DESC')->first();
 
         if (!empty($value)){
-            if ($value->time == $time){
-                DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('id',$value->id)->delete();
-            }
+            if ($value->time == $time){ $repository->queryBuilder()->where('id',$value->id)->delete();}
         }
 
         return true;
     }
 
-
     /**
+     * @param RepositoriesContract $repository
      * @param string $variableName
      * @param array $infoCalculation
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function generateVariableCalculated(string $variableName, array $infoCalculation)
+    public function generateVariableCalculatedWDT(RepositoriesContract $repository, string $variableName, array $infoCalculation) : bool
     {
-        $values = DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('id',$variableName)->whereNotNull($variableName)->get();
+        $values = $repository->queryBuilder()->select('id',$variableName)->whereNotNull($variableName)->get();
 
         foreach ($values as $value) {
-            DB::connection('temporary_work')
-                ->table($this->etlConfig->tableSpaceWork)
+            $repository->queryBuilder()
                 ->where('id',$value->id)
-                ->update([
-                        $infoCalculation['destiny'] => round(((double)$value->{$variableName}) *  $infoCalculation['factor'],2)
-                    ]
-                );
+                ->update([ $infoCalculation['destiny'] => round(((double)$value->{$variableName}) *  $infoCalculation['factor'],2)]);
         }
         return true;
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param int $id
      * @param array $updates
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function updateDateTimeFromId(int $id, array $updates)
+    public function updateDateTimeFromIdWDT(RepositoriesContract $repository, int $id, array $updates)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('id','=',$id)->update($updates);
+        return $repository->queryBuilder()->where('id','=',$id)->update($updates);
     }
 
     /**
-     * @param string $tableSpaceWork
+     * @param RepositoriesContract $repository
      * @param string $variable
      * @param array $arr
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteWhereInVariable(string $tableSpaceWork, string $variable, array $arr)
+    public function deleteWhereInVariableWDT(RepositoriesContract $repository, string $variable, array $arr)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->whereIn($variable,$arr)->delete();
+        return $repository->queryBuilder()->whereIn($variable,$arr)->delete();
     }
 
     /**
-     * @param $tableSpaceWork
+     * @param RepositoriesContract $repository
      * @param $variable
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteNullVariable($tableSpaceWork, $variable)
+    public function deleteNullVariableWDT(RepositoriesContract $repository, $variable)
     {
-        return DB::connection('temporary_work')->table($tableSpaceWork)->whereNull($variable)->delete();
+        return $repository->queryBuilder()->whereNull($variable)->delete();
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param array $inserts
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function insertDataArray(array $inserts)
+    public function insertDataArrayWDT(RepositoriesContract $repository, array $inserts)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->insert($inserts);
+        return $repository->queryBuilder()->insert($inserts);
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param string $variable
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function changeCommaForPoint(string $variable)
+    public function changeCommaForPointWDT(RepositoriesContract $repository, string $variable)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->update([ $variable => DB::raw( " REGEXP_REPLACE($variable,',','.') " )]);
+        return $repository->queryBuilder()->update([ $variable => DB::raw( " REGEXP_REPLACE($variable,',','.') " )]);
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param int $id
      * @param array $variables
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteAfterIdVariable(int $id, array $variables)
+    public function deleteAfterIdVariableWDT(RepositoriesContract $repository, int $id, array $variables)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->TableSpaceWork)->where('id', '>=' ,$id)->update($variables);
+        return $repository->queryBuilder()->where('id', '>=' ,$id)->update($variables);
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param int $initialId
      * @param int $finalId
      * @param array $variables
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteInRangeIdVariable(int $initialId, int $finalId, array $variables)
+    public function deleteInRangeIdVariableWDT(RepositoriesContract $repository, int $initialId, int $finalId, array $variables)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->TableSpaceWork)->whereBetween('id', [$initialId, $finalId])->update($variables);
+        return $repository->queryBuilder()->whereBetween('id', [$initialId, $finalId])->update($variables);
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param array $times
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function deleteEldestHomogenization($times)
+    public function deleteEldestHomogenizationWDT(RepositoriesContract $repository, $times)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->whereNotIn('time_sk',(array)$times)->delete();
+        return $repository->queryBuilder()->whereNotIn('time_sk',(array)$times)->delete();
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getIdAndDateTime()
+    public function getIdAndDateTimeWDT(RepositoriesContract $repository) : Collection
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->select('id','date','time')->get();
+        return $repository->queryBuilder()->select('id','date','time')->get();
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param string $key
      * @param string $column
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function selectColumnWhereNull(string $key, string $column)
+    public function selectColumnWhereNullWDT(RepositoriesContract $repository, string $key, string $column) : array
     {
-        return DB::connection('temporary_work')
-            ->table($this->etlConfig->tableSpaceWork)
+        return $repository->queryBuilder()
             ->select($key)
-            ->distinct($column)
+            ->distinct($column) // TODO este distintic no recibe paametros...
             ->whereNull($column)
             ->orderBy($key)
             ->get()
@@ -473,39 +424,41 @@ trait WorkDatabaseTrait
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param $dateSk
      * @param null $date
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function updateDateFromDateSk($dateSk, $date = null)
+    public function updateDateFromDateSkWDT(RepositoriesContract $repository, $dateSk, $date = null)
     {
-        return DB::connection('temporary_work')->table($this->etlConfig->tableSpaceWork)->where('date_sk', '=',$dateSk)->update(['date'=> $date]);
+        return $repository->queryBuilder()->where('date_sk', '=',$dateSk)->update(['date'=> $date]);
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @param $timeSk
      * @param null $time
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function updateTimeFromTimeSk($timeSk, $time = null)
+    public function updateTimeFromTimeSkWDT(RepositoriesContract $repository, $timeSk, $time = null)
     {
-        return DB::connection('temporary_work')
-            ->table($this->etlConfig->tableSpaceWork)
-            ->where('time_sk', '=',$timeSk)
-            ->update(['time'=> $time]);
+        return $repository->queryBuilder()->where('time_sk', '=',$timeSk)->update(['time'=> $time]);
     }
 
     /**
+     * @param RepositoriesContract $repository
      * @return mixed
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getDuplicates()
+    public function getDuplicatesWDT(RepositoriesContract $repository) : array
     {
-        return DB::connection('temporary_work')
-            ->table($this->etlConfig->tableSpaceWork)
+        return $repository->queryBuilder()
             ->selectRaw('station_sk,date_sk,time_sk, max(id)')
             ->groupBy('station_sk','date_sk','time_sk')
             ->havingRaw('count(station_sk) > 1')
-            ->orderBy('station_sk','date_sk','time_sk')
+            ->orderBy('station_sk','date_sk','time_sk') // TODO order by solo recibe dos paramtros la columna y el metodo de ordenamiento
             ->get()
             ->toArray();
     }
