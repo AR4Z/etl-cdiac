@@ -9,7 +9,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\InventoryFact;
 use DB;
 
-class InventoryFactRepository extends EloquentRepository implements RepositoriesContract
+class InventoryFactRepository extends EloquentRepository implements FactRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

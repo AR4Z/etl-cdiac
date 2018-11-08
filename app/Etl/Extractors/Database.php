@@ -21,11 +21,6 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     public $stepsList = null;
 
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var External or Local
      */
     public $extractTypeObject = null;
@@ -38,7 +33,7 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     /**
      * @var bool
      */
-    public  $truncateTemporal = true;
+    public $truncateTemporal = true;
 
     /**
      * @param $etlConfig

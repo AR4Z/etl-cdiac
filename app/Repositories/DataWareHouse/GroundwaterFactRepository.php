@@ -9,7 +9,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\GroundwaterFact;
 use DB;
 
-class GroundwaterFactRepository extends EloquentRepository implements RepositoriesContract
+class GroundwaterFactRepository extends EloquentRepository implements FactRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

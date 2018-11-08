@@ -3,11 +3,17 @@
 namespace App\Etl\Transformers;
 
 use App\Etl\EtlBase;
+use App\Etl\EtlConfig;
 use DB;
 use phpDocumentor\Reflection\Types\This;
 
 abstract class TransformBase extends EtlBase
 {
+    /**
+     * @var EtlConfig
+     */
+    public $etlConfig = null;
+
     /**
      * @param string $variable
      * @param null $overflowMaximum

@@ -22,11 +22,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public $extension = 'csv';
 
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var StepList
      */
     public $stepsList = null;

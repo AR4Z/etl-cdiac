@@ -10,7 +10,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporalAir;
 use DB;
 
-class TemporalAirRepository extends EloquentRepository implements RepositoriesContract,TemporaryInterface
+class TemporalAirRepository extends EloquentRepository implements TemporalRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

@@ -14,11 +14,6 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     public $method = 'FilterAir';
 
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var StepList
      */
     public $stepsList = null;

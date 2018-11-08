@@ -14,11 +14,6 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public $method = 'Homogenization';
 
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var StepList
      */
     public $stepsList = null;
@@ -34,6 +29,12 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      * @var int
      */
     public $timeSpace = 300;
+
+    /**
+     * Intervalo de Serialización (time) en segundos para el caso en que solo existan un valor en el rango $timeSapce
+     * @var int
+     */
+    public $timeSpaceOneMissingData = 150;
 
     /**
      * Array de fechas posibles
@@ -266,14 +267,24 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
             #Evaluar cantidad en el rango actual
             $valInRangeActual = $this->getValInRangeWDT($this->etlConfig->repositorySpaceWork,$date->date_sk,$lowerLimit,$upperLimit);
 
+            # Primer caso: cuando es la primera hora del dia
             if ($time->time_sk == 1 and !is_null($this->previousData)){
+
+                # Se inicializa el array temporal para almacenar los valores
                 $temporalValInRange = [];
+
+                # se inserta el ultimo valor de la fecha anterior al array temporal
                 array_push($temporalValInRange,$this->previousData);
+
+                # se recorren los valores en el array de valores de la fecha actual en el rango inicial y se insertan al array temporal
                 foreach ($valInRangeActual as $value){ array_push($temporalValInRange,$value); }
+
+                # se asigna el array temporal al array al array general para enviarlo en las funciones de homogenizacion
                 $valInRangeActual = $temporalValInRange;
             }
 
             if (!is_null($valInRangeActual)) {
+
                 # se evalua si el tiempo esta mal posicionado.
                 if (!(in_array((array)$time,array_column( (!is_array($valInRangeActual)) ? $valInRangeActual->toArray() : $valInRangeActual,'time_sk')))){
 
@@ -312,8 +323,15 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      */
     public function homogenizationOneElements($value, $date, $time)
     {
+        # pivotTime: bandera para evaluar la diferencia real entre dos time_sk teniendo en cuenta las fechas diferentes
+        $pivotTime = ($value->date_sk == $date->date_sk) ? $time->time_sk : $this->maxValueSk - $time->time_sk;
+
         if (!($value->time_sk == $time->time_sk)){
-           array_push($this->updates, ['value'=> $value,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ]);
+            if ((abs($value->time_sk - $pivotTime) <= $this->timeSpaceOneMissingData)){
+                array_push($this->updates, ['value'=> $value,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ]);
+            }else{
+                $this->homogenizationNotElements($date,$time);
+            }
         }
     }
 

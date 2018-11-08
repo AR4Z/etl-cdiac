@@ -6,7 +6,6 @@ use DB;
 
 trait CorrectMethod
 {
-
     /**
      * @param $spaceTable
      * @param $variable

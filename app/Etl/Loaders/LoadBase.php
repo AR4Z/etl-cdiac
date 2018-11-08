@@ -2,11 +2,17 @@
 namespace  App\Etl\Loaders;
 
 use App\Etl\EtlBase;
+use App\Etl\EtlConfig;
 use Carbon\Carbon;
 use DB;
 
 abstract class LoadBase extends EtlBase
 {
+    /**
+     * @var EtlConfig
+     */
+    public $etlConfig = null;
+
     /**
      * @var array
      */

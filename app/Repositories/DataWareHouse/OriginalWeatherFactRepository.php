@@ -9,7 +9,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\OriginalWeatherFact;
 use DB;
 
-class OriginalWeatherFactRepository extends EloquentRepository implements RepositoriesContract
+class OriginalWeatherFactRepository extends EloquentRepository implements FactRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

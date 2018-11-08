@@ -2,9 +2,10 @@
 
 namespace App\Repositories\TemporaryWork;
 
+use App\Repositories\RepositoriesContract;
 use Illuminate\Support\Collection;
 
-interface TemporaryInterface
+interface TemporalRepositoryContract extends RepositoriesContract
 {
     /**
      * @return array

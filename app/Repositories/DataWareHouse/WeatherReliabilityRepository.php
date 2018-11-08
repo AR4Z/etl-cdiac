@@ -9,7 +9,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\WeatherReliability;
 use DB;
 
-class WeatherReliabilityRepository extends EloquentRepository implements RepositoriesContract
+class WeatherReliabilityRepository extends EloquentRepository implements ReliabilityRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

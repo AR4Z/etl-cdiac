@@ -15,11 +15,6 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     public $method = 'Detection';
 
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var StepList
      */
     public $stepsList = null;

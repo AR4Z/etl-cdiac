@@ -9,7 +9,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\AirFact;
 use DB;
 
-class AirFactRepository extends EloquentRepository implements RepositoriesContract
+class AirFactRepository extends EloquentRepository implements FactRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

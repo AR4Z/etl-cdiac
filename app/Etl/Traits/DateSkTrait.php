@@ -7,7 +7,6 @@ use Facades\App\Repositories\DataWareHouse\DateDimRepository;
 
 Trait DateSkTrait
 {
-
     /**
      * @param $date
      * @return mixed

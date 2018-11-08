@@ -2,14 +2,13 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\ExistFactGroundwater;
 use DB;
 
-class ExistFactGroundwaterRepository extends EloquentRepository implements RepositoriesContract
+class ExistFactGroundwaterRepository extends EloquentRepository implements ExistRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

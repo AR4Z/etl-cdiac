@@ -5,11 +5,18 @@ namespace App\Etl\Extractors;
 use App\Etl\EtlBase;
 use App\Etl\EtlConfig;
 use Carbon\Carbon;
-use DB;
 use Exception;
 
 abstract class ExtractorBase extends EtlBase
 {
+    /**
+     * @var EtlConfig
+     */
+    public $etlConfig = null;
+
+    /**
+     * @var array
+     */
     public $keyErrors = ['_','Min','Date','Time','Max','Date','Time','AVG','Num','Data[%]'];
 
     /**
@@ -109,7 +116,6 @@ abstract class ExtractorBase extends EtlBase
     }
 
     /**
-     * @param $tableSpaceWork
      * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getCalculateDateAndTime()

@@ -4,7 +4,12 @@ namespace App\Etl;
 
 use App\Entities\Administrator\{Connection, Net, Station };
 use App\Etl\Traits\RemoveAccents;
+use App\Repositories\DataWareHouse\FactRepositoryContract;
+use App\Repositories\DataWareHouse\ReliabilityRepositoryContract;
+use App\Repositories\RepositoriesContract;
 use App\Repositories\RepositoryFactoryTrait;
+use App\Repositories\TemporaryWork\ExistRepositoryContract;
+use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 use Facades\App\Repositories\Administrator\{NetRepository,ConnectionRepository,StationRepository};
 use App\Etl\Config\PrimaryKeys;
 use Config;
@@ -53,6 +58,11 @@ class EtlConfig
      * @var Station
      */
     public $station = null;
+
+    /**
+     * @var PrimaryKeys
+     */
+    public $keys = null;
 
     /**
      * @var array
@@ -115,11 +125,6 @@ class EtlConfig
     public $incomingAmount = 0;
 
     /**
-     * @var PrimaryKeys
-     */
-    public $keys = null;
-
-    /**
      * @var bool
      */
     public $trustProcess = false;
@@ -129,11 +134,30 @@ class EtlConfig
      */
     public $calculateDateTime = true;
 
+    /**
+     * @var bool
+     */
+    public $sequence = true;
+
+    /**
+     * @var FactRepositoryContract
+     */
     public $repositoryDestination = null;
+
+    /**
+     * @var TemporalRepositoryContract
+     */
     public $repositorySpaceWork = null;
+
+    /**
+     * @var ExistRepositoryContract
+     */
     public $repositoryExist = null;
+
+    /**
+     * @var ReliabilityRepositoryContract
+     */
     public $trustRepository = null;
-    public $sequence = null;
 
     /**
      * EtlConfig constructor.
@@ -264,12 +288,10 @@ class EtlConfig
 
     /**
      * @param bool|true $sequence
-     * @return $this
      */
     public function setSequence(bool $sequence)
     {
         $this->sequence = $sequence;
-        return $this;
     }
 
     /**

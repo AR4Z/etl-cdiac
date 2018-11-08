@@ -9,7 +9,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\AirReliability;
 use DB;
 
-class AirReliabilityRepository extends EloquentRepository implements RepositoriesContract
+class AirReliabilityRepository extends EloquentRepository implements ReliabilityRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

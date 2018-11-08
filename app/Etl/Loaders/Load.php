@@ -15,11 +15,6 @@ class Load extends LoadBase implements LoadInterface,StepContract
     public $method = 'General';
 
     /**
-     * @var EtlConfig
-     */
-    public  $etlConfig = null;
-
-    /**
      * @var StepList
      */
     public $stepsList = null;

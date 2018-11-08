@@ -9,7 +9,7 @@ use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\ExistFactAir;
 use DB;
 
-class ExistFactAirRepository extends EloquentRepository implements RepositoriesContract
+class ExistFactAirRepository extends EloquentRepository implements ExistRepositoryContract
 {
     /**
      * RepositoriesContract constructor.

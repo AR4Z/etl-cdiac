@@ -15,11 +15,6 @@ class FilterCorrection extends TransformBase implements TransformInterface, Step
     public $method = 'Correction';
 
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var StepList
      */
     public $stepsList = null;

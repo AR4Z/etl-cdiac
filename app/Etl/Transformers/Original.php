@@ -13,11 +13,6 @@ class Original extends TransformBase implements TransformInterface, StepContract
     public $method = 'Original';
 
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var StepList
      */
     public $stepsList = null;

@@ -2,14 +2,13 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\ExistFactWeather;
 use DB;
 
-class ExistFactWeatherRepository extends EloquentRepository implements RepositoriesContract
+class ExistFactWeatherRepository extends EloquentRepository implements ExistRepositoryContract
 {
     /**
      * RepositoriesContract constructor.
