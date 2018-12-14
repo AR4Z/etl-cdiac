@@ -59,3 +59,17 @@ Route::group(['prefix' => 'search-missing','name' => 'search-missing'], function
     Route::post('search-data', [ 'as'=>'search-missing.search-data','uses'=>'Etl\SearchMissingData@searchData']);
     Route::post('stationsForFactTable', [ 'as'=>'search-missing.stationsForFactTable','uses'=>'Etl\SearchMissingData@stationsForFactTable']);
 });
+
+Route::group(['prefix' => 'auditory','name' => 'auditory'], function()
+{
+    Route::get('/', [ 'as'=>'auditory','uses'=>'Auditory\AuditoryController@index']);
+    Route::post('make-auditory', [ 'as'=>'auditory.make-auditory','uses'=>'Auditory\AuditoryController@makeAuditory']);
+    Route::post('apply-auditory', [ 'as'=>'auditory.apply-auditory','uses'=>'Auditory\AuditoryController@applyAuditory']);
+    Route::post('graphics', [ 'as'=>'auditory.graphics','uses'=>'Auditory\AuditoryController@graphics']);
+    Route::get('generate-risk', [ 'as'=>'auditory.generate-risk','uses'=>'Auditory\AuditoryController@generateRisk']);
+    Route::post('save-risk', [ 'as'=>'auditory.save-risk','uses'=>'Auditory\AuditoryController@saveRisk']);
+
+
+
+
+});

@@ -126,6 +126,10 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
     <script type="text/javascript" src="//cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="graficas/googlechart.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
 
     <script src="{{asset('libraries/bootstrap-datepicker/js/bootstrap-datepicker.js')}}"></script>
     <script src="{{asset('libraries/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js')}}"></script>

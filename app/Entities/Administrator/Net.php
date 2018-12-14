@@ -75,4 +75,6 @@ class Net extends Model
         return $this->belongsTo(Connection::class,'connection_id');
     }
 
+
+
 }
