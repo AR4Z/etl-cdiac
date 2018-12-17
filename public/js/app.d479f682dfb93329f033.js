@@ -16,7 +16,7 @@
 /******/ 			exports: {}
 /******/ 		};
 /******/
-/******/ 		// Execute the module function
+/******/ 		// TypeExecute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/
 /******/ 		// Flag the module as loaded
@@ -4176,7 +4176,7 @@ jQuery.fn = jQuery.prototype = {
 		return ret;
 	},
 
-	// Execute a callback for every element in the matched set.
+	// TypeExecute a callback for every element in the matched set.
 	each: function( callback ) {
 		return jQuery.each( this, callback );
 	},
@@ -7073,7 +7073,7 @@ var rootjQuery,
 			return root.ready !== undefined ?
 				root.ready( selector ) :
 
-				// Execute immediately if ready is not present
+				// TypeExecute immediately if ready is not present
 				selector( jQuery );
 		}
 
@@ -7330,7 +7330,7 @@ jQuery.Callbacks = function( options ) {
 			// Enforce single-firing
 			locked = locked || options.once;
 
-			// Execute callbacks for all pending executions,
+			// TypeExecute callbacks for all pending executions,
 			// respecting firingIndex overrides and runtime changes
 			fired = firing = true;
 			for ( ; queue.length; firingIndex = -1 ) {
@@ -12997,7 +12997,7 @@ jQuery.extend( {
 					if ( map ) {
 						if ( completed ) {
 
-							// Execute the appropriate callbacks
+							// TypeExecute the appropriate callbacks
 							jqXHR.always( map[ jqXHR.status ] );
 						} else {
 

@@ -27,7 +27,7 @@ class MigrateInPath extends Command
 
 
     /**
-     * Execute the console command.
+     * TypeExecute the console command.
      *
      * @return mixed
      */

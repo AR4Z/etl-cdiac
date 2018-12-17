@@ -167,7 +167,7 @@ jQuery.fn = jQuery.prototype = {
 		return ret;
 	},
 
-	// Execute a callback for every element in the matched set.
+	// TypeExecute a callback for every element in the matched set.
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {
@@ -2854,7 +2854,7 @@ var rootjQuery,
 		} else if ( jQuery.isFunction( selector ) ) {
 			return typeof rootjQuery.ready !== "undefined" ?
 				rootjQuery.ready( selector ) :
-				// Execute immediately if ready is not present
+				// TypeExecute immediately if ready is not present
 				selector( jQuery );
 		}
 
@@ -3615,7 +3615,7 @@ jQuery(function() {
 (function() {
 	var div = document.createElement( "div" );
 
-	// Execute the test only if not already executed in another module.
+	// TypeExecute the test only if not already executed in another module.
 	if (support.deleteExpando == null) {
 		// Support: IE<9
 		support.deleteExpando = true;
@@ -4230,7 +4230,7 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
 		div.cloneNode( true ).click();
 	}
 
-	// Execute the test only if not already executed in another module.
+	// TypeExecute the test only if not already executed in another module.
 	if (support.deleteExpando == null) {
 		// Support: IE<9
 		support.deleteExpando = true;
@@ -9083,7 +9083,7 @@ jQuery.extend({
 								statusCode[ code ] = [ statusCode[ code ], map[ code ] ];
 							}
 						} else {
-							// Execute the appropriate callbacks
+							// TypeExecute the appropriate callbacks
 							jqXHR.always( map[ jqXHR.status ] );
 						}
 					}

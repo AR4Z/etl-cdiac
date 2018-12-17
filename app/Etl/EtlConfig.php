@@ -386,7 +386,7 @@ class EtlConfig
      */
     public function setTrustRepository(string $trustRepository)
     {
-        $this->trustRepository = $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository);
+        $this->trustRepository = ($trustRepository) ? $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository) : $trustRepository;
     }
 
     /**

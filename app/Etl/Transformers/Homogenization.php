@@ -67,21 +67,13 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public $previousData = null;
 
     /**
-     * @param EtlConfig $etlConfig
-     */
-    public function setOptions(EtlConfig $etlConfig)
-    {
-        $this->etlConfig = $etlConfig;
-
-        # Se crean los pasos que se requieren para Database
-        $this->stepsList = $this->startSteps(new StepList());
-    }
-
-    /**
      * Punto de acceso para ejecutar funcionalidad
      */
     public function run()
     {
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
+
         # Se ejecutan los pasos que se requieren para el proceso
         $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }

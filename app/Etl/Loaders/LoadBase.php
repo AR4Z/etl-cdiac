@@ -9,11 +9,6 @@ use DB;
 abstract class LoadBase extends EtlBase
 {
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var array
      */
     public $redirectExist = [];

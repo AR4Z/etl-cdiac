@@ -8,5 +8,10 @@ use App\Etl\Database\DatabaseConfig;
 class EtlBase
 {
     use TrustTrait,DateSkTrait,TimeSkTrait,CorrectMethod,RemoveAccents, WorkDatabaseTrait,DatabaseConfig;
+
+    /**
+     * @var EtlConfig
+     */
+    public $etlConfig;
 }
 

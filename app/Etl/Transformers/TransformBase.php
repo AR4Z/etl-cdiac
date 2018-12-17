@@ -10,11 +10,6 @@ use phpDocumentor\Reflection\Types\This;
 abstract class TransformBase extends EtlBase
 {
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @param string $variable
      * @param null $overflowMaximum
      * @param null $overflowMinimum

@@ -23,7 +23,7 @@ class EtlYesterdayJob implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * TypeExecute the job.
      *
      * @return void
      */

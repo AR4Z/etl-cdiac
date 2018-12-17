@@ -2,7 +2,6 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;

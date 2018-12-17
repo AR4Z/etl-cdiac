@@ -87,7 +87,7 @@ class ExternalConnectionController extends Controller
        // dd($this->stationRepository);
         //dd($this->connectionRepository->getCacheLifetime());
         //dd($this->connectionRepository->where('id', 1)->first());
-
+/*
         $jobEtl = Etl::start('Original', null, null,19,['trustProcess'=> false, 'sequence' => false, 'debug'=> true]) // sequense true
                         ->extract('Database',['extractType' => 'External', 'initialDate' => '2017-06-10','initialTime' => '00:00:00','finalDate' => '2017-06-20','finalTime' => '23:59:59']) //'initialTime' => '05:00:00','finalTime' => '10:59:59'
                         ->transform('FilterDetection')  #['paramSearch'=> ['r','j']] parametro opcional de valores de busqueda
@@ -101,7 +101,7 @@ class ExternalConnectionController extends Controller
         //EtlStationJob::dispatch($jobEtl);
 
         dd($jobEtl,'Hola');
-
+*/
     }
 
     /**

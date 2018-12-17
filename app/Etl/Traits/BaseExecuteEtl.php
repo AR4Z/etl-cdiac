@@ -144,6 +144,7 @@ trait BaseExecuteEtl
      * @param array $transform
      * @param array $load
      * @return array
+     * @throws \ReflectionException
      */
     public function dispatchJob(string $method, string $net = null, string $station, bool $sequence, bool $serialization,array $extract = [], array $transform = [], array $load = [])
     {
@@ -213,6 +214,7 @@ trait BaseExecuteEtl
      * @param array $transform
      * @param array $load
      * @return Etl
+     * @throws \ReflectionException
      */
     public function filterJob(
         $net = null,
@@ -225,7 +227,7 @@ trait BaseExecuteEtl
         array $load = []
     )# array $extractOptions,bool $serialization,bool $detection,bool $correction
     {
-        $etl = Etl::start('Filter', $net, $connection,$station,$sequence);
+        $etl = Etl::start('Filter', $net, $connection,$station,['sequence'=> $sequence]);
 
          if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Csv'){
              $extract['optionExtract']['extractType'] = 'Local';
@@ -264,6 +266,7 @@ trait BaseExecuteEtl
      * @param array $transform
      * @param array $load
      * @return Etl
+     * @throws \ReflectionException
      */
     public function OriginalJob(
         $net = null,
@@ -275,7 +278,7 @@ trait BaseExecuteEtl
         array $load = []
     )//array $extractOptions,bool $serialization,bool $detection,bool $correction
     {
-        $etl = Etl::start('Original', $net, $connection,$station,$sequence);
+        $etl = Etl::start('Original', $net, $connection,$station,['sequence'=> $sequence]);
 
         if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Csv'){
             $extract['optionExtract']['extractType'] = 'External';

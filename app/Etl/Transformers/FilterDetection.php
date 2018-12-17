@@ -45,21 +45,12 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     public $changeOverflowPreviousDeference = null;
 
     /**
-     * @param EtlConfig $etlConfig
-     * @return mixed
-     */
-    public function setOptions(EtlConfig $etlConfig)
-    {
-        $this->etlConfig = $etlConfig;
-
-        $this->stepsList = $this->startSteps(new StepList());
-    }
-
-    /**
      * Punto de acceso para ejecutar funcionalidad
      */
     public function run()
     {
+        $this->stepsList = $this->startSteps(new StepList());
+
         # Se ejecutan los pasos que se requieren para el proceso
         $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }

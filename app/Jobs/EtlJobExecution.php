@@ -7,34 +7,38 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Etl\Etl;
 use Storage;
+use App\Etl\EtlFactoryContract;
 
-class EtlStationJob implements ShouldQueue
+class EtlJobExecution implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var
+     * @var EtlFactoryContract[]
      */
-    private $work;
+    private $etlProcess;
 
-    public function __construct(Etl $work)
+    /**
+     * EtlJobExecution constructor.
+     * @param array $etlProcess
+     */
+    public function __construct(array $etlProcess = [])
     {
         Storage::put('file.txt','Hola');
-        $this->work = $work;
+        $this->etlProcess = $etlProcess;
     }
 
     /**
      * TypeExecute the job.
      * @return void
-     * @internal param Etl $etl
-     * @throws \ReflectionException
      */
     public function handle()
     {
         Storage::put('file.txt','Hola');
-        $result= $this->work->run();
+
+        foreach ($this->etlProcess as $process){$process->run();}
+
         Storage::put('file.txt','Hola estoy desde un EtlStationjob final');
     }
 }
