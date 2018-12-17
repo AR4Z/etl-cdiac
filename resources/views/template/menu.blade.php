@@ -20,7 +20,6 @@
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Modulo de Auditoría<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li><a href="{{url('/auditory')}}">Auditoría Bodega 1.0</a></li>
-                    <li><a href="{{ url('/auditory-new') }}">Auditoría Bodega 2.0</a></li>
                 </ul>
             </li>
             <li>
