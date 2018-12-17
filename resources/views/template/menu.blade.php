@@ -17,6 +17,12 @@
                 </ul>
             </li>
             <li>
+                <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Modulo de Auditoría<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li><a href="{{url('/auditory')}}">Auditoría Bodega 1.0</a></li>
+                </ul>
+            </li>
+            <li>
                 <a href="http://cdiac.manizales.unal.edu.co/"><i class="fa fa-files-o fa-fw"></i>
                     Página principal
                 </a>

@@ -187,6 +187,7 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
         return $this->select('id','net_id')->where('etl_active',true)->get();
     }
 
+    //Auditory System Functions
 
     /**
      * @param int $stationId
@@ -265,5 +266,48 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
     public function countReportData($station)
     {
 
+    }
+
+
+    // Auditory System Functions
+
+    /**
+     * @param int $station_id
+     * @return array
+     */
+
+    public function getStationDate($station_id)
+    {
+        return $this->select('station.id','station.name','station.measurements_per_day')
+            ->where('station.name','=',$station_id)
+            ->where('station.etl_active',true)
+            ->orderby('station.name','ASC')
+            ->get()->toArray();
+    }
+
+    /**
+     * @param int $netId
+     * @return array
+     */
+    public function getStationForNetAuditoryActive($netId)
+    {
+        return $this->select('station.id','station.net_id','station.table_db_name','station.station_type_id','station.name')
+            ->join('station_type','station.station_type_id','=', 'station_type.id')
+            ->where('station.net_id',$netId)
+            ->where('station.active',true)
+            ->whereNotNull('station_type.etl_method')
+            ->get()->toArray();
+    }
+    /**
+     * @return object
+     */
+    public function getStationAuditoryActive()
+    {
+        return $this->select('station.id','station.table_db_name','station.station_type_id','station.name')
+            ->join('station_type','station.station_type_id','=', 'station_type.id')
+            ->where('station.station_type_id','<=',2)
+            ->where('station.active',true)
+            ->whereNotNull('station_type.etl_method')
+            ->get();
     }
 }

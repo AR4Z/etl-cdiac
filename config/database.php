@@ -119,12 +119,25 @@ return [
             'port'      => env('DB_PORT_AUDITORY', '5432'),
             'database'  => env('DB_AUDITORY', 'forge'),
             'username'  => env('DB_USERNAME_AUDITORY', 'forge'),
-            'password'  => env('DB_PASSWORD_AUDITORY', ''),
+            'password'  => env('DB_PASSWORD_AUDITORY', 'e3ccae410a'),
             'charset'   => 'utf8',
             'prefix'    => '',
             'schema'    => 'public',
             'sslmode'   => 'prefer',
         ],
+
+        'bodega' => [
+            'driver'    => env('DB_DRIVER_BODEGA', 'pgsql'),
+            'host'      => env('DB_HOST_BODEGA', '127.0.0.1'),
+            'port'      => env('DB_PORT_BODEGA', '5432'),
+            'database'  => env('DB_BODEGA', 'forge'),
+            'username'  => env('DB_USERNAME_BODEGA', 'forge'),
+            'password'  => env('DB_PASSWORD_BODEGA', ''),
+            'charset'   => 'utf8',
+            'prefix'    => '',
+            'schema'    => 'public',
+            'sslmode'   => 'prefer',
+        ]
 
     ],
 

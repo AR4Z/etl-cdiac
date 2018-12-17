@@ -1,0 +1,83 @@
+{
+    "name": "rinvex/repository",
+    "description": "Rinvex Repository is a simple, intuitive, and smart implementation of Active Repository with extremely flexible & granular caching system for Laravel, used to abstract the data layer, making applications more flexible to maintain.",
+    "keywords": [
+        "rinvex",
+        "laravel",
+        "contract",
+        "interface",
+        "repository",
+        "intuitive",
+        "eloquent",
+        "granular",
+        "pattern",
+        "cache"
+    ],
+    "license": "MIT",
+    "homepage": "https://rinvex.com",
+    "support": {
+        "email": "help@rinvex.com",
+        "issues": "https://github.com/rinvex/repository/issues",
+        "source": "https://github.com/rinvex/repository",
+        "docs": "https://github.com/rinvex/repository/blob/master/README.md"
+    },
+    "authors": [
+        {
+            "name": "Rinvex LLC",
+            "homepage": "https://rinvex.com",
+            "email": "help@rinvex.com"
+        },
+        {
+            "name": "Abdelrahman Omran",
+            "homepage": "https://omranic.com",
+            "email": "me@omranic.com",
+            "role": "Project Lead"
+        },
+        {
+            "name": "The Generous Laravel Community",
+            "homepage": "https://github.com/rinvex/repository/contributors"
+        }
+    ],
+    "require": {
+        "php": "^7.0.0",
+        "illuminate/events": "~5.5.0",
+        "illuminate/support": "~5.5.0",
+        "illuminate/database": "~5.5.0",
+        "illuminate/container": "~5.5.0",
+        "illuminate/contracts": "~5.5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0.0",
+        "illuminate/config": "~5.5.0"
+    },
+    "suggest": {
+        "illuminate/pagination": "Required to paginate the result set."
+    },
+    "autoload": {
+        "psr-4": {
+            "Rinvex\\Repository\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rinvex\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Rinvex\\Repository\\Providers\\RepositoryServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

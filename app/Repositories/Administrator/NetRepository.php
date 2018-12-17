@@ -39,4 +39,34 @@ class NetRepository extends EloquentRepository implements RepositoriesContract
     {
         return $this->select('id','name')->where('etl_active',true)->pluck('name','id');
     }
+
+    //Auditory System Functions
+
+    /**
+     * @param int $station_id
+     * @return Array
+     */
+    public function getNetById($station_id){
+        return $this->select('id', 'name')
+            ->where('etl_active',true)
+            ->where('id','=',$station_id)
+            ->orderby('name','ASC')
+            ->get()->toArray();
+    }
+
+    /**
+     * @return object
+     */
+    public function getNet(){
+        return $this
+            ->select('id', 'name')
+            ->where('etl_active',true)
+            ->orderby('name','ASC')
+            ->get();
+
+
+
+    }
+
+
 }
