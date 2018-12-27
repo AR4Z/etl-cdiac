@@ -4,7 +4,7 @@ namespace App\Etl\Run;
 
 use App\Etl\EtlFactoryContract;
 
-class RunSynchronous extends RunBase implements RunInterface
+class Synchronous extends RunBase implements RunInterface
 {
     /**
      * return mixed

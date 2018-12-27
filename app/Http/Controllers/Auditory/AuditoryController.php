@@ -190,7 +190,7 @@ class AuditoryController extends Controller
                 foreach ($variable as $variable){$listVariable[$variable->id_variable]= $variable->nombre;}
                 foreach ($stations as $station){$listStation[$station->estacion_sk]= $station->estacion;}
 
-                return view('auditory.auditoryStation')->with(['variable' => $listVariable, 'station'=>$listStation]);
+                return view('Auditory.auditoryStation')->with(['variable' => $listVariable, 'station'=>$listStation]);
 
                         }
         }
@@ -274,44 +274,44 @@ class AuditoryController extends Controller
 
                 if (sizeof($station)==1 && sizeof($variables)==1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_accurancy_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_accurancy_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 elseif (array_key_exists("net_id",$data)) {
                     $net=$this->netRepository->getNetById($data['net_id']);
-                    return view('Auditory.result_Net')->with(['data_risk' => $result_accurancy_array,'net'=> array_column($net,'name')[0], 'search' => $data]);
+                    return view('auditory.result_Net')->with(['data_risk' => $result_accurancy_array,'net'=> array_column($net,'name')[0], 'search' => $data]);
 
                 }
                 elseif (sizeof($station)==1 && sizeof($variables)>1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_accurancy_array,'station'=>array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_accurancy_array,'station'=>array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 else {
                 //dd($result_accurancy_array[706]);
-                return view('Auditory.result_AllStations')->with(['data_risk' => $result_accurancy_array, 'search' => $data]);}
+                return view('auditory.result_AllStations')->with(['data_risk' => $result_accurancy_array, 'search' => $data]);}
                 break;
 
             case "Integridad":
             $result_integrity = $this->averageRisk($station, $variables, $date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
                 if (sizeof($station)==1 && sizeof($variables)==1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_integrity, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_integrity, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 elseif (array_key_exists("net_id",$data)) {
                     $net=$this->netRepository->getNetById($data['net_id']);
-                    return view('Auditory.result_Net')->with(['data_risk' => $result_integrity,'net'=> array_column($net,'name')[0], 'search' => $data]);
+                    return view('auditory.result_Net')->with(['data_risk' => $result_integrity,'net'=> array_column($net,'name')[0], 'search' => $data]);
 
                 }
                 elseif (sizeof($station)==1 && sizeof($variables)>1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_integrity, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_integrity, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 else {
 
-            return view('Auditory.result_AllStations')->with(['data_risk' => $result_integrity, 'search' => $data]);}
+            return view('auditory.result_AllStations')->with(['data_risk' => $result_integrity, 'search' => $data]);}
             break;
 
             case "Completitud":
@@ -319,21 +319,21 @@ class AuditoryController extends Controller
                 $result_completeness_array = $this->completeness($station,$variables,$data['start'],$data['end']);
                 if (sizeof($station)==1 && sizeof($variables)==1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_completeness_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_completeness_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 elseif (array_key_exists("net_id",$data)) {
                     $net=$this->netRepository->getNetById($data['net_id']);
-                    return view('Auditory.result_Net')->with(['data_risk' => $result_completeness_array,'net'=> array_column($net,'name')[0], 'search' => $data]);
+                    return view('auditory.result_Net')->with(['data_risk' => $result_completeness_array,'net'=> array_column($net,'name')[0], 'search' => $data]);
 
                 }
                 elseif (sizeof($station)==1 && sizeof($variables)>1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_completeness_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_completeness_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 else {
-                    return view('Auditory.result_AllStations')->with(['data_risk' => $result_completeness_array, 'search' => $data]);
+                    return view('auditory.result_AllStations')->with(['data_risk' => $result_completeness_array, 'search' => $data]);
                 }
             break;
 
@@ -348,22 +348,22 @@ class AuditoryController extends Controller
                 if (sizeof($station)==1 && sizeof($variables)==1){
 
                    // dd(['outlier'=>(array_column($result_consistence_array,'outlier')[0]),'data_risk' => $result_consistence_array, 'station'=> array_column($station,'estacion'),'var'=>array_column($variables,'nombre'),'search' => $data]);
-                    return view('Auditory.result_Station_consistence')->with(['outlier'=>(array_column($result_consistence_array,'outlier')[0]),'data_risk' => $result_consistence_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station_consistence')->with(['outlier'=>(array_column($result_consistence_array,'outlier')[0]),'data_risk' => $result_consistence_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 elseif (array_key_exists("net_id",$data)) {
 
                     $net=$this->netRepository->getNetById($data['net_id']);
-                    return view('Auditory.result_Net_consistence')->with(['data_risk' => $result_consistence_array,'net'=> array_column($net,'name')[0], 'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Net_consistence')->with(['data_risk' => $result_consistence_array,'net'=> array_column($net,'name')[0], 'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 elseif (sizeof($station)==1 && sizeof($variables)>1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_consistence_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_consistence_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 else {
-                    return view('Auditory.result_consistence')->with(['data_risk' => $result_consistence_array, 'search' => $data]);
+                    return view('auditory.result_consistence')->with(['data_risk' => $result_consistence_array, 'search' => $data]);
                 }
                 break;
 
@@ -376,16 +376,16 @@ class AuditoryController extends Controller
                 if (array_key_exists("net_id",$data)) {
 
                     $net=$this->netRepository->getNetById($data['net_id']);
-                    return view('Auditory.result_Net')->with(['data_risk' => $result_coherence_array,'net'=> $net[0]->name, 'search' => $data]);
+                    return view('auditory.result_Net')->with(['data_risk' => $result_coherence_array,'net'=> $net[0]->name, 'search' => $data]);
 
                 }
                 elseif (sizeof($station)==1 && sizeof($variables)>1){
 
-                    return view('Auditory.result_Station')->with(['data_risk' => $result_coherence_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                    return view('auditory.result_Station')->with(['data_risk' => $result_coherence_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
                 else {
-                    return view('Auditory.result_AllStations')->with(['data_risk' => $result_coherence_array, 'search' => $data]);
+                    return view('auditory.result_AllStations')->with(['data_risk' => $result_coherence_array, 'search' => $data]);
                 }
                 break;
 
@@ -413,7 +413,7 @@ class AuditoryController extends Controller
 
                 $result_array=array_merge($result,$result_consistence_array);}
 
-                return view('Auditory.result_Station')->with(['data_risk' => $result_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                return view('auditory.result_Station')->with(['data_risk' => $result_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
             }
             elseif (array_key_exists("net_id",$data)) {
                 $net=$this->netRepository->getNetById($data['net_id']);
@@ -437,14 +437,14 @@ class AuditoryController extends Controller
 
                     $result_array=array_merge($result,$result_coherence_array);
                 }
-                return view('Auditory.result_Net')->with(['data_risk' => $result_array,'net'=> $net[0]->name, 'search' => $data]);
+                return view('auditory.result_Net')->with(['data_risk' => $result_array,'net'=> $net[0]->name, 'search' => $data]);
 
             }
             elseif (sizeof($station)==1 && sizeof($variables)>1){
                 $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
 
                 $result_array=array_merge($result,$result_coherence_array);
-                return view('Auditory.result_Station')->with(['data_risk' => $result_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                return view('auditory.result_Station')->with(['data_risk' => $result_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
             }
             else {
@@ -467,7 +467,7 @@ class AuditoryController extends Controller
                     $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
 
                     $result_array=array_merge($result,$result_coherence_array);                }
-                return view('Auditory.result_AllStations')->with(['data_risk' => $result_array, 'search' => $data]);
+                return view('auditory.result_AllStations')->with(['data_risk' => $result_array, 'search' => $data]);
             }
         }
     }

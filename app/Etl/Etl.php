@@ -142,7 +142,7 @@ class Etl
      * @return $this
      * @throws \ReflectionException
      */
-    public function run($method = 'RunSynchronous',$options = []) : Etl
+    public function run($method = 'Synchronous',$options = []) : Etl
     {
         # Se evalua que los procesos anteriores no conengan errores fatales.
         if ($this->etlConfig->processState->stopProcessState){

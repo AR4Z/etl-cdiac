@@ -4,7 +4,7 @@ namespace App\Etl\Run;
 
 use App\Jobs\EtlJobExecution;
 
-class RunAsynchronous extends RunBase implements RunInterface
+class Asynchronous extends RunBase implements RunInterface
 {
     /**
      * return mixed
