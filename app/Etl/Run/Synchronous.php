@@ -2,8 +2,6 @@
 
 namespace App\Etl\Run;
 
-use App\Etl\EtlFactoryContract;
-
 class Synchronous extends RunBase implements RunInterface
 {
     /**

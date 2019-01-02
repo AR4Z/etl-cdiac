@@ -10,5 +10,13 @@ class RunBase extends EtlBase
     /**
      * @var EtlFactoryContract[]
      */
-    public $etlProcess;
+    protected $etlProcess;
+
+    /**
+     * @param EtlFactoryContract[] $etlProcess
+     */
+    public function setEtlProcess(array $etlProcess)
+    {
+        $this->etlProcess = $etlProcess;
+    }
 }

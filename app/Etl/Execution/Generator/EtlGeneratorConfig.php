@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Etl;
+namespace App\Etl\Execution\Generator;
 
 use Carbon\Carbon;
+use App\Etl\Etl;
 
 class EtlGeneratorConfig
 {
@@ -54,7 +55,7 @@ class EtlGeneratorConfig
     /**
      * @var string
      */
-    private $typeProcess = '';
+    private $typeProcess = 'Original';
 
     /**
      * @var array
@@ -62,20 +63,19 @@ class EtlGeneratorConfig
     private $generalOptions = [];
 
     /**
-     * EtlGeneratorConfig constructor.
-     * @param String $typeProcess
+     * @param $stationOrStations int | array
+     * @return array
      */
-    public function __construct(String $typeProcess)
+    public function config($stationOrStations) :array
     {
-        $this->typeProcess = $typeProcess;
+        return is_array($stationOrStations) ? $this->configStations($stationOrStations) : $this->configStation($stationOrStations);
     }
 
     /**
      * @param array $stations
      * @return array
-     * @throws \ReflectionException
      */
-    public function configStations(array $stations) :array
+    private function configStations(array $stations) :array
     {
         foreach ($stations as $station) { $this->configStation($station);}
         return $this->etl;
@@ -84,9 +84,8 @@ class EtlGeneratorConfig
     /**
      * @param int $station
      * @return array
-     * @throws \ReflectionException
      */
-    public function configStation(int $station) :array
+    private function configStation(int $station) :array
     {
         $initialDate = Carbon::parse($this->extractorConfig['initialDate']);
         $finalDate = Carbon::parse($this->extractorConfig['finalDate']);
@@ -102,7 +101,6 @@ class EtlGeneratorConfig
      * @param \App\Etl\Etl $etl
      * @param Carbon $initialDate
      * @param Carbon $finalDate
-     * @throws \ReflectionException
      */
     private function partitionExecute(Etl $etl,Carbon $initialDate,Carbon $finalDate)
     {
@@ -126,12 +124,11 @@ class EtlGeneratorConfig
      * @param \App\Etl\Etl $etl
      * @param Carbon $initialDate
      * @param Carbon $finalDate
-     * @throws \ReflectionException
      */
     private function execute(Etl $etl,Carbon $initialDate,Carbon $finalDate)
     {
-        $this->extractorConfig['initialDate'] = $initialDate->toDateTimeString();
-        $this->extractorConfig['finalDate'] = $finalDate->toDateTimeString();
+        $this->extractorConfig['initialDate'] = $initialDate->toDateString();
+        $this->extractorConfig['finalDate'] = $finalDate->toDateString();
 
         $etl->extract($this->extractor,$this->extractorConfig);
 

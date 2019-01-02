@@ -28,7 +28,6 @@ class Etl
      * @param int $station
      * @param array $options
      * @return Etl
-     * @throws \ReflectionException
      */
 
     public static function start(String $typeProcess, $net = null,$connection = null, int $station,array $options = []) : Etl
@@ -50,7 +49,6 @@ class Etl
      * @param int $station
      * @param array $options
      * @return Etl
-     * @throws \ReflectionException
      */
 
     public function etlConfig(Etl $etl, String $typeProcess, $net = null,$connection = null, int $station, array $options = []) : Etl
@@ -72,7 +70,6 @@ class Etl
      * @param String $method
      * @param array $options
      * @return $this
-     * @throws \ReflectionException
      */
 
     public function extract(string $method = 'Database', $options = []) : Etl
@@ -95,7 +92,6 @@ class Etl
      * @param string $method
      * @param array $options
      * @return $this
-     * @throws \ReflectionException
      */
     public function transform(string $method = 'Original', $options = []) : Etl
     {
@@ -117,7 +113,6 @@ class Etl
      * @param string $method
      * @param array $options
      * @return $this
-     * @throws \ReflectionException
      */
 
     public function load(string $method = 'Load', $options = []) : Etl
@@ -140,7 +135,6 @@ class Etl
      * @param string $method
      * @param array $options
      * @return $this
-     * @throws \ReflectionException
      */
     public function run($method = 'Synchronous',$options = []) : Etl
     {
@@ -149,7 +143,7 @@ class Etl
             dd('TODO: error no fue posible realizar las configuraciones necesarias. Etl.php method run'); # TODO
         }
 
-        $options['eltProcess'] = $this->etlObject;
+        $options['etlProcess'] = $this->etlObject;
 
         $executor = $this->factory($method, 'Run',false,$options);
 
@@ -164,15 +158,12 @@ class Etl
      * @param bool $config
      * @param array $options
      * @return mixed
-     * @throws \ReflectionException
      */
 
     protected function factory(string $class, string $category, bool $config = true, array $options = [])
     {
-        # Se crea la direccion completa de la clase
-        if (! class_exists($class)) {$class = __NAMESPACE__ . '\\' . ucwords($category) . '\\' . $class;}
-
         # Se crea un objeto de la clase en cuestion
+        $class = __NAMESPACE__ . '\\' . ucwords($category) . '\\' . $class;
         $class = new $class;
 
         # Se agrega la configuracion global en caso de ser requerida
@@ -188,43 +179,37 @@ class Etl
      * @param $class
      * @param $options
      * @return null
-     * @throws \ReflectionException
-     * @throws \Exception
      */
 
     protected function setOptions($class, array $options = [])
     {
-        $reflectionClass = new ReflectionClass($class);
-        $reflectionConfig = new ReflectionClass($this->etlConfig);
-
-        foreach ($options as $option => $value) {
-            $result = $this->setOption($reflectionConfig,$reflectionClass,$method = 'set'.$option,$value);
+        foreach ($options as $option => $value) {;
+            $result = $this->setOption($class,$method = 'set'.ucfirst($option),$value);
 
             if (!$result){
                 $this->etlConfig->processState->addWarningsState([
                     'localization'  => 'App\Etl@setOptions',
-                    'description'   => 'Un metodo para ingresar la propiedad : set'.$option.', por lo tanto esta propiedad no se utilizó en el proceso',
+                    'description'   => 'Un metodo para ingresar la propiedad : set'.$method.', por lo tanto esta propiedad no se utilizó en el proceso',
                 ]);
             }
         }
     }
 
     /**
-     * @param ReflectionClass $reflectionConfig
-     * @param ReflectionClass $reflectionClass
+     * @param $class
      * @param string $method
      * @param $value
      * @return bool
      */
-    protected function setOption(ReflectionClass $reflectionConfig, ReflectionClass $reflectionClass, string $method, $value) : bool
+    protected function setOption($class, string $method, $value) : bool
     {
-        if ($this->validateMethodExistence($reflectionConfig,$method)) {
-            $this->toAssignValueFromMethodClass($reflectionConfig, $method, $value);
+        if ($this->validateMethodExistence($this->etlConfig,$method)) {
+            $this->toAssignValueFromMethodClass($this->etlConfig, $method, $value);
             return true;
         }
 
-        if ($this->validateMethodExistence($reflectionClass,$method)){
-            $this->toAssignValueFromMethodClass($reflectionClass, $method, $value);
+        if ($this->validateMethodExistence($class,$method)){
+            $this->toAssignValueFromMethodClass($class, $method, $value);
             return true;
         }
 
@@ -232,13 +217,18 @@ class Etl
     }
 
     /**
-     * @param ReflectionClass $reflector
+     * @param $class
      * @param $method
      * @return bool
      */
-    protected function validateMethodExistence(ReflectionClass $reflector, $method) : bool
+    protected function validateMethodExistence($class, $method) : bool
     {
-        return ($reflector->hasMethod($method));
+        try {
+            return ((new ReflectionClass($class))->hasMethod($method));
+        } catch (\ReflectionException $e) {
+
+            dd('ERROR'); // TODO
+        }
     }
 
     /**
