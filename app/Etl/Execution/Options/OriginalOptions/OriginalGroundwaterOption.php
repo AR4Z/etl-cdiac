@@ -46,11 +46,13 @@ class OriginalGroundwaterOption extends EtlGeneratorConfig implements OriginalOp
      */
     public function runConfig(string $typeProcess, array $executionParams): array
     {
-        $this->setTypeProcess($typeProcess)
+        return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
             ->setExtractor('Csv',$this->initialDate,$this->finalDate)
+            ->addExtractorVariable('extractType','Local')
             ->addExtractorVariable('fileName',$this->fileName)
             ->addTransform('Original',[])
+            ->setSpaceDayExecution(-1)
             ->config($this->station);
     }
 }

@@ -51,12 +51,14 @@ class OriginalAirOption extends EtlGeneratorConfig implements OriginalOptionCont
      */
     public function runConfig(string $typeProcess, array $executionParams): array
     {
-        $this->setTypeProcess($typeProcess)
+        return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
             ->setExtractor('Csv',$this->initialDate,$this->finalDate)
+            ->addExtractorVariable('extractType','Local')
             ->addExtractorVariable('extension',$this->extension)
             ->addExtractorVariable('fileName',$this->fileName)
             ->addTransform('Original',[])
+            ->setSpaceDayExecution(-1)
             ->config($this->station);
     }
 }

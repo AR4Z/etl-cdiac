@@ -3,6 +3,7 @@
 namespace App\Etl\Traits;
 
 use App\Repositories\RepositoriesContract;
+use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use App\Etl\Database\Query;
@@ -461,5 +462,51 @@ trait WorkDatabaseTrait
             ->orderBy('station_sk','date_sk','time_sk') // TODO order by solo recibe dos paramtros la columna y el metodo de ordenamiento
             ->get()
             ->toArray();
+    }
+
+    /**
+     * @param RepositoriesContract $repository
+     * @param string $countSelect
+     * @return Collection
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function specificConsultValuesRawWDT(RepositoriesContract $repository, string $countSelect) : Collection
+    {
+        return $repository->queryBuilder()
+            ->selectRaw('CAST(station_sk AS integer),CAST(date_sk AS integer),'.$countSelect)
+            ->groupby('station_sk','date_sk')
+            ->orderByRaw('station_sk asc,date_sk asc')
+            ->get();
+    }
+
+    /**
+     * @param RepositoriesContract $repository
+     * @param $station_sk
+     * @param $date_sk
+     * @return array
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function firstStationAndDateWDT(RepositoriesContract $repository, $station_sk, $date_sk) : array
+    {
+        return (array)$repository->queryBuilder()->select('*')
+            ->where('station_sk','=',$station_sk)
+            ->where('date_sk','=',$date_sk)
+            ->first();
+    }
+
+    /**
+     * @param TemporalRepositoryContract $repository
+     * @param $variable
+     * @param $as
+     * @return Collection
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     */
+    public function countVariableFromStationAndDateWDT(TemporalRepositoryContract $repository, $variable, $as) : Collection
+    {
+        return $repository->queryBuilder()
+            ->selectRaw("CAST(station_sk AS integer),CAST(date_sk AS integer),COUNT($variable) AS $as")
+            ->groupby('station_sk','date_sk')
+            ->orderByRaw("station_sk asc,date_sk asc")
+            ->get();
     }
 }

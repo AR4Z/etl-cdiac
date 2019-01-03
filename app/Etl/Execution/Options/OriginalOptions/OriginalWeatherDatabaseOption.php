@@ -38,9 +38,10 @@ class OriginalWeatherDatabaseOption extends EtlGeneratorConfig implements Origin
      */
     public function runConfig(string $typeProcess, array $executionParams): array
     {
-        $this->setTypeProcess($typeProcess)
+        return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
             ->setExtractor('Database',$this->initialDate,$this->finalDate)
+            ->addExtractorVariable('extractType','External')
             ->addTransform('Original',[])
             ->config($this->stationOrStations);
     }

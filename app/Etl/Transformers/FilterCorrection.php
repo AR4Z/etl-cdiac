@@ -58,7 +58,7 @@ class FilterCorrection extends TransformBase implements TransformInterface, Step
                     $this->correctControl(
                         $this->etlConfig->tableSpaceWork,
                         $variable,
-                        $this->etlConfig->incomingAmount
+                        $this->etlConfig->trustObject->getIncomingAmount()
                     );
                 }
             }

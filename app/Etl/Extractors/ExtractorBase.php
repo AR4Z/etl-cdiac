@@ -62,17 +62,22 @@ abstract class ExtractorBase extends EtlBase
      */
     public function trustProcess()
     {
-        if (!$this->etlConfig->isTrustProcess()){ return false;}
+        if (!$this->etlConfig->trustObject->active){ return false;}
 
         # Calcular los datos entrantes para el preceso de confianza
 
-        $trust= $this->incomingCalculation($this->etlConfig->varForFilter->toArray());
+        $trust = $this->etlConfig->trustObject->incomingCalculation(
+            $this->etlConfig->repositorySpaceWork,
+            $this->etlConfig->varForFilter->toArray()
+        );
 
         # Actualizar el estado del proceso de confianza
-        $this->etlConfig->setTrustColumns($trust);
+        $this->etlConfig->trustObject->setTrustColumns($trust);
 
         # Calcular la Cantidad de datos entrante
-        $this->etlConfig->setIncomingAmount($this->getIncomingAmountWDT($this->etlConfig->repositorySpaceWork));
+        $this->etlConfig->trustObject->setIncomingAmount(
+            $this->getIncomingAmountWDT($this->etlConfig->repositorySpaceWork)
+        );
 
         return true;
     }

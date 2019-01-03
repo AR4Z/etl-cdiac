@@ -71,6 +71,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
 
     /**
      * @param $varFilter
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function ExecuteFilterCappedRainGauge($varFilter)
     {

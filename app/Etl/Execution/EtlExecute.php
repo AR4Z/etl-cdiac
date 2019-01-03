@@ -23,6 +23,11 @@ class EtlExecute
     private $trustProcess = false;
 
     /**
+     * @var bool
+     */
+    private $debug = false;
+
+    /**
      * EtlExecute constructor.
      * @param ExecuteStrategy $executeStrategy
      */
@@ -36,7 +41,7 @@ class EtlExecute
      */
     public function execute() : array
     {
-        return $this->executeStrategy->execute(['sequence'=> $this->sequence, 'trustProcess' => $this->trustProcess]);
+        return $this->executeStrategy->execute(['sequence'=> $this->sequence, 'trustProcess' => $this->trustProcess,'debug'=> $this->debug]);
     }
 
     /**
@@ -68,5 +73,21 @@ class EtlExecute
     public function setTrustProcess(bool $trustProcess)
     {
         $this->trustProcess = $trustProcess;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDebug(): bool
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param bool $debug
+     */
+    public function setDebug(bool $debug)
+    {
+        $this->debug = $debug;
     }
 }

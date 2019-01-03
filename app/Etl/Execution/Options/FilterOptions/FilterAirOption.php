@@ -42,6 +42,7 @@ class FilterAirOption extends EtlGeneratorConfig implements FilterOptionContract
         return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
             ->setExtractor('Database',$this->initialDate,$this->finalDate)
+            ->addExtractorVariable('extractType','Local')
             ->addTransform('FilterDetection',[])
             ->addTransform('FilterCorrection',[])
             ->config($this->stationOrStations);

@@ -15,7 +15,7 @@ class EtlGeneratorConfig
     /**
      * @var string External | Local
      */
-    private $extractor = 'External';
+    private $extractor = 'Database';
 
     /**
      * @var array
@@ -151,8 +151,10 @@ class EtlGeneratorConfig
     public function setExtractor(string $extractor,string $initialDate,string $finalDate): EtlGeneratorConfig
     {
         $this->extractor = $extractor;
+
         $this->extractorConfig['initialDate'] = $initialDate;
         $this->extractorConfig['finalDate'] = $finalDate;
+
         return $this;
     }
 
@@ -390,5 +392,4 @@ class EtlGeneratorConfig
     {
         return $this->generalOptions;
     }
-
 }

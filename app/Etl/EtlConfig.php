@@ -72,11 +72,6 @@ class EtlConfig
     /**
      * @var string
      */
-    public $tableTrust = null;
-
-    /**
-     * @var string
-     */
     public $tableSpaceWork = null;
 
     /**
@@ -115,21 +110,6 @@ class EtlConfig
     public $finalTime = '23:59:59';
 
     /**
-     * @var array
-     */
-    public $trustColumns = [];
-
-    /**
-     * @var integer
-     */
-    public $incomingAmount = 0;
-
-    /**
-     * @var bool
-     */
-    public $trustProcess = false;
-
-    /**
      * @var bool
      */
     public $calculateDateTime = true;
@@ -160,6 +140,11 @@ class EtlConfig
     public $trustRepository = null;
 
     /**
+     * @var TrustProcess
+     */
+    public $trustObject = null;
+
+    /**
      * EtlConfig constructor.
      * @param String $typeProcess
      * @param int $netId
@@ -172,6 +157,7 @@ class EtlConfig
     {
         $this->setProcessId(time());
         $this->setProcessState(new EtlState());
+        $this->setTrustObject(new TrustProcess());
 
         $this->setTypeProcess($typeProcess);
         $this->setStation($stationId);
@@ -227,6 +213,7 @@ class EtlConfig
         $this->setRepositoryDestination((array_key_exists('repositoryDestination',$config)) ? $config->repositoryDestination : false);
         $this->setRepositoryExist((array_key_exists('repositoryExist',$config)) ? $config->repositoryExist : false);
         $this->setTableExist((array_key_exists('tableExist',$config)) ? $config->tableExist : false);
+
         $this->setTableTrust((array_key_exists('tableTrust',$config)) ? $config->tableTrust : false);
         $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
     }
@@ -371,13 +358,11 @@ class EtlConfig
 
     /**
      * @param mixed $tableTrust
-     * @return $this
      */
     public function setTableTrust($tableTrust)
     {
-        $this->tableTrust = $tableTrust;
-
-        return $this;
+        #$this->tableTrust = $tableTrust;
+        $this->trustObject->table = $tableTrust;
     }
 
     /**
@@ -386,29 +371,8 @@ class EtlConfig
      */
     public function setTrustRepository(string $trustRepository)
     {
-        $this->trustRepository = ($trustRepository) ? $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository) : $trustRepository;
-    }
-
-    /**
-     * @param array $trustColumns
-     * @return $this
-     */
-    public function setTrustColumns(array $trustColumns)
-    {
-        $this->trustColumns = $trustColumns;
-
-        return $this;
-    }
-
-    /**
-     * @param int $incomingAmount
-     * @internal param int $incomingAmount
-     * @return $this
-     */
-    public function setIncomingAmount(int $incomingAmount)
-    {
-        $this->incomingAmount = $incomingAmount;
-        return $this;
+        #$this->trustRepository = ($trustRepository) ? $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository) : $trustRepository;
+        $this->trustObject->repository = ($trustRepository) ? $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository) : $trustRepository;
     }
 
     /**
@@ -430,19 +394,11 @@ class EtlConfig
     }
 
     /**
-     * @return bool
-     */
-    public function isTrustProcess(): bool
-    {
-        return $this->trustProcess;
-    }
-
-    /**
      * @param bool $trustProcess
      */
     public function setTrustProcess(bool $trustProcess)
     {
-        $this->trustProcess = $trustProcess;
+        $this->trustObject->active = $trustProcess;
     }
 
     /**
@@ -488,5 +444,13 @@ class EtlConfig
     public function setProcessState($processState)
     {
         $this->processState = $processState;
+    }
+
+    /**
+     * @param null $trustObject
+     */
+    public function setTrustObject($trustObject)
+    {
+        $this->trustObject = $trustObject;
     }
 }
