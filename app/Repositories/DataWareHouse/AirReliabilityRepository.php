@@ -2,15 +2,15 @@
 
 namespace App\Repositories\DataWareHouse;
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\AirReliability;
-use Illuminate\Support\Collection;
-use DB;
 
 class AirReliabilityRepository extends EloquentRepository implements ReliabilityRepositoryContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -18,17 +18,6 @@ class AirReliabilityRepository extends EloquentRepository implements Reliability
     public function __construct(Container $container)
     {
         $this->setContainer($container)->setModel(AirReliability::class)->setRepositoryId('rinvex.repository.uniqueid');
-    }
-
-    /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
 
     /**

@@ -2,16 +2,16 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\RepositoriesContract;
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporalAir;
-use DB;
 
 class TemporalAirRepository extends EloquentRepository implements TemporalRepositoryContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -19,17 +19,6 @@ class TemporalAirRepository extends EloquentRepository implements TemporalReposi
     public function __construct(Container $container)
     {
         $this->setContainer($container)->setModel(TemporalAir::class)->setRepositoryId('rinvex.repository.uniqueid');
-    }
-
-    /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
 
     /**
@@ -52,22 +41,20 @@ class TemporalAirRepository extends EloquentRepository implements TemporalReposi
      * @param $dateSk
      * @param $date
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateDateSk(int $dateSk, string $date)
     {
-        return $this->createModel()->where('date', 'LIKE', $date)->update(['date_sk' => $dateSk]);
+        return $this->queryBuilder()->where('date', 'LIKE', $date)->update(['date_sk' => $dateSk]);
     }
 
     /**
      * @param $timeSk
      * @param $time
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateTimeSk(int $timeSk, string $time)
     {
-        return $this->createModel()->where('time', '=', $time)->update(['time_sk' => $timeSk]);
+        return $this->queryBuilder()->where('time', '=', $time)->update(['time_sk' => $timeSk]);
     }
 
     /**
@@ -75,13 +62,13 @@ class TemporalAirRepository extends EloquentRepository implements TemporalReposi
      * @return mixed
      * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function UpdateStationSk(int $stationId)
+    public function UpdateStationSk(int $stationId) /* TODO REVISAR ESTE METODO*/
     {
         return $this->createModel()->query()->update(['station_sk' => $stationId]);
     }
 
     /**
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @return mixed|void
      */
     public function truncate()
     {
@@ -102,11 +89,10 @@ class TemporalAirRepository extends EloquentRepository implements TemporalReposi
      * @param $stationSk
      * @param $value
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateTimeSkFromStationSk(int $stationSk, int $value)
     {
-        return $this->createModel()->where('id', '=', $stationSk)->update(['time_sk' => $value]);
+        return $this->queryBuilder()->where('id', '=', $stationSk)->update(['time_sk' => $value]);
     }
 
     /**

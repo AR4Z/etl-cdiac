@@ -3,14 +3,14 @@
 namespace App\Repositories\DataWareHouse;
 
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\WeatherReliability;
-use Illuminate\Support\Collection;
-use DB;
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 
 class WeatherReliabilityRepository extends EloquentRepository implements ReliabilityRepositoryContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -18,17 +18,6 @@ class WeatherReliabilityRepository extends EloquentRepository implements Reliabi
     public function __construct(Container $container)
     {
         $this->setContainer($container)->setModel(WeatherReliability::class)->setRepositoryId('rinvex.repository.uniqueid');
-    }
-
-    /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
 
     /**
