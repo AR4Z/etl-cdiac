@@ -10,11 +10,6 @@ use phpDocumentor\Reflection\Types\This;
 abstract class TransformBase extends EtlBase
 {
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @param string $variable
      * @param null $overflowMaximum
      * @param null $overflowMinimum
@@ -145,14 +140,19 @@ abstract class TransformBase extends EtlBase
     /**
      * @param $variables
      * @return bool
+     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function trustProcess($variables)
     {
-        if (!$this->etlConfig->isTrustProcess()){return false;}
+        if (!$this->etlConfig->trustObject->active){return false;}
 
         if (is_null($variables->reliability_name)){return false;}
 
-        $this->insertGoods($variables->local_name, $variables->reliability_name);
+        $this->etlConfig->trustObject->insertGoods(
+            $this->etlConfig->repositorySpaceWork,
+            $variables->local_name,
+            $variables->reliability_name
+        );
     }
 
     /**

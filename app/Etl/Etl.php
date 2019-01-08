@@ -12,7 +12,7 @@ class Etl
     Public $etlConfig = null;
 
     /**
-     * @var array
+     * @var EtlFactoryContract[]
      */
     Public $etlObject = [];
 
@@ -28,7 +28,6 @@ class Etl
      * @param int $station
      * @param array $options
      * @return Etl
-     * @throws \ReflectionException
      */
 
     public static function start(String $typeProcess, $net = null,$connection = null, int $station,array $options = []) : Etl
@@ -50,7 +49,6 @@ class Etl
      * @param int $station
      * @param array $options
      * @return Etl
-     * @throws \ReflectionException
      */
 
     public function etlConfig(Etl $etl, String $typeProcess, $net = null,$connection = null, int $station, array $options = []) : Etl
@@ -63,7 +61,7 @@ class Etl
             dd('TODO: error no fue posible realizar las configuraciones necesarias'); # TODO: etl config not define
         }
 
-        $this->setOptions(null,$options);
+        $this->setOptions($this->etlConfig,$options);
 
         return $etl;
     }
@@ -72,7 +70,6 @@ class Etl
      * @param String $method
      * @param array $options
      * @return $this
-     * @throws \ReflectionException
      */
 
     public function extract(string $method = 'Database', $options = []) : Etl
@@ -83,7 +80,7 @@ class Etl
         }
 
         # Se ingrega el metodo de extracción en el array de ejecusión.
-        array_push($this->etlObject,$this->factory($method,'Extractors',$options));
+        array_push($this->etlObject,$this->factory($method,'Extractors',true,$options));
 
         # Se aumenta el contados de procesos a ejecutar.
         $this->flagEtl++;
@@ -95,7 +92,6 @@ class Etl
      * @param string $method
      * @param array $options
      * @return $this
-     * @throws \ReflectionException
      */
     public function transform(string $method = 'Original', $options = []) : Etl
     {
@@ -105,7 +101,7 @@ class Etl
         }
 
         # Se ingrega el metodo de extracción en el array de ejecusión.
-        array_push($this->etlObject,$this->factory($method,'Transformers',$options));
+        array_push($this->etlObject,$this->factory($method,'Transformers',true,$options));
 
         # Se aumenta el contados de procesos a ejecutar.
         $this->flagEtl++;
@@ -117,7 +113,6 @@ class Etl
      * @param string $method
      * @param array $options
      * @return $this
-     * @throws \ReflectionException
      */
 
     public function load(string $method = 'Load', $options = []) : Etl
@@ -128,7 +123,7 @@ class Etl
         }
 
         # Se ingrega el metodo de extracción en el array de ejecusión.
-        array_push($this->etlObject,$this->factory($method, 'Loaders',$options));
+        array_push($this->etlObject,$this->factory($method, 'Loaders',true,$options));
 
         # Se aumenta el contados de procesos a ejecutar.
         $this->flagEtl++;
@@ -137,39 +132,45 @@ class Etl
     }
 
     /**
+     * @param string $method
+     * @param array $options
      * @return $this
      */
-    public function run() : Etl
+    public function run($method = 'Synchronous',$options = []) : Etl
     {
         # Se evalua que los procesos anteriores no conengan errores fatales.
         if ($this->etlConfig->processState->stopProcessState){
             dd('TODO: error no fue posible realizar las configuraciones necesarias. Etl.php method run'); # TODO
         }
 
-        # Se ejecuta cada una de los metodos run detro de los procesos en cola de ejecusión.
-        foreach ($this->etlObject as $object){$object->run();}
+        $options['etlProcess'] = $this->etlObject;
+
+        $executor = $this->factory($method, 'Run',false,$options);
+
+        $executor->execute();
 
         return $this;
     }
 
     /**
-     * @param $class
-     * @param $category
-     * @param $options
+     * @param string $class
+     * @param string $category
+     * @param bool $config
+     * @param array $options
      * @return mixed
-     * @throws \ReflectionException
      */
 
-    protected function factory($class, $category, $options)
+    protected function factory(string $class, string $category, bool $config = true, array $options = [])
     {
-        if (! class_exists($class)) {
-            $class = __NAMESPACE__ . '\\' . ucwords($category) . '\\' . $class;
-        }
-
+        # Se crea un objeto de la clase en cuestion
+        $class = __NAMESPACE__ . '\\' . ucwords($category) . '\\' . $class;
         $class = new $class;
-        $class->setOptions($this->etlConfig);
 
-        if (!empty($options)){ $this->setOptions($class, $options); }
+        # Se agrega la configuracion global en caso de ser requerida
+        if ($config){ $options['etlConfig'] = $this->etlConfig;}
+
+        # Se agrega la configuracion ingresada externamente
+        if (!empty($options) and !is_null($class)){ $this->setOptions($class, $options); }
 
         return $class;
     }
@@ -178,31 +179,67 @@ class Etl
      * @param $class
      * @param $options
      * @return null
-     * @throws \ReflectionException
-     * @throws \Exception
      */
 
-    protected function setOptions($class = null, array $options = [])
+    protected function setOptions($class, array $options = [])
     {
-        $refactor = (!is_null($class)) ? new ReflectionClass($class) : $class;
-        $refactorConfig = new ReflectionClass($this->etlConfig);
+        foreach ($options as $option => $value) {;
+            $result = $this->setOption($class,$method = 'set'.ucfirst($option),$value);
 
-        foreach ($options as $option => $value)
-        {
-            $setMethod = 'set'.$option;
-
-            if ($refactorConfig->hasMethod($setMethod)) {
-                $this->etlConfig->$setMethod($value);
-
-            }elseif (!is_null($refactor)) {
-                if ($refactor->hasMethod($setMethod)) { $class->$setMethod($value); }
-            }else{
+            if (!$result){
                 $this->etlConfig->processState->addWarningsState([
                     'localization'  => 'App\Etl@setOptions',
-                    'description'   => 'Un metodo para ingresar la propiedad : '.$option.', por lo tanto esta propiedad no se utilizó en el proceso',
+                    'description'   => 'Un metodo para ingresar la propiedad : set'.$method.', por lo tanto esta propiedad no se utilizó en el proceso',
                 ]);
             }
         }
+    }
+
+    /**
+     * @param $class
+     * @param string $method
+     * @param $value
+     * @return bool
+     */
+    protected function setOption($class, string $method, $value) : bool
+    {
+        if ($this->validateMethodExistence($this->etlConfig,$method)) {
+            $this->toAssignValueFromMethodClass($this->etlConfig, $method, $value);
+            return true;
+        }
+
+        if ($this->validateMethodExistence($class,$method)){
+            $this->toAssignValueFromMethodClass($class, $method, $value);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $class
+     * @param $method
+     * @return bool
+     */
+    protected function validateMethodExistence($class, $method) : bool
+    {
+        try {
+            return ((new ReflectionClass($class))->hasMethod($method));
+        } catch (\ReflectionException $e) {
+
+            dd('ERROR'); // TODO
+        }
+    }
+
+    /**
+     * @param $class
+     * @param string $method
+     * @param $value
+     * @return mixed
+     */
+    protected function toAssignValueFromMethodClass($class, string $method, $value)
+    {
+        return $class->$method($value);
     }
 
 }

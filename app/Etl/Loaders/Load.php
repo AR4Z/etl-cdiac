@@ -35,21 +35,13 @@ class Load extends LoadBase implements LoadInterface,StepContract
     public $deleteDuplicates = true;
 
     /**
-     * @param EtlConfig $etlConfig
-     */
-    public function setOptions(EtlConfig $etlConfig)
-    {
-        $this->etlConfig = $etlConfig;
-
-        # Se crean los pasos que se requieren para Database
-        $this->stepsList = $this->startSteps(new StepList());
-    }
-
-    /**
      *
      */
     public function run()
     {
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
+
         # Se ejecutan los pasos que se requieren para el proceso
         $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }

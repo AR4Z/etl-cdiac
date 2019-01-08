@@ -19,7 +19,6 @@ class PlaneEtlController extends Controller
 {
     use BaseExecuteEtl;
 
-
     /**
      * @var StationRepository
      */
@@ -128,7 +127,7 @@ class PlaneEtlController extends Controller
         }
 
         /*
-         *  Execute Factory ETL
+         *  TypeExecute Factory ETL
          *  @param  Method, Sequence, Starion Id, File Name
          */
         $result = $this->executePlaneEtl($options);

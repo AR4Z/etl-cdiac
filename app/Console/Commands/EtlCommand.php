@@ -25,7 +25,7 @@ class EtlCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Execute Etl all yesterday';
+    protected $description = 'TypeExecute Etl all yesterday';
     /**
      * @var EtlYesterdayJob
      */
@@ -51,7 +51,7 @@ class EtlCommand extends Command
     }
 
     /**
-     * Execute the console command.
+     * TypeExecute the console command.
      *
      * @return mixed
      */

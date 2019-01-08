@@ -3,15 +3,16 @@
 
 namespace App\Repositories\TemporaryWork;
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporaryCorrection;
-use DB;
 
 class TemporaryCorrectionRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -19,16 +20,5 @@ class TemporaryCorrectionRepository extends EloquentRepository implements Reposi
     public function __construct(Container $container)
     {
         $this->setContainer($container)->setModel(TemporaryCorrection::class)->setRepositoryId('rinvex.repository.uniqueid');
-    }
-
-    /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
 }

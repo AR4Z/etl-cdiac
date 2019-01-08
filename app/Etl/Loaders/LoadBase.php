@@ -9,11 +9,6 @@ use DB;
 abstract class LoadBase extends EtlBase
 {
     /**
-     * @var EtlConfig
-     */
-    public $etlConfig = null;
-
-    /**
      * @var array
      */
     public $redirectExist = [];
@@ -100,10 +95,9 @@ abstract class LoadBase extends EtlBase
      */
     public function trustProcess()
     {
-        if (!$this->etlConfig->isTrustProcess()){ return false;}
+        if (!$this->etlConfig->trustObject->active){ return false;}
 
-        $this->generateTrustAndSupport(
-            $this->etlConfig->trustColumns,
+        $this->etlConfig->trustObject->generateTrustAndSupport(
             $this->etlConfig->varForFilter,
             ($this->etlConfig->station)->measurements_per_day
         );

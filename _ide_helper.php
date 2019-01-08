@@ -3789,7 +3789,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Execute an SQL statement and return the boolean result.
+         * TypeExecute an SQL statement and return the boolean result.
          *
          * @param string $query
          * @param array $bindings
@@ -3830,7 +3830,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Execute the given callback in "dry run" mode.
+         * TypeExecute the given callback in "dry run" mode.
          *
          * @param \Closure $callback
          * @return array 
@@ -4336,7 +4336,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Execute a Closure within a transaction.
+         * TypeExecute a Closure within a transaction.
          *
          * @param \Closure $callback
          * @param int $attempts
@@ -15713,7 +15713,7 @@ namespace  {
             }
          
             /**
-             * Execute the query and get the first result or throw an exception.
+             * TypeExecute the query and get the first result or throw an exception.
              *
              * @param array $columns
              * @return \Illuminate\Database\Eloquent\Model|static 
@@ -15726,7 +15726,7 @@ namespace  {
             }
          
             /**
-             * Execute the query and get the first result or call a callback.
+             * TypeExecute the query and get the first result or call a callback.
              *
              * @param \Closure|array $columns
              * @param \Closure|null $callback
@@ -15751,7 +15751,7 @@ namespace  {
             }
          
             /**
-             * Execute the query as a "select" statement.
+             * TypeExecute the query as a "select" statement.
              *
              * @param array $columns
              * @return \Illuminate\Database\Eloquent\Collection|static[] 
@@ -16045,7 +16045,7 @@ namespace  {
             }
          
             /**
-             * Execute a callback over each item while chunking.
+             * TypeExecute a callback over each item while chunking.
              *
              * @param callable $callback
              * @param int $count
@@ -16058,7 +16058,7 @@ namespace  {
             }
          
             /**
-             * Execute the query and get the first result.
+             * TypeExecute the query and get the first result.
              *
              * @param array $columns
              * @return \Illuminate\Database\Eloquent\Model|object|static|null 
@@ -17298,7 +17298,7 @@ namespace  {
             }
          
             /**
-             * Execute an aggregate function on the database.
+             * TypeExecute an aggregate function on the database.
              *
              * @param string $function
              * @param array $columns
@@ -17311,7 +17311,7 @@ namespace  {
             }
          
             /**
-             * Execute a numeric aggregate function on the database.
+             * TypeExecute a numeric aggregate function on the database.
              *
              * @param string $function
              * @param array $columns

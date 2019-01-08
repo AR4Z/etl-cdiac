@@ -2,16 +2,17 @@
 
 namespace App\Repositories\DataWareHouse;
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Carbon\Carbon;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\DateDim;
-use DB;
 
 class DateDimRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -20,18 +21,6 @@ class DateDimRepository extends EloquentRepository implements RepositoriesContra
     {
         $this->setContainer($container)->setModel(DateDim::class)->setRepositoryId('rinvex.repository.uniqueid');
     }
-
-    /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
-    }
-
 
     /**
      * @param Carbon $date
@@ -67,7 +56,6 @@ class DateDimRepository extends EloquentRepository implements RepositoriesContra
     /**
      * @param $datesSk
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getWhereInDateAndDateSk($datesSk)
     {

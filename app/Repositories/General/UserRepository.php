@@ -2,15 +2,17 @@
 
 namespace App\Repositories\General;
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
+use Rinvex\Repository\Exceptions\RepositoryException;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\General\User;
-use DB;
 
 class UserRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -21,24 +23,12 @@ class UserRepository extends EloquentRepository implements RepositoriesContract
     }
 
     /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
-    }
-
-    /**
      * @param User $user
      * @return User
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function createUser(User $user) : User
     {
-        $user = $this->createModel()->fill($user);
+        try { $user = $this->createModel()->fill($user); } catch (RepositoryException $e) { /*TODO*/}
         $user->password = bcrypt($user->password);
         return $this->create($user->toArray());
     }

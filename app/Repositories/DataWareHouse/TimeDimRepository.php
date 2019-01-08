@@ -2,15 +2,16 @@
 
 namespace App\Repositories\DataWareHouse;
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\TimeDim;
-use DB;
 
 class TimeDimRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -18,17 +19,6 @@ class TimeDimRepository extends EloquentRepository implements RepositoriesContra
     public function __construct(Container $container)
     {
         $this->setContainer($container)->setModel(TimeDim::class)->setRepositoryId('rinvex.repository.uniqueid');
-    }
-
-    /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
 
     /**
@@ -63,7 +53,6 @@ class TimeDimRepository extends EloquentRepository implements RepositoriesContra
     /**
      * @param $elements
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getStandardData($elements)
     {

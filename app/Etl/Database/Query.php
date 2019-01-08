@@ -5,11 +5,12 @@ namespace App\Etl\Database;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
 
 class Query
 {
     /**
-     * @var DB
+     * @var Builder
      */
     public $query = null;
 

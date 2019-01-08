@@ -2,20 +2,9 @@
 
 namespace App\Etl\Loaders;
 
+use App\Etl\EtlFactoryContract;
 
-use App\Etl\EtlConfig;
-
-interface LoadInterface
+interface LoadInterface extends EtlFactoryContract
 {
 
-    /**
-     * @param EtlConfig $etlConfig
-     * @return mixed
-     */
-    public function setOptions(EtlConfig $etlConfig);
-
-    /**
-     * @return mixed
-     */
-    public function run();
 }

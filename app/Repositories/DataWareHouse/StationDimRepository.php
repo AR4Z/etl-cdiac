@@ -2,15 +2,16 @@
 
 namespace App\Repositories\DataWareHouse;
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\StationDim;
-use DB;
 
 class StationDimRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -21,31 +22,34 @@ class StationDimRepository extends EloquentRepository implements RepositoriesCon
     }
 
     /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @return mixed
      */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
-    }
-
     public function getDifferentNetName()
     {
         return $this->select('net_name as id','net_name as name')->distinct('net_name')->pluck('id','name');
     }
 
+    /**
+     * @param $netName
+     * @return mixed
+     */
     public function getStationsForNet($netName)
     {
         return $this->select('station_sk as id','name')->where('net_name','=',$netName)->orderby('name','ASC')->get();
     }
 
+    /**
+     * @return mixed
+     */
     public function getIdAndNameStations()
     {
         return $this->select('station_sk as id','name')->orderby('name','ASC')->get();
     }
 
+    /**
+     * @param $netName
+     * @return mixed
+     */
     public function getIdStationForName($netName)
     {
         return $this->select('station_sk as id')->where('net_name',$netName)->first();

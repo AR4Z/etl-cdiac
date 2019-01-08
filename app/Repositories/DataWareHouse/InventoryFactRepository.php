@@ -2,15 +2,15 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\RepositoriesContract;
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\InventoryFact;
-use DB;
 
 class InventoryFactRepository extends EloquentRepository implements FactRepositoryContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -18,16 +18,5 @@ class InventoryFactRepository extends EloquentRepository implements FactReposito
     public function __construct(Container $container)
     {
         $this->setContainer($container)->setModel(InventoryFact::class)->setRepositoryId('rinvex.repository.uniqueid');
-    }
-
-    /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
 }

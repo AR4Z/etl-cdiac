@@ -17,24 +17,14 @@ class Original extends TransformBase implements TransformInterface, StepContract
      */
     public $stepsList = null;
 
-
-    /**
-     * @param EtlConfig $etlConfig
-     * @return mixed
-     */
-    public function setOptions(EtlConfig $etlConfig)
-    {
-        $this->etlConfig = $etlConfig;
-
-        # Se crean los pasos que se requieren para Database
-        $this->stepsList = $this->startSteps(new StepList());
-    }
-
     /**
      *
      */
     public function run()
     {
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
+
         # Se ejecutan los pasos que se requieren para el proceso (Actualmente ho hay steps)
         # $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }

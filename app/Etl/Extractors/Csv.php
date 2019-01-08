@@ -8,6 +8,7 @@ use App\Etl\Steps\{StepList,Step,StepContract};
 use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
+use Maatwebsite\Excel\Readers\LaravelExcelReader;
 
 class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 {
@@ -67,26 +68,15 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public $dateTime = false;
 
     /**
-     * Csv constructor.
-     * @param $etlConfig
-     */
-    public function setOptions(EtlConfig $etlConfig)
-    {
-        $this->etlConfig = $etlConfig;
-
-        # Se crean los pasos que se requieren para Database
-        $this->stepsList = $this->startSteps(new StepList());
-    }
-
-    /**
      * @return $this|mixed
      */
     public function run()
     {
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
+
         # Se ejecutan los pasos que se requieren para el proceso
         $this->stepsList->runStartList($this->etlConfig->processState,$this);
-
-        dd('stop in csv plane extractor',$this);
     }
 
     /**
@@ -338,6 +328,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     private function loadFile()
     {
         if (!method_exists($this,$this->extension)){ return false;}
+
         return $this->{$this->extension}();
     }
 
@@ -409,14 +400,16 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
      */
     protected function csv()
     {
-        Excel::load(storage_path().'/app/public/'.$this->fileName, function($reader) {
+        Excel::load(storage_path().'/app/public/'.$this->fileName, function(LaravelExcelReader $reader) {
 
             $inputVariables = $reader->all()->getHeading();
             $variablesName = $this->getVariablesName($inputVariables);
             $variablesNameExcel = array_keys($variablesName);
 
+            #dd($reader,$inputVariables,$variablesName,$variablesNameExcel);
+
             # Se edita la propiedad data time TODO porque se entrega esta variable a el date time ?? esta variables es bool
-            #$this->setDateTimeProperty($inputVariables);
+            $this->setDateTimeProperty($inputVariables);
 
             foreach ($reader->get() as $values){
                 $val = [];
@@ -426,9 +419,11 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
                         $val[$variablesName[$inputVariable]] = $values[$inputVariable];
                     }
                 }
+
                 $this->etlConfig->repositorySpaceWork->create($val);
             }
         });
+
         # cambiar de comas a puntos los datos de las variables
         $this->changeCommaForPointAllVariables();
 

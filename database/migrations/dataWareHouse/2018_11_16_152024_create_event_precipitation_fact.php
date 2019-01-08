@@ -22,10 +22,10 @@ class CreateEventPrecipitationFact extends Migration
             $table->dateTime('date_time')->nullable();
 
             $table->integer('duration')->nullable();
-            $table->boolean('magnitude')->nullable();
-            $table->boolean('intensity')->nullable();
-            $table->boolean('primary_betas')->nullable();
-            $table->boolean('index_n')->nullable();
+            $table->double('magnitude',5,2)->nullable();
+            $table->double('magnitude',5,2)->nullable();
+            $table->double('magnitude',5,2)->nullable();
+            $table->double('magnitude',5,2)->nullable();
 
             $table->string('classification_lkp')->nullable();
             $table->string('classification_aemet')->nullable();

@@ -2,19 +2,9 @@
 
 namespace App\Etl\Transformers;
 
+use App\Etl\EtlFactoryContract;
 
-use App\Etl\EtlConfig;
-
-interface TransformInterface
+interface TransformInterface extends EtlFactoryContract
 {
-    /**
-     * @param EtlConfig $etlConfig
-     * @return mixed
-     */
-    public function setOptions(EtlConfig $etlConfig);
 
-    /**
-     * @return mixed
-     */
-    public function run();
 }

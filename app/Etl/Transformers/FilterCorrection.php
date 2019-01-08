@@ -20,22 +20,13 @@ class FilterCorrection extends TransformBase implements TransformInterface, Step
     public $stepsList = null;
 
     /**
-     * @param EtlConfig $etlConfig
-     * @return mixed
-     */
-    public function setOptions(EtlConfig $etlConfig)
-    {
-        $this->etlConfig = $etlConfig;
-
-        # Se crean los pasos que se requieren para Database
-        $this->stepsList = $this->startSteps(new StepList());
-    }
-
-    /**
      *
      */
     public function run()
     {
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
+
         # Se ejecutan los pasos que se requieren para el proceso
         $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }
@@ -67,7 +58,7 @@ class FilterCorrection extends TransformBase implements TransformInterface, Step
                     $this->correctControl(
                         $this->etlConfig->tableSpaceWork,
                         $variable,
-                        $this->etlConfig->incomingAmount
+                        $this->etlConfig->trustObject->getIncomingAmount()
                     );
                 }
             }

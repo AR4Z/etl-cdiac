@@ -36,22 +36,13 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     public $truncateTemporal = true;
 
     /**
-     * @param $etlConfig
-     * @return mixed
-     */
-    public function setOptions(EtlConfig $etlConfig)
-    {
-        $this->etlConfig = $etlConfig;
-
-        # Se crean los pasos que se requieren para Database
-        $this->stepsList = $this->startSteps(new StepList());
-    }
-
-    /**
      * Punto de acceso para ejecutar funcionalidad
      */
     public function run()
     {
+        # Se crean los pasos que se requieren para Database
+        $this->stepsList = $this->startSteps(new StepList());
+
         # Se ejecutan los pasos que se requieren para el proceso
         $this->stepsList->runStartList($this->etlConfig->processState,$this);
     }

@@ -17,7 +17,6 @@ interface RepositoriesContract extends RepositoryContract, CacheableContract
 
     /**
      * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function queryBuilder() : Builder;
 }
