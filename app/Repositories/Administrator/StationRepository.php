@@ -246,6 +246,27 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
                     ->toArray();
     }
 
+
+    /**
+     * @param int $net
+     * @param string $etlMethod
+     * @return array
+     */
+    public function getStationsId(int $net,string $etlMethod) :array
+    {
+        return $this->queryBuilder()
+            ->select('station.id')
+            ->where('station.net_id',$net)
+            ->join('station_type', 'station_type.id', '=', 'station.station_type_id')
+            ->where('station_type.etl_method',$etlMethod)
+            ->pluck('station.id')
+            ->toArray();
+    }
+
+
+
+
+
     public function countReportData($station)
     {
 

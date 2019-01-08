@@ -72,7 +72,7 @@ class ServerAcquisitionController extends Controller
 
     private function connectionServerAcquisition($connection,$table = null)
     {
-        # Realizar la conexion usando el trait DatabaseConnection
+        # Realizar la conexion usando el Traits DatabaseConnection
         return $this->searchExternalConnection($connection,$table,$this->connectionDefault);
     }
 

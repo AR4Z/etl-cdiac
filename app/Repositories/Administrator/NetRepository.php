@@ -29,4 +29,10 @@ class NetRepository extends EloquentRepository implements RepositoriesContract
     {
         return $this->select('id','name')->where('etl_active',true)->pluck('name','id');
     }
+
+
+    public function getNetsForServerAcquisition() : array
+    {
+        return $this->select('id','name')->where('etl_active',true)->pluck('name','id')->toArray();
+    }
 }

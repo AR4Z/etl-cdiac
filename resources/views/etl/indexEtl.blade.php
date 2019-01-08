@@ -26,7 +26,7 @@
             <div class="form-group {{ $errors->has('net_name') ? ' has-error' : '' }}">
                 {{ Form::label('net_name', 'Red: ', ['class' => 'col-md-3 control-label']) }}
                 <div class="col-md-9">
-                    {!! Form::select('net_name', $differentNetName , null ,['class' => 'form-control', 'id'=> 'net_name', 'required']) !!}
+                    {!! Form::select('net_name', $nets , null ,['class' => 'form-control', 'id'=> 'net_name', 'required']) !!}
                     @if ($errors->has('net_name'))
                         <span class="help-block">
                                 <strong>{{ $errors->first('net_name') }}</strong>
@@ -44,6 +44,18 @@
                                 <strong>{{ $errors->first('station_id') }}</strong>
                             </span>
                     @endif
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ Form::label('options', 'Opciones: ', ['class' => 'col-md-3 control-label']) }}
+                <div class="col-md-9">
+                    <div class="col-md-3">
+                        {!! Form::checkbox('sequence', 'sequence' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'sequence', 'data-off'=>'no-sequence' , 'data-onstyle'=>'success', 'data-size'=>'mini' ,'id'=> 'sequence']) !!}
+                    </div>
+                    <div class="col-md-3">
+                        {!! Form::checkbox('jobs', 'jobs' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'asynchronous', 'data-off'=>'synchronous' , 'data-onstyle'=>'success', 'data-size'=>'mini' ,'id'=> 'jobs']) !!}
+                    </div>
                 </div>
             </div>
 

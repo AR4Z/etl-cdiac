@@ -3,6 +3,13 @@
 namespace App\Http\Controllers\Config;
 
 use App\Entities\TemporaryWork\TemporalWeather;
+use App\Etl\Execution\EtlExecute;
+use App\Etl\Execution\FilterExecute;
+use App\Etl\Execution\Options\FilterOptions\FilterWeatherOption;
+use App\Etl\Execution\Options\OriginalOptions\OriginalAirOption;
+use App\Etl\Execution\Options\OriginalOptions\OriginalWeatherDatabaseOption;
+use App\Etl\Execution\OriginalExecute;
+use App\Etl\Execution\OriginalOptions\OriginalGeneralOption;
 use App\Http\Controllers\Controller;
 use App\Repositories\Administrator\NetRepository;
 use App\Repositories\RepositoryFactoryTrait;
@@ -80,6 +87,26 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
+        $execute = new EtlExecute(
+            $method = new FilterExecute(
+                $option = new FilterWeatherOption(1,'2018-10-21','2018-10-22')
+            )
+        );
+
+
+        $execute->setTrustProcess(true);
+        #$execute->setSequence(true);
+        $option->setRunType('Synchronous');
+
+        $execute->execute();
+
+        //$method->setRunMethod('Syncrone');
+        //$method->addExtractConfigVariable('fileName', 'ruta del elemento');
+
+        dd($execute,$method,$option);
+
+
+
         //$container = $this->stationRepository->getContainer();
         //dd($container);
 

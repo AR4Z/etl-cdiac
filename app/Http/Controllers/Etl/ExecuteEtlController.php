@@ -2,23 +2,52 @@
 
 namespace App\Http\Controllers\Etl;
 
+use App\Etl\Execution\EtlExecute;
+use App\Repositories\Administrator\NetRepository;
+use App\Repositories\Administrator\StationRepository;
+use App\Repositories\DataWareHouse\StationDimRepository;
+use function Couchbase\defaultDecoder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Etl\Traits\BaseExecuteEtl;
 
 class ExecuteEtlController extends Controller
 {
-    use BaseExecuteEtl;
+    /**
+     * @var StationRepository
+     */
+    private $stationRepository;
+    /**
+     * @var StationDimRepository
+     */
+    private $stationDimRepository;
+    /**
+     * @var NetRepository
+     */
+    private $netRepository;
+
+    /**
+     * PlaneEtlController constructor.
+     * @param StationRepository $stationRepository
+     * @param StationDimRepository $stationDimRepository
+     * @param NetRepository $netRepository
+     */
+    public function __construct(
+        StationRepository $stationRepository,
+        StationDimRepository $stationDimRepository,
+        NetRepository $netRepository)
+    {
+        $this->stationRepository = $stationRepository;
+        $this->stationDimRepository = $stationDimRepository;
+        $this->netRepository = $netRepository;
+    }
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        //$this->executeTestJob();
-        $differentNetName = $this->netRepository->getNetName();
-        $differentNetName[0] = '---------- TODAS LAS REDES ------------ ';
-        return view('etl.indexEtl',compact('differentNetName'));
+        $nets = $this->netRepository->getNetsForServerAcquisition();
+        return view('etl.indexEtl',compact('nets'));
     }
 
     /**
@@ -28,8 +57,10 @@ class ExecuteEtlController extends Controller
     public function getStationsForNet(Request $request)
     {
         $data = $request['id'];
+
         #no retornar nada cuando el parametro enviado es null
         if (is_null($data)){return;}
+
         #obtener las estaciones dependiando de la red
         $stations =  ($data == 0) ? $this->stationRepository->getStationEtlActive() : $this->stationRepository->getStationForNetEtlActive($data);
 
@@ -47,6 +78,12 @@ class ExecuteEtlController extends Controller
      */
     public function redirectionEtlFilter(Request $request)
     {
+
+        $object = $this->optionalStationInAllNets(1);
+
+        dd($object);
+
+
         $jobs = false; # TODO : Debe entrar por parametro
         $data = $request->all();
         $data['sequence'] = true; # TODO: Dede entrar por parametro
@@ -72,6 +109,25 @@ class ExecuteEtlController extends Controller
 
         dd('stop final',$response);
     }
+
+    /**
+     *  init
+     * @param int $net
+     * @return array
+     */
+
+    public function optionalStationInAllNets(int $net) :array
+    {
+        $stationsWeather = $this->stationRepository->getStationsId($net,'weather');
+        $stationsAir = $this->stationRepository->getStationsId($net,'air');
+        $stationsGroundwater = $this->stationRepository->getStationsId($net,'groundwater');
+
+        dd($stationsWeather,$stationsAir,$stationsGroundwater);
+    }
+
+    /**
+     * end
+     */
 
 
     public function executeResetStation()
