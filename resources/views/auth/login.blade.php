@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('template.main')
+
+@section('title', 'Inicio')
 
 @section('content')
 <div class="container">
@@ -65,4 +67,6 @@
         </div>
     </div>
 </div>
+@endsection
+@section('javascript')
 @endsection

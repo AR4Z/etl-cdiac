@@ -6,6 +6,8 @@ use App\Repositories\General\UserRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+
 
 class RegisterController extends Controller
 {
@@ -67,5 +69,28 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         return $this->userRepository->createUser($data);
+    }
+
+
+
+    public function index()
+    {
+        return view('auth.register');
+    }
+
+    public function validation(Request $request)
+    {        dd('exito');
+
+        $this->validate($request,[
+            'name' => 'required',
+            'lastname' => 'required',
+            'email'=>'required',
+            'password'=>'required',
+            'institution'=>'required',
+            'rol' => 'required'
+
+        ]);
+
+        return view('auth.test');
     }
 }
