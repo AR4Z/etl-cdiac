@@ -47,9 +47,9 @@ class CorrectionHistoricalRepository extends EloquentRepository implements Repos
         return $this
             ->selectRaw('count(id_correccion)')
             ->where('estacion_sk','=',$station_id)
+            ->whereBetween('fecha_sk',[$date1,$date2])
             ->where('tipo_correccion_aplicado','=','promedio')
             ->where('variable','=',$var)
-            ->whereBetween('fecha_sk',[$date1,$date2])
             ->get()->toArray();
     }
 }

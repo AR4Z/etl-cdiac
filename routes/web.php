@@ -68,8 +68,14 @@ Route::group(['prefix' => 'auditory','name' => 'auditory'], function()
     Route::post('graphics', [ 'as'=>'auditory.graphics','uses'=>'Auditory\AuditoryController@graphics']);
     Route::get('generate-risk', [ 'as'=>'auditory.generate-risk','uses'=>'Auditory\AuditoryController@generateRisk']);
     Route::post('save-risk', [ 'as'=>'auditory.save-risk','uses'=>'Auditory\AuditoryController@saveRisk']);
+});
 
-
+Route::group(['prefix' => 'users','name' => 'users'], function()
+{
+    Route::get('/', [ 'as'=>'login','uses'=>'Auth\LoginController@index']);
+    Route::get('/', [ 'as'=>'register','uses'=>'Auth\RegisterController@index']);
+    Route::post('create_user', [ 'as'=>'users.create_user','uses'=>'Auth\RegisterController@validation']);
 
 
 });
+
