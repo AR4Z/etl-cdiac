@@ -268,6 +268,16 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
 
     }
 
+    //APP map
+
+    /**
+     * @return object
+     */
+
+    public function listStations() : Collection
+    {
+        return $this->select('*')->where('active','=',true)->where('rt_active','=',true)->get();
+    }
 
     // Auditory System Functions
 

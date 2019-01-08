@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => 'apiMap'], function()  //,'middleware' => 'auth:api'
+{
+    Route::post('/getStations', [ 'as'=>'apiMap.getStations','uses'=>'ApiMap\ApiMapController@getStations']);
+    Route::post('/getStation',['as'=>'apiMap.getStation','uses'=>'ApiMap\ApiMapController@getStation']);
+});
