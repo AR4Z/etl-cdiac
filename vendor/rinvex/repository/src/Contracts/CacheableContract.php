@@ -9,7 +9,7 @@ interface CacheableContract
     /**
      * Set the repository cache lifetime.
      *
-     * @param float|int $cacheLifetime
+     * @param int $cacheLifetime
      *
      * @return $this
      */
@@ -18,9 +18,9 @@ interface CacheableContract
     /**
      * Get the repository cache lifetime.
      *
-     * @return float|int
+     * @return int
      */
-    public function getCacheLifetime();
+    public function getCacheLifetime(): int;
 
     /**
      * Set the repository cache driver.
@@ -34,9 +34,9 @@ interface CacheableContract
     /**
      * Get the repository cache driver.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCacheDriver();
+    public function getCacheDriver(): ?string;
 
     /**
      * Enable repository cache clear.
@@ -52,7 +52,7 @@ interface CacheableContract
      *
      * @return bool
      */
-    public function isCacheClearEnabled();
+    public function isCacheClearEnabled(): bool;
 
     /**
      * Forget the repository cache.

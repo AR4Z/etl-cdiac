@@ -136,7 +136,7 @@ class EloquentRepository extends BaseRepository
     public function findWhere(array $where, $attributes = ['*'])
     {
         return $this->executeCallback(get_called_class(), __FUNCTION__, func_get_args(), function () use ($where, $attributes) {
-            list($attribute, $operator, $value, $boolean) = array_pad($where, 4, null);
+            [$attribute, $operator, $value, $boolean] = array_pad($where, 4, null);
 
             $this->where($attribute, $operator, $value, $boolean);
 
@@ -150,7 +150,7 @@ class EloquentRepository extends BaseRepository
     public function findWhereIn(array $where, $attributes = ['*'])
     {
         return $this->executeCallback(get_called_class(), __FUNCTION__, func_get_args(), function () use ($where, $attributes) {
-            list($attribute, $values, $boolean, $not) = array_pad($where, 4, null);
+            [$attribute, $values, $boolean, $not] = array_pad($where, 4, null);
 
             $this->whereIn($attribute, $values, $boolean, $not);
 
@@ -164,7 +164,7 @@ class EloquentRepository extends BaseRepository
     public function findWhereNotIn(array $where, $attributes = ['*'])
     {
         return $this->executeCallback(get_called_class(), __FUNCTION__, func_get_args(), function () use ($where, $attributes) {
-            list($attribute, $values, $boolean) = array_pad($where, 3, null);
+            [$attribute, $values, $boolean] = array_pad($where, 3, null);
 
             $this->whereNotIn($attribute, $values, $boolean);
 
@@ -178,7 +178,7 @@ class EloquentRepository extends BaseRepository
     public function findWhereHas(array $where, $attributes = ['*'])
     {
         return $this->executeCallback(get_called_class(), __FUNCTION__, func_get_args(), function () use ($where, $attributes) {
-            list($relation, $callback, $operator, $count) = array_pad($where, 4, null);
+            [$relation, $callback, $operator, $count] = array_pad($where, 4, null);
 
             $this->whereHas($relation, $callback, $operator, $count);
 
@@ -315,7 +315,7 @@ class EloquentRepository extends BaseRepository
     /**
      * {@inheritdoc}
      */
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         $this->getContainer('db')->beginTransaction();
     }
@@ -323,7 +323,7 @@ class EloquentRepository extends BaseRepository
     /**
      * {@inheritdoc}
      */
-    public function commit()
+    public function commit(): void
     {
         $this->getContainer('db')->commit();
     }
@@ -331,7 +331,7 @@ class EloquentRepository extends BaseRepository
     /**
      * {@inheritdoc}
      */
-    public function rollBack()
+    public function rollBack(): void
     {
         $this->getContainer('db')->rollBack();
     }
@@ -339,7 +339,7 @@ class EloquentRepository extends BaseRepository
     /**
      * {@inheritdoc}
      */
-    public function count($columns = '*')
+    public function count($columns = '*'): int
     {
         return $this->executeCallback(get_called_class(), __FUNCTION__, func_get_args(), function () use ($columns) {
             return $this->prepareQuery($this->createModel())->count($columns);
@@ -394,7 +394,7 @@ class EloquentRepository extends BaseRepository
      *
      * @return array
      */
-    protected function extractRelations($entity, array $attributes)
+    protected function extractRelations($entity, array $attributes): array
     {
         $relations = [];
         $potential = array_diff(array_keys($attributes), $entity->getFillable());
@@ -403,7 +403,7 @@ class EloquentRepository extends BaseRepository
             if (method_exists($entity, $relation)) {
                 $relations[$relation] = [
                     'values' => $attributes[$relation],
-                    'class' => get_class($entity->$relation()),
+                    'class' => get_class($entity->{$relation}()),
                 ];
             }
         });
@@ -420,13 +420,13 @@ class EloquentRepository extends BaseRepository
      *
      * @return void
      */
-    protected function syncRelations($entity, array $relations, $detaching = true)
+    protected function syncRelations($entity, array $relations, $detaching = true): void
     {
         foreach ($relations as $method => $relation) {
             switch ($relation['class']) {
                 case 'Illuminate\Database\Eloquent\Relations\BelongsToMany':
                 default:
-                    $entity->$method()->sync((array) $relation['values'], $detaching);
+                    $entity->{$method}()->sync((array) $relation['values'], $detaching);
                     break;
             }
         }

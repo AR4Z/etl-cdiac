@@ -36,23 +36,15 @@ class AddAnnotatedClassesToCachePass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $classes = array();
-        $annotatedClasses = array();
+        $annotatedClasses = $this->kernel->getAnnotatedClassesToCompile();
         foreach ($container->getExtensions() as $extension) {
             if ($extension instanceof Extension) {
-                if (\PHP_VERSION_ID < 70000) {
-                    $classes = array_merge($classes, $extension->getClassesToCompile());
-                }
                 $annotatedClasses = array_merge($annotatedClasses, $extension->getAnnotatedClassesToCompile());
             }
         }
 
         $existingClasses = $this->getClassesInComposerClassMaps();
 
-        if (\PHP_VERSION_ID < 70000) {
-            $classes = $container->getParameterBag()->resolveValue($classes);
-            $this->kernel->setClassCache($this->expandClasses($classes, $existingClasses));
-        }
         $annotatedClasses = $container->getParameterBag()->resolveValue($annotatedClasses);
         $this->kernel->setAnnotatedClassCache($this->expandClasses($annotatedClasses, $existingClasses));
     }
@@ -63,7 +55,7 @@ class AddAnnotatedClassesToCachePass implements CompilerPassInterface
      * @param array $patterns The class patterns to expand
      * @param array $classes  The existing classes to match against the patterns
      *
-     * @return array A list of classes derivated from the patterns
+     * @return array A list of classes derived from the patterns
      */
     private function expandClasses(array $patterns, array $classes)
     {

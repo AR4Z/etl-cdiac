@@ -24,7 +24,7 @@ trait Bindable
      *
      * @return void
      */
-    protected function bindRepository($abstract, $concrete = null, $shared = true, $alias = null, $force = false)
+    protected function bindRepository($abstract, $concrete = null, $shared = true, $alias = null, $force = false): void
     {
         if (! $this->app->bound($abstract) || $force) {
             $concrete = $concrete ?: $abstract;
@@ -41,7 +41,7 @@ trait Bindable
      *
      * @return string
      */
-    protected function prepareRepositoryAlias($alias, $concrete)
+    protected function prepareRepositoryAlias($alias, $concrete): string
     {
         if (! $alias && ! $concrete instanceof \Closure) {
             $concrete = str_replace('Repositories', 'Contracts', $concrete);

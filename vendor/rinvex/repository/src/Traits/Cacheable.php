@@ -11,7 +11,7 @@ trait Cacheable
     /**
      * The repository cache lifetime.
      *
-     * @var float|int
+     * @var int
      */
     protected $cacheLifetime;
 
@@ -36,7 +36,7 @@ trait Cacheable
      *
      * @return string
      */
-    protected function generateCacheHash($args)
+    protected function generateCacheHash($args): string
     {
         return md5(json_encode($args + [
                 $this->getRepositoryId(),
@@ -62,7 +62,7 @@ trait Cacheable
      *
      * @return void
      */
-    protected function storeCacheKeys($class, $method, $hash)
+    protected function storeCacheKeys($class, $method, $hash): void
     {
         $keysFile = $this->getContainer('config')->get('rinvex.repository.cache.keys_file');
         $cacheKeys = $this->getCacheKeys($keysFile);
@@ -80,7 +80,7 @@ trait Cacheable
      *
      * @return array
      */
-    protected function getCacheKeys($file)
+    protected function getCacheKeys($file): array
     {
         if (! file_exists($file)) {
             file_put_contents($file, null);
@@ -94,7 +94,7 @@ trait Cacheable
      *
      * @return array
      */
-    protected function flushCacheKeys()
+    protected function flushCacheKeys(): array
     {
         $flushedKeys = [];
         $calledClass = get_called_class();
@@ -114,11 +114,7 @@ trait Cacheable
     }
 
     /**
-     * Set the repository cache lifetime.
-     *
-     * @param float|int $cacheLifetime
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCacheLifetime($cacheLifetime)
     {
@@ -128,24 +124,16 @@ trait Cacheable
     }
 
     /**
-     * Get the repository cache lifetime.
-     *
-     * @return float|int
+     * {@inheritdoc}
      */
-    public function getCacheLifetime()
+    public function getCacheLifetime(): int
     {
-        $lifetime = $this->getContainer('config')->get('rinvex.repository.cache.lifetime');
-
         // Return value even if it's zero "0" (which means cache is disabled)
-        return ! is_null($this->cacheLifetime) ? $this->cacheLifetime : $lifetime;
+        return $this->cacheLifetime ?? $this->getContainer('config')->get('rinvex.repository.cache.lifetime');
     }
 
     /**
-     * Set the repository cache driver.
-     *
-     * @param string $cacheDriver
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCacheDriver($cacheDriver)
     {
@@ -155,21 +143,15 @@ trait Cacheable
     }
 
     /**
-     * Get the repository cache driver.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getCacheDriver()
+    public function getCacheDriver(): ?string
     {
         return $this->cacheDriver;
     }
 
     /**
-     * Enable repository cache clear.
-     *
-     * @param bool $status
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function enableCacheClear($status = true)
     {
@@ -179,19 +161,15 @@ trait Cacheable
     }
 
     /**
-     * Determine if repository cache clear is enabled.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isCacheClearEnabled()
+    public function isCacheClearEnabled(): bool
     {
         return $this->cacheClearEnabled;
     }
 
     /**
-     * Forget the repository cache.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function forgetCache()
     {

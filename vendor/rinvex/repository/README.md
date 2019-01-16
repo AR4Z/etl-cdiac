@@ -4,13 +4,20 @@
 
 **Rinvex Repository** is a simple, intuitive, and smart implementation of Active Repository with extremely flexible & granular caching system for Laravel, used to abstract the data layer, making applications more flexible to maintain.
 
+⚠️ This package is **renamed** and now maintained at **[rinvex/laravel-repositories](https://github.com/rinvex/laravel-repositories)**, author suggests using the new package instead. Old package supportes up to Laravel v5.6, and the new one supports Laravel v5.7+
+
 [![Packagist](https://img.shields.io/packagist/v/rinvex/repository.svg?label=Packagist&style=flat-square)](https://packagist.org/packages/rinvex/repository)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/rinvex/repository.svg?label=Scrutinizer&style=flat-square)](https://scrutinizer-ci.com/g/rinvex/repository/)
 [![Code Climate](https://img.shields.io/codeclimate/github/rinvex/repository.svg?label=CodeClimate&style=flat-square)](https://codeclimate.com/github/rinvex/repository)
 [![Travis](https://img.shields.io/travis/rinvex/repository.svg?label=TravisCI&style=flat-square)](https://travis-ci.org/rinvex/repository)
-[![SensioLabs Insight](https://img.shields.io/sensiolabs/i/8394bf3e-26c8-415a-8952-078b41110181.svg?label=SensioLabs&style=flat-square)](https://insight.sensiolabs.com/projects/8394bf3e-26c8-415a-8952-078b41110181)
 [![StyleCI](https://styleci.io/repos/61269204/shield)](https://styleci.io/repos/61269204)
 [![License](https://img.shields.io/packagist/l/rinvex/repository.svg?label=License&style=flat-square)](https://github.com/rinvex/repository/blob/develop/LICENSE)
+
+
+💡 If you are looking for **Laravel 5.5** support, use the `dev-develop` branch. It's stable but not tagged yet since test suites isn't complete. 💡
+
+
+⚠️ [This package is looking for new maintainer, read details or takeover if interested!](https://github.com/rinvex/repository/issues/156) ⚠️
 
 
 ## Features
@@ -31,6 +38,7 @@
 The `Rinvex\Repository\Repositories\BaseRepository` is an abstract class with bare minimum that concrete implementations must extend.
 
 The `Rinvex\Repository\Repositories\EloquentRepository` is currently the only available repository implementation (more to come in the future and [you can develop your own](#add-custom-implementation)), it makes it easy to create new eloquent model instances and to manipulate them easily. To use `EloquentRepository` your repository MUST extend it first:
+
 ```php
 namespace App\Repositories;
 
@@ -46,6 +54,7 @@ class FooRepository extends EloquentRepository
 That's it, you're done! Yes, it's that simple.
 
 But if you'd like more control over the container instance, or would like to pass model name dynamically you can alternatively do as follow:
+
 ```php
 namespace App\Repositories;
 
@@ -66,6 +75,7 @@ class FooRepository extends EloquentRepository
 ```
 
 Now inside your controller, you can either instantiate the repository traditionally through `$repository = new \App\Repositories\FooRepository();` or to use Laravel's awesome dependency injection and let the IoC do the magic:
+
 ```php
 namespace App\Http\Controllers;
 
@@ -103,6 +113,12 @@ class BarController
 **Unless you need to dig deeper & know some advanced stuff, you can skip the following steps! :wink:**
 
 ---
+
+
+💡 If you are looking for **Laravel 5.5** support, use the `dev-develop` branch. It's stable but not tagged yet since test suites isn't complete. 💡
+
+
+⚠️ [This package is looking for new maintainer, read details or takeover if interested!](https://github.com/rinvex/repository/issues/156) ⚠️
 
 
 ## Table Of Contents
@@ -221,6 +237,7 @@ You are good to go. Integration is done and you can now use all the available me
 If you followed the previous integration steps, then your published config file reside at `config/rinvex.repository.php`.
 
 Config options are very expressive and self explanatory, as follows:
+
 ```php
 return [
 
@@ -323,6 +340,7 @@ return [
 #### `setContainer()`, `getContainer()`
 
 The `setContainer` method sets the IoC container instance, while `getContainer` returns it:
+
 ```php
 // Set the IoC container instance
 $repository->setContainer(new \Illuminate\Container\Container());
@@ -334,6 +352,7 @@ $container = $repository->getContainer();
 #### `setConnection()`, `getConnection()`
 
 The `setConnection` method sets the connection associated with the repository, while `getConnection` returns it:
+
 ```php
 // Set the connection associated with the repository
 $repository->setConnection('mysql');
@@ -347,6 +366,7 @@ $connection = $repository->getConnection();
 #### `setModel()`, `getModel()`
 
 The `setModel` method sets the repository model, while `getModel` returns it:
+
 ```php
 // Set the repository model
 $repository->setModel(\App\Models\User::class);
@@ -358,6 +378,7 @@ $repositoryModel = $repository->getModel();
 #### `setRepositoryId()`, `getRepositoryId()`
 
 The `setRepositoryId` method sets the repository identifier, while `getRepositoryId` returns it (it could be anything you want, but must be **unique per repository**):
+
 ```php
 // Set the repository identifier
 $repository->setRepositoryId('rinvex.repository.uniqueid');
@@ -369,6 +390,7 @@ $repositoryId = $repository->getRepositoryId();
 #### `setCacheLifetime()`, `getCacheLifetime()`
 
 The `setCacheLifetime` method sets the repository cache lifetime, while `getCacheLifetime` returns it:
+
 ```php
 // Set the repository cache lifetime
 $repository->setCacheLifetime(123);
@@ -380,6 +402,7 @@ $cacheLifetime = $repository->getCacheLifetime();
 #### `setCacheDriver()`, `getCacheDriver()`
 
 The `setCacheDriver` method sets the repository cache driver, while `getCacheDriver` returns it:
+
 ```php
 // Set the repository cache driver
 $repository->setCacheDriver('redis');
@@ -391,6 +414,7 @@ $cacheDriver = $repository->getCacheDriver();
 #### `enableCacheClear()`, `isCacheClearEnabled()`
 
 The `enableCacheClear` method enables repository cache clear, while `isCacheClearEnabled` determines it's state:
+
 ```php
 // Enable repository cache clear
 $repository->enableCacheClear(true);
@@ -405,6 +429,7 @@ $cacheClearStatus = $repository->isCacheClearEnabled();
 #### `createModel()`
 
 The `createModel()` method creates a new repository model instance:
+
 ```php
 $repositoryModelInstance = $repository->createModel();
 ```
@@ -412,6 +437,7 @@ $repositoryModelInstance = $repository->createModel();
 #### `forgetCache()`
 
 The `forgetCache()` method forgets the repository cache:
+
 ```php
 $repository->forgetCache();
 ```
@@ -419,6 +445,7 @@ $repository->forgetCache();
 #### `with()`
 
 The `with` method sets the relationships that should be eager loaded:
+
 ```php
 // Pass a string
 $repository->with('relationship');
@@ -430,6 +457,7 @@ $repository->with(['relationship1', 'relationship2']);
 #### `where()`
 
 The `where` method adds a basic where clause to the query:
+
 ```php
 $repository->where('slug', '=', 'example');
 ```
@@ -437,6 +465,7 @@ $repository->where('slug', '=', 'example');
 #### `whereIn()`
 
 The `whereIn` method adds a "where in" clause to the query:
+
 ```php
 $repository->whereIn('id', [1, 2, 5, 8]);
 ```
@@ -444,6 +473,7 @@ $repository->whereIn('id', [1, 2, 5, 8]);
 #### `whereNotIn()`
 
 The `whereNotIn` method adds a "where not in" clause to the query:
+
 ```php
 $repository->whereNotIn('id', [1, 2, 5, 8]);
 ```
@@ -451,6 +481,7 @@ $repository->whereNotIn('id', [1, 2, 5, 8]);
 #### `whereHas()`
 
 The `whereHas` method adds a "where has relationship" clause to the query:
+
 ```php
 use Illuminate\Database\Eloquent\Builder;
 
@@ -464,6 +495,7 @@ $repository->whereHas('attachments', function (Builder $builder) use ($attachmen
 #### `offset()`
 
 The `offset` method sets the "offset" value of the query:
+
 ```php
 $repository->offset(5);
 ```
@@ -471,6 +503,7 @@ $repository->offset(5);
 #### `limit()`
 
 The `limit` method sets the "limit" value of the query:
+
 ```php
 $repository->limit(9);
 ```
@@ -478,6 +511,7 @@ $repository->limit(9);
 #### `orderBy()`
 
 The `orderBy` method adds an "order by" clause to the query:
+
 ```php
 $repository->orderBy('id', 'asc');
 ```
@@ -485,6 +519,7 @@ $repository->orderBy('id', 'asc');
 #### `find()`
 
 The `find` method finds an entity by it's primary key:
+
 ```php
 $entity = $repository->find(1);
 ```
@@ -492,6 +527,7 @@ $entity = $repository->find(1);
 #### `findOrFail()`
 
 The `findOrFail()` method finds an entity by its primary key or throw an exception:
+
 ```php
 $entity = $repository->findOrFail(1);
 ```
@@ -499,6 +535,7 @@ $entity = $repository->findOrFail(1);
 #### `findOrNew()`
 
 The `findOrNew()` method finds an entity by its primary key or return fresh entity instance:
+
 ```php
 $entity = $repository->findOrNew(1);
 ```
@@ -506,6 +543,7 @@ $entity = $repository->findOrNew(1);
 #### `findBy()`
 
 The `findBy` method finds an entity by one of it's attributes:
+
 ```php
 $entity = $repository->findBy('id', 1);
 ```
@@ -513,6 +551,7 @@ $entity = $repository->findBy('id', 1);
 #### `findFirst()`
 
 The `findFirst` method finds first entity:
+
 ```php
 $firstEntity = $repository->findFirst();
 ```
@@ -520,6 +559,7 @@ $firstEntity = $repository->findFirst();
 #### `findAll()`
 
 The `findAll` method finds all entities:
+
 ```php
 $allEntities = $repository->findAll();
 ```
@@ -527,6 +567,7 @@ $allEntities = $repository->findAll();
 #### `paginate()`
 
 The `paginate` method paginates all entities:
+
 ```php
 $entitiesPagination = $repository->paginate(15, ['*'], 'page', 2);
 ```
@@ -535,6 +576,7 @@ As you can guess, this query the first 15 records, in the second page.
 #### `simplePaginate()`
 
 The `simplePaginate` method paginates all entities into a simple paginator:
+
 ```php
 $entitiesSimplePagination = $repository->simplePaginate(15);
 ```
@@ -542,6 +584,7 @@ $entitiesSimplePagination = $repository->simplePaginate(15);
 #### `findWhere()`
 
 The `findWhere` method finds all entities matching where conditions:
+
 ```php
 // Matching values with equal '=' operator
 $repository->findWhere(['slug', '=', 'example']);
@@ -550,6 +593,7 @@ $repository->findWhere(['slug', '=', 'example']);
 #### `findWhereIn()`
 
 The `findWhereIn` method finds all entities matching whereIn conditions:
+
 ```php
 $includedEntities = $repository->findwhereIn(['id', [1, 2, 5, 8]]);
 ```
@@ -557,6 +601,7 @@ $includedEntities = $repository->findwhereIn(['id', [1, 2, 5, 8]]);
 #### `findWhereNotIn()`
 
 The `findWhereNotIn` method finds all entities matching whereNotIn conditions:
+
 ```php
 $excludedEntities = $repository->findWhereNotIn(['id', [1, 2, 5, 8]]);
 ```
@@ -564,6 +609,7 @@ $excludedEntities = $repository->findWhereNotIn(['id', [1, 2, 5, 8]]);
 #### `findWhereHas()`
 
 The `findWhereHas` method finds all entities matching whereHas conditions:
+
 ```php
 use Illuminate\Database\Eloquent\Builder;
 
@@ -865,4 +911,4 @@ Rinvex is a software solutions startup, specialized in integrated enterprise sol
 
 This software is released under [The MIT License (MIT)](LICENSE).
 
-(c) 2016-2017 Rinvex LLC, Some rights reserved.
+(c) 2016-2018 Rinvex LLC, Some rights reserved.

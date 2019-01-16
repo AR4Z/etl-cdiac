@@ -51,7 +51,7 @@ trait Criteriable
      *
      * @return string
      */
-    public function getCriterionName($criteria)
+    public function getCriterionName($criteria): string
     {
         if ($criteria instanceof Closure) {
             return spl_object_hash($criteria);
@@ -100,19 +100,18 @@ trait Criteriable
      *
      * @return array
      */
-    protected function extractCriterionClassAndArgs(array $criterion)
+    protected function extractCriterionClassAndArgs(array $criterion): array
     {
         if (count($criterion) > 2 || empty($criterion)) {
             throw CriterionException::wrongArraySignature($criterion);
         }
 
-        //If an array is assoc we assume that the key is a class and value is an arguments
+        // If an array is assoc we assume that the key is a class and value is an arguments
         if (Arr::isAssoc($criterion)) {
             $criterion = [array_keys($criterion)[0], array_values($criterion)[0]];
-
-        //If an array is not assoc but count is one, we can assume there is a class without arguments.
-        //Like when a string passed as criterion
         } elseif (count($criterion) === 1) {
+            // If an array is not assoc but count is one, we can assume there is a class without arguments.
+            // Like when a string passed as criterion
             array_push($criterion, []);
         }
 
@@ -157,7 +156,7 @@ trait Criteriable
             $criterion = call_user_func_array([$this, 'instantiateCriterion'], $this->extractCriterionClassAndArgs($criterion));
         }
 
-        $this->$list[$this->getCriterionName($criterion)] = $criterion;
+        $this->{$list}[$this->getCriterionName($criterion)] = $criterion;
 
         return $this;
     }
@@ -269,7 +268,7 @@ trait Criteriable
      *
      * @return array
      */
-    public function getDefaultCriteria()
+    public function getDefaultCriteria(): array
     {
         return $this->defaultCriteria;
     }
@@ -279,7 +278,7 @@ trait Criteriable
      *
      * @return array
      */
-    public function getCriteria()
+    public function getCriteria(): array
     {
         if ($this->skipCriteria) {
             return [];
@@ -323,7 +322,7 @@ trait Criteriable
      *
      * @return bool
      */
-    public function hasCriterion($criterion)
+    public function hasCriterion($criterion): bool
     {
         return isset($this->getCriteria()[$this->getCriterionName($criterion)]);
     }
