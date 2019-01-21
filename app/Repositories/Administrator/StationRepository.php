@@ -286,7 +286,7 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
      * @return array
      */
 
-    public function getStationDate($station_id)
+    public function getStationDate($station_id) : array
     {
         return $this->select('station.id','station.name','station.measurements_per_day')
             ->where('station.name','=',$station_id)
@@ -299,7 +299,7 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
      * @param int $netId
      * @return array
      */
-    public function getStationForNetAuditoryActive($netId)
+    public function getStationForNetAuditoryActive($netId) : array
     {
         return $this->select('station.id','station.net_id','station.table_db_name','station.station_type_id','station.name')
             ->join('station_type','station.station_type_id','=', 'station_type.id')
@@ -309,9 +309,9 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
             ->get()->toArray();
     }
     /**
-     * @return object
+     * @return Collection
      */
-    public function getStationAuditoryActive()
+    public function getStationAuditoryActive() : Collection
     {
         return $this->select('station.id','station.table_db_name','station.station_type_id','station.name')
             ->join('station_type','station.station_type_id','=', 'station_type.id')
