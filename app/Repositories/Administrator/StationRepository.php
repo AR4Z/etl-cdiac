@@ -246,7 +246,6 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
                     ->toArray();
     }
 
-
     /**
      * @param int $net
      * @param string $etlMethod
@@ -263,9 +262,19 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
             ->toArray();
     }
 
-
-
-
+    /**
+     * @param int $station
+     * @return array
+     */
+    public function getStationId(int $station) :string
+    {
+        return $this->queryBuilder()
+            ->select('station_type.etl_method')
+            ->where('station.id',$station)
+            ->join('station_type', 'station_type.id', '=', 'station.station_type_id')
+            ->pluck('station_type.etl_method')
+            ->toArray()[0];
+    }
 
     public function countReportData($station)
     {

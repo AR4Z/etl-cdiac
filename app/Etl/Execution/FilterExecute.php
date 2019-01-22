@@ -10,9 +10,15 @@ use App\Etl\Execution\Options\FilterOptions\FilterOptionContract;
 class FilterExecute extends ExecuteStrategy
 {
     /**
+     * @var bool
+     */
+    private $trustProcess = true;
+
+    /**
      * @var FilterOptionContract
      */
     private $filterObject;
+
     /**
      * FilterExecute constructor.
      * @param FilterOptionContract $filterObject
@@ -28,6 +34,23 @@ class FilterExecute extends ExecuteStrategy
      */
     public function execute(array $executionParams = []): array
     {
-        return $this->filterObject->runConfig('Filter',$executionParams);
+       $executionParams['trustProcess'] = $this->trustProcess;
+       return $this->filterObject->runConfig('Filter',$executionParams);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrustProcess(): bool
+    {
+        return $this->trustProcess;
+    }
+
+    /**
+     * @param bool $trustProcess
+     */
+    public function setTrustProcess(bool $trustProcess)
+    {
+        $this->trustProcess = $trustProcess;
     }
 }

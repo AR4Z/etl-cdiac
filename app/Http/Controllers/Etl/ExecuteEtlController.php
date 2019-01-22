@@ -2,24 +2,27 @@
 
 namespace App\Http\Controllers\Etl;
 
-use App\Etl\Execution\EtlExecute;
+use App\Etl\Execution\Traits\EtlExecutionFacilitatorTrait;
 use App\Repositories\Administrator\NetRepository;
 use App\Repositories\Administrator\StationRepository;
 use App\Repositories\DataWareHouse\StationDimRepository;
-use function Couchbase\defaultDecoder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class ExecuteEtlController extends Controller
 {
+    use EtlExecutionFacilitatorTrait;
+
     /**
      * @var StationRepository
      */
     private $stationRepository;
+
     /**
      * @var StationDimRepository
      */
     private $stationDimRepository;
+
     /**
      * @var NetRepository
      */
@@ -78,87 +81,66 @@ class ExecuteEtlController extends Controller
      */
     public function redirectionEtlFilter(Request $request)
     {
+        $station = (int)$request->get('station_id');
+        $net = (int)$request->get('net_name');
 
-        $object = $this->optionalStationInAllNets(1);
+        $elements = $this->executeConfiguration(
+            ($station == 0) ?  $this->optionalStationsInNet($this->stationRepository,$net) : $this->optionalStationInNet($this->stationRepository,$station),
+            $request->get('method'),
+            $request->get('start'),
+            $request->get('end'),
+            !is_null($request->get('sequence')),
+            !is_null($request->get('jobs'))
+        );
 
-        dd($object);
-
-
-        $jobs = false; # TODO : Debe entrar por parametro
-        $data = $request->all();
-        $data['sequence'] = true; # TODO: Dede entrar por parametro
-        $data['trustProcess'] = false; # TODO: Debe entrar por parametro
-        $data['serialization'] = false; # TODO: Debe entrar por parametro
-
-        $extract = ['method' => 'Database','optionExtract' => ['trustProcess'=> $data['trustProcess'], 'initialDate' => $data['start'],'initialTime' => '00:00:00','finalDate' =>  $data['end'],'finalTime' => '23:59:59']];
-        $transform = [];
-        $load = [];
-        if ($data['net_name'] == 0){
-            if ($data['station_id'] == 0){
-                $response = $this->executeAllStations($data['method'],$data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
-            }else{
-                $response = $this->executeOneStation($data['method'],null,$data['station_id'],$data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
-            }
-        }else{
-            if ($data['station_id'] == 0){
-                $response = $this->executeOneNetAllStations($data['method'],$data['net_name'],$data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
-            }else{
-                $response = $this->executeOneStation($data['method'],null,$data['station_id'], $data['sequence'],$data['serialization'],$extract,$transform,$load,$jobs);
-            }
-         }
-
-        dd('stop final',$response);
+        dd('stop final',$elements);
     }
 
     /**
-     *  init
-     * @param int $net
+     * @param array $options
+     * @param string $method
+     * @param string $initialDate
+     * @param string $finalDate
+     * @param bool $sequence
+     * @param string $typeExecution
      * @return array
      */
-
-    public function optionalStationInAllNets(int $net) :array
+    private function executeConfiguration(array $options, string $method, string $initialDate, string $finalDate, bool $sequence, string $typeExecution) : array
     {
-        $stationsWeather = $this->stationRepository->getStationsId($net,'weather');
-        $stationsAir = $this->stationRepository->getStationsId($net,'air');
-        $stationsGroundwater = $this->stationRepository->getStationsId($net,'groundwater');
+        $elements = [];
 
-        dd($stationsWeather,$stationsAir,$stationsGroundwater);
+        foreach ($options as $key => $row) {
+            switch ($key) {
+                case 'weather':
+                    if ($method == 'Filter'){ $elements[] = $this->FilterWeather($initialDate,$finalDate,$row,$sequence,$typeExecution); }
+                    if ($method == 'Original'){ $elements[] = $this->OriginalWeatherDatabase($initialDate,$finalDate,$row,$sequence,$typeExecution); }
+                    if ($method == 'All'){ $elements[] = $this->OriginalWeatherDatabase($initialDate,$finalDate,$row,$sequence,$typeExecution); $elements[] = $this->FilterWeather($initialDate,$finalDate,$row,$sequence,$typeExecution); }
+                    break;
+                case 'air':
+                    if ($method == 'Filter'){ $elements[] = $this->FilterAir($initialDate,$finalDate,$row,$sequence,$typeExecution); }
+                    if ($method == 'Original'){ dd('opcion no disponible (red no permite real time)');/** TODO opcion no disponible (red no permite real time) */ }
+                    if ($method == 'All'){ dd('opcion no disponible (red no permite real time)'); /** TODO Opcion no desponible (red no permite real time) */}
+                    break;
+                case 'groundwater':
+                    if ($method == 'Filter'){ dd('opcion no disponible (red no necesita ser filtrada )');/** TODO opcion no disponible (red no necesita ser filtrada ) */ }
+                    if ($method == 'Original'){  dd('opcion no disponible (red no permite real time)');/** TODO opcion no disponible (red no permite real time) */ }
+                    if ($method == 'All'){ dd('opcion no disponible (red no necesita ser filtrada )');/** TODO opcion no disponible (red no necesita ser filtrada ) */  }
+                    break;
+            }
+        }
+
+        return $elements;
     }
 
-    /**
-     * end
-     */
+    public function executeResetStation(){ /** TODO */}
 
+    public function executeResetAllStations(){ /** TODO */}
 
-    public function executeResetStation()
-    {
+    public function executeRollbackStation(){/** TODO */}
 
-    }
+    public function executeRollbackAllStations(){/** TODO */}
 
-    public function executeResetAllStations()
-    {
+    public function executeRefreshStation(){/** TODO */}
 
-    }
-
-    public function executeRollbackStation()
-    {
-
-    }
-
-    public function executeRollbackAllStations()
-    {
-
-    }
-
-    public function executeRefreshStation()
-    {
-
-    }
-
-    public function executeRefreshAllStations()
-    {
-
-    }
-
-
+    public function executeRefreshAllStations(){/** TODO */}
 }

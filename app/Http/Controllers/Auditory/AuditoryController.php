@@ -437,7 +437,7 @@ class AuditoryController extends Controller
 
                     $result_array=array_merge($result,$result_coherence_array);
                 }
-                return view('auditory.result_Net')->with(['data_risk' => $result_array,'net'=> $net[0]->name, 'search' => $data]);
+                return view('auditory.result_Net')->with(['data_risk' => $result_array,'net'=> array_column($net,'name')[0], 'search' => $data]);
 
             }
             elseif (sizeof($station)==1 && sizeof($variables)>1){

@@ -8,11 +8,6 @@ namespace App\Etl\Execution;
 class EtlExecute
 {
     /**
-     * @var ExecuteStrategy
-     */
-    private $executeStrategy;
-
-    /**
      * @var bool
      */
     private $sequence = false;
@@ -20,12 +15,12 @@ class EtlExecute
     /**
      * @var bool
      */
-    private $trustProcess = false;
+    private $debug = true;
 
     /**
-     * @var bool
+     * @var ExecuteStrategy
      */
-    private $debug = false;
+    private $executeStrategy;
 
     /**
      * EtlExecute constructor.
@@ -41,7 +36,7 @@ class EtlExecute
      */
     public function execute() : array
     {
-        return $this->executeStrategy->execute(['sequence'=> $this->sequence, 'trustProcess' => $this->trustProcess,'debug'=> $this->debug]);
+        return $this->executeStrategy->execute(['sequence'=> $this->sequence,'debug'=> $this->debug]);
     }
 
     /**
@@ -57,22 +52,6 @@ class EtlExecute
     public function setSequence(bool $sequence)
     {
         $this->sequence = $sequence;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTrustProcess(): bool
-    {
-        return $this->trustProcess;
-    }
-
-    /**
-     * @param bool $trustProcess
-     */
-    public function setTrustProcess(bool $trustProcess)
-    {
-        $this->trustProcess = $trustProcess;
     }
 
     /**
