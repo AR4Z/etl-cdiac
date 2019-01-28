@@ -16,4 +16,13 @@ trait AppGeneralRepositoryBaseTrait
 
         return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
+
+    /**
+     * @param array $columns
+     * @return mixed
+     */
+    public function fillingColumnsModel(array $columns = [])
+    {
+        return $this->createModel()->fill($columns);
+    }
 }

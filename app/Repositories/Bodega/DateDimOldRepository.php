@@ -3,17 +3,18 @@
 namespace App\Repositories\Bodega;
 
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Bodega\DateDim;
-use DB;
-
-
 
 class DateDimOldRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -24,25 +25,11 @@ class DateDimOldRepository extends EloquentRepository implements RepositoriesCon
     }
 
     /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @param $date
+     * @return Collection
      */
-    public function queryBuilder(): Builder
+    public function getDate($date) : Collection
     {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
-    }
-
-// funciones del modulo de auditoria
-
-    public function getDate($date)
-    {
-        return $this
-            ->select('fecha_sk')
-            ->where('fecha','=',$date)
-            ->get();
-
-
+        return $this->select('fecha_sk')->where('fecha','=',$date)->get();
     }
 }

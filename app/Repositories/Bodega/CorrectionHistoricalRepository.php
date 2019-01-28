@@ -3,17 +3,17 @@
 namespace App\Repositories\Bodega;
 
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Bodega\CorrectionHistorical;
-use DB;
-
-
 
 class CorrectionHistoricalRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -24,32 +24,20 @@ class CorrectionHistoricalRepository extends EloquentRepository implements Repos
     }
 
     /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    public function queryBuilder(): Builder
-    {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
-    }
-
-    //Auditory System Functions
-
-    /**
      * @param int $station_id
      * @param string $var
      * @param date $date1
      * @param date $date2
      * @return array
      */
-    public function correctionAverageByStationAndVar($station_id,$var,$date1,$date2){
-        return $this
-            ->selectRaw('count(id_correccion)')
+    public function correctionAverageByStationAndVar($station_id,$var,$date1,$date2) : array
+    {
+        return $this->selectRaw('count(id_correccion)')
             ->where('estacion_sk','=',$station_id)
             ->whereBetween('fecha_sk',[$date1,$date2])
             ->where('tipo_correccion_aplicado','=','promedio')
             ->where('variable','=',$var)
-            ->get()->toArray();
+            ->get()
+            ->toArray();
     }
 }

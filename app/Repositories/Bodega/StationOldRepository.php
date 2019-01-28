@@ -3,17 +3,17 @@
 namespace App\Repositories\Bodega;
 
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Bodega\Station;
-use DB;
-
-
 
 class StationOldRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -25,37 +25,20 @@ class StationOldRepository extends EloquentRepository implements RepositoriesCon
     }
 
     /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @param int $station_id
+     * @return array
      */
-    public function queryBuilder(): Builder
+    public function getStationDate($station_id) : array
     {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
+        return $this->select('estacion_sk','total_medicion_dia')->where('estacion_sk','=',$station_id)->get()->toArray();
     }
-
-    // Auditory System Functions
 
     /**
      * @param int $station_id
      * @return array
      */
-    public function getStationDate($station_id)
+    public function dates($station_id) : array
     {
-        return $this
-            ->select('estacion_sk','total_medicion_dia')
-            ->where('estacion_sk','=',$station_id)
-            ->get()->toArray();
-    }
-    /**
-     * @param int $station_id
-     * @return array
-     */
-    public function dates($station_id)
-    { return $this
-        ->selectRaw('total_medicion_dia')
-        ->where('estacion_sk','=',$station_id)
-        ->get()->toArray();
+        return $this->selectRaw('total_medicion_dia')->where('estacion_sk','=',$station_id)->get()->toArray();
     }
 }

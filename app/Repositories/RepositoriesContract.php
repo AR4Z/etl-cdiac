@@ -19,4 +19,10 @@ interface RepositoriesContract extends RepositoryContract, CacheableContract
      * @return Builder
      */
     public function queryBuilder() : Builder;
+
+    /**
+     * @param array $columns
+     * @return mixed
+     */
+    public function fillingColumnsModel(array $columns = []);
 }

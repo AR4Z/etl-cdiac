@@ -2,42 +2,66 @@
 
 namespace App\Repositories\Config;
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\RepositoriesContract;
+use Illuminate\Container\Container;
 use Rinvex\Repository\Repositories\EloquentRepository;
-use App\Entities\Config\Connection;
+use App\Entities\Auditory\Analysis;
 
-/**
- *
- */
-class AnalysisRepository extends EloquentRepository
+class AnalysisRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
 
-  protected $repositoryId = 'rinvex.repository.uniqueid';
+    /**
+     * RepositoriesContract constructor.
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->setContainer($container)->setModel(Analysis::class)->setRepositoryId('rinvex.repository.uniqueid');
+    }
 
-  protected $model = AnalysisRepository::class;
-
-
-
-    public function getId($connectionName)
+    /**
+     * @param $connectionName
+     * @return Analysis
+     */
+    public function getId($connectionName) : Analysis
     {
         return $this->where('id', $connectionName)->first();
     }
 
-    public function getInitialRange($connectionName)
+    /**
+     * @param $connectionName
+     * @return Analysis
+     */
+    public function getInitialRange($connectionName) : Analysis
     {
         return $this->where('initial_range', $connectionName)->first();
     }
 
-    public function getEndRange($connectionName)
+    /**
+     * @param $connectionName
+     * @return Analysis
+     */
+    public function getEndRange($connectionName) : Analysis
     {
         return $this->where('end_range', $connectionName)->first();
     }
 
-    public function getName($connectionName)
+    /**
+     * @param $connectionName
+     * @return Analysis
+     */
+    public function getName($connectionName) : Analysis
     {
         return $this->where('name', $connectionName)->first();
     }
 
-    public function getAnalysis($connectionName)
+    /**
+     * @param $connectionName
+     * @return Analysis
+     */
+    public function getAnalysis($connectionName) : Analysis
     {
         return $this->where('analysis', $connectionName)->first();
     }

@@ -3,17 +3,18 @@
 namespace App\Repositories\Bodega;
 
 
+use App\Repositories\AppGeneralRepositoryBaseTrait;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Bodega\StationDim;
-use DB;
-
-
 
 class StationDimOldRepository extends EloquentRepository implements RepositoriesContract
 {
+    use AppGeneralRepositoryBaseTrait;
+
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -24,23 +25,11 @@ class StationDimOldRepository extends EloquentRepository implements Repositories
     }
 
     /**
-     * @return Builder
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @return Collection
      */
-    public function queryBuilder(): Builder
+    public function stations() : Collection
     {
-        $model = $this->createModel();
-
-        return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
-    }
-
-    // Auditory System Functions
-    /**
-     * @return array
-     */
-    public function stations(){
-        return $this
-            ->select('estacion_sk', 'estacion')
+        return $this->select('estacion_sk', 'estacion')
             ->where('tipologia',"=",'M')
             ->OrWhere('tipologia','=','H')
             ->where('fin_funcionamiento',null)
@@ -48,29 +37,31 @@ class StationDimOldRepository extends EloquentRepository implements Repositories
             ->orderby('estacion','ASC')
             ->get();
     }
+
     /**
      * @return array
      */
-    public function getAllStations(){
-        return $this
-            ->select('*')
+    public function getAllStations() : array
+    {
+        return $this->select('*')
             ->where('tipologia',"=",'M')
             ->OrWhere('tipologia','=','H')
             ->where('fin_funcionamiento',null)
             ->where('visible',TRUE)
             ->orderby('estacion','ASC')
-            ->get()->toarray();
+            ->get()
+            ->toarray();
     }
+
     /**
      * @param int $station_id
      * @return array
      */
-    public function getStationNameById($station_id)
+    public function getStationNameById($station_id) : array
     {
-        return $this
-            ->select('estacion_sk','estacion')
+        return $this->select('estacion_sk','estacion')
             ->where('estacion_sk','=',$station_id)
-            ->get()->toArray();
+            ->get()
+            ->toArray();
     }
-
 }
