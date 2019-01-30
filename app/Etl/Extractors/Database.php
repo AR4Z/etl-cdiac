@@ -115,14 +115,7 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
 
-            $values = ($this->extractTypeObject)->extractData(
-                $this->etlConfig->keys,
-                $this->etlConfig->initialDate,
-                $this->etlConfig->initialTime,
-                $this->etlConfig->finalDate,
-                $this->etlConfig->finalTime,
-                10000
-            );
+            $values = $this->extractTypeObject->extractData($this->etlConfig);
 
             if (is_null($values) or count($values) ==  0){
                 return [
@@ -154,13 +147,13 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
     {
         try {
             # Ingresar la llave subrrogada de la estacion
-            if ($this->extractTypeObject->flagStationSk){$this->updateStationSk(($this->etlConfig->station)->id);}
+            if ($this->extractTypeObject->flagStationSk){$this->extractTypeObject->flagStationSk = $this->updateStationSk(($this->etlConfig->station)->id);}
 
             # Ingresar la llave subrrogada de la fecha
-            if ($this->extractTypeObject->flagDateSk){$this->updateDateSk();}
+            if ($this->extractTypeObject->flagDateSk){ $this->extractTypeObject->flagDateSk = $this->updateDateSk();}
 
             # Ingresar la llave subrrogada de la tiempo
-            if ($this->extractTypeObject->flagTimeSk){$this->updateTimeSk();}
+            if ($this->extractTypeObject->flagTimeSk){$this->extractTypeObject->flagTimeSk = $this->updateTimeSk();}
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -181,7 +174,6 @@ class Database extends ExtractorBase implements ExtractorInterface, StepContract
             $this->trustProcess();
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
-
         } catch (Exception $e) {
 
             return ['resultExecution' => false , 'data' => null, 'exception' => $e];

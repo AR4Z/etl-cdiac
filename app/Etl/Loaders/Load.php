@@ -346,14 +346,16 @@ class Load extends LoadBase implements LoadInterface,StepContract
 
     /**
      * Se el ultimo dato entrante cuando se ingresan datos duplicados
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteDuplicates()
     {
         if ($this->deleteDuplicates) {
 
             # se extrae el maximo id cuando existen datos duplicados
-            $result = $this->getDuplicatesWDT($this->etlConfig->repositorySpaceWork);
+            $result = $this->getDuplicatesWDT(
+                $this->etlConfig->repositorySpaceWork,
+                $this->etlConfig->station->id
+            );
 
             # se eliminan los id's duplicados
             if (count($result) > 0){ $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'id', array_column($result,'max')); }

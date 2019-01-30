@@ -25,4 +25,9 @@ interface RepositoriesContract extends RepositoryContract, CacheableContract
      * @return mixed
      */
     public function fillingColumnsModel(array $columns = []);
+
+    /**
+     * @return mixed
+     */
+    public function newEmptyEntity();
 }

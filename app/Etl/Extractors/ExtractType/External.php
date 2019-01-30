@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors\ExtractType;
 
 use App\Etl\EtlConfig;
+use Carbon\Carbon;
 use function Couchbase\defaultDecoder;
 
 class External extends ExtractTypeBase implements ExtractTypeInterface
@@ -92,27 +93,20 @@ class External extends ExtractTypeBase implements ExtractTypeInterface
     }
 
     /**
-     * @param $keys
-     * @param $initialDate
-     * @param $initialTime
-     * @param $finalDate
-     * @param $finalTime
-     * @param $limit
+     * @param EtlConfig $etlConfig
      * @return mixed
      */
-
-    public function extractData($keys, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
+    public function extractData(EtlConfig $etlConfig)
     {
         return $this->getExternalDataWDT(
                 $this->extractConnection,
                 $this->extractTable,
-                $keys->mergeExternalIncomingKeys,
+                $etlConfig->keys->mergeExternalIncomingKeys,
                 $this->select,
-                $initialDate,
-                $initialTime,
-                $finalDate,
-                $finalTime,
-                $limit
+                $etlConfig->initialDate,
+                $etlConfig->initialTime,
+                $etlConfig->finalDate,
+                $etlConfig->finalTime
         );
     }
 

@@ -6,6 +6,7 @@ use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Rinvex\Repository\Exceptions\RepositoryException;
 use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Station;
 use App\Repositories\AppGeneralRepositoryBaseTrait;
@@ -44,12 +45,13 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
     /**
      * @param int $stationId
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
 
     public function findRelationship(int $stationId) : Station
     {
-        return $this->createModel()->with(['originalState','filterState','typeStation'])->find($stationId);
+        try {
+            return $this->createModel()->with(['originalState', 'filterState', 'typeStation'])->find($stationId);
+        } catch (RepositoryException $e) { /** TODO */ dd('Error al optener la estacion y sus relaciones');}
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Etl\Database;
 
 use Carbon\Carbon;
 use DB;
+use function foo\func;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 
@@ -35,7 +36,7 @@ class Query
      * @param string $table
      * @return $this
      */
-    public function init(string $connection, string $table)
+    public function init(string $connection, string $table) : Query
     {
         if (!($connection and $table)){
             dd('Los parametros connection y table son obligatorios para la inicializacion de la consulta');
@@ -51,7 +52,7 @@ class Query
      * @param $select
      * @return $this
      */
-    public function select(string $select)
+    public function select(string $select) : Query
     {
         if (!$this->init){ dd('Error no se puede hacer un select sin iniciar la consulta'); }
         if (!$select){dd('Error el parametro select es obligatorio');}
@@ -84,25 +85,29 @@ class Query
     }
 
     /**
-     * @param string $initialDate
-     * @param string $initialTime
-     * @param string $finalDate
-     * @param string $finalTime
+     * @param int $stationSk
+     * @param int $initialDateSk
+     * @param int $initialTimeSk
+     * @param int $finalDateSk
+     * @param int $finalTimeSk
      * @return $this
      */
-    public function localWhere(string $initialDate, string $initialTime, string $finalDate, string $finalTime)
+    public function localWhere(int $stationSk, int $initialDateSk, int $initialTimeSk, int $finalDateSk, int $finalTimeSk) : Query
     {
         if (!$this->select){dd('Error no se puede hacer un where sin el select');}
-        if (!($initialTime and $initialDate)){dd('Error los parametros initialTime e initialDate son obligatorios');}
-        if (!($finalTime and $finalDate)){dd('Error los parametros finalDate e finalTime son obligatorios');}
+        if (!($initialTimeSk and $initialDateSk)){dd('Error los parametros initialTime e initialDate son obligatorios');}
+        if (!($finalTimeSk and $finalDateSk)){dd('Error los parametros finalDate e finalTime son obligatorios');}
 
-        $this->query->where('date_sk', '=', $initialDate);
-        $this->query->where('time_sk' ,'>=' ,$initialTime);
-        $this->query->orWhere('date_sk' ,'>' ,$initialDate);
-        $this->query->where('date_sk', '<' ,$finalDate);
-        $this->query->orWhere('date_sk' ,'=' ,$finalDate);
-        $this->query->where('time_sk', '<=' ,$finalTime);
-        //(((date_sk = $initialDate and time_sk >= $initialTime) or ( date_sk > $initialDate)) and ((date_sk < $finalDate) or (date_sk = $finalDate and time_sk <= $finalTime))"
+        $this->query->where('station_sk','=',$stationSk);
+
+        $this->query->where(function(Builder $query) use ($initialDateSk,$initialTimeSk,$finalDateSk,$finalTimeSk){
+            $query->where('date_sk', '=', $initialDateSk)
+                ->where('time_sk' ,'>=' ,$initialTimeSk)
+                ->orWhere('date_sk' ,'>' ,$initialDateSk)
+                ->where('date_sk', '<' ,$finalDateSk)
+                ->orWhere('date_sk' ,'=' ,$finalDateSk)
+                ->where('time_sk', '<=' ,$finalTimeSk);
+        });
 
         return $this;
     }
@@ -111,7 +116,7 @@ class Query
      * @param string $keys
      * @return $this
      */
-    public function orderBy(string $keys)
+    public function orderBy(string $keys) : Query
     {
         if (!$this->select){dd('Error no se puede hacer un order by sin el select');}
         $this->query->orderby(DB::raw($keys), 'asc');
@@ -123,7 +128,7 @@ class Query
      * @param int $limit
      * @return $this
      */
-    public function limit(int $limit)
+    public function limit(int $limit) : Query
     {
         if (!$this->select){dd('Error no se puede hacer un limit sin el select');}
         if (!is_null($limit)){$this->query->limit($limit);}
@@ -133,7 +138,7 @@ class Query
     /**
      * @return $this
      */
-    public function execute()
+    public function execute() : Query
     {
         if (!$this->select){dd('Error no se puede hacer un execute sin el select');}
         $this->data = $this->query->get()->all();

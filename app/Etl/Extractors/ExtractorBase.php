@@ -16,9 +16,9 @@ abstract class ExtractorBase extends EtlBase
 
     /**
      * @var EtlConfig etlConfig
-     * @return void
+     * @return bool
      */
-    public function updateDateSk()
+    public function updateDateSk() :bool
     {
         $dates = $this->etlConfig->repositorySpaceWork->getDatesDistinct();
 
@@ -26,15 +26,16 @@ abstract class ExtractorBase extends EtlBase
             $this->etlConfig->repositorySpaceWork->updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);
         }
 
-        $this->flagDateSk = true; # TODO es posible quitar esto ?
+        return true;
     }
 
     /**
-     * @return void
+     * @return bool
      */
-    public  function updateTimeSk()
+    public  function updateTimeSk() : bool
     {
         $times = $this->etlConfig->repositorySpaceWork->getTimesDistinct();
+
         foreach ($times as $time){
             if($time->time == '24:00:00'){
                 $this->etlConfig->repositorySpaceWork->incrementDateSk($time->id,1);
@@ -43,40 +44,36 @@ abstract class ExtractorBase extends EtlBase
                 $this->etlConfig->repositorySpaceWork->updateTimeSk($this->calculateTimeSk($time->time),$time->time);
             }
         }
-        $this->flagTimeSk = true; # TODO es posible quitar esto ?
+
+        return true;
     }
 
     /**
      * @param int $stationId
+     * @return bool
      */
-    public function updateStationSk(int $stationId)
+    public function updateStationSk(int $stationId) : bool
     {
         $this->etlConfig->repositorySpaceWork->updateStationSk($stationId);
 
-        $this->flagStationSk = true; # TODO es posible quitar esto ?
+        return true;
     }
 
     /**
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function trustProcess()
     {
-        if (!$this->etlConfig->trustObject->active){ return false;}
-
-        # Calcular los datos entrantes para el preceso de confianza
-
-        $trust = $this->etlConfig->trustObject->incomingCalculation(
-            $this->etlConfig->repositorySpaceWork,
-            $this->etlConfig->varForFilter->toArray()
-        );
-
-        # Actualizar el estado del proceso de confianza
-        $this->etlConfig->trustObject->setTrustColumns($trust);
-
-        # Calcular la Cantidad de datos entrante
+        # Calcular la total de datos entrantes
         $this->etlConfig->trustObject->setIncomingAmount(
             $this->getIncomingAmountWDT($this->etlConfig->repositorySpaceWork)
+        );
+
+        # Calcular los datos entrantes para por variable
+        $this->etlConfig->trustObject->incomingCalculation(
+            $this->etlConfig->repositorySpaceWork,
+            $this->etlConfig->station->id,
+            $this->etlConfig->varForFilter->toArray()
         );
 
         return true;

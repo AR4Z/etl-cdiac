@@ -19,4 +19,10 @@ interface ExtractTypeInterface
      */
     public function setSelect($variables,$foreignKey);
 
+    /**
+     * @param EtlConfig $etlConfig
+     * @return mixed
+     */
+    public function extractData(EtlConfig $etlConfig);
+
 }

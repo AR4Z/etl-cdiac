@@ -257,7 +257,13 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
            $lowerLimit = (($time->time_sk - $this->timeSpace) <= 0 ) ? 1 : $time->time_sk - $this->timeSpace;
 
             #Evaluar cantidad en el rango actual
-            $valInRangeActual = $this->getValInRangeWDT($this->etlConfig->repositorySpaceWork,$date->date_sk,$lowerLimit,$upperLimit);
+            $valInRangeActual = $this->getValInRangeWDT(
+                $this->etlConfig->repositorySpaceWork,
+                $this->etlConfig->station->id,
+                $date->date_sk,
+                $lowerLimit,
+                $upperLimit
+            );
 
             # Primer caso: cuando es la primera hora del dia
             if ($time->time_sk == 1 and !is_null($this->previousData)){

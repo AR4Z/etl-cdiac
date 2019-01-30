@@ -94,28 +94,22 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
     }
 
     /**
-     * @param $keys
-     * @param $initialDate
-     * @param $initialTime
-     * @param $finalDate
-     * @param $finalTime
-     * @param $limit
+     * @param EtlConfig $etlConfig
      * @return mixed
      * @internal param $keyMerge
      */
-
-    public function extractData($keys, $initialDate, $initialTime, $finalDate, $finalTime, $limit)
+    public function extractData(EtlConfig $etlConfig)
     {
         return $this->getLocalDataWDT(
             $this->extractConnection,
-                $this->extractTable,
-                $keys->mergeLocalIncomingKeys,
-                $this->select,
-                $this->calculateDateSk(Carbon::parse($initialDate)), // Todo .....
-                $this->calculateTimeSk($initialTime),
-                $this->calculateDateSk(Carbon::parse($finalDate)),
-                $this->calculateTimeSk($finalTime),
-                $limit
+            $this->extractTable,
+            $etlConfig->station->id,
+            $etlConfig->keys->mergeLocalIncomingKeys,
+            $this->select,
+            $this->calculateDateSk(Carbon::parse($etlConfig->initialDate)),
+            $this->calculateTimeSk($etlConfig->initialTime),
+            $this->calculateDateSk(Carbon::parse($etlConfig->finalDate)),
+            $this->calculateTimeSk($etlConfig->finalTime)
         );
     }
 }

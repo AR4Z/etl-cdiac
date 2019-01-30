@@ -21,17 +21,15 @@ trait WorkDatabaseTrait
      * @param string $initialTime
      * @param string $finalDate
      * @param string $finalTime
-     * @param int $limit
      * @return mixed
      */
-    public function getExternalDataWDT(string $connection, string $table, string $keys, string $select, string $initialDate, string $initialTime, string $finalDate, string $finalTime, int $limit = null)
+    public function getExternalDataWDT(string $connection, string $table, string $keys, string $select, string $initialDate, string $initialTime, string $finalDate, string $finalTime)
     {
         $query = new Query();
 
         return $query->init($connection,$table)
                     ->select($select)
                     ->externalWhereBetween($keys,$initialDate,$initialTime,$finalDate,$finalTime)
-                    ->limit($limit)
                     ->execute()
                     ->data;
     }
@@ -39,28 +37,24 @@ trait WorkDatabaseTrait
     /**
      * @param string $connection
      * @param string $table
+     * @param int $stationSk
      * @param string $keys
      * @param string $select
-     * @param string $initialDate
-     * @param string $initialTime
-     * @param string $finalDate
-     * @param string $finalTime
-     * @param int $limit
+     * @param int $initialDate
+     * @param int $initialTime
+     * @param int $finalDate
+     * @param int $finalTime
      * @return mixed
      */
-    public function getLocalDataWDT(string $connection, string $table, string $keys, string $select, string $initialDate, string $initialTime, string $finalDate, string $finalTime, int $limit = null)
+    public function getLocalDataWDT(string $connection, string $table, int $stationSk, string $keys, string  $select, int $initialDate, int $initialTime, int $finalDate, int $finalTime)
     {
         $query = new Query();
 
         $query->init($connection,$table)
             ->select($select)
-            ->localWhere($initialDate,$initialTime,$finalDate,$finalTime)
+            ->localWhere($stationSk,$initialDate,$initialTime,$finalDate,$finalTime)
             ->orderBy($keys)
-            ->limit($limit)
             ->execute();
-
-        //TODO -- probar la funcionalidad de este metodo --
-        //dd($connection,$table,$keys,$select,$initialDate,$initialTime,$finalDate,$finalTime,$limit,$query->data);
 
         return $query->data;
     }
@@ -69,12 +63,11 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param string $select
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getAllDataWDT(RepositoriesContract $repository, string $select) : array
     {
         return $repository->queryBuilder()
-                        ->select(DB::raw($select))
+                        ->selectRaw($select)
                         ->whereNotNull('station_sk')
                         ->whereNotNull('date_sk')
                         ->whereNotNull('time_sk')
@@ -107,7 +100,6 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param array $data
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function insertDataEncodeWDT(RepositoriesContract $repository, array $data = []) : bool
     {
@@ -138,7 +130,6 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param $data
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function insertExistTableWDT(RepositoriesContract $repository,array $data)
     {
@@ -148,17 +139,18 @@ trait WorkDatabaseTrait
     /**
      * @param RepositoriesContract $repository
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getIncomingAmountWDT(RepositoriesContract $repository) : int
     {
-        return $repository->queryBuilder()->select(DB::raw('COUNT(id) AS count'))->get()->toArray()[0]->count;
+        return $repository->queryBuilder()
+            ->select(DB::raw('COUNT(id) AS count'))
+            ->get()
+            ->toArray()[0]->count;
     }
 
     /**
      * @param RepositoriesContract $repository
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getLastMigrateDataWDT(RepositoriesContract $repository)
     {
@@ -167,16 +159,17 @@ trait WorkDatabaseTrait
 
     /**
      * @param RepositoriesContract $repository
+     * @param $station_sk
      * @param $date_sk
      * @param $time
      * @param $interval
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function getValInRangeWDT(RepositoriesContract $repository, $date_sk, $time, $interval) : Collection
+    public function getValInRangeWDT(RepositoriesContract $repository, $station_sk,$date_sk, $time, $interval) : Collection
     {
         return $repository->queryBuilder()
                     ->select('*')
+                    ->where('station_sk',$station_sk)
                     ->where('date_sk', $date_sk)
                     ->whereBetween('time_sk',[$time,$interval])
                     ->orderby('date_sk','ASC')
@@ -188,7 +181,6 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param $date
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function countRowForDateWDT(RepositoriesContract $repository, $date)
     {
@@ -200,14 +192,10 @@ trait WorkDatabaseTrait
      * @param $date_sk
      * @param $time_sk
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteFromDateAndTimeWDT(RepositoriesContract $repository, $date_sk, $time_sk)
     {
-        return $repository->queryBuilder()
-                    ->where('date_sk',$date_sk)
-                    ->where('time_sk',$time_sk)
-                    ->delete();
+        return $repository->queryBuilder()->where('date_sk',$date_sk)->where('time_sk',$time_sk)->delete();
     }
 
 
@@ -234,7 +222,6 @@ trait WorkDatabaseTrait
     /**
      * @param RepositoriesContract $repository
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getInitialDataInSpaceWorkWDT(RepositoriesContract $repository)
     {
@@ -244,7 +231,6 @@ trait WorkDatabaseTrait
     /**
      * @param RepositoriesContract $repository
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getFinalDataInSpaceWorkWDT(RepositoriesContract $repository)
     {
@@ -256,22 +242,20 @@ trait WorkDatabaseTrait
      * @param $variable
      * @param array $search
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getWhereInWDT(RepositoriesContract $repository, $variable, array $search) : Collection
     {
         return $repository->queryBuilder()
-                    ->select('id','station_sk','date_sk','time_sk',$variable)
-                    ->whereIn($variable,$search)
-                    ->orderby('id')
-                    ->get();
+            ->select('id','station_sk','date_sk','time_sk',$variable)
+            ->whereIn($variable,$search)
+            ->orderby('id')
+            ->get();
     }
 
     /**
      * @param RepositoriesContract $repository
      * @param $time
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteLastDateWDT(RepositoriesContract $repository, $time) : bool
     {
@@ -289,7 +273,6 @@ trait WorkDatabaseTrait
      * @param string $variableName
      * @param array $infoCalculation
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function generateVariableCalculatedWDT(RepositoriesContract $repository, string $variableName, array $infoCalculation) : bool
     {
@@ -308,7 +291,6 @@ trait WorkDatabaseTrait
      * @param int $id
      * @param array $updates
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateDateTimeFromIdWDT(RepositoriesContract $repository, int $id, array $updates)
     {
@@ -320,7 +302,6 @@ trait WorkDatabaseTrait
      * @param string $variable
      * @param array $arr
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteWhereInVariableWDT(RepositoriesContract $repository, string $variable, array $arr)
     {
@@ -331,7 +312,6 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param $variable
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteNullVariableWDT(RepositoriesContract $repository, $variable)
     {
@@ -342,7 +322,6 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param array $inserts
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function insertDataArrayWDT(RepositoriesContract $repository, array $inserts)
     {
@@ -353,7 +332,6 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param string $variable
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function changeCommaForPointWDT(RepositoriesContract $repository, string $variable)
     {
@@ -365,7 +343,6 @@ trait WorkDatabaseTrait
      * @param int $id
      * @param array $variables
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteAfterIdVariableWDT(RepositoriesContract $repository, int $id, array $variables)
     {
@@ -378,7 +355,6 @@ trait WorkDatabaseTrait
      * @param int $finalId
      * @param array $variables
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteInRangeIdVariableWDT(RepositoriesContract $repository, int $initialId, int $finalId, array $variables)
     {
@@ -389,7 +365,6 @@ trait WorkDatabaseTrait
      * @param RepositoriesContract $repository
      * @param array $times
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteEldestHomogenizationWDT(RepositoriesContract $repository, $times)
     {
@@ -399,7 +374,6 @@ trait WorkDatabaseTrait
     /**
      * @param RepositoriesContract $repository
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function getIdAndDateTimeWDT(RepositoriesContract $repository) : Collection
     {
@@ -411,7 +385,6 @@ trait WorkDatabaseTrait
      * @param string $key
      * @param string $column
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function selectColumnWhereNullWDT(RepositoriesContract $repository, string $key, string $column) : array
     {
@@ -429,7 +402,6 @@ trait WorkDatabaseTrait
      * @param $dateSk
      * @param null $date
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateDateFromDateSkWDT(RepositoriesContract $repository, $dateSk, $date = null)
     {
@@ -441,7 +413,6 @@ trait WorkDatabaseTrait
      * @param $timeSk
      * @param null $time
      * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateTimeFromTimeSkWDT(RepositoriesContract $repository, $timeSk, $time = null)
     {
@@ -450,30 +421,32 @@ trait WorkDatabaseTrait
 
     /**
      * @param RepositoriesContract $repository
-     * @return mixed
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @param int $stationSk
+     * @return array
      */
-    public function getDuplicatesWDT(RepositoriesContract $repository) : array
+    public function getDuplicatesWDT(RepositoriesContract $repository,int $stationSk) : array
     {
         return $repository->queryBuilder()
             ->selectRaw('station_sk,date_sk,time_sk, max(id)')
+            ->where('station_sk',$stationSk)
             ->groupBy('station_sk','date_sk','time_sk')
             ->havingRaw('count(station_sk) > 1')
-            ->orderBy('station_sk','date_sk','time_sk') // TODO order by solo recibe dos paramtros la columna y el metodo de ordenamiento
+            ->orderByRaw('station_sk, date_sk, time_sk')
             ->get()
             ->toArray();
     }
 
     /**
      * @param RepositoriesContract $repository
+     * @param int $stationSk
      * @param string $countSelect
      * @return Collection
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function specificConsultValuesRawWDT(RepositoriesContract $repository, string $countSelect) : Collection
+    public function specificConsultValuesRawWDT(RepositoriesContract $repository,int $stationSk, string $countSelect) : Collection
     {
         return $repository->queryBuilder()
             ->selectRaw('CAST(station_sk AS integer),CAST(date_sk AS integer),'.$countSelect)
+            ->where('station_sk',$stationSk)
             ->groupby('station_sk','date_sk')
             ->orderByRaw('station_sk asc,date_sk asc')
             ->get();
@@ -484,27 +457,28 @@ trait WorkDatabaseTrait
      * @param $station_sk
      * @param $date_sk
      * @return array
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function firstStationAndDateWDT(RepositoriesContract $repository, $station_sk, $date_sk) : array
     {
         return (array)$repository->queryBuilder()->select('*')
-            ->where('station_sk','=',$station_sk)
-            ->where('date_sk','=',$date_sk)
+            ->where('station_sk',$station_sk)
+            ->where('date_sk',$date_sk)
             ->first();
     }
 
+
     /**
      * @param TemporalRepositoryContract $repository
-     * @param $variable
-     * @param $as
+     * @param int $stationSk
+     * @param string $variable
+     * @param string $as
      * @return Collection
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function countVariableFromStationAndDateWDT(TemporalRepositoryContract $repository, $variable, $as) : Collection
+    public function countVariableFromStationAndDateWDT(TemporalRepositoryContract $repository, int $stationSk, string $variable, string $as) : Collection
     {
         return $repository->queryBuilder()
             ->selectRaw("CAST(station_sk AS integer),CAST(date_sk AS integer),COUNT($variable) AS $as")
+            ->where('station_sk',$stationSk)
             ->groupby('station_sk','date_sk')
             ->orderByRaw("station_sk asc,date_sk asc")
             ->get();

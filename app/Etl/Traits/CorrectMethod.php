@@ -158,4 +158,55 @@ trait CorrectMethod
 
     }
 
+    /**
+     * @param $value
+     * @param $variable
+     * @param $correctValue
+     * @param $applied_correction_type
+     */
+    public function updateHistoryCorrect($value, $variable, $correctValue, $applied_correction_type)
+    {
+        if (!$this->evaluateExistenceInHistoryCorrection($value->id,$variable)){
+            DB::connection('temporary_work')
+                ->table('temporary_correction')
+                ->insert([
+                    'temporary_id'              => $value->id,
+                    'station_sk'                => $value->station_sk,
+                    'date_sk'                   => $value->date_sk,
+                    'time_sk'                   => $value->time_sk,
+                    'variable'                  => $variable,
+                    'observation'               => 'not_existence',
+                    'correct_value'             => $correctValue,
+                    'applied_correction_type'   => $applied_correction_type
+                ]);
+
+        }else{
+            DB::connection('temporary_work')
+                ->table('temporary_correction')
+                ->where('temporary_id','=',$value->id)
+                ->where('variable','=',$variable)
+                ->update([
+                    'correct_value' => $correctValue,
+                    'applied_correction_type' => $applied_correction_type
+                ]);
+        }
+
+    }
+
+    /**
+     * @param $id
+     * @param $variable
+     * @return bool
+     */
+    private function evaluateExistenceInHistoryCorrection($id, $variable){
+
+        $value=  DB::connection('temporary_work')
+            ->table('temporary_correction')
+            ->where('temporary_id','=',$id)
+            ->where('variable','=',$variable)
+            ->get()->count();
+
+        return ($value == 0) ? false : true;
+    }
+
 }

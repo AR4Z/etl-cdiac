@@ -230,11 +230,11 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepUpdateKeys() : array
     {
         try {
-            if (!$this->flagStationSk){$this->updateStationSk($this->etlConfig->station->id);}
+            if (!$this->flagStationSk){$this->flagStationSk =  $this->updateStationSk($this->etlConfig->station->id);}
 
-            if (!$this->flagDateSk){$this->updateDateSk();}
+            if (!$this->flagDateSk){$this->flagDateSk = $this->updateDateSk();}
 
-            if (!$this->flagTimeSk){$this->updateTimeSk();}
+            if (!$this->flagTimeSk){$this->flagTimeSk = $this->updateTimeSk();}
 
             $this->configureDateTimes();
 

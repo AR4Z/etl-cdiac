@@ -62,7 +62,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
      */
     public function startSteps(StepList $stepList) : StepList
     {
-        $stepList->addStep( new Step('stepExecuteCementFilters'));
+        $stepList->addStep( new Step('stepExecuteCommentFilters'));
         $stepList->addStep( new Step('stepTraverseDynamicVariablesToFilter'));
         $stepList->addStep( new Step('stepTraverseStaticVariablesToFilter'));
 
@@ -85,7 +85,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
      *  Ejecutar los filtros definidos para el campo de comentarios
      *  @return array
      */
-    public function stepExecuteCementFilters()
+    public function stepExecuteCommentFilters()
     {
         try {
             # Se extraen las variables a evaluar

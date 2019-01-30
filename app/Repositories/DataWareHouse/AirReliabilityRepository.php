@@ -27,8 +27,17 @@ class AirReliabilityRepository extends EloquentRepository implements Reliability
      */
     public function getFirstFromStationAndDate($station_sk, $date_sk) :AirReliability
     {
-        return $this->where('station_sk',$station_sk)
-            ->where('date_sk' , $date_sk)
-            ->first();
+        return $this->where('station_sk',$station_sk)->where('date_sk' , $date_sk)->first();
+    }
+
+    /**
+     * @param int $stationSk
+     * @param int $dateSk
+     * @param array $arr
+     * @return int|mixed
+     */
+    public function updateTrustAndSupport(int $stationSk, int $dateSk, array $arr = [])
+    {
+        return $this->queryBuilder()->where('station_sk',$stationSk)->where('date_sk',$dateSk)->update($arr);
     }
 }

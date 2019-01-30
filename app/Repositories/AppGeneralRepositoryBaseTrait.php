@@ -12,7 +12,7 @@ trait AppGeneralRepositoryBaseTrait
      */
     public function queryBuilder(): Builder
     {
-        $model = $this->createModel();
+        $model = $this->newEmptyEntity();
 
         return DB::connection($model->getConnection()->getConfig()['name'])->table($model->getTable());
     }
@@ -24,5 +24,13 @@ trait AppGeneralRepositoryBaseTrait
     public function fillingColumnsModel(array $columns = [])
     {
         return $this->createModel()->fill($columns);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function newEmptyEntity()
+    {
+        return $this->createModel();
     }
 }

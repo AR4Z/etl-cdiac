@@ -68,7 +68,6 @@ abstract class LoadBase extends EtlBase
 
     /**
      *
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function calculateSequence()
     {
@@ -78,7 +77,7 @@ abstract class LoadBase extends EtlBase
 
             if (!is_null($data))
             {
-                $response =  ($this->etlConfig->sequence and Carbon::parse($this->etlConfig->finalDate) == Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
+                $response =  ($this->etlConfig->sequence and Carbon::parse($this->etlConfig->finalDate) === Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
 
                 $this->updateDateAndTime(
                     ($this->etlConfig->station)->{$this->etlConfig->stateTable},
@@ -91,12 +90,10 @@ abstract class LoadBase extends EtlBase
     }
 
     /**
-     * @return bool
+     *
      */
     public function trustProcess()
     {
-        if (!$this->etlConfig->trustObject->active){ return false;}
-
         $this->etlConfig->trustObject->generateTrustAndSupport(
             $this->etlConfig->varForFilter,
             ($this->etlConfig->station)->measurements_per_day

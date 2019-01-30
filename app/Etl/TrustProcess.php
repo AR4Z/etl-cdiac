@@ -9,6 +9,7 @@ use App\Etl\Traits\WorkDatabaseTrait;
 class TrustProcess
 {
     use WorkDatabaseTrait;
+
     /**
      * @var bool
      */
@@ -56,60 +57,70 @@ class TrustProcess
 
     /**
      * @param TemporalRepositoryContract $TemporaryWorkRepository
-     * @param $variables
-     * @return array
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @param int $stationSk
+     * @param array $variables
+     * @return bool
      */
-    public function incomingCalculation(TemporalRepositoryContract $TemporaryWorkRepository,$variables)
+    public function incomingCalculation(TemporalRepositoryContract $TemporaryWorkRepository,int $stationSk, array $variables) : bool
     {
-        $trustActuality = [];
+        if (!$this->active){ return false;}
 
-        foreach ($this->specificConsultValuesRawWDT($TemporaryWorkRepository,$this->generateSelect($variables)) as $value) {
+        $trustActuality = [];
+        foreach ($this->specificConsultValuesRawWDT($TemporaryWorkRepository,$stationSk,$this->generateSelect($variables)) as $value) {
             $actualTrust = $this->firstStationAndDateWDT($this->repository,$value->station_sk,$value->date_sk);
-            array_push($trustActuality, (empty($actualTrust)) ? $this->createModel($value) : $this->updateModel($actualTrust,$value));
+            $trustActuality[] = (empty($actualTrust)) ? $this->createModel($value) : $this->updateModel($actualTrust,$value);
         }
 
-        return $trustActuality;
+        # Actualizar el estado del proceso de confianza
+        $this->trustColumns = $trustActuality;
+
+        return true;
     }
+
 
     /**
      * @param TemporalRepositoryContract $temporaryRepository
-     * @param $variable
-     * @param $reliability_name
-     * @return void
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @param int $stationSk
+     * @param string $variable
+     * @param string $reliability_name
+     * @return bool
      */
-    public function insertGoods(TemporalRepositoryContract $temporaryRepository, $variable, $reliability_name) // TODO -->modificado
+    public function insertGoods(TemporalRepositoryContract $temporaryRepository, int $stationSk , string $variable, string $reliability_name) : bool
     {
-        foreach ($this->countVariableFromStationAndDateWDT($temporaryRepository,$variable,$reliability_name.$this->goods) as $value ){
-            if (count($actualTrust = $this->firstStationAndDateWDT($this->repository,$value->station_sk,$value->date_sk)) > 0){
+        if (!$this->active){return false;}
+
+        foreach ($this->countVariableFromStationAndDateWDT($temporaryRepository,$stationSk,$variable,$reliability_name.$this->goods) as $value ){
+            if (!empty($actualTrust = $this->firstStationAndDateWDT($this->repository,$value->station_sk,$value->date_sk))){
                 $this->updateModel($actualTrust, $value);
             }
         }
+
+        return true;
     }
 
     /**
      * @param $variables
      * @param $measurementsPerDay
+     * @return bool
      */
     public function generateTrustAndSupport($variables, $measurementsPerDay)
     {
+        if (!$this->active){ return false;}
+
         foreach ($this->trustColumns as $column){
+            $temporal = [];
             $value = $this->repository->getFirstFromStationAndDate($column['station_sk'],$column['date_sk']);
             foreach ($variables as $variable){
                 if (!is_null($variable->reliability_name)){
-
-                    $total_records = $value->{$variable->reliability_name.$this->incoming};
-                    $correct_records = $value->{$variable->reliability_name.$this->goods};
-
-                    $value->{$variable->reliability_name.$this->trust} = $this->calculateTrust($total_records,$correct_records);
-                    $value->{$variable->reliability_name.$this->support} = $this->calculateSupport($correct_records,$measurementsPerDay);
+                    $temporal[$variable->reliability_name.$this->trust] = $this->calculateTrust($value->{$variable->reliability_name.$this->incoming},$value->{$variable->reliability_name.$this->goods});
+                    $temporal[$variable->reliability_name.$this->support] = $this->calculateSupport($value->{$variable->reliability_name.$this->goods},$measurementsPerDay);
                 }
             }
-            $value->update();
+            $this->repository->updateTrustAndSupport($column['station_sk'],$column['date_sk'],$temporal);
         }
-    }
 
+        return true;
+    }
 
     /**
      * @param $total_records
@@ -141,15 +152,14 @@ class TrustProcess
      * @param $actualTrust
      * @param $value
      * @return array
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function updateModel($actualTrust, $value) : array
     {
-        $trustModel = $this->repository->createModel()->fill($actualTrust);
+        $trustModel = $this->repository->fillingColumnsModel($actualTrust);
 
         foreach ($value as $key => $val){$trustModel->$key += (!($key == 'station_sk' || $key == 'date_sk')) ? $val:0;}
 
-        $this->repository->getFirstFromStationAndDate($trustModel->station_sk,$trustModel->date_sk)->fill($trustModel->toArray())->save();
+        $this->repository->queryBuilder()->where('id',$trustModel->id)->update($trustModel->toArray());
 
         return ['station_sk' => $value->station_sk,'date_sk' => $value->date_sk];
     }
@@ -157,11 +167,11 @@ class TrustProcess
     /**
      * @param $value
      * @return array
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function createModel($value) : array
     {
-        $trustModel = $this->repository->createModel();
+        $trustModel = $this->repository->newEmptyEntity();
+
         foreach ($value as $key => $val){$trustModel->$key = $val;}
         $trustModel->save();
 
@@ -183,14 +193,6 @@ class TrustProcess
         $text[strlen($text)-1] = ' ';
 
         return $text;
-    }
-
-    /**
-     * @param array $trustColumns
-     */
-    public function setTrustColumns(array $trustColumns)
-    {
-        $this->trustColumns = $trustColumns;
     }
 
     /**
