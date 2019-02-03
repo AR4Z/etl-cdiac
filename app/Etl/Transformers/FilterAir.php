@@ -151,7 +151,6 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     /**
      * @param string $localName
      * @param array $variablesCalculatedName
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function insertCalculateData(string $localName, array $variablesCalculatedName)
     {

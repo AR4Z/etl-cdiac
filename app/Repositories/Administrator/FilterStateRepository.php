@@ -2,16 +2,13 @@
 
 namespace App\Repositories\Administrator;
 
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\FilterState;
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 
-class FilterStateRepository extends EloquentRepository implements RepositoriesContract
+class FilterStateRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

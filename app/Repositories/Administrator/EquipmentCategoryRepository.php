@@ -2,16 +2,13 @@
 
 namespace App\Repositories\Administrator;
 
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\EquipmentCategory;
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 
-class EquipmentCategoryRepository extends EloquentRepository implements RepositoriesContract
+class EquipmentCategoryRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

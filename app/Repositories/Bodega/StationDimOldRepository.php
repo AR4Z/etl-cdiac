@@ -2,19 +2,14 @@
 
 namespace App\Repositories\Bodega;
 
-
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Bodega\StationDim;
 
-class StationDimOldRepository extends EloquentRepository implements RepositoriesContract
+class StationDimOldRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

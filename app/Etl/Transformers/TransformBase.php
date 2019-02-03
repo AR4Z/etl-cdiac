@@ -85,13 +85,10 @@ abstract class TransformBase extends EtlBase
      * @param $deleteLastHour
      * @param $spaceTimeDelete
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function updateRageTime(string $variable, $deleteLastHour, $spaceTimeDelete)
     {
-        $values = $this->getWhereInWDT($this->etlConfig->repositorySpaceWork,$variable,$deleteLastHour);
-
-        if (is_null($values)){ return false;}
+        if (is_null($values = $this->etlConfig->repositorySpaceWork->getVariableToSearchLimit($variable,$deleteLastHour))){ return false;}
 
         # MaxValueSk esta en TimeSkTrait: es el ultimo tiempo sk en la tabla
         $limit = $this->maxValueSk - $spaceTimeDelete;

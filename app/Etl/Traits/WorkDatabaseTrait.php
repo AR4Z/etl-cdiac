@@ -3,12 +3,10 @@
 namespace App\Etl\Traits;
 
 use App\Repositories\RepositoriesContract;
-use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 use Facades\App\Repositories\DataWareHouse\CorrectionHistoryRepository;
 use Facades\App\Repositories\TemporaryWork\TemporaryCorrectionRepository;
 use App\Etl\Database\Query;
 use DB;
-use Illuminate\Support\Collection;
 
 trait WorkDatabaseTrait
 {
@@ -60,22 +58,6 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param RepositoriesContract $repository
-     * @param string $select
-     * @return mixed
-     */
-    public function getAllDataWDT(RepositoriesContract $repository, string $select) : array
-    {
-        return $repository->queryBuilder()
-                        ->selectRaw($select)
-                        ->whereNotNull('station_sk')
-                        ->whereNotNull('date_sk')
-                        ->whereNotNull('time_sk')
-                        ->get()
-                        ->toArray();
-    }
-
-    /**
      * @param string $connection
      * @param array $columns
      * @param array $data
@@ -98,36 +80,6 @@ trait WorkDatabaseTrait
 
     /**
      * @param RepositoriesContract $repository
-     * @param array $data
-     * @return bool
-     */
-    public function insertDataEncodeWDT(RepositoriesContract $repository, array $data = []) : bool
-    {
-        $localData =  array_chunk(json_decode(json_encode($data),true),5000,true);
-
-        foreach ($localData as $localValue){ $repository->queryBuilder()->insert($localValue);}
-
-        return true;
-    }
-
-    /**
-     * @param $repository
-     * @param $data
-     * @return bool
-     */
-    public function evaluateExistenceWDT(RepositoriesContract $repository, $data) : bool
-    {
-        $count = $repository->selectRaw('count(station_sk) AS count')
-                            ->where('date_sk','=',$data->date_sk)
-                            ->where('station_sk','=',$data->station_sk)
-                            ->where('time_sk','=',$data->time_sk)
-                            ->get()->toArray()[0]['count'];
-
-        return ($count == 0) ? false : true;
-    }
-
-    /**
-     * @param RepositoriesContract $repository
      * @param $data
      * @return mixed
      */
@@ -137,75 +89,11 @@ trait WorkDatabaseTrait
     }
 
     /**
-     * @param RepositoriesContract $repository
-     * @return mixed
-     */
-    public function getIncomingAmountWDT(RepositoriesContract $repository) : int
-    {
-        return $repository->queryBuilder()
-            ->select(DB::raw('COUNT(id) AS count'))
-            ->get()
-            ->toArray()[0]->count;
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @return mixed
-     */
-    public function getLastMigrateDataWDT(RepositoriesContract $repository)
-    {
-        return $repository->queryBuilder()->orderby('id','DESC')->first();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $station_sk
-     * @param $date_sk
-     * @param $time
-     * @param $interval
-     * @return mixed
-     */
-    public function getValInRangeWDT(RepositoriesContract $repository, $station_sk,$date_sk, $time, $interval) : Collection
-    {
-        return $repository->queryBuilder()
-                    ->select('*')
-                    ->where('station_sk',$station_sk)
-                    ->where('date_sk', $date_sk)
-                    ->whereBetween('time_sk',[$time,$interval])
-                    ->orderby('date_sk','ASC')
-                    ->orderby('time_sk','ASC')
-                    ->get();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $date
-     * @return mixed
-     */
-    public function countRowForDateWDT(RepositoriesContract $repository, $date)
-    {
-        return $repository->queryBuilder()->select('*')->where('date_sk',$date)->count();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $date_sk
-     * @param $time_sk
-     * @return mixed
-     */
-    public function deleteFromDateAndTimeWDT(RepositoriesContract $repository, $date_sk, $time_sk)
-    {
-        return $repository->queryBuilder()->where('date_sk',$date_sk)->where('time_sk',$time_sk)->delete();
-    }
-
-
-    /**
      *
      */
     public  function migrateHistoricCorrection()
     {
-        $temporaryCorrection = TemporaryCorrectionRepository::all();
-        foreach ($temporaryCorrection as $valueCorrection){
+        foreach (TemporaryCorrectionRepository::all() as $valueCorrection){
             CorrectionHistoryRepository::create($valueCorrection->toArray());
         }
         $this->truncateCorrectionTable();
@@ -221,51 +109,12 @@ trait WorkDatabaseTrait
 
     /**
      * @param RepositoriesContract $repository
-     * @return mixed
-     */
-    public function getInitialDataInSpaceWorkWDT(RepositoriesContract $repository)
-    {
-        return $repository->queryBuilder()->select('*')->orderByRaw("date_sk ASC, time_sk ASC")->first();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @return mixed
-     */
-    public function getFinalDataInSpaceWorkWDT(RepositoriesContract $repository)
-    {
-        return $repository->queryBuilder()->select('*')->orderByRaw("date_sk DESC, time_sk DESC")->first();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $variable
-     * @param array $search
-     * @return mixed
-     */
-    public function getWhereInWDT(RepositoriesContract $repository, $variable, array $search) : Collection
-    {
-        return $repository->queryBuilder()
-            ->select('id','station_sk','date_sk','time_sk',$variable)
-            ->whereIn($variable,$search)
-            ->orderby('id')
-            ->get();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
      * @param $time
      * @return bool
      */
     public function deleteLastDateWDT(RepositoriesContract $repository, $time) : bool
     {
-        $value = $repository->queryBuilder()->select('id','time')->orderby('id','DESC')->first();
-
-        if (!empty($value)){
-            if ($value->time == $time){ $repository->queryBuilder()->where('id',$value->id)->delete();}
-        }
-
-        return true;
+        return $repository->queryBuilder()->where('time',$time)->delete();
     }
 
     /**
@@ -279,9 +128,7 @@ trait WorkDatabaseTrait
         $values = $repository->queryBuilder()->select('id',$variableName)->whereNotNull($variableName)->get();
 
         foreach ($values as $value) {
-            $repository->queryBuilder()
-                ->where('id',$value->id)
-                ->update([ $infoCalculation['destiny'] => round(((double)$value->{$variableName}) *  $infoCalculation['factor'],2)]);
+            $repository->queryBuilder()->where('id',$value->id)->update([ $infoCalculation['destiny'] => round(((double)$value->{$variableName}) *  $infoCalculation['factor'],2)]);
         }
         return true;
     }
@@ -306,16 +153,6 @@ trait WorkDatabaseTrait
     public function deleteWhereInVariableWDT(RepositoriesContract $repository, string $variable, array $arr)
     {
         return $repository->queryBuilder()->whereIn($variable,$arr)->delete();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $variable
-     * @return mixed
-     */
-    public function deleteNullVariableWDT(RepositoriesContract $repository, $variable)
-    {
-        return $repository->queryBuilder()->whereNull($variable)->delete();
     }
 
     /**
@@ -369,118 +206,5 @@ trait WorkDatabaseTrait
     public function deleteEldestHomogenizationWDT(RepositoriesContract $repository, $times)
     {
         return $repository->queryBuilder()->whereNotIn('time_sk',(array)$times)->delete();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @return mixed
-     */
-    public function getIdAndDateTimeWDT(RepositoriesContract $repository) : Collection
-    {
-        return $repository->queryBuilder()->select('id','date','time')->get();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param string $key
-     * @param string $column
-     * @return mixed
-     */
-    public function selectColumnWhereNullWDT(RepositoriesContract $repository, string $key, string $column) : array
-    {
-        return $repository->queryBuilder()
-            ->select($key)
-            ->distinct($column) // TODO este distintic no recibe paametros...
-            ->whereNull($column)
-            ->orderBy($key)
-            ->get()
-            ->toArray();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $dateSk
-     * @param null $date
-     * @return mixed
-     */
-    public function updateDateFromDateSkWDT(RepositoriesContract $repository, $dateSk, $date = null)
-    {
-        return $repository->queryBuilder()->where('date_sk', '=',$dateSk)->update(['date'=> $date]);
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $timeSk
-     * @param null $time
-     * @return mixed
-     */
-    public function updateTimeFromTimeSkWDT(RepositoriesContract $repository, $timeSk, $time = null)
-    {
-        return $repository->queryBuilder()->where('time_sk', '=',$timeSk)->update(['time'=> $time]);
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param int $stationSk
-     * @return array
-     */
-    public function getDuplicatesWDT(RepositoriesContract $repository,int $stationSk) : array
-    {
-        return $repository->queryBuilder()
-            ->selectRaw('station_sk,date_sk,time_sk, max(id)')
-            ->where('station_sk',$stationSk)
-            ->groupBy('station_sk','date_sk','time_sk')
-            ->havingRaw('count(station_sk) > 1')
-            ->orderByRaw('station_sk, date_sk, time_sk')
-            ->get()
-            ->toArray();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param int $stationSk
-     * @param string $countSelect
-     * @return Collection
-     */
-    public function specificConsultValuesRawWDT(RepositoriesContract $repository,int $stationSk, string $countSelect) : Collection
-    {
-        return $repository->queryBuilder()
-            ->selectRaw('CAST(station_sk AS integer),CAST(date_sk AS integer),'.$countSelect)
-            ->where('station_sk',$stationSk)
-            ->groupby('station_sk','date_sk')
-            ->orderByRaw('station_sk asc,date_sk asc')
-            ->get();
-    }
-
-    /**
-     * @param RepositoriesContract $repository
-     * @param $station_sk
-     * @param $date_sk
-     * @return array
-     */
-    public function firstStationAndDateWDT(RepositoriesContract $repository, $station_sk, $date_sk) : array
-    {
-        return (array)$repository->queryBuilder()->select('*')
-            ->where('station_sk',$station_sk)
-            ->where('date_sk',$date_sk)
-            ->first();
-    }
-
-
-    /**
-     * @param TemporalRepositoryContract $repository
-     * @param int $stationSk
-     * @param string $variable
-     * @param string $as
-     * @return Collection
-     */
-    public function countVariableFromStationAndDateWDT(TemporalRepositoryContract $repository, int $stationSk, string $variable, string $as) : Collection
-    {
-        return $repository->queryBuilder()
-            ->selectRaw("CAST(station_sk AS integer),CAST(date_sk AS integer),COUNT($variable) AS $as")
-            ->where('station_sk',$stationSk)
-            ->groupby('station_sk','date_sk')
-            ->orderByRaw("station_sk asc,date_sk asc")
-            ->get();
     }
 }

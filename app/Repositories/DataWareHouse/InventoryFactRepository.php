@@ -2,15 +2,12 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\AppBaseRepository;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\InventoryFact;
 
-class InventoryFactRepository extends EloquentRepository implements FactRepositoryContract
+class InventoryFactRepository extends AppBaseRepository implements FactRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

@@ -4,8 +4,10 @@ namespace App\Repositories;
 
 use DB;
 use Illuminate\Database\Query\Builder;
+use Rinvex\Repository\Exceptions\RepositoryException;
+use Rinvex\Repository\Repositories\EloquentRepository;
 
-trait AppGeneralRepositoryBaseTrait
+class AppBaseRepository extends EloquentRepository
 {
     /**
      * @return Builder
@@ -23,7 +25,9 @@ trait AppGeneralRepositoryBaseTrait
      */
     public function fillingColumnsModel(array $columns = [])
     {
-        return $this->createModel()->fill($columns);
+        try {
+            return $this->createModel()->fill($columns);
+        } catch (RepositoryException $e) { /** TODO  */ dd('Fallo el filtrado de array');}
     }
 
     /**
@@ -31,6 +35,8 @@ trait AppGeneralRepositoryBaseTrait
      */
     public function newEmptyEntity()
     {
-        return $this->createModel();
+        try {
+            return $this->createModel();
+        } catch (RepositoryException $e) { /** TODO */ dd('Fallo la creacion del modelo');}
     }
 }

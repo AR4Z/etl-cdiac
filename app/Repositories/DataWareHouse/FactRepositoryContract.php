@@ -2,9 +2,13 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\RepositoriesContract;
+use App\Repositories\BaseFactStructureContract;
 
-interface FactRepositoryContract extends RepositoriesContract
+interface FactRepositoryContract extends BaseFactStructureContract
 {
-
+    /**
+     * @param array $data
+     * @return bool
+     */
+    public function insertDataEncode(array $data = []) : bool;
 }

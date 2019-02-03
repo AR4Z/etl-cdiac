@@ -2,15 +2,13 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\BaseFactStructureContract;
+use App\Repositories\BaseFactStructureRepository;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\AirFact;
 
-class AirFactRepository extends EloquentRepository implements FactRepositoryContract
+class AirFactRepository extends BaseFactStructureRepository implements BaseFactStructureContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

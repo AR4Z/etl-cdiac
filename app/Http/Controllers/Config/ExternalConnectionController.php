@@ -12,6 +12,9 @@ use App\Etl\Execution\OriginalExecute;
 use App\Etl\Execution\OriginalOptions\OriginalGeneralOption;
 use App\Http\Controllers\Controller;
 use App\Repositories\Administrator\NetRepository;
+use App\Repositories\Administrator\VariableRepository;
+use App\Repositories\Bodega\StationDimOldRepository;
+use App\Repositories\DataWareHouse\StationDimRepository;
 use App\Repositories\RepositoryFactoryTrait;
 use App\Repositories\TemporaryWork\TemporalAirRepository;
 use App\Repositories\TemporaryWork\TemporalWeatherRepository;
@@ -54,6 +57,18 @@ class ExternalConnectionController extends Controller
      * @var TemporalWeatherRepository
      */
     private $temporalWeatherRepository;
+    /**
+     * @var VariableRepository
+     */
+    private $variableRepository;
+    /**
+     * @var StationDimRepository
+     */
+    private $stationDimRepository;
+    /**
+     * @var StationDimOldRepository
+     */
+    private $stationDimOldRepository;
 
     /**
      * ExternalConnectionController constructor.
@@ -62,13 +77,19 @@ class ExternalConnectionController extends Controller
      * @param NetRepository $netRepository
      * @param TemporalAirRepository $temporalAirRepository
      * @param TemporalWeatherRepository $temporalWeatherRepository
+     * @param VariableRepository $variableRepository
+     * @param StationDimRepository $stationDimRepository
+     * @param StationDimOldRepository $stationDimOldRepository
      */
     function __construct(
         ConnectionRepository $connectionRepository,
         StationRepository $stationRepository,
         NetRepository $netRepository,
         TemporalAirRepository $temporalAirRepository,
-        TemporalWeatherRepository $temporalWeatherRepository
+        TemporalWeatherRepository $temporalWeatherRepository,
+        VariableRepository $variableRepository,
+        StationDimRepository $stationDimRepository,
+        StationDimOldRepository $stationDimOldRepository
     )
     {
         $this->connectionRepository = $connectionRepository;
@@ -76,6 +97,9 @@ class ExternalConnectionController extends Controller
         $this->netRepository = $netRepository;
         $this->temporalAirRepository = $temporalAirRepository;
         $this->temporalWeatherRepository = $temporalWeatherRepository;
+        $this->variableRepository = $variableRepository;
+        $this->stationDimRepository = $stationDimRepository;
+        $this->stationDimOldRepository = $stationDimOldRepository;
     }
 
     /**
@@ -87,6 +111,7 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
+        dd($this->stationDimOldRepository->stations());
         $execute = new EtlExecute(
             $method = new FilterExecute(
                 $option = new FilterWeatherOption(1,'2018-10-21','2018-10-22')

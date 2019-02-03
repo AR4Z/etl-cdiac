@@ -65,9 +65,7 @@ abstract class ExtractorBase extends EtlBase
     public function trustProcess()
     {
         # Calcular la total de datos entrantes
-        $this->etlConfig->trustObject->setIncomingAmount(
-            $this->getIncomingAmountWDT($this->etlConfig->repositorySpaceWork)
-        );
+        $this->etlConfig->trustObject->setIncomingAmount($this->etlConfig->repositorySpaceWork->getIncomingAmount());
 
         # Calcular los datos entrantes para por variable
         $this->etlConfig->trustObject->incomingCalculation(
@@ -148,7 +146,6 @@ abstract class ExtractorBase extends EtlBase
 
     /**
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function deleteTimeAndDateNull() : bool
     {
@@ -156,7 +153,7 @@ abstract class ExtractorBase extends EtlBase
         $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'date',$this->keyErrors);
         $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'time',$this->keyErrors);
 
-        $this->deleteNullVariableWDT($this->etlConfig->repositorySpaceWork,'date');
+        $this->etlConfig->repositorySpaceWork->deleteNullVariable('date');
 
         return true;
     }

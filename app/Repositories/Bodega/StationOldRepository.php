@@ -2,23 +2,17 @@
 
 namespace App\Repositories\Bodega;
 
-
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Bodega\Station;
 
-class StationOldRepository extends EloquentRepository implements RepositoriesContract
+class StationOldRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container
      */
-
     public function __construct(Container $container)
     {
         $this->setContainer($container)->setModel(Station::class)->setRepositoryId('rinvex.repository.uniqueid');

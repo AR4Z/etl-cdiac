@@ -96,31 +96,16 @@ class AuditoryController extends Controller
         $this->correctionHistorialRepository = $correctionHistoricalRepository;
 
         $this->tablesOldWareHouseRepository = $tablesOldWareHouseRepository;
-
-
-
         // $this->riskRepository = $riskRepository;
-
     }
-
     /**
      * Show the application dashboard.
-     *
      * @return \Illuminate\Http\Response
      */
-
-
-
-
-
     public function index()
     {
-
         return view('auditory.auditory');
-
     }
-
-
 
     public function makeAuditory(Request $request){
 

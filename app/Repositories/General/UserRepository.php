@@ -2,17 +2,14 @@
 
 namespace App\Repositories\General;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Rinvex\Repository\Exceptions\RepositoryException;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\General\User;
 
-class UserRepository extends EloquentRepository implements RepositoriesContract
+class UserRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

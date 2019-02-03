@@ -2,15 +2,11 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\GroundwaterFact;
 
-class GroundwaterFactRepository extends EloquentRepository implements FactRepositoryContract
+class GroundwaterFactRepository extends BaseFactRepository implements FactRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

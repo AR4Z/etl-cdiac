@@ -2,16 +2,12 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporalGroundwater;
 
-class TemporalGroundwaterRepository extends EloquentRepository implements TemporalRepositoryContract
+class TemporalGroundwaterRepository extends TemporalBaseRepository implements TemporalRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -101,5 +97,14 @@ class TemporalGroundwaterRepository extends EloquentRepository implements Tempor
     public function getDateTime() : Collection
     {
         return $this->select('id','date_time')->get();
+    }
+
+    /**
+     * @param string $variable
+     * @return mixed
+     */
+    public function deleteNullVariable(string $variable)
+    {
+        return $this->queryBuilder()->whereNull($variable)->delete();
     }
 }

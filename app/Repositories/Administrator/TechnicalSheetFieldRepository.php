@@ -2,16 +2,13 @@
 
 namespace App\Repositories\Administrator;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\TechnicalSheetField;
 
-class TechnicalSheetFieldRepository extends EloquentRepository implements RepositoriesContract
+class TechnicalSheetFieldRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

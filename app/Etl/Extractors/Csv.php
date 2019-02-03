@@ -354,12 +354,11 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 
     /**
      *
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function configureDateTimes()
     {
-        $initVal = $this->getInitialDataInSpaceWorkWDT($this->etlConfig->repositorySpaceWork);
-        $finalVal = $this->getFinalDataInSpaceWorkWDT($this->etlConfig->repositorySpaceWork);
+        $initVal = $this->etlConfig->repositorySpaceWork->getInitialData();
+        $finalVal = $this->etlConfig->repositorySpaceWork->getFinalData();
 
         if (!is_null($initVal)){
             $this->etlConfig->setInitialDate(
@@ -381,7 +380,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 
     /**
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     private function changeCommaForPointAllVariables() : bool
     {
@@ -396,7 +394,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
 
     /**
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     protected function csv()
     {

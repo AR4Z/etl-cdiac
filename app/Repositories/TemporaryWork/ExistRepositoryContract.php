@@ -2,9 +2,9 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\RepositoriesContract;
+use App\Repositories\DataWareHouse\FactRepositoryContract;
 
-interface ExistRepositoryContract extends RepositoriesContract
+interface ExistRepositoryContract extends FactRepositoryContract
 {
 
 }

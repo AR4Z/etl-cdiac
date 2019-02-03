@@ -2,15 +2,11 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\WeatherFact;
 
-class WeatherFactRepository extends EloquentRepository implements FactRepositoryContract
+class WeatherFactRepository extends BaseFactRepository implements FactRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

@@ -2,16 +2,12 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\TemporalWeather;
 
-class TemporalWeatherRepository extends EloquentRepository implements TemporalRepositoryContract
+class TemporalWeatherRepository extends TemporalBaseRepository implements TemporalRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

@@ -2,16 +2,13 @@
 
 namespace App\Repositories\Config;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Config\Connection;
 
-class ConnectionRepository extends EloquentRepository implements RepositoriesContract
+class ConnectionRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -23,9 +20,9 @@ class ConnectionRepository extends EloquentRepository implements RepositoriesCon
 
     /**
      * @param string $connectionName
-     * @return Connection
+     * @return mixed
      */
-    public function getName(string $connectionName) : Connection
+    public function getName(string $connectionName)
     {
         return $this->where('name', $connectionName)->first();
     }

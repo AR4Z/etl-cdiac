@@ -15,7 +15,6 @@ abstract class LoadBase extends EtlBase
 
     /**
      *
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function redirectExisting()
     {
@@ -25,16 +24,12 @@ abstract class LoadBase extends EtlBase
         #Obtener los valores de la tabla te trabajo temporal
         $values = $this->etlConfig->repositorySpaceWork->all();
 
-        foreach ($values as $value)
-        {
+        foreach ($values as $value) {
             #Evaluar la existencia de los valores en su respectiva fact
-            if ($this->evaluateExistenceWDT($this->etlConfig->repositoryDestination,$value))
-            {
-                #Extraer Dato existente en la fact respectiva
-                $exist = $this->etlConfig->repositoryExist->fill($value->toArray())->toArray();
-
-                if (!$this->evaluateExistenceWDT($this->etlConfig->repositoryExist,$value))
-                {
+            if ($this->etlConfig->repositoryDestination->evaluateExistence($value->station_sk,$value->date_sk,$value->time_sk)) {
+                if (!$this->etlConfig->repositoryExist->evaluateExistence($value->station_sk,$value->date_sk,$value->time_sk)) {
+                    #Extraer Dato existente en la fact respectiva
+                    $exist = $this->etlConfig->repositoryExist->fill($value->toArray())->toArray();
                     #Insertar dato existente en la fact de existentes respectiva
                     $this->insertExistTableWDT($this->etlConfig->repositoryExist,$exist);
 
@@ -42,7 +37,7 @@ abstract class LoadBase extends EtlBase
                     array_push($this->redirectExist, $exist);
                 }
                 #Eliminar los valores existentes de la tabla tenporal de trabajo
-                $this->deleteFromDateAndTimeWDT($this->etlConfig->repositorySpaceWork,$value->date_sk,$value->time_sk);
+                $this->etlConfig->repositorySpaceWork->deleteFromDateAndTime($value->date_sk,$value->time_sk);
             }
         }
     }
@@ -72,18 +67,12 @@ abstract class LoadBase extends EtlBase
     public function calculateSequence()
     {
         if ($this->etlConfig->sequence){
-
-            $data = $this->getLastMigrateDataWDT($this->etlConfig->repositorySpaceWork);
-
-            if (!is_null($data))
-            {
-                $response =  ($this->etlConfig->sequence and Carbon::parse($this->etlConfig->finalDate) === Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false;
-
+            if (!is_null($data = $this->etlConfig->repositorySpaceWork->getLastMigrateData())) {
                 $this->updateDateAndTime(
                     ($this->etlConfig->station)->{$this->etlConfig->stateTable},
                     $this->calculateDateFromDateSk($data->date_sk),
                     $this->calculateTimeFromTimeSk($data->time_sk),
-                    $response
+                    ($this->etlConfig->sequence and Carbon::parse($this->etlConfig->finalDate) === Carbon::parse($this->calculateDateFromDateSk($data->date_sk))) ? true : false
                 );
             }
         }

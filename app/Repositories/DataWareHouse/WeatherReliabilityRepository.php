@@ -3,14 +3,10 @@
 namespace App\Repositories\DataWareHouse;
 
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\WeatherReliability;
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 
-class WeatherReliabilityRepository extends EloquentRepository implements ReliabilityRepositoryContract
+class WeatherReliabilityRepository extends BaseReliabilityRepository implements ReliabilityRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

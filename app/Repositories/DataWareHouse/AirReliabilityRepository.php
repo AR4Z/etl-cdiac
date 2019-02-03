@@ -2,15 +2,11 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\DataWareHouse\AirReliability;
 
-class AirReliabilityRepository extends EloquentRepository implements ReliabilityRepositoryContract
+class AirReliabilityRepository extends BaseReliabilityRepository implements ReliabilityRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

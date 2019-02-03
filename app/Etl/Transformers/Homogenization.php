@@ -118,13 +118,8 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public function stepConfigureArrayDate()
     {
         try {
-
             $this->arrayDate = $this->getDateAndDateSk(
-                $this->getSerializationDate(
-                    $this->etlConfig->initialDate,
-                    $this->etlConfig->finalDate,
-                    $this->dateSpace
-                )
+                $this->getSerializationDate($this->etlConfig->initialDate, $this->etlConfig->finalDate, $this->dateSpace)
             );
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
@@ -205,7 +200,6 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
 
     /**
      *
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function homogenization()
     {
@@ -222,7 +216,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
             }
 
             #contar la cantidad de horas en un dia
-            $count = $this->countRowForDateWDT($this->etlConfig->repositorySpaceWork,$date->date_sk);
+            $count = $this->etlConfig->repositorySpaceWork->countRowForDate($date->date_sk);
 
             if($count == 0){
                 $this->pushAllInserts($date); #insertar todas las horas para una fecha que no trae nunguna hora
@@ -241,28 +235,23 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public function pushAllInserts($date)
     {
         foreach ($this->arrayTime as $time) {
-            array_push($this->inserts,['station_sk' => ($this->etlConfig->station)->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time]);
+            array_push($this->inserts,['station_sk' => $this->etlConfig->station->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time]);
         }
     }
 
     /**
      * @param $date
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function cycleForTime($date)
     {
-        foreach ($this->arrayTime as $time)
-        {
-           $upperLimit = $this->timeSpace + $time->time_sk;
-           $lowerLimit = (($time->time_sk - $this->timeSpace) <= 0 ) ? 1 : $time->time_sk - $this->timeSpace;
+        foreach ($this->arrayTime as $time) {
 
             #Evaluar cantidad en el rango actual
-            $valInRangeActual = $this->getValInRangeWDT(
-                $this->etlConfig->repositorySpaceWork,
+            $valInRangeActual = $this->etlConfig->repositorySpaceWork->getValInRange(
                 $this->etlConfig->station->id,
                 $date->date_sk,
-                $lowerLimit,
-                $upperLimit
+                (($time->time_sk - $this->timeSpace) <= 0 ) ? 1 : $time->time_sk - $this->timeSpace,
+                $this->timeSpace + $time->time_sk
             );
 
             # Primer caso: cuando es la primera hora del dia
@@ -288,7 +277,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
 
                     switch (count($valInRangeActual)) {
                         case 0:
-                            $this->homogenizationNotElements($date,$time);
+                            $this->homogenizationNotElements($this->etlConfig->station->id,$date,$time);
                             break;
                         case 1:
                             $this->homogenizationOneElements($valInRangeActual[0],$date,$time);
@@ -306,12 +295,13 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     }
 
     /**
+     * @param int $stationSk
      * @param $date
      * @param $time
      */
-    public function homogenizationNotElements($date, $time)
+    public function homogenizationNotElements(int $stationSk,$date, $time)
     {
-        array_push($this->inserts,['date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ]);
+        $this->inserts[] = ['station_sk'=> $stationSk,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ];
     }
 
     /**
@@ -326,9 +316,9 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
 
         if (!($value->time_sk == $time->time_sk)){
             if ((abs($value->time_sk - $pivotTime) <= $this->timeSpaceOneMissingData)){
-                array_push($this->updates, ['value'=> $value,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ]);
+                $this->updates[] = ['value'=> $value,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ];
             }else{
-                $this->homogenizationNotElements($date,$time);
+                $this->homogenizationNotElements($this->etlConfig->station->id,$date,$time);
             }
         }
     }
@@ -351,7 +341,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
         foreach ($this->etlConfig->varForFilter as $variable) {
             $arr[$variable->local_name] = $this->directionElements($variable->local_name,$valueOne,$valueTwo,$time->time_sk,$variable->decimal_precision);
         }
-        array_push($this->inserts,$arr);
+        $this->inserts[] = $arr;
     }
 
     /**
@@ -385,7 +375,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
             );
 
         }
-        array_push($this->inserts,$arr);
+        $this->inserts[] = $arr;
     }
 
     /**

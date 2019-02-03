@@ -2,20 +2,16 @@
 
 namespace App\Repositories\Administrator;
 
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Rinvex\Repository\Exceptions\RepositoryException;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Station;
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 use DB;
 
-class StationRepository extends EloquentRepository implements RepositoriesContract
+class StationRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * StationRepository constructor.
      * @param Container $container
@@ -57,9 +53,9 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
 
     /**
      * @param int $id
-     * @return \Illuminate\Database\Eloquent\Model|Builder|null|object
+     * @return Station
      */
-    public function getTypeStation(int $id)
+    public function getTypeStation(int $id) : Station
     {
         return $this->queryBuilder()
                     ->select('station_type.*')
@@ -149,7 +145,6 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
                     ->orderby('station.id','ASC')
                     //->limit(1)
                     ->get();
-
     }
 
     /**
@@ -234,7 +229,7 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
      * @param int $station_id
      * @return array
      */
-    public function countMissingDataForStation(string $fact_table, int $station_id) : array
+    public function countMissingDataForStation(string $fact_table, int $station_id) : array /** TODO ESTE METODO NO DEBE ESTAR ACA */
     {
         return DB::connection('data_warehouse')
                     ->table($fact_table)
@@ -253,7 +248,7 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
      * @param string $etlMethod
      * @return array
      */
-    public function getStationsId(int $net,string $etlMethod) :array
+    public function getStationsId(int $net,string $etlMethod) : array
     {
         return $this->queryBuilder()
             ->select('station.id')
@@ -266,9 +261,9 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
 
     /**
      * @param int $station
-     * @return array
+     * @return string
      */
-    public function getStationId(int $station) :string
+    public function getStationId(int $station) : string
     {
         return $this->queryBuilder()
             ->select('station_type.etl_method')
@@ -303,7 +298,8 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
             ->where('station.name','=',$station_id)
             ->where('station.etl_active',true)
             ->orderby('station.name','ASC')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
     }
 
     /**
@@ -317,7 +313,8 @@ class StationRepository extends EloquentRepository implements RepositoriesContra
             ->where('station.net_id',$netId)
             ->where('station.active',true)
             ->whereNotNull('station_type.etl_method')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
     }
     /**
      * @return Collection

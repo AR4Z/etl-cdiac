@@ -2,9 +2,9 @@
 
 namespace App\Repositories\DataWareHouse;
 
-use App\Repositories\RepositoriesContract;
+use App\Repositories\BaseFactStructureContract;
 
-interface ReliabilityRepositoryContract extends RepositoriesContract
+interface ReliabilityRepositoryContract extends BaseFactStructureContract
 {
     /**
      * @param $station_sk
@@ -20,4 +20,11 @@ interface ReliabilityRepositoryContract extends RepositoriesContract
      * @return mixed
      */
     public function updateTrustAndSupport(int $stationSk, int $dateSk, array $arr = []);
+
+    /**
+     * @param $station_sk
+     * @param $date_sk
+     * @return array
+     */
+    public function firstStationAndDate($station_sk, $date_sk) : array;
 }

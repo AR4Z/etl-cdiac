@@ -2,16 +2,14 @@
 
 namespace App\Repositories\Administrator;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Variable;
+use Illuminate\Support\Collection;
 
-class VariableRepository extends EloquentRepository implements RepositoriesContract
+class VariableRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container
@@ -21,30 +19,28 @@ class VariableRepository extends EloquentRepository implements RepositoriesContr
         $this->setContainer($container)->setModel(Variable::class)->setRepositoryId('rinvex.repository.uniqueid');
     }
 
-    //Auditory System Functions
-
     /**
-     * @return object
+     * @return Collection
      */
-    public function getVariableName()
+    public function getVariableName() : Collection
     {
         return $this->select('id','name')->get();
     }
 
     /**
      * @param int $station_id
-     * @return object
+     * @return Collection
      */
-    public function getVariableNameByStation($station_id)
+    public function getVariableNameByStation($station_id) : Collection
     {
         return $this->select('name')->where('id',$station_id)->get();
     }
 
     /**
      * @param string $var
-     * @return object
+     * @return Collection
      */
-    public function getVariableNameByVarOldDataWarehouse($var)
+    public function getVariableNameByVarOldDataWarehouse($var) : Collection
     {
         return $this->select('id','name')->where('excel_name',$var)->get();
     }
@@ -54,15 +50,15 @@ class VariableRepository extends EloquentRepository implements RepositoriesContr
      * @param int $var
      * @return array
      */
-    public function getVariableInformation($station,$var)
+    public function getVariableInformation($station,$var) : array
     {
-        return $this
-            ->select('*')
+        return $this->select('*')
             ->join('variable_station','variable_station.variable_id','=','variable.id')
-            ->where('variable.id','=',$var)
+            ->where('variable.id',$var)
             ->where('variable_station.station_id',$station)
             ->whereNotNull('maximum')
             ->whereNotNull('minimum')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
     }
 }

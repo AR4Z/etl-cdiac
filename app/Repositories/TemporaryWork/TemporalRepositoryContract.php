@@ -2,10 +2,10 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\RepositoriesContract;
+use App\Repositories\BaseFactStructureContract;
 use Illuminate\Support\Collection;
 
-interface TemporalRepositoryContract extends RepositoriesContract
+interface TemporalRepositoryContract extends BaseFactStructureContract
 {
     /**
      * @return array
@@ -61,4 +61,87 @@ interface TemporalRepositoryContract extends RepositoriesContract
      * @return Collection
      */
     public function getDateTime() : Collection;
+
+
+    // NUEVAS
+
+    /**
+     * @param string $select
+     * @return mixed
+     */
+    public function getAllDataPersonalSelect(string $select = '*');
+
+    /**
+     * @return int
+     */
+    public function getIncomingAmount() : int;
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|null|object|static
+     */
+    public function getLastMigrateData();
+
+    /**
+     * @param $station_sk
+     * @param $date_sk
+     * @param $time
+     * @param $interval
+     * @return Collection
+     */
+    public function getValInRange($station_sk, $date_sk, $time, $interval) : Collection;
+
+    /**
+     * @return mixed
+     */
+    public function getInitialData();
+
+    /**
+     * @return mixed
+     */
+    public function getFinalData();
+
+    /**
+     * @param string $variable
+     * @param array $search
+     * @return Collection
+     */
+    public function getVariableToSearchLimit(string $variable, array $search) : Collection;
+
+    /**
+     * @param int $stationSk
+     * @return array
+     */
+    public function getDuplicates(int $stationSk) : array;
+
+    /**
+     * @param int $timeSk
+     * @param null $time
+     * @return mixed
+     */
+    public function updateTimeFromTimeSk(int $timeSk, $time = null);
+
+    /**
+     * @param int $dateSk
+     * @param null $date
+     * @return mixed
+     */
+    public function updateDateFromDateSk(int $dateSk, $date = null);
+
+    /**
+     * @param string $key
+     * @param string $column
+     * @return array
+     */
+    public function selectColumnWhereNull(string $key, string $column) : array;
+
+    /**
+     * @return mixed
+     */
+    public function getIdAndDateTime() : Collection;
+
+    /**
+     * @param string $variable
+     * @return mixed
+     */
+    public function deleteNullVariable(string $variable);
 }

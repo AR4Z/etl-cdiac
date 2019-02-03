@@ -2,15 +2,11 @@
 
 namespace App\Repositories\TemporaryWork;
 
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 use Illuminate\Container\Container;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\TemporaryWork\ExistFactWeather;
 
-class ExistFactWeatherRepository extends EloquentRepository implements ExistRepositoryContract
+class ExistFactWeatherRepository extends ExistFactBaseRepository implements ExistRepositoryContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

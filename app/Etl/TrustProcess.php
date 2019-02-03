@@ -61,13 +61,13 @@ class TrustProcess
      * @param array $variables
      * @return bool
      */
-    public function incomingCalculation(TemporalRepositoryContract $TemporaryWorkRepository,int $stationSk, array $variables) : bool
+    public function incomingCalculation(TemporalRepositoryContract $TemporaryWorkRepository, int $stationSk, array $variables) : bool
     {
         if (!$this->active){ return false;}
 
         $trustActuality = [];
-        foreach ($this->specificConsultValuesRawWDT($TemporaryWorkRepository,$stationSk,$this->generateSelect($variables)) as $value) {
-            $actualTrust = $this->firstStationAndDateWDT($this->repository,$value->station_sk,$value->date_sk);
+        foreach ($TemporaryWorkRepository->specificConsultValuesRaw($stationSk,$this->generateSelect($variables)) as $value) {
+            $actualTrust = $this->repository->firstStationAndDate($value->station_sk,$value->date_sk);
             $trustActuality[] = (empty($actualTrust)) ? $this->createModel($value) : $this->updateModel($actualTrust,$value);
         }
 
@@ -89,8 +89,8 @@ class TrustProcess
     {
         if (!$this->active){return false;}
 
-        foreach ($this->countVariableFromStationAndDateWDT($temporaryRepository,$stationSk,$variable,$reliability_name.$this->goods) as $value ){
-            if (!empty($actualTrust = $this->firstStationAndDateWDT($this->repository,$value->station_sk,$value->date_sk))){
+        foreach ($temporaryRepository->countVariableFromStationAndDate($stationSk,$variable,$reliability_name.$this->goods) as $value ){
+            if (!empty($actualTrust = $this->repository->firstStationAndDate($value->station_sk,$value->date_sk))){
                 $this->updateModel($actualTrust, $value);
             }
         }

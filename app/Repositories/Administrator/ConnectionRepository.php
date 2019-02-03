@@ -2,17 +2,14 @@
 
 namespace App\Repositories\Administrator;
 
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
-use Rinvex\Repository\Repositories\EloquentRepository;
 use App\Entities\Administrator\Connection;
-use App\Repositories\AppGeneralRepositoryBaseTrait;
 
-class ConnectionRepository extends EloquentRepository implements RepositoriesContract
+class ConnectionRepository extends AppBaseRepository implements RepositoriesContract
 {
-    use AppGeneralRepositoryBaseTrait;
-
     /**
      * RepositoriesContract constructor.
      * @param Container $container

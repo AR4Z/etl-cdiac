@@ -213,9 +213,9 @@ class EtlConfig
         $this->setRepositoryDestination((array_key_exists('repositoryDestination',$config)) ? $config->repositoryDestination : false);
         $this->setRepositoryExist((array_key_exists('repositoryExist',$config)) ? $config->repositoryExist : false);
         $this->setTableExist((array_key_exists('tableExist',$config)) ? $config->tableExist : false);
-
         $this->setTableTrust((array_key_exists('tableTrust',$config)) ? $config->tableTrust : false);
         $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
+
     }
 
 
