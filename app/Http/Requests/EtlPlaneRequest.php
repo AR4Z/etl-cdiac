@@ -28,10 +28,10 @@ class EtlPlaneRequest extends FormRequest
             'station_id'    =>'required',
             'method'        =>'required',
             'sequence'      =>'',
-            'jobs'=>'',
-            'serialization' =>'',
-            'trust_process' =>'',
+            'jobs'          =>'',
             'file'          =>'required|mimes:csv,txt',
+            'start'         =>'required',
+            'end'         =>'required'
         ];
     }
 }

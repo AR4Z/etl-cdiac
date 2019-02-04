@@ -90,12 +90,4 @@ class TemporalAirRepository extends TemporalBaseRepository implements TemporalRe
     {
         return $this->queryBuilder()->where('id', '=', $stationSk)->update(['time_sk' => $value]);
     }
-
-    /**
-     * @return Collection
-     */
-    public function getDateTime() : Collection
-    {
-        return $this->select('id','date_time')->get();
-    }
 }

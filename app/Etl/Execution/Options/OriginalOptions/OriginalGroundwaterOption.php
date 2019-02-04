@@ -15,28 +15,16 @@ class OriginalGroundwaterOption extends EtlGeneratorConfig implements OriginalOp
      * @var string
      */
     private $fileName;
-    /**
-     * @var string
-     */
-    private $initialDate;
-    /**
-     * @var string
-     */
-    private $finalDate;
 
     /**
      * OriginalGroundwaterOption constructor.
      * @param int $station
      * @param string $fileName
-     * @param string $initialDate
-     * @param string $finalDate
      */
-    public function __construct(int $station, string $fileName, string $initialDate, string $finalDate)
+    public function __construct(int $station, string $fileName)
     {
         $this->station = $station;
         $this->fileName = $fileName;
-        $this->initialDate = $initialDate;
-        $this->finalDate = $finalDate;
     }
 
     /**
@@ -48,7 +36,7 @@ class OriginalGroundwaterOption extends EtlGeneratorConfig implements OriginalOp
     {
         return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
-            ->setExtractor('Csv',$this->initialDate,$this->finalDate)
+            ->setExtractor('Csv')
             ->addExtractorVariable('extractType','Local')
             ->addExtractorVariable('fileName',$this->fileName)
             ->addTransform('Original',[])

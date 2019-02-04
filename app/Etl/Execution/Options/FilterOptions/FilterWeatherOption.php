@@ -41,7 +41,9 @@ class FilterWeatherOption extends EtlGeneratorConfig implements FilterOptionCont
     {
         return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
-            ->setExtractor('Database',$this->initialDate,$this->finalDate)
+            ->setExtractor('Database')
+            ->addExtractorVariable('initialDate',$this->initialDate)
+            ->addExtractorVariable('finalDate',$this->finalDate)
             ->addExtractorVariable('extractType','Local')
             ->addTransform('FilterDetection',[])
             ->addTransform('FilterCorrection',[])

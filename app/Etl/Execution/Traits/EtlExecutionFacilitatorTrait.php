@@ -7,6 +7,7 @@ use App\Etl\Execution\FilterExecute;
 use App\Etl\Execution\Options\FilterOptions\FilterAirOption;
 use App\Etl\Execution\Options\FilterOptions\FilterWeatherOption;
 use App\Etl\Execution\Options\OriginalOptions\OriginalAirOption;
+use App\Etl\Execution\Options\OriginalOptions\OriginalGroundwaterOption;
 use App\Etl\Execution\Options\OriginalOptions\OriginalWeatherDatabaseOption;
 use App\Etl\Execution\Options\OriginalOptions\OriginalWeatherFilePlaneOption;
 use App\Etl\Execution\OriginalExecute;
@@ -102,18 +103,14 @@ trait EtlExecutionFacilitatorTrait
     }
 
     /**
-     * @param string $initialDate
-     * @param string $finalDate
-     * @param array $stations
+     * @param int $station
      * @param bool $sequence
      * @param bool $job
      * @param string $fileName
      * @return array
      */
     public function OriginalWeatherPlane(
-        string $initialDate,
-        string $finalDate,
-        array $stations,
+        int $station,
         bool $sequence,
         bool $job,
         string $fileName
@@ -121,9 +118,10 @@ trait EtlExecutionFacilitatorTrait
     {
         $execute = new EtlExecute(
             $method = new OriginalExecute(
-                $option = new OriginalWeatherFilePlaneOption($stations[0],$fileName,$initialDate,$finalDate)
+                $option = new OriginalWeatherFilePlaneOption($station,$fileName)
             )
         );
+
 
         $execute->setSequence($sequence);
         $option->setRunType(($job)? 'Asynchronous' : 'Synchronous');
@@ -160,9 +158,7 @@ trait EtlExecutionFacilitatorTrait
     }
 
     /**
-     * @param string $initialDate
-     * @param string $finalDate
-     * @param array $stations
+     * @param int $station
      * @param bool $sequence
      * @param bool $job
      * @param string $extension
@@ -170,9 +166,7 @@ trait EtlExecutionFacilitatorTrait
      * @return array
      */
     public function OriginalAir(
-        string $initialDate,
-        string $finalDate,
-        array $stations,
+        int $station,
         bool $sequence,
         bool $job,
         string $extension,
@@ -181,12 +175,16 @@ trait EtlExecutionFacilitatorTrait
     {
         $execute = new EtlExecute(
             $method = new OriginalExecute(
-                $option = new OriginalAirOption($stations[0],$extension,$fileName,$initialDate,$finalDate)
+                $option = new OriginalAirOption($station,$extension,$fileName)
             )
         );
 
         $execute->setSequence($sequence);
         $option->setRunType(($job)? 'Asynchronous' : 'Synchronous');
+
+        $execute->execute();
+
+        dd($execute,$method,$option);
 
         return $execute->execute();
     }
@@ -204,28 +202,22 @@ trait EtlExecutionFacilitatorTrait
 
 
     /**
-     * @param string $initialDate
-     * @param string $finalDate
-     * @param array $stations
+     * @param int $station
      * @param bool $sequence
      * @param bool $job
-     * @param string $extension
      * @param string $fileName
      * @return array
      */
     public function OriginalGroundwater(
-        string $initialDate,
-        string $finalDate,
-        array $stations,
+        int $station,
         bool $sequence,
         bool $job,
-        string $extension,
         string $fileName
     ) : array
     {
         $execute = new EtlExecute(
             $method = new OriginalExecute(
-                $option = new OriginalAirOption($stations[0],$extension,$fileName,$initialDate,$finalDate)
+                $option = new OriginalGroundwaterOption($station,$fileName)
             )
         );
 

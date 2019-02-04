@@ -90,12 +90,4 @@ class TemporalWeatherRepository extends TemporalBaseRepository implements Tempor
     {
         return $this->queryBuilder()->where('id', '=', $stationSk)->update(['time_sk' => $value]);
     }
-
-    /**
-     * @return Collection
-     */
-    public function getDateTime() : Collection
-    {
-        return $this->select('id','date_time')->get();
-    }
 }

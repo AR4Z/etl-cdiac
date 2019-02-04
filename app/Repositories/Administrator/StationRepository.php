@@ -57,6 +57,10 @@ class StationRepository extends AppBaseRepository implements RepositoriesContrac
      */
     public function getTypeStation(int $id) : Station
     {
+        dd($this->queryBuilder()
+            ->select('station_type.*')
+            ->join('station_type','station.station_type_id','=', 'station_type.id')
+            ->where('station.id',$id)->get());
         return $this->queryBuilder()
                     ->select('station_type.*')
                     ->join('station_type','station.station_type_id','=', 'station_type.id')
@@ -179,6 +183,15 @@ class StationRepository extends AppBaseRepository implements RepositoriesContrac
     public function getIdNetForIdStation(int $stationId) : Station
     {
         return $this->select('net_id as id')->where('id',$stationId)->first();
+    }
+
+    /**
+     * @param int $netId
+     * @return Collection
+     */
+    public function getAllStationForNet(int $netId) : Collection
+    {
+        return $this->queryBuilder()->select('id','name')->where('net_id','=',$netId)->orderby('name','ASC')->get();
     }
 
     /**

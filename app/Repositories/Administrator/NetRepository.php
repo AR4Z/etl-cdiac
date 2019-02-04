@@ -28,9 +28,20 @@ class NetRepository extends AppBaseRepository implements RepositoriesContract
     }
 
 
+    /**
+     * @return array
+     */
     public function getNetsForServerAcquisition() : array
     {
         return $this->select('id','name')->where('etl_active',true)->pluck('name','id')->toArray();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNameAndIdAllNets()
+    {
+        return $this->select('id','name')->pluck('name','id')->toArray();
     }
 
     //Auditory System Functions

@@ -37,8 +37,8 @@ class ExecuteEtlController extends Controller
     public function __construct(
         StationRepository $stationRepository,
         StationDimRepository $stationDimRepository,
-        NetRepository $netRepository)
-    {
+        NetRepository $netRepository
+    ){
         $this->stationRepository = $stationRepository;
         $this->stationDimRepository = $stationDimRepository;
         $this->netRepository = $netRepository;

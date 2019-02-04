@@ -10,10 +10,23 @@
 
         <div class="col-lg-10 col-lg-offset-1">
             {!! Form::open(['route'=> 'plane-etl.loadFile','method'=> 'POST', 'class'=> 'form-horizontal form-validate floating-label', 'enctype'=>'multipart/form-data']) !!}
+
+            <div class="form-group {{ $errors->has('method') ? ' has-error' : '' }}">
+                {{ Form::label('method', 'Metodo: ', ['class' => 'col-md-2 control-label']) }}
+                <div class="col-md-10">
+                    {!! Form::select('method', ['Original'=>'Original', 'ALL' => 'Original + Filter'] , null ,['class' => 'form-control', 'id'=> 'method', 'required']) !!}
+                    @if ($errors->has('method'))
+                        <span class="help-block">
+                                <strong>{{ $errors->first('method') }}</strong>
+                            </span>
+                    @endif
+                </div>
+            </div>
+
             <div class="form-group {{ $errors->has('net_name') ? ' has-error' : '' }}">
                     {{ Form::label('net_name', 'Red: ', ['class' => 'col-md-2 control-label']) }}
                     <div class="col-md-10">
-                        {!! Form::select('net_name', $differentNetName , null ,['class' => 'form-control', 'id'=> 'net_name', 'required']) !!}
+                        {!! Form::select('net_name', $nets , null ,['class' => 'form-control', 'id'=> 'net_name', 'required']) !!}
                         @if ($errors->has('net_name'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('net_name') }}</strong>
@@ -33,15 +46,20 @@
                     </div>
                 </div>
 
-            <div class="form-group {{ $errors->has('method') ? ' has-error' : '' }}">
-                {{ Form::label('method', 'Metodo: ', ['class' => 'col-md-2 control-label']) }}
-                <div class="col-md-10">
-                    {!! Form::select('method', ['Filter' => 'Filtrar', 'Original'=>'Original'] , null ,['class' => 'form-control', 'id'=> 'method', 'required']) !!}
-                    @if ($errors->has('method'))
-                        <span class="help-block">
-                                <strong>{{ $errors->first('method') }}</strong>
+            <div class="form-group {{ $errors->has('date_range') ? ' has-error' : '' }}">
+                {{ Form::label('date_range', 'Rango de Fechas: ', ['class' => 'col-lg-2 control-label','required']) }}
+                <div class="col-md-10" id="sandbox-container">
+                    <div class="input-daterange input-group" id="datepicker">
+                        <span class="input-group-addon">De</span>
+                        <input required  type="text" class="input-sm form-control" name="start"/>
+                        <span   class="input-group-addon">Hasta</span>
+                        <input required type="text" class="input-sm form-control" name="end" />
+                        @if ($errors->has('date_range'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('date_range') }}</strong>
                             </span>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             </div>
 
@@ -53,12 +71,6 @@
                     </div>
                     <div class="col-md-3">
                         {!! Form::checkbox('jobs', 'jobs' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'asynchronous', 'data-off'=>'synchronous' , 'data-onstyle'=>'success', 'data-size'=>'mini' ,'id'=> 'jobs']) !!}
-                    </div>
-                    <div class="col-md-3">
-                        {!! Form::checkbox('serialization', 'serialization' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'serialization', 'data-off'=>'no-serialization' , 'data-onstyle'=>'success' ,  'data-size'=>'mini' ,'id'=> 'serialization']) !!}
-                    </div>
-                    <div class="col-md-3">
-                        {!! Form::checkbox('trust_process', 'trust_process' , 'data-on' ,['class' => '', 'data-toggle' => 'toggle', 'data-on'=>'trust-process', 'data-off'=>'no-trust-process' , 'data-onstyle'=>'success' ,  'data-size'=>'mini' ,'id'=> 'trust_process']) !!}
                     </div>
                 </div>
 
@@ -100,10 +112,25 @@
                 $('#station_id').empty();
             }else{
                 $.post('/etl-cdiac/plane-etl/getStationsForNet',{ net_name: net_name },function (values) {
+                    console.log(values);
                     $('#station_id').populateSelect(values);
                 },'json');
             }
-        })
+        });
+
+        $('#sandbox-container .input-daterange').datepicker({
+            startView: 1,
+            format: "yyyy-mm-dd",
+            language: "es",
+            autoclose: true,
+            todayHighlight: true,
+            toggleActive: true,
+            startDate: "2012-01-01",
+            endDate: new Date(),
+            calendarWeeks: true,
+            todayBtn: "linked"
+        });
+
     </script>
 
 @endsection

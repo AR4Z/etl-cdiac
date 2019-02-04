@@ -90,21 +90,4 @@ class TemporalGroundwaterRepository extends TemporalBaseRepository implements Te
     {
         return $this->queryBuilder()->where('id', '=', $stationSk)->update(['time_sk' => $value]);
     }
-
-    /**
-     * @return Collection
-     */
-    public function getDateTime() : Collection
-    {
-        return $this->select('id','date_time')->get();
-    }
-
-    /**
-     * @param string $variable
-     * @return mixed
-     */
-    public function deleteNullVariable(string $variable)
-    {
-        return $this->queryBuilder()->whereNull($variable)->delete();
-    }
 }

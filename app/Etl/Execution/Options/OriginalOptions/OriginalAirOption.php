@@ -13,14 +13,6 @@ class OriginalAirOption extends EtlGeneratorConfig implements OriginalOptionCont
     /**
      * @var string
      */
-    private $initialDate;
-    /**
-     * @var string
-     */
-    private $finalDate;
-    /**
-     * @var string
-     */
     private $fileName;
     /**
      * @var string
@@ -32,14 +24,10 @@ class OriginalAirOption extends EtlGeneratorConfig implements OriginalOptionCont
      * @param int $station
      * @param string $extension
      * @param string $fileName
-     * @param string $initialDate
-     * @param string $finalDate
      */
-    public function __construct(int $station, string $extension, string $fileName, string $initialDate, string $finalDate)
+    public function __construct(int $station, string $extension, string $fileName)
     {
         $this->station = $station;
-        $this->initialDate = $initialDate;
-        $this->finalDate = $finalDate;
         $this->fileName = $fileName;
         $this->extension = $extension;
     }
@@ -53,10 +41,10 @@ class OriginalAirOption extends EtlGeneratorConfig implements OriginalOptionCont
     {
         return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
-            ->setExtractor('Csv',$this->initialDate,$this->finalDate)
-            ->addExtractorVariable('extractType','Local')
+            ->setExtractor('Csv')
             ->addExtractorVariable('extension',$this->extension)
             ->addExtractorVariable('fileName',$this->fileName)
+            ->addExtractorVariable('extractType','Local')
             ->addTransform('Original',[])
             ->setSpaceDayExecution(-1)
             ->config($this->station);

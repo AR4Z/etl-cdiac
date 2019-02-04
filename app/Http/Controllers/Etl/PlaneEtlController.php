@@ -13,12 +13,11 @@ use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Etl\Etl;
 use App\Etl\Traits\BaseExecuteEtl;
-
+use App\Etl\Execution\Traits\EtlExecutionFacilitatorTrait;
 
 class PlaneEtlController extends Controller
 {
-    use BaseExecuteEtl;
-
+    use BaseExecuteEtl,EtlExecutionFacilitatorTrait;
     /**
      * @var StationRepository
      */
@@ -41,8 +40,8 @@ class PlaneEtlController extends Controller
     public function __construct(
         StationRepository $stationRepository,
         StationDimRepository $stationDimRepository,
-        NetRepository $netRepository)
-    {
+        NetRepository $netRepository
+    ){
         $this->stationRepository = $stationRepository;
         $this->stationDimRepository = $stationDimRepository;
         $this->netRepository = $netRepository;
@@ -52,14 +51,13 @@ class PlaneEtlController extends Controller
      */
     public function index()
     {
-        $differentNetName = $this->stationDimRepository->getDifferentNetName();
-        return view('etl.index',compact('differentNetName'));
+        return view('etl.index',compact('nets'))->with('nets',$this->netRepository->getNameAndIdAllNets());
     }
 
     /**
      * @return mixed
      */
-    public function getDifferentNetName()
+    public function getDifferentNetName() // TODO quitar ??
     {
         return $this->stationDimRepository->getDifferentNetName();
     }
@@ -70,7 +68,7 @@ class PlaneEtlController extends Controller
      */
     public function getStationsForNet(Request $request)
     {
-        return $this->stationDimRepository->getStationsForNet($request->get('net_name'));
+        return $this->stationRepository->getAllStationForNet($request->get('net_name'));
     }
 
     /**
@@ -104,7 +102,7 @@ class PlaneEtlController extends Controller
 
         if (is_null($options->etl_type)){ return redirect()->back()->withErrors(['file'=> 'No exisite Metodo Etl para el tipo de estación seleccionado']);}
 
-        $options->file_name = time().'.'.($options->file)->getClientOriginalExtension();
+        $options->file_name = time().'.'.$options->file->getClientOriginalExtension();
 
         # Guardar el archivo en el servidor
         Storage::disk('public')->put( $options->file_name,  \File::get($options->file));
@@ -112,7 +110,8 @@ class PlaneEtlController extends Controller
         # Obtener la primera fila que corresponde a los encabezados del archivo csv
         if ($options->extension == 'csv'){
             $options->variables_load = ((((Excel::load(storage_path().'/app/public/'. $options->file_name)->get())->first())->keys())->toArray());
-        }else if ($options->extension == 'txt') {
+        }
+        if ($options->extension == 'txt') {
             $options->variables_load = explode(",",file(storage_path().'/app/public/'. $options->file_name,FILE_IGNORE_NEW_LINES)[0]);
         }
 
@@ -147,13 +146,13 @@ class PlaneEtlController extends Controller
 
         $options['sequence'] = $request->exists('sequence');
         $options['jobs'] = $request->exists('jobs');
-        $options['serialization'] = $request->exists('serialization');
-        $options['trust_process'] = $request->exists('trust_process');
         $options['method'] = $request->get('method');
         $options['station_id'] = (integer)$request->get('station_id');
-        $options['net_name'] = $request->get('net_name');
+        $options['net_id'] = $request->get('net_name');
         $options['file'] = $request->file('file');
         $options['extension'] = ($request->file('file'))->getClientOriginalExtension();
+        $options['initialDate'] = $request->get('start');
+        $options['finalDate'] = $request->get('end');
 
         return (object)$options;
     }
@@ -216,32 +215,31 @@ class PlaneEtlController extends Controller
      */
     private function executePlaneEtl($options)
     {
-        $station = $this->stationRepository->getStation($options->station_id);
         $response = null;
-
-        if (is_null($station)){return (object)['original'=> false,'filter' => false, 'error' => 'no se encontró la estación'];}
-
-        $typeStation = ($this->stationRepository->getTypeStation($options->station_id))->etl_method;
-
-        if (is_null($typeStation)){return (object)['original'=> false,'filter' => false, 'error' => 'No se encuentra un metodo ETL para la estación seleccionada'];}
-
-        $extract = ['method' => 'Csv','optionExtract' =>['fileName'=> $options->file_name, 'extension' => $options->extension]];
-
-        switch ($typeStation) {
+        switch ($options->etl_type) {
             case "weather":
-                $response = $this->executeWeather($station,$extract,$options);
+                $response[] = $this->OriginalWeatherPlane($options->station_id, $options->sequence, $options->jobs, $options->file_name);
+
+                if ($options->method == 'ALL'){
+                    $response[] = $this->FilterWeather($options->initialDate, $options->finalDate, $options->station_id, $options->sequence, $options->jobs);
+                }
+                //$response = $this->executeWeather($station,$extract,$options);
                 break;
             case "air":
-                $response = $this->executeAir($station,$extract,$options);
+                $response[] = $this->OriginalAir($options->station_id, $options->sequence, $options->jobs, $options->extension , $options->file_name);
+
+                if ($options->method == 'ALL'){
+                    $response[] = $this->FilterAir($options->initialDate,$options->finalDate, $options->station_id, $options->sequence, $options->jobs);
+                }
+                //$response = $this->executeAir($station,$extract,$options);
                 break;
             case "groundwater":
-                $response = $this->executeGroundwater($station,$extract,$options);
+                $response[] = $this->OriginalGroundwater($options->station_id, $options->sequence, $options->jobs, $options->file_name);
+                //$response = $this->executeGroundwater($station,$extract,$options);
                 break;
             default:
-                $response = ['original'=> false,'filter' => false, 'error' => 'se ejecutó ningun proceso de migrado - posiblemente sea un typo de estacion nuevo y no exista función de ejecusión'];
+                $response[] = ['error' => 'se ejecutó ningun proceso de migrado - posiblemente sea un typo de estacion nuevo y no exista función de ejecusión'];
         }
-
-        dd($response);
 
         return (object)$response;
 

@@ -66,7 +66,7 @@ class EtlGeneratorConfig
      * @param $stationOrStations int | array
      * @return array
      */
-    public function config($stationOrStations) :array
+    public function config($stationOrStations) : array
     {
         return is_array($stationOrStations) ? $this->configStations($stationOrStations) : $this->configStation($stationOrStations);
     }
@@ -87,12 +87,14 @@ class EtlGeneratorConfig
      */
     private function configStation(int $station) :array
     {
-        $initialDate = Carbon::parse($this->extractorConfig['initialDate']);
-        $finalDate = Carbon::parse($this->extractorConfig['finalDate']);
+        $initialDate = (array_key_exists('initialDate',$this->extractorConfig)) ?  Carbon::parse($this->extractorConfig['initialDate']) : null;
+        $finalDate = (array_key_exists('finalDate',$this->extractorConfig)) ?  Carbon::parse($this->extractorConfig['finalDate']) : null;
+
+        $diff = (!(is_null($initialDate) and is_null($finalDate))) ? $initialDate->diffInDays($finalDate) : 0;
 
         $etl = Etl::start($this->typeProcess,null,null,$station,$this->generalOptions);
 
-        ($this->spaceDayExecution == -1 or $initialDate->diffInDays($finalDate) <= $this->spaceDayExecution) ? $this->execute($etl,$initialDate,$finalDate) : $this->partitionExecute(clone $etl,$initialDate,$finalDate);
+        ($this->spaceDayExecution == -1 or $diff <= $this->spaceDayExecution) ? $this->execute($etl,$initialDate,$finalDate) : $this->partitionExecute(clone $etl,$initialDate,$finalDate);
 
         return $this->etl;
     }
@@ -125,10 +127,10 @@ class EtlGeneratorConfig
      * @param Carbon $initialDate
      * @param Carbon $finalDate
      */
-    private function execute(Etl $etl,Carbon $initialDate,Carbon $finalDate)
+    private function execute(Etl $etl,Carbon $initialDate = null,Carbon $finalDate = null)
     {
-        $this->extractorConfig['initialDate'] = $initialDate->toDateString();
-        $this->extractorConfig['finalDate'] = $finalDate->toDateString();
+        if (!is_null($initialDate)){ $this->extractorConfig['initialDate'] = $initialDate->toDateString();}
+        if (!is_null($finalDate)){ $this->extractorConfig['finalDate'] = $finalDate->toDateString();}
 
         $etl->extract($this->extractor,$this->extractorConfig);
 
@@ -144,17 +146,11 @@ class EtlGeneratorConfig
 
     /**
      * @param string $extractor
-     * @param string $initialDate
-     * @param string $finalDate
      * @return EtlGeneratorConfig
      */
-    public function setExtractor(string $extractor,string $initialDate,string $finalDate): EtlGeneratorConfig
+    public function setExtractor(string $extractor): EtlGeneratorConfig
     {
         $this->extractor = $extractor;
-
-        $this->extractorConfig['initialDate'] = $initialDate;
-        $this->extractorConfig['finalDate'] = $finalDate;
-
         return $this;
     }
 
@@ -308,7 +304,12 @@ class EtlGeneratorConfig
         return $this;
     }
 
-    public function addRunTypeVariable(string $variable,$value) :EtlGeneratorConfig
+    /**
+     * @param string $variable
+     * @param $value
+     * @return EtlGeneratorConfig
+     */
+    public function addRunTypeVariable(string $variable, $value) :EtlGeneratorConfig
     {
         $this->runTypeConfig[$variable] = $value;
         return $this;

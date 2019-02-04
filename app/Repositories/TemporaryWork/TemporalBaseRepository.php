@@ -146,4 +146,22 @@ class TemporalBaseRepository extends BaseFactRepository
     {
         return $this->queryBuilder()->select('id','date','time')->get();
     }
+
+    /**
+     * @return Collection
+     */
+    public function getDateTime(): Collection
+    {
+        return $this->select('id','date_time')->get();
+    }
+
+    /**
+     * @param string $variable
+     * @return mixed
+     */
+    public function deleteNullVariable(string $variable)
+    {
+        return $this->queryBuilder()->whereNull($variable)->delete();
+    }
+
 }
