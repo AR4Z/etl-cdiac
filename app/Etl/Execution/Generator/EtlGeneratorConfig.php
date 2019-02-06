@@ -129,6 +129,7 @@ class EtlGeneratorConfig
      */
     private function execute(Etl $etl,Carbon $initialDate = null,Carbon $finalDate = null)
     {
+
         if (!is_null($initialDate)){ $this->extractorConfig['initialDate'] = $initialDate->toDateString();}
         if (!is_null($finalDate)){ $this->extractorConfig['finalDate'] = $finalDate->toDateString();}
 

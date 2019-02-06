@@ -112,20 +112,15 @@ class ExecuteEtlController extends Controller
         foreach ($options as $key => $row) {
             switch ($key) {
                 case 'weather':
-                    if ($method == 'Filter'){ $elements[] = $this->FilterWeather($initialDate,$finalDate,$row,$sequence,$typeExecution); }
-                    if ($method == 'Original'){ $elements[] = $this->OriginalWeatherDatabase($initialDate,$finalDate,$row,$sequence,$typeExecution); }
-                    if ($method == 'All'){ $elements[] = $this->OriginalWeatherDatabase($initialDate,$finalDate,$row,$sequence,$typeExecution); $elements[] = $this->FilterWeather($initialDate,$finalDate,$row,$sequence,$typeExecution); }
+                    if ($method == 'Original' or $method == 'ALL'){ $elements[] = $this->OriginalWeatherDatabase($initialDate,$finalDate,$row,$sequence,$typeExecution); }
+                    if ($method == 'Filter' or $method == 'ALL'){ $elements[] = $this->FilterWeather($initialDate,$finalDate,$row,$sequence,$typeExecution); }
                     break;
                 case 'air':
-                    if ($method == 'Filter'){ $elements[] = $this->FilterAir($initialDate,$finalDate,$row,$sequence,$typeExecution); }
-                    if ($method == 'Original'){ dd('opcion no disponible (red no permite real time)');/** TODO opcion no disponible (red no permite real time) */ }
-                    if ($method == 'All'){ dd('opcion no disponible (red no permite real time)'); /** TODO Opcion no desponible (red no permite real time) */}
+                    if ($method == 'Original'){ $response[] = ['error' => 'No se puede realizar el proceso de aire para originales. ingrese por medio de archivo plano'];}
+                    if ($method == 'Filter' or 'All'){ $elements[] = $this->FilterAir($initialDate,$finalDate,$row,$sequence,$typeExecution); }
                     break;
-                case 'groundwater':
-                    if ($method == 'Filter'){ dd('opcion no disponible (red no necesita ser filtrada )');/** TODO opcion no disponible (red no necesita ser filtrada ) */ }
-                    if ($method == 'Original'){  dd('opcion no disponible (red no permite real time)');/** TODO opcion no disponible (red no permite real time) */ }
-                    if ($method == 'All'){ dd('opcion no disponible (red no necesita ser filtrada )');/** TODO opcion no disponible (red no necesita ser filtrada ) */  }
-                    break;
+                default:
+                    $response[] = ['error' => 'se ejecutó ningun proceso de migrado - posiblemente sea un tipo de estacion nuevo y no exista función de ejecusión'];
             }
         }
 

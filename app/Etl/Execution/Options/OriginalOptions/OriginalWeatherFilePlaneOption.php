@@ -35,8 +35,7 @@ class OriginalWeatherFilePlaneOption extends EtlGeneratorConfig implements Origi
     {
         return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
-            ->setExtractor('Csv')
-            ->addExtractorVariable('extractType','Local')
+            ->setExtractor('Plane')
             ->addExtractorVariable('fileName',$this->fileName)
             ->addTransform('Original',[])
             ->setSpaceDayExecution(-1)

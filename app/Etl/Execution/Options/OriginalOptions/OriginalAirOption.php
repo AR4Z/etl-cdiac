@@ -41,10 +41,9 @@ class OriginalAirOption extends EtlGeneratorConfig implements OriginalOptionCont
     {
         return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)
-            ->setExtractor('Csv')
+            ->setExtractor('Plane')
             ->addExtractorVariable('extension',$this->extension)
             ->addExtractorVariable('fileName',$this->fileName)
-            ->addExtractorVariable('extractType','Local')
             ->addTransform('Original',[])
             ->setSpaceDayExecution(-1)
             ->config($this->station);

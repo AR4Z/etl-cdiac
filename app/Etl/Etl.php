@@ -183,13 +183,13 @@ class Etl
 
     protected function setOptions($class, array $options = [])
     {
-        foreach ($options as $option => $value) {;
+        foreach ($options as $option => $value) {
             $result = $this->setOption($class,$method = 'set'.ucfirst($option),$value);
 
             if (!$result){
                 $this->etlConfig->processState->addWarningsState([
                     'localization'  => 'App\Etl@setOptions',
-                    'description'   => 'Un metodo para ingresar la propiedad : set'.$method.', por lo tanto esta propiedad no se utilizó en el proceso',
+                    'description'   => 'No existe el metodo : '.$method.', por lo tanto esta propiedad no se utilizó en el proceso',
                 ]);
             }
         }

@@ -182,10 +182,6 @@ trait EtlExecutionFacilitatorTrait
         $execute->setSequence($sequence);
         $option->setRunType(($job)? 'Asynchronous' : 'Synchronous');
 
-        $execute->execute();
-
-        dd($execute,$method,$option);
-
         return $execute->execute();
     }
 

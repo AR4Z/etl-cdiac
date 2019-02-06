@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Etl;
 
+use Config;
+use Storage;
+use Excel;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EtlPlaneRequest;
 use App\Repositories\Administrator\NetRepository;
 use App\Repositories\Administrator\StationRepository;
 use App\Repositories\DataWareHouse\StationDimRepository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Etl\Etl;
-use App\Etl\Traits\BaseExecuteEtl;
 use App\Etl\Execution\Traits\EtlExecutionFacilitatorTrait;
 
 class PlaneEtlController extends Controller
 {
-    use BaseExecuteEtl,EtlExecutionFacilitatorTrait;
+    use EtlExecutionFacilitatorTrait;
     /**
      * @var StationRepository
      */
@@ -92,7 +90,7 @@ class PlaneEtlController extends Controller
     {
         $options = $this->getOptions($request);
 
-        # El proceso solo acepta archivos csv
+        # El proceso solo acepta archivos planos
         if (!($options->extension == 'csv' or $options->extension == 'txt')) {
             return redirect()->back()->withErrors(['file'=>"Acualmente solo se pueden subir archivos CSV con codificacion UTF-8    por favor revise que el archivo tenga estas caracteristicas "]);
         }
@@ -107,7 +105,7 @@ class PlaneEtlController extends Controller
         # Guardar el archivo en el servidor
         Storage::disk('public')->put( $options->file_name,  \File::get($options->file));
 
-        # Obtener la primera fila que corresponde a los encabezados del archivo csv
+        # Obtener la primera fila que corresponde a los encabezados del archivo plano
         if ($options->extension == 'csv'){
             $options->variables_load = ((((Excel::load(storage_path().'/app/public/'. $options->file_name)->get())->first())->keys())->toArray());
         }
@@ -181,9 +179,9 @@ class PlaneEtlController extends Controller
         $notExist = [];
         $notFind = [];
 
-        $configCsv = (object)Config::get('etl')['csv_keys'][$etlType];
+        $configPlane = (object)Config::get('etl')['csv_keys'][$etlType];
 
-        foreach ($configCsv as $key => $value){
+        foreach ($configPlane as $key => $value){
 
             $val = array_search($value['incoming_name'],$variablesLoad);
             if ( $val !== false){
@@ -211,11 +209,11 @@ class PlaneEtlController extends Controller
 
     /**
      * @param $options
-     * @return object
+     * @return array
      */
-    private function executePlaneEtl($options)
+    private function executePlaneEtl($options) : array
     {
-        $response = null;
+        $response = [];
         switch ($options->etl_type) {
             case "weather":
                 $response[] = $this->OriginalWeatherPlane($options->station_id, $options->sequence, $options->jobs, $options->file_name);
@@ -223,7 +221,6 @@ class PlaneEtlController extends Controller
                 if ($options->method == 'ALL'){
                     $response[] = $this->FilterWeather($options->initialDate, $options->finalDate, $options->station_id, $options->sequence, $options->jobs);
                 }
-                //$response = $this->executeWeather($station,$extract,$options);
                 break;
             case "air":
                 $response[] = $this->OriginalAir($options->station_id, $options->sequence, $options->jobs, $options->extension , $options->file_name);
@@ -231,18 +228,15 @@ class PlaneEtlController extends Controller
                 if ($options->method == 'ALL'){
                     $response[] = $this->FilterAir($options->initialDate,$options->finalDate, $options->station_id, $options->sequence, $options->jobs);
                 }
-                //$response = $this->executeAir($station,$extract,$options);
                 break;
             case "groundwater":
                 $response[] = $this->OriginalGroundwater($options->station_id, $options->sequence, $options->jobs, $options->file_name);
-                //$response = $this->executeGroundwater($station,$extract,$options);
                 break;
             default:
-                $response[] = ['error' => 'se ejecutó ningun proceso de migrado - posiblemente sea un typo de estacion nuevo y no exista función de ejecusión'];
+                $response[] = ['error' => 'se ejecutó ningun proceso de migrado - posiblemente sea un tipo de estacion nuevo y no exista función de ejecusión'];
         }
 
-        return (object)$response;
-
+        return $response;
     }
 
     /**

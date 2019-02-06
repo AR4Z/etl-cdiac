@@ -2,18 +2,15 @@
 
 namespace App\Etl;
 
-use App\Entities\Administrator\{Connection, Net, Station };
+use Illuminate\Support\Collection;
 use App\Etl\Traits\RemoveAccents;
-use App\Repositories\DataWareHouse\FactRepositoryContract;
-use App\Repositories\DataWareHouse\ReliabilityRepositoryContract;
-use App\Repositories\RepositoriesContract;
 use App\Repositories\RepositoryFactoryTrait;
-use App\Repositories\TemporaryWork\ExistRepositoryContract;
-use App\Repositories\TemporaryWork\TemporalRepositoryContract;
-use Facades\App\Repositories\Administrator\{NetRepository,ConnectionRepository,StationRepository};
+use App\Entities\Administrator\{Connection, Net, Station };
+use App\Repositories\DataWareHouse\{FactRepositoryContract, ReliabilityRepositoryContract};
+use App\Repositories\TemporaryWork\{ExistRepositoryContract, TemporalRepositoryContract};
+use Facades\App\Repositories\Administrator\{NetRepository, ConnectionRepository, StationRepository};
 use App\Etl\Config\PrimaryKeys;
 use Config;
-use Illuminate\Support\Collection;
 
 class EtlConfig
 {
@@ -133,11 +130,6 @@ class EtlConfig
      * @var ExistRepositoryContract
      */
     public $repositoryExist = null;
-
-    /**
-     * @var ReliabilityRepositoryContract
-     */
-    public $trustRepository = null;
 
     /**
      * @var TrustProcess

@@ -55,7 +55,6 @@ abstract class ExtractorBase extends EtlBase
     public function updateStationSk(int $stationId) : bool
     {
         $this->etlConfig->repositorySpaceWork->updateStationSk($stationId);
-
         return true;
     }
 
@@ -111,7 +110,23 @@ abstract class ExtractorBase extends EtlBase
     }
 
     /**
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
+     * @param string $directory
+     * @param string $class
+     * @return mixed
+     */
+    public function factoryExtractorClass(string $directory, string $class)
+    {
+        if (! class_exists($class)) {
+            if (isset($aliases[$directory][$class])) { $class = $class[$directory][$class]; }
+
+            $class = __NAMESPACE__ . '\\' . ucwords($directory) . '\\' . ucwords($class);
+        }
+
+        return new $class();
+    }
+
+    /**
+     *
      */
     public function getCalculateDateAndTime()
     {

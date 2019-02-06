@@ -104,7 +104,7 @@ trait BaseExecuteEtl
         $response = null;
         $this->jobsActive = $jobs;
 
-        if($extract['method'] == 'Csv'){
+        if($extract['method'] == 'Plane'){
             $response =  $this->dispatchJob($method, $net, $station,$sequence,$serialization,$extract,$transform,$load);
         }else{
             $spaceDays = $this->spaceDaysForFilter;
@@ -229,7 +229,7 @@ trait BaseExecuteEtl
     {
         $etl = Etl::start('Filter', $net, $connection,$station,['sequence'=> $sequence]);
 
-         if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Csv'){
+         if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Plane'){
              $extract['optionExtract']['extractType'] = 'Local';
          }
 
@@ -280,7 +280,7 @@ trait BaseExecuteEtl
     {
         $etl = Etl::start('Original', $net, $connection,$station,['sequence'=> $sequence]);
 
-        if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Csv'){
+        if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Plane'){
             $extract['optionExtract']['extractType'] = 'External';
         }
 

@@ -2,25 +2,21 @@
 
 namespace App\Etl\Extractors;
 
-use App\Etl\EtlConfig;
-use App\Etl\Extractors\ExtractType\ExtractTypeInterface;
+use App\Etl\Extractors\ExtensionLoad\ExtensionLoadContract;
 use App\Etl\Steps\{StepList,Step,StepContract};
-use Illuminate\Support\Facades\Config;
-use Maatwebsite\Excel\Facades\Excel;
 use Exception;
-use Maatwebsite\Excel\Readers\LaravelExcelReader;
 
-class Csv extends ExtractorBase implements ExtractorInterface, StepContract
+class Plane extends ExtractorBase implements ExtractorInterface, StepContract
 {
     /**
      * @var string
      */
-    public $method = 'Csv';
+    public $method = 'Plane';
 
     /**
-     * @var string
+     * @var ExtensionLoadContract
      */
-    public $extension = 'csv';
+    public $extension = null;
 
     /**
      * @var StepList
@@ -31,16 +27,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
      * @var string
      */
     public $fileName = null;
-
-    /**
-     * @var ExtractTypeInterface
-     */
-    public $extractTypeObject = null;
-
-    /**
-     * @var string
-     */
-    public $extractType = null;
 
     /**
      * @var bool
@@ -61,11 +47,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
      * @var bool
      */
     public $flagTimeSk = false;
-
-    /**
-     * @var bool
-     */
-    public $dateTime = false;
 
     /**
      * @return $this|mixed
@@ -126,8 +107,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepConfigureConsults() : array
     {
         try {
-
-            ($this->etlConfig->keys)->config(
+            $this->etlConfig->keys->config(
                 $this->etlConfig->typeProcess,
                 ($this->etlConfig->station)->typeStation->etl_method,
                 'Plane',
@@ -150,7 +130,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepLoadFile() : array
     {
         try {
-
             $this->loadFile();
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
@@ -169,8 +148,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepCalculateDateTime() : array
     {
         try {
-
-            if ($this->dateTime){ $this->getCalculateDateAndTime(); }
+            if ($this->extension->isDateTime()){ $this->getCalculateDateAndTime(); }
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -207,7 +185,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepDeleteExpectedErrorsKeys() : array
     {
         try {
-
             $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'24:00:00');
             $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'00:00:00');
 
@@ -274,7 +251,7 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
      */
     public function setExtension(string $extension = 'csv')
     {
-        $this->extension = $extension;
+        $this->extension = $this->factoryExtractorClass('ExtensionLoad',$extension);
     }
 
     /**
@@ -301,22 +278,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
         $this->flagTimeSk = $flagTimeSk;
     }
 
-    /**
-     * @param bool $dateTime
-     */
-    public function setDateTime(bool $dateTime = false)
-    {
-        $this->dateTime = $dateTime;
-    }
-
-    /**
-     * @param array $inputVariables # TODO ESTE METODO HAY QUE QUITARLO ?? O CREAR OTRA PROPIEDAD
-     */
-    private function setDateTimeProperty(array $inputVariables)
-    {
-        $this->dateTime = in_array('date_time',$inputVariables);
-    }
-
     /**####################################### END SETTERS SECTION ################################################## **/
 
 
@@ -327,29 +288,15 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
      */
     private function loadFile()
     {
-        if (!method_exists($this,$this->extension)){ return false;}
+        if (is_null($this->extension)){$this->setExtension();}
 
-        return $this->{$this->extension}();
-    }
+        $this->extension->loadFormatData(
+            $this->etlConfig->repositorySpaceWork,
+            $this->etlConfig->station->typeStation->etl_method,
+            $this->etlConfig->varForFilter,
+            $this->fileName
+        );
 
-    /**
-     * @param $inputVariables
-     * @return array
-     */
-    private function getVariablesName($inputVariables)
-    {
-        $arr = [];
-        $configCsv = (object)Config::get('etl')['csv_keys'][$this->etlConfig->station->typeStation->etl_method];
-        foreach ($configCsv as $key => $value){
-            if (in_array($value['incoming_name'],$inputVariables)){$arr[$value['incoming_name']] = $value['local_name'];}
-        }
-        foreach ($this->etlConfig->varForFilter as $value)
-        {
-            if (in_array($value->excel_name,$inputVariables)){
-                $arr[$value->excel_name] = $value->local_name ;
-            }
-        }
-        return $arr;
     }
 
     /**
@@ -376,96 +323,6 @@ class Csv extends ExtractorBase implements ExtractorInterface, StepContract
                 $this->calculateTimeFromTimeSk($finalVal->time_sk)
             );
         }
-    }
-
-    /**
-     * @return bool
-     */
-    private function changeCommaForPointAllVariables() : bool
-    {
-        # Extraer variables para el proceso
-        $varFilter = $this->etlConfig->varForFilter;
-
-        #Cambiar comas por puntos en los decimales.
-        foreach ($varFilter as $value) { $this->changeCommaForPointWDT($this->etlConfig->repositorySpaceWork,$value->local_name);}
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function csv()
-    {
-        Excel::load(storage_path().'/app/public/'.$this->fileName, function(LaravelExcelReader $reader) {
-
-            $inputVariables = $reader->all()->getHeading();
-            $variablesName = $this->getVariablesName($inputVariables);
-            $variablesNameExcel = array_keys($variablesName);
-
-            #dd($reader,$inputVariables,$variablesName,$variablesNameExcel);
-
-            # Se edita la propiedad data time TODO porque se entrega esta variable a el date time ?? esta variables es bool
-            $this->setDateTimeProperty($inputVariables);
-
-            foreach ($reader->get() as $values){
-                $val = [];
-                $values->toArray();
-                foreach ($inputVariables as $inputVariable){
-                    if (in_array($inputVariable,$variablesNameExcel)){
-                        $val[$variablesName[$inputVariable]] = $values[$inputVariable];
-                    }
-                }
-
-                $this->etlConfig->repositorySpaceWork->create($val);
-            }
-        });
-
-        # cambiar de comas a puntos los datos de las variables
-        $this->changeCommaForPointAllVariables();
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
-     */
-    protected function txt()
-    {
-        # Se lee el archivo
-        $file = file(storage_path().'/app/public/'. $this->fileName,FILE_IGNORE_NEW_LINES);
-
-        # Extraer los encabezados del archivo text delimitado por comas
-        $inputVariables = explode(",",$file[0]);
-
-        # Se eliminan los encabezados el array del archivo
-        unset($file[0]);
-
-        # Se cargan las variables dependiendo de las variables cargadas
-        $variablesName = $this->getVariablesName($inputVariables);
-
-        # Se edita la propiedad data time TODO porque se entrega esta variable a el date time ?? esta variables es bool
-        # $this->setDateTimeProperty($inputVariables);
-
-        # Se buscan los encabezados entrantes y se obtiene el nombre en la tabla temporal
-        $headers = [];
-        foreach ($inputVariables as $inputVariable){
-            if (array_key_exists($inputVariable,$variablesName)){
-                array_push($headers,$variablesName[$inputVariable]);
-            }
-        }
-
-        # Se genera el array para insertar en la tabla temporal
-        $data = [];
-        foreach ($file as $row) {
-            array_push($data,array_combine($headers,explode(",",$row)));
-        }
-
-        # Se inserta el array en a tabla temporal
-        $this->insertDataArrayWDT($this->etlConfig->repositorySpaceWork,$data);
-
-        return true;
     }
 
     /**####################################### END PRIVATE SECTION ################################################# **/

@@ -167,16 +167,6 @@ trait WorkDatabaseTrait
 
     /**
      * @param RepositoriesContract $repository
-     * @param string $variable
-     * @return bool
-     */
-    public function changeCommaForPointWDT(RepositoriesContract $repository, string $variable)
-    {
-        return $repository->queryBuilder()->update([ $variable => DB::raw( " REGEXP_REPLACE($variable,',','.') " )]);
-    }
-
-    /**
-     * @param RepositoriesContract $repository
      * @param int $id
      * @param array $variables
      * @return mixed
