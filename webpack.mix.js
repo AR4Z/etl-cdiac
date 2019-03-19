@@ -14,4 +14,7 @@ const mix = require('laravel-mix');
  */
 
 mix.setPublicPath('/var/www/etl-cdiac');
-mix.js('resources/assets/js/app.js', 'js');
+mix.js('resources/js/app.js', 'js');
+//mix.sass('resources/css/app.scss','css');
+
+

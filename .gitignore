@@ -1,3 +1,4 @@
+/vendor
 /node_modules
 /public/storage
 /storage/*.key
@@ -5,3 +6,8 @@
 Homestead.json
 Homestead.yaml
 .env
+npm-debug.log
+_ide_helper.php
+@php
+.phpstorm.meta.php
+git
