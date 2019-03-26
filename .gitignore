@@ -11,3 +11,4 @@ _ide_helper.php
 @php
 .phpstorm.meta.php
 git
+!.gitignore

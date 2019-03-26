@@ -25,7 +25,6 @@ class MigrateInPath extends Command
 
     // Example => php artisan migrate:inPat migrate dataWareHouse
 
-
     /**
      * TypeExecute the console command.
      *
@@ -39,11 +38,11 @@ class MigrateInPath extends Command
         if ($this->validateAction($action) and $this->validatePath($path)){
             if ($action == 'migrate'){
                 $this->line('executing migrate:'.$action.' --path='.$this->route.''.$path);
-                Artisan::call($action, [ '--path' => $this->route.''.$path ]);
+                Artisan::call($action.' --path='.$this->route.''.$path);
                 $this->line(Artisan::output());
             }else{
                 $this->line('executing migrate:'.$action.' --path='.$this->route.''.$path);
-                Artisan::call('migrate:'.$action, [ '--path' => $this->route.''.$path]);
+                Artisan::call('migrate:'.$action.' --path='.$this->route.''.$path);
                 $this->line(Artisan::output());
             }
         }
@@ -75,9 +74,6 @@ class MigrateInPath extends Command
             $this->error(' path is optional field [ administrator | auditory | etl | dataWareHouse | temporaryWork| user ]');
             return false;
         }
-
         return true;
     }
-
-
 }
