@@ -266,7 +266,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
                 # se recorren los valores en el array de valores de la fecha actual en el rango inicial y se insertan al array temporal
                 foreach ($valInRangeActual as $value){ array_push($temporalValInRange,$value); }
 
-                # se asigna el array temporal al array al array general para enviarlo en las funciones de homogenizacion
+                # se asigna el array temporal al array al array public para enviarlo en las funciones de homogenizacion
                 $valInRangeActual = $temporalValInRange;
             }
 

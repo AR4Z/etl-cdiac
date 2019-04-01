@@ -185,8 +185,11 @@ class Plane extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepDeleteExpectedErrorsKeys() : array
     {
         try {
-            $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'24:00:00');
-            $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'00:00:00');
+            if ($this->etlConfig->net->name == "Calidad del Aire"){
+                # TODO mejorar este metodo que es solo para aire
+                $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'24:00:00');
+                $this->deleteLastDateWDT($this->etlConfig->repositorySpaceWork,'00:00:00');
+            }
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -230,7 +233,6 @@ class Plane extends ExtractorBase implements ExtractorInterface, StepContract
     public function stepTrustProcess() : array
     {
         try {
-
             $this->trustProcess();
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];

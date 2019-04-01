@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Etl;
 
 use Config;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Readers\LaravelExcelReader;
 use Storage;
-use Excel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EtlPlaneRequest;
@@ -12,6 +13,7 @@ use App\Repositories\Administrator\NetRepository;
 use App\Repositories\Administrator\StationRepository;
 use App\Repositories\DataWareHouse\StationDimRepository;
 use App\Etl\Execution\Traits\EtlExecutionFacilitatorTrait;
+use App\Etl\Extractors\ExtensionLoad\Imports\PlaneImport;
 
 class PlaneEtlController extends Controller
 {
@@ -107,8 +109,11 @@ class PlaneEtlController extends Controller
 
         # Obtener la primera fila que corresponde a los encabezados del archivo plano
         if ($options->extension == 'csv'){
-            $options->variables_load = ((((Excel::load(storage_path().'/app/public/'. $options->file_name)->get())->first())->keys())->toArray());
+            $planeImport = new PlaneImport();
+            $planeImport->import(storage_path().'/app/public/'. $options->file_name,null,\Maatwebsite\Excel\Excel::CSV);
+            $options->variables_load = $planeImport->headers;
         }
+
         if ($options->extension == 'txt') {
             $options->variables_load = explode(",",file(storage_path().'/app/public/'. $options->file_name,FILE_IGNORE_NEW_LINES)[0]);
         }
@@ -116,7 +121,7 @@ class PlaneEtlController extends Controller
         # Validar columnas de entrada con las columnas registradas para la estacion
         $validate = $this->validateVariablesLoad($options->variables_load,$options->variables_station, $options->etl_type);
 
-        if (!$validate['response']){
+        if ($validate['response']){
             return view('etl.displayPlaneErrors')
                         ->with('validate',$validate)
                         ->with('options',json_encode($options))
@@ -182,7 +187,6 @@ class PlaneEtlController extends Controller
         $configPlane = (object)Config::get('etl')['csv_keys'][$etlType];
 
         foreach ($configPlane as $key => $value){
-
             $val = array_search($value['incoming_name'],$variablesLoad);
             if ( $val !== false){
                 unset($variablesLoad[$val]);
@@ -192,18 +196,27 @@ class PlaneEtlController extends Controller
                 }
             }
         }
+
         # se buscan las varia
         foreach ($variablesStation as $item => $value) {
             $val = array_search($value['excel_name'],$variablesLoad);
-            if ($val === false){$flag = false;array_push($notExist,$value['excel_name'].' : '.$value['description']);}
+            if ($val === false){
+                $flag = false;
+                array_push($notExist,$value['excel_name'].' : '.$value['description']);
+            }
         }
 
         $excelName = array_column($variablesStation, 'excel_name');
 
         foreach ($variablesLoad as $item => $value) {
             $val = array_search($value,$excelName);
-            if ($val === false){$flag = false;array_push($notFind,$value);}
+
+            if ($val === false){
+                $flag = false;
+                array_push($notFind,$value);
+            }
         }
+
         return ['response' => $flag,'notExist'=>$notExist,'notFind'=> $notFind];
     }
 

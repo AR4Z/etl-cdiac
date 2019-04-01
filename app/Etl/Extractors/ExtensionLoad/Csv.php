@@ -2,9 +2,8 @@
 
 namespace App\Etl\Extractors\ExtensionLoad;
 
-use Excel;
+use App\Etl\Extractors\ExtensionLoad\Imports\PlaneImport;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Readers\LaravelExcelReader;
 use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 
 class Csv extends ExtensionLoadBase implements ExtensionLoadContract
@@ -23,27 +22,27 @@ class Csv extends ExtensionLoadBase implements ExtensionLoadContract
      */
     public function loadFormatData(TemporalRepositoryContract $repository, string $method, Collection $variables, string $fileName): bool
     {
-        Excel::load(storage_path().'/app/public/'.$fileName, function(LaravelExcelReader $reader) use ($method,$variables,$repository) {
+        $planeImport = new PlaneImport();
+        $planeImport->import(storage_path().'/app/public/'. $fileName,null,\Maatwebsite\Excel\Excel::CSV);
 
-            $inputVariables = $reader->all()->getHeading();
-            $variablesName = $this->getVariablesName($method, $inputVariables, $variables);
-            $variablesNameExcel = array_keys($variablesName);
+        $variablesName = $this->getVariablesName($method, $planeImport->headers, $variables);
 
-            # Se edita la propiedad data time
-            $this->dateTime = in_array('date_time',$inputVariables);
+        $variablesNameExcel = array_keys($variablesName);
 
-            foreach ($reader->get() as $values){
-                $val = [];
-                $values->toArray();
-                foreach ($inputVariables as $inputVariable){
-                    if (in_array($inputVariable,$variablesNameExcel)){
-                        $val[$variablesName[$inputVariable]] = $values[$inputVariable];
-                    }
+        $this->dateTime = in_array('date_time',$planeImport->headers);
+
+        foreach ($planeImport->elements as $values){
+            $val = [];
+            $values->toArray();
+
+            foreach ($planeImport->headers as $key => $variableName){
+                if (in_array($variableName,$variablesNameExcel)){
+                    $val[$variablesName[$variableName]] = $values[$key];
                 }
-
-                $repository->create($val);
             }
-        });
+
+            $repository->create($val);
+        }
 
         # cambiar de comas a puntos los datos de las variables
         $this->changeCommaForPointAllVariables($repository,$variables);

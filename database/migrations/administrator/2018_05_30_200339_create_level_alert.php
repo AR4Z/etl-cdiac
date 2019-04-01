@@ -38,6 +38,6 @@ class CreateLevelAlert extends Migration
      */
     public function down()
     {
-        //
+        Schema::connection('administrator')->dropIfExists('level_alert');
     }
 }

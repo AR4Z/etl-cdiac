@@ -3,16 +3,20 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use Artisan;
 
 class MigrateInPath extends Command
 {
+    /**
+     *  Execution Example => php artisan migrate:inPath $optionAction $optionPath --seed
+     */
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'migrate:inPath {action? : action execute [ migrate | reset | refresh | rollback ]} { pre_path? : path for execute [ administrator | etl | dataWareHouse  | temporaryWork | auditory | user  ] }';
+    protected $signature = 'migrate:inPath {action} {pre_path} {--seed : Indicates if the seed task should be re-run}';
 
     /**
      * The console command description.
@@ -21,9 +25,33 @@ class MigrateInPath extends Command
      */
     protected $description = 'Migrations with custom path';
 
-    protected $route = 'database/migrations/';
+    /**
+     * @var string
+     */
+    protected $route = '/database/migrations/';
 
-    // Example => php artisan migrate:inPat migrate dataWareHouse
+    /**
+     * @var array
+     */
+    protected $optionPaths = ['public','administrator', 'dataWareHouse','temporaryWork','auditory','user'];
+
+    /**
+     * @var array
+     */
+    protected $optionActions = ['migrate','reset','refresh'];
+
+    /**
+     * @var array
+     */
+    protected $actionCompatibilitySeed = ['migrate','refresh'];
+
+    /**
+     * @var array
+     */
+    protected $seedOptions = [
+        'administrator' => 'AdministratorProcessSeeder',
+        'dataWareHouse' => 'DataWareHouseProcessSeeder',
+    ];
 
     /**
      * TypeExecute the console command.
@@ -32,48 +60,106 @@ class MigrateInPath extends Command
      */
     public function handle()
     {
-        $action = $this->argument('action');
-        $path =  $this->argument('pre_path');
+        $flag = false;
 
-        if ($this->validateAction($action) and $this->validatePath($path)){
-            if ($action == 'migrate'){
-                $this->line('executing migrate:'.$action.' --path='.$this->route.''.$path);
-                Artisan::call($action.' --path='.$this->route.''.$path);
-                $this->line(Artisan::output());
-            }else{
-                $this->line('executing migrate:'.$action.' --path='.$this->route.''.$path);
-                Artisan::call('migrate:'.$action.' --path='.$this->route.''.$path);
-                $this->line(Artisan::output());
+        if ($this->validateAction($this->argument('action')) and $this->validatePath($this->argument('pre_path'))){
+            $this->migrateCall(
+                ($this->argument('action') == 'migrate') ? "migrate" : "migrate:{$this->argument('action')}",
+                $this->route.$this->argument('pre_path')
+            );
+            $flag = true;
+        }
+
+        if ($this->option('seed') and $flag){
+            if ($this->validateCompatibilitySeed($this->argument('action'),$this->argument('pre_path'))){
+                $this->seedCall($this->argument('pre_path'));
             }
         }
+
+        return;
     }
 
-    private function validateAction($action)
+    /**
+     * @param string $action
+     * @param string $path
+     * @return bool
+     */
+    private function validateCompatibilitySeed(string $action,string $path) :bool
     {
-        if (is_null($action)){
-            $this->error('action is required for execution');
+        if (!in_array($action,$this->actionCompatibilitySeed,true)){
+            $this->info("the action {$action} is not compatible. Try alone with [ ".implode(' | ',$this->actionCompatibilitySeed)." ]");
             return false;
         }
 
-        if ($action != 'migrate' and $action != 'reset' and $action != 'rollback' and $action != 'refresh'){
-            $this->error(' action is optional field [ migrate | reset | refresh | rollback ]');
+        if (!in_array($path,array_keys($this->seedOptions),true)){
+            $this->info("the path {$path} is not compatible. Try alone with [ ".implode(' | ',array_keys($this->seedOptions))." ]");
+            return false;
+        }
+
+        if (is_null($this->seedOptions[$path])){
+            $this->info("the path {$path} is not configured. enter the value in MigrateInPath:seedOptions:$path");
             return false;
         }
 
         return true;
     }
 
-    private function validatePath($path){
+    /**
+     * @param string $action
+     * @return bool
+     */
+    private function validateAction(string $action) : bool
+    {
+        if (is_null($action)){
+            $this->error('Action is required for execution');
+            return false;
+        }
 
+        if (!in_array($action,$this->optionActions,true)){
+            $this->error("Action is optional field [ ".implode(' | ',$this->optionActions)." ]");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    private function validatePath(string $path) : bool
+    {
         if (is_null($path)){
             $this->error('path is required for execution');
             return false;
         }
 
-        if ($path != 'administrator' and $path != 'etl' and $path != 'dataWareHouse' and $path != 'config' and $path != 'temporaryWork' and $path != 'auditory'and $path != 'user'){
-            $this->error(' path is optional field [ administrator | auditory | etl | dataWareHouse | temporaryWork| user ]');
+        if (!in_array($path,$this->optionPaths,true)){
+            $this->error("path is optional field [ ".implode(' | ',$this->optionPaths)." ]");
             return false;
         }
+
         return true;
+    }
+
+    /**
+     * @param string $command
+     * @param string $path
+     */
+    private function migrateCall(string $command, string $path)
+    {
+        $this->comment("executing $command --path=$path");
+
+        Artisan::call($command,['--path'=> $path, '-vvv' => true],$this->getOutput());
+    }
+
+    /**
+     * @param string $path
+     */
+    private function seedCall(string $path)
+    {
+        $this->comment("executing db:seed --class={$this->seedOptions[$path]}");
+
+        Artisan::call('db:seed',['--class'=> $this->seedOptions[$path],'-vvv' => true],$this->getOutput());
     }
 }

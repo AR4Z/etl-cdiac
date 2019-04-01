@@ -4,13 +4,13 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
+class ComposerStaticInitb4bc7f07bf201bc6f51c09f0b61ff80f
 {
     public static $files = array (
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
@@ -27,6 +27,8 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         '1ca3bc274755662169f9629d5412a1da' => __DIR__ . '/..' . '/zendframework/zend-diactoros/src/functions/normalize_uploaded_files.php',
         '40360c0b9b437e69bcbb7f1349ce029e' => __DIR__ . '/..' . '/zendframework/zend-diactoros/src/functions/parse_cookie_header.php',
         '538ca81a9a966a6716601ecf48f4eaef' => __DIR__ . '/..' . '/opis/closure/functions.php',
+        'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
+        '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         '9d8e013a5160a09477beb8e44f8ae97b' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/functions/adjoint.php',
         '6e78d1bdea6248d6aa117229efae50f2' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/functions/antidiagonal.php',
         '4623d87924d94f5412fe5afbf1cef31d' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/functions/cofactors.php',
@@ -85,13 +87,11 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         '883af48563631547925fa4c3b48ead07' => __DIR__ . '/..' . '/markbaker/complex/classes/src/operations/multiply.php',
         'f190e3308e6ca23234a2875edc985c03' => __DIR__ . '/..' . '/markbaker/complex/classes/src/operations/divideby.php',
         'ac9e33ce6841aa5bf5d16d465a2f03a7' => __DIR__ . '/..' . '/markbaker/complex/classes/src/operations/divideinto.php',
-        'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
-        '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
-        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
-        '0d8253363903f0ac7b0978dcde4e28a0' => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/helpers.php',
-        '4a1f389d6ce373bda9e57857d3b61c84' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/helpers.php',
+        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
+        '4a1f389d6ce373bda9e57857d3b61c84' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/helpers.php',
+        '0d8253363903f0ac7b0978dcde4e28a0' => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -245,8 +245,8 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'Zend\\Diactoros\\' => 
         array (
@@ -696,6 +696,7 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'App\\Etl\\Extractors\\ExtensionLoad\\Csv' => __DIR__ . '/../..' . '/app/Etl/Extractors/ExtensionLoad/Csv.php',
         'App\\Etl\\Extractors\\ExtensionLoad\\ExtensionLoadBase' => __DIR__ . '/../..' . '/app/Etl/Extractors/ExtensionLoad/ExtensionLoadBase.php',
         'App\\Etl\\Extractors\\ExtensionLoad\\ExtensionLoadContract' => __DIR__ . '/../..' . '/app/Etl/Extractors/ExtensionLoad/ExtensionLoadContract.php',
+        'App\\Etl\\Extractors\\ExtensionLoad\\Imports\\PlaneImport' => __DIR__ . '/../..' . '/app/Etl/Extractors/ExtensionLoad/Imports/PlaneImport.php',
         'App\\Etl\\Extractors\\ExtensionLoad\\Txt' => __DIR__ . '/../..' . '/app/Etl/Extractors/ExtensionLoad/Txt.php',
         'App\\Etl\\Extractors\\ExtractType\\External' => __DIR__ . '/../..' . '/app/Etl/Extractors/ExtractType/External.php',
         'App\\Etl\\Extractors\\ExtractType\\ExtractTypeBase' => __DIR__ . '/../..' . '/app/Etl/Extractors/ExtractType/ExtractTypeBase.php',
@@ -854,6 +855,7 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'Barryvdh\\Debugbar\\Controllers\\BaseController' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/Controllers/BaseController.php',
         'Barryvdh\\Debugbar\\Controllers\\CacheController' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/Controllers/CacheController.php',
         'Barryvdh\\Debugbar\\Controllers\\OpenHandlerController' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/Controllers/OpenHandlerController.php',
+        'Barryvdh\\Debugbar\\Controllers\\TelescopeController' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/Controllers/TelescopeController.php',
         'Barryvdh\\Debugbar\\DataCollector\\CacheCollector' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/DataCollector/CacheCollector.php',
         'Barryvdh\\Debugbar\\DataCollector\\EventCollector' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/DataCollector/EventCollector.php',
         'Barryvdh\\Debugbar\\DataCollector\\FilesCollector' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/DataCollector/FilesCollector.php',
@@ -2928,8 +2930,11 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'Maatwebsite\\Excel\\Concerns\\OnEachRow' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/OnEachRow.php',
         'Maatwebsite\\Excel\\Concerns\\RegistersEventListeners' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/RegistersEventListeners.php',
         'Maatwebsite\\Excel\\Concerns\\ShouldAutoSize' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/ShouldAutoSize.php',
+        'Maatwebsite\\Excel\\Concerns\\SkipsErrors' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/SkipsErrors.php',
+        'Maatwebsite\\Excel\\Concerns\\SkipsFailures' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/SkipsFailures.php',
         'Maatwebsite\\Excel\\Concerns\\SkipsOnError' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/SkipsOnError.php',
         'Maatwebsite\\Excel\\Concerns\\SkipsOnFailure' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/SkipsOnFailure.php',
+        'Maatwebsite\\Excel\\Concerns\\SkipsUnknownSheets' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/SkipsUnknownSheets.php',
         'Maatwebsite\\Excel\\Concerns\\ToArray' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/ToArray.php',
         'Maatwebsite\\Excel\\Concerns\\ToCollection' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/ToCollection.php',
         'Maatwebsite\\Excel\\Concerns\\ToModel' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/ToModel.php',
@@ -2938,6 +2943,7 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'Maatwebsite\\Excel\\Concerns\\WithCharts' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/WithCharts.php',
         'Maatwebsite\\Excel\\Concerns\\WithChunkReading' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/WithChunkReading.php',
         'Maatwebsite\\Excel\\Concerns\\WithColumnFormatting' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/WithColumnFormatting.php',
+        'Maatwebsite\\Excel\\Concerns\\WithConditionalSheets' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/WithConditionalSheets.php',
         'Maatwebsite\\Excel\\Concerns\\WithCustomChunkSize' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/WithCustomChunkSize.php',
         'Maatwebsite\\Excel\\Concerns\\WithCustomCsvSettings' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/WithCustomCsvSettings.php',
         'Maatwebsite\\Excel\\Concerns\\WithCustomQuerySize' => __DIR__ . '/..' . '/maatwebsite/excel/src/Concerns/WithCustomQuerySize.php',
@@ -2960,6 +2966,7 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'Maatwebsite\\Excel\\Console\\ExportMakeCommand' => __DIR__ . '/..' . '/maatwebsite/excel/src/Console/ExportMakeCommand.php',
         'Maatwebsite\\Excel\\Console\\ImportMakeCommand' => __DIR__ . '/..' . '/maatwebsite/excel/src/Console/ImportMakeCommand.php',
         'Maatwebsite\\Excel\\Console\\WithModelStub' => __DIR__ . '/..' . '/maatwebsite/excel/src/Console/WithModelStub.php',
+        'Maatwebsite\\Excel\\DefaultValueBinder' => __DIR__ . '/..' . '/maatwebsite/excel/src/DefaultValueBinder.php',
         'Maatwebsite\\Excel\\DelegatedMacroable' => __DIR__ . '/..' . '/maatwebsite/excel/src/DelegatedMacroable.php',
         'Maatwebsite\\Excel\\Events\\AfterImport' => __DIR__ . '/..' . '/maatwebsite/excel/src/Events/AfterImport.php',
         'Maatwebsite\\Excel\\Events\\AfterSheet' => __DIR__ . '/..' . '/maatwebsite/excel/src/Events/AfterSheet.php',
@@ -2975,14 +2982,25 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'Maatwebsite\\Excel\\Exceptions\\NoFilePathGivenException' => __DIR__ . '/..' . '/maatwebsite/excel/src/Exceptions/NoFilePathGivenException.php',
         'Maatwebsite\\Excel\\Exceptions\\NoFilenameGivenException' => __DIR__ . '/..' . '/maatwebsite/excel/src/Exceptions/NoFilenameGivenException.php',
         'Maatwebsite\\Excel\\Exceptions\\NoTypeDetectedException' => __DIR__ . '/..' . '/maatwebsite/excel/src/Exceptions/NoTypeDetectedException.php',
+        'Maatwebsite\\Excel\\Exceptions\\RowSkippedException' => __DIR__ . '/..' . '/maatwebsite/excel/src/Exceptions/RowSkippedException.php',
+        'Maatwebsite\\Excel\\Exceptions\\SheetNotFoundException' => __DIR__ . '/..' . '/maatwebsite/excel/src/Exceptions/SheetNotFoundException.php',
         'Maatwebsite\\Excel\\Exceptions\\UnreadableFileException' => __DIR__ . '/..' . '/maatwebsite/excel/src/Exceptions/UnreadableFileException.php',
         'Maatwebsite\\Excel\\Exporter' => __DIR__ . '/..' . '/maatwebsite/excel/src/Exporter.php',
         'Maatwebsite\\Excel\\Facades\\Excel' => __DIR__ . '/..' . '/maatwebsite/excel/src/Facades/Excel.php',
         'Maatwebsite\\Excel\\Factories\\ReaderFactory' => __DIR__ . '/..' . '/maatwebsite/excel/src/Factories/ReaderFactory.php',
+        'Maatwebsite\\Excel\\Factories\\WriterFactory' => __DIR__ . '/..' . '/maatwebsite/excel/src/Factories/WriterFactory.php',
         'Maatwebsite\\Excel\\Fakes\\ExcelFake' => __DIR__ . '/..' . '/maatwebsite/excel/src/Fakes/ExcelFake.php',
+        'Maatwebsite\\Excel\\Files\\Disk' => __DIR__ . '/..' . '/maatwebsite/excel/src/Files/Disk.php',
+        'Maatwebsite\\Excel\\Files\\Filesystem' => __DIR__ . '/..' . '/maatwebsite/excel/src/Files/Filesystem.php',
+        'Maatwebsite\\Excel\\Files\\LocalTemporaryFile' => __DIR__ . '/..' . '/maatwebsite/excel/src/Files/LocalTemporaryFile.php',
+        'Maatwebsite\\Excel\\Files\\RemoteTemporaryFile' => __DIR__ . '/..' . '/maatwebsite/excel/src/Files/RemoteTemporaryFile.php',
+        'Maatwebsite\\Excel\\Files\\TemporaryFile' => __DIR__ . '/..' . '/maatwebsite/excel/src/Files/TemporaryFile.php',
+        'Maatwebsite\\Excel\\Files\\TemporaryFileFactory' => __DIR__ . '/..' . '/maatwebsite/excel/src/Files/TemporaryFileFactory.php',
         'Maatwebsite\\Excel\\Filters\\ChunkReadFilter' => __DIR__ . '/..' . '/maatwebsite/excel/src/Filters/ChunkReadFilter.php',
         'Maatwebsite\\Excel\\HasEventBus' => __DIR__ . '/..' . '/maatwebsite/excel/src/HasEventBus.php',
         'Maatwebsite\\Excel\\HeadingRowImport' => __DIR__ . '/..' . '/maatwebsite/excel/src/HeadingRowImport.php',
+        'Maatwebsite\\Excel\\Helpers\\ArrayHelper' => __DIR__ . '/..' . '/maatwebsite/excel/src/Helpers/ArrayHelper.php',
+        'Maatwebsite\\Excel\\Helpers\\FileTypeDetector' => __DIR__ . '/..' . '/maatwebsite/excel/src/Helpers/FileTypeDetector.php',
         'Maatwebsite\\Excel\\Importer' => __DIR__ . '/..' . '/maatwebsite/excel/src/Importer.php',
         'Maatwebsite\\Excel\\Imports\\EndRowFinder' => __DIR__ . '/..' . '/maatwebsite/excel/src/Imports/EndRowFinder.php',
         'Maatwebsite\\Excel\\Imports\\HeadingRowExtractor' => __DIR__ . '/..' . '/maatwebsite/excel/src/Imports/HeadingRowExtractor.php',
@@ -3006,6 +3024,10 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'Maatwebsite\\Excel\\RegistersCustomConcerns' => __DIR__ . '/..' . '/maatwebsite/excel/src/RegistersCustomConcerns.php',
         'Maatwebsite\\Excel\\Row' => __DIR__ . '/..' . '/maatwebsite/excel/src/Row.php',
         'Maatwebsite\\Excel\\Sheet' => __DIR__ . '/..' . '/maatwebsite/excel/src/Sheet.php',
+        'Maatwebsite\\Excel\\Transactions\\DbTransactionHandler' => __DIR__ . '/..' . '/maatwebsite/excel/src/Transactions/DbTransactionHandler.php',
+        'Maatwebsite\\Excel\\Transactions\\NullTransactionHandler' => __DIR__ . '/..' . '/maatwebsite/excel/src/Transactions/NullTransactionHandler.php',
+        'Maatwebsite\\Excel\\Transactions\\TransactionHandler' => __DIR__ . '/..' . '/maatwebsite/excel/src/Transactions/TransactionHandler.php',
+        'Maatwebsite\\Excel\\Transactions\\TransactionManager' => __DIR__ . '/..' . '/maatwebsite/excel/src/Transactions/TransactionManager.php',
         'Maatwebsite\\Excel\\Validators\\Failure' => __DIR__ . '/..' . '/maatwebsite/excel/src/Validators/Failure.php',
         'Maatwebsite\\Excel\\Validators\\RowValidator' => __DIR__ . '/..' . '/maatwebsite/excel/src/Validators/RowValidator.php',
         'Maatwebsite\\Excel\\Validators\\ValidationException' => __DIR__ . '/..' . '/maatwebsite/excel/src/Validators/ValidationException.php',
@@ -3027,7 +3049,11 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'Mockery\\Adapter\\Phpunit\\Legacy\\TestListenerForV7' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/Legacy/TestListenerForV7.php',
         'Mockery\\Adapter\\Phpunit\\Legacy\\TestListenerTrait' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/Legacy/TestListenerTrait.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegration' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegration.php',
+        'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegrationAssertPostConditionsForV7AndPrevious' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegrationAssertPostConditionsForV7AndPrevious.php',
+        'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegrationAssertPostConditionsForV8' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegrationAssertPostConditionsForV8.php',
         'Mockery\\Adapter\\Phpunit\\MockeryTestCase' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryTestCase.php',
+        'Mockery\\Adapter\\Phpunit\\MockeryTestCaseSetUpForV7AndPrevious' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryTestCaseSetUpForV7AndPrevious.php',
+        'Mockery\\Adapter\\Phpunit\\MockeryTestCaseSetUpForV8' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryTestCaseSetUpForV8.php',
         'Mockery\\Adapter\\Phpunit\\TestListener' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/TestListener.php',
         'Mockery\\ClosureWrapper' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/ClosureWrapper.php',
         'Mockery\\CompositeExpectation' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/CompositeExpectation.php',
@@ -4046,6 +4072,7 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
         'PhpParser\\Node\\Expr\\AssignOp\\BitwiseAnd' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/AssignOp/BitwiseAnd.php',
         'PhpParser\\Node\\Expr\\AssignOp\\BitwiseOr' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/AssignOp/BitwiseOr.php',
         'PhpParser\\Node\\Expr\\AssignOp\\BitwiseXor' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/AssignOp/BitwiseXor.php',
+        'PhpParser\\Node\\Expr\\AssignOp\\Coalesce' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/AssignOp/Coalesce.php',
         'PhpParser\\Node\\Expr\\AssignOp\\Concat' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/AssignOp/Concat.php',
         'PhpParser\\Node\\Expr\\AssignOp\\Div' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/AssignOp/Div.php',
         'PhpParser\\Node\\Expr\\AssignOp\\Minus' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Node/Expr/AssignOp/Minus.php',
@@ -5383,11 +5410,11 @@ class ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit31bcf80e63791f1c54f86109559ca7c5::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb4bc7f07bf201bc6f51c09f0b61ff80f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb4bc7f07bf201bc6f51c09f0b61ff80f::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInitb4bc7f07bf201bc6f51c09f0b61ff80f::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitb4bc7f07bf201bc6f51c09f0b61ff80f::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitb4bc7f07bf201bc6f51c09f0b61ff80f::$classMap;
 
         }, null, ClassLoader::class);
     }
