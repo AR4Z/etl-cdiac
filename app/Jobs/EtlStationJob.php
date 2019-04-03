@@ -19,6 +19,10 @@ class EtlStationJob implements ShouldQueue
      */
     private $work;
 
+    /**
+     * EtlStationJob constructor.
+     * @param Etl $work
+     */
     public function __construct(Etl $work)
     {
         Storage::put('file.txt','Hola');
@@ -29,7 +33,6 @@ class EtlStationJob implements ShouldQueue
      * TypeExecute the job.
      * @return void
      * @internal param Etl $etl
-     * @throws \ReflectionException
      */
     public function handle()
     {

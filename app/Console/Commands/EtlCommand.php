@@ -2,17 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Etl\Etl;
-use App\Jobs\EtlYesterdayJob;
+use App\Etl\Execution\{EtlExecute,FilterExecute,OriginalExecute};
+use App\Etl\Execution\Options\FilterOptions\FilterWeatherOption;
+use App\Etl\Execution\Options\OriginalOptions\OriginalWeatherDatabaseOption;
 use App\Repositories\Administrator\StationRepository;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use App\Etl\Traits\BaseExecuteEtl;
-
 
 class EtlCommand extends Command
 {
-    use BaseExecuteEtl;
     /**
      * The name and signature of the console command.
      *
@@ -26,10 +23,7 @@ class EtlCommand extends Command
      * @var string
      */
     protected $description = 'TypeExecute Etl all yesterday';
-    /**
-     * @var EtlYesterdayJob
-     */
-    private $etlYesterdayJob;
+
     /**
      * @var StationRepository
      */
@@ -39,14 +33,11 @@ class EtlCommand extends Command
 
     /**
      * Create a new command instance.
-     * @param EtlYesterdayJob $etlYesterdayJob
      * @param StationRepository $stationRepository
      */
-    public function __construct(EtlYesterdayJob $etlYesterdayJob,StationRepository $stationRepository)
+    public function __construct(StationRepository $stationRepository)
     {
         parent::__construct();
-
-        $this->etlYesterdayJob = $etlYesterdayJob;
         $this->stationRepository = $stationRepository;
     }
 
@@ -57,12 +48,50 @@ class EtlCommand extends Command
      */
     public function handle()
     {
-        //$this->etlYesterdayJob::dispatch();
+        # se extrae la fecha del dia anterior
+        $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
+
         #iniciar el proceso para las estaciones presentes en la tabla de originales
-        $this->executeAllOriginalYesterday();
+        $this->executeAllOriginalWeather($date);
 
         #iniciar el proceso para las estaciones presentes en la tabla de filtrados
-        $this->executeAllFilterYesterday();
+        $this->executeAllFilterWeather($date);
+    }
+
+    /**
+     * @param string $date
+     */
+    public function executeAllOriginalWeather(string $date)
+    {
+        $execute = new EtlExecute(
+            $method = new OriginalExecute(
+                $option = new OriginalWeatherDatabaseOption(
+                    array_column($this->stationRepository->getStationToOriginalMethod('weather'),'id'),
+                    $date,
+                    $date
+                )
+            )
+        );
+
+        $execute->execute();
+    }
+
+    /**
+     * @param string $date
+     */
+    public function executeAllFilterWeather(string $date)
+    {
+        $execute = new EtlExecute(
+            $method = new FilterExecute(
+                $option = new FilterWeatherOption(
+                    array_column($this->stationRepository->getStationToFilterMethod('weather'),'id'),
+                    $date,
+                    $date
+                )
+            )
+        );
+
+        $execute->execute();
     }
 }
 

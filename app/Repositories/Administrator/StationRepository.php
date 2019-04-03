@@ -341,4 +341,37 @@ class StationRepository extends AppBaseRepository implements RepositoriesContrac
             ->whereNotNull('station_type.etl_method')
             ->get();
     }
+
+    /**
+     * @param string $etlMethod
+     * @return array
+     */
+    public function getStationToOriginalMethod(string $etlMethod) : array
+    {
+        return $this->queryBuilder()
+            ->select('station.id')
+            ->join('original_state','station.id','=','original_state.station_id')
+            ->join('station_type','station.station_type_id','=','station_type.id')
+            ->where('original_state.updated','=',false)
+            ->where('station.etl_active','=',true)
+            ->where('station_type.etl_method','=',$etlMethod)
+            ->get()
+            ->toArray();
+    }
+    /**
+     * @param string $etlMethod
+     * @return array
+     */
+    public function getStationToFilterMethod(string $etlMethod) : array
+    {
+        return $this->queryBuilder()
+            ->select('station.id')
+            ->join('filter_state','station.id','=','filter_state.station_id')
+            ->join('station_type','station.station_type_id','=','station_type.id')
+            ->where('original_state.updated','=',false)
+            ->where('station.etl_active','=',true)
+            ->where('station_type.etl_method','=',$etlMethod)
+            ->get()
+            ->toArray();
+    }
 }

@@ -104,22 +104,20 @@ class ExternalConnectionController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @return \Illuminate\Http\Response
-     * @internal param DatabaseConfig $databaseConfig
-     * @throws \ReflectionException
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function index()
     {
-        dd($this->stationDimOldRepository->stations());
+        $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
+        $stations = array_column($this->stationRepository->getStationToOriginalMethod('weather'),'id');
+
         $execute = new EtlExecute(
             $method = new FilterExecute(
-                $option = new FilterWeatherOption(1,'2018-10-21','2018-10-22')
+                $option = new FilterWeatherOption($stations,$date,$date)
             )
         );
 
+        dd($execute,$method,$option);
 
-        $execute->setTrustProcess(true);
         #$execute->setSequence(true);
         $option->setRunType('Synchronous');
 
