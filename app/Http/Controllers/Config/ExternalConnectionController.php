@@ -107,6 +107,7 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
+        dd(round(16.06+(15.89-16.06)/(700-385)*(601-385),2));
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
         $stations = array_column($this->stationRepository->getStationToOriginalMethod('weather'),'id');
 

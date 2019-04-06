@@ -82,13 +82,13 @@ interface TemporalRepositoryContract extends BaseFactStructureContract
     public function getLastMigrateData();
 
     /**
-     * @param $station_sk
-     * @param $date_sk
-     * @param $time
-     * @param $interval
+     * @param $stationSk
+     * @param $dateSk
+     * @param $initTimeSk
+     * @param $finalTimeSk
      * @return Collection
      */
-    public function getValInRange($station_sk, $date_sk, $time, $interval) : Collection;
+    public function getValInRange($stationSk,$dateSk, $initTimeSk, $finalTimeSk) : Collection;
 
     /**
      * @return mixed

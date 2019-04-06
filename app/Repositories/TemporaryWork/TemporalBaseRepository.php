@@ -39,19 +39,19 @@ class TemporalBaseRepository extends BaseFactRepository
     }
 
     /**
-     * @param $station_sk
-     * @param $date_sk
-     * @param $time
-     * @param $interval
+     * @param $stationSk
+     * @param $dateSk
+     * @param $initTimeSk
+     * @param $finalTimeSk
      * @return Collection
      */
-    public function getValInRange($station_sk,$date_sk, $time, $interval) : Collection
+    public function getValInRange($stationSk,$dateSk, $initTimeSk, $finalTimeSk) : Collection
     {
         return $this->queryBuilder()
             ->select('*')
-            ->where('station_sk',$station_sk)
-            ->where('date_sk', $date_sk)
-            ->whereBetween('time_sk',[$time,$interval])
+            ->where('station_sk',$stationSk)
+            ->where('date_sk', $dateSk)
+            ->whereBetween('time_sk',[$initTimeSk,$finalTimeSk])
             ->orderby('date_sk','ASC')
             ->orderby('time_sk','ASC')
             ->get();

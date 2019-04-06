@@ -5,6 +5,7 @@ namespace App\Etl\Transformers;
 use App\Etl\EtlConfig;
 use App\Etl\Steps\{StepList,Step,StepContract};
 use Exception;
+use Nexmo\Call\Collection;
 
 class Homogenization extends TransformBase implements TransformInterface, StepContract
 {
@@ -209,8 +210,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
         $this->previousData = $this->getElementInFact($this->arrayDate[0]->date_sk -1 , $this->maxValueSk - $this->timeSpace + 1);
 
         #Se hace ciclo por cada dia en las fechas ingresadas
-        foreach ($this->arrayDate as $date)
-        {
+        foreach ($this->arrayDate as $date) {
             if ($iterations > 1){
                $this->previousData = $this->getElementInTemporal($date->date_sk -1 , $this->maxValueSk - $this->timeSpace + 1);
             }
@@ -270,28 +270,38 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
                 $valInRangeActual = $temporalValInRange;
             }
 
-            if (!is_null($valInRangeActual)) {
-
-                # se evalua si el tiempo esta mal posicionado.
-                if (!(in_array((array)$time,array_column( (!is_array($valInRangeActual)) ? $valInRangeActual->toArray() : $valInRangeActual,'time_sk')))){
-
-                    switch (count($valInRangeActual)) {
-                        case 0:
-                            $this->homogenizationNotElements($this->etlConfig->station->id,$date,$time);
-                            break;
-                        case 1:
-                            $this->homogenizationOneElements($valInRangeActual[0],$date,$time);
-                            break;
-                        case 2:
-                            $this->homogenizationTwoElements($valInRangeActual[0],$valInRangeActual[1],$date,$time);
-                            break;
-                        default:
-                            $this->homogenizationMultipleElements($valInRangeActual,$date,$time);
-                            break;
-                    }
-                }
+            if (!is_null($valInRangeActual)){
+                $this->homogenizationDirection((is_array($valInRangeActual)) ? $valInRangeActual : $valInRangeActual->toArray(),$date,$time);
             }
         }
+    }
+
+    /**
+     * @param array $valInRangeActual
+     * @param object $date ['date_sk'=> 'value','date'=> value]
+     * @param object $time ['time_sk'=> 'value','time'=> value]
+     */
+    public function homogenizationDirection(array $valInRangeActual, object $date,object $time) : void
+    {
+        # se evalua si el tiempo esta mal posicionado.
+        if (!(in_array((array)$time,array_column( (!is_array($valInRangeActual)) ? $valInRangeActual : $valInRangeActual,'time_sk')))){
+
+            switch (count($valInRangeActual)) {
+                case 0:
+                    $this->homogenizationNotElements($this->etlConfig->station->id,$date,$time);
+                    break;
+                case 1:
+                    $this->homogenizationOneElements($valInRangeActual[0],$date,$time);
+                    break;
+                case 2:
+                    $this->homogenizationTwoElements($valInRangeActual[0],$valInRangeActual[1],$date,$time);
+                    break;
+                default:
+                    $this->homogenizationMultipleElements($valInRangeActual,$date,$time);
+                    break;
+            }
+        }
+
     }
 
     /**
@@ -299,7 +309,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      * @param $date
      * @param $time
      */
-    public function homogenizationNotElements(int $stationSk,$date, $time)
+    public function homogenizationNotElements(int $stationSk,$date, $time) : void
     {
         $this->inserts[] = ['station_sk'=> $stationSk,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ];
     }
@@ -315,7 +325,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
         $pivotTime = ($value->date_sk == $date->date_sk) ? $time->time_sk : $this->maxValueSk - $time->time_sk;
 
         if (!($value->time_sk == $time->time_sk)){
-            if ((abs($value->time_sk - $pivotTime) <= $this->timeSpaceOneMissingData)){
+            if ($this->validateTimeSpaceOneMissingData($pivotTime,$value->time_sk)){
                 $this->updates[] = ['value'=> $value,'date_sk'=> $date->date_sk,'date'=>$date->date,'time_sk'=> $time->time_sk, 'time'=> $time->time ];
             }else{
                 $this->homogenizationNotElements($this->etlConfig->station->id,$date,$time);
@@ -329,17 +339,18 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      * @param $date
      * @param $time
      */
-    public function homogenizationTwoElements($valueOne, $valueTwo, $date, $time)
+    public function homogenizationTwoElements(object $valueOne,object $valueTwo,object $date,object $time)
     {
-        $arr = [];
-        $arr['station_sk'] = $valueOne->station_sk;
-        $arr['date_sk'] = $date->date_sk;
-        $arr['date'] = $date->date;
-        $arr['time_sk'] = $time->time_sk;
-        $arr['time'] = $time->time;
+        $arr = $this->formatActualElement($valueOne->station_sk,$date->date_sk,$time->time_sk,$date->date,$time->time);
 
         foreach ($this->etlConfig->varForFilter as $variable) {
-            $arr[$variable->local_name] = $this->directionElements($variable->local_name,$valueOne,$valueTwo,$time->time_sk,$variable->decimal_precision);
+            $arr[$variable->local_name] = $this->directionElements(
+                $variable->local_name,
+                $time->time_sk,
+                (!is_null($valueOne->{$variable->local_name})) ? $valueOne : null,
+                (!is_null($valueTwo->{$variable->local_name})) ? $valueTwo : null,
+                $variable->decimal_precision
+            );
         }
         $this->inserts[] = $arr;
     }
@@ -349,31 +360,20 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      * @param $date
      * @param $time
      */
-    public function homogenizationMultipleElements($valInRangeActual, $date, $time)
+    public function homogenizationMultipleElements($valInRangeActual, $date, $time) : void
     {
-        $arrLower = [];
-        $arrHigher = [];
+        $arr = $this->formatActualElement($valInRangeActual[0]->station_sk,$date->date_sk,$time->time_sk,$date->date,$time->time);
 
-        $arr = [];
-        $arr['station_sk'] = $valInRangeActual[0]->station_sk;
-        $arr['date_sk'] = $date->date_sk;
-        $arr['date'] = $date->date;
-        $arr['time_sk'] = $time->time_sk;
-        $arr['time'] = $time->time;
+        $arrPartition = $this->partitionArrayForTime($valInRangeActual,$time->time_sk);
 
-        # se particionan dependiendo de si son mayores o menores.
-        foreach ($valInRangeActual as $value){array_push(${($value->time_sk <= $time->time_sk) ? 'arrLower' : 'arrHigher' } , $value);}
-
-        foreach ($this->etlConfig->varForFilter as $variable)
-        {
+        foreach ($this->etlConfig->varForFilter as $variable){
             $arr[$variable->local_name] = $this->directionElements(
                 $variable->local_name,
-                (float)(count($arrLower) > 1) ? $this->findNearestValue($variable->local_name,$arrLower,$time->time_sk) : $arrLower[0],
-                (float)(count($arrHigher) > 1) ? $this->findNearestValue($variable->local_name,$arrHigher,$time->time_sk) : $arrHigher[0],
                 $time->time_sk,
+                $this->findNearestValue($variable->local_name,$arrPartition['arrLower'],$time->time_sk),
+                $this->findNearestValue($variable->local_name,$arrPartition['arrHigher'],$time->time_sk),
                 $variable->decimal_precision
             );
-
         }
         $this->inserts[] = $arr;
     }
@@ -387,7 +387,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      * @param int $round
      * @return float
      */
-    public function executeFormula(float $v1, float $v2, int $t1, int $t2, int $t3, int $round = 2)
+    private function executeFormula(float $v1, float $v2, int $t1, int $t2, int $t3, int $round = 2) : float
     {
         return round(($v1 + (($v2 - $v1)/($t2 - $t1)) * ($t3 - $t1)),2);
     }
@@ -398,54 +398,58 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      * @param int $time
      * @return object
      */
-    public function findNearestValue(string $variableName, array $arr, int $time)
+    private function findNearestValue(string $variableName, array $arr, int $time)
     {
-        $val = null;
+        if (count($arr) == 0){ return null;}
 
-        foreach ($arr as $value){
+        if (count($elements = $this->extractNotNullVariable($variableName,$arr)) == 0){ return null;}
 
-            if (!is_null($val)){
-                if (!is_null($value->{$variableName})){ if (abs($time - $value->time_sk) < abs($time - $val->time_sk)){ $val = $value;} }
-            }else{
-                $val = $value;
-            }
-        }
+        $value = $this->validateTheClosest($elements,$time);
 
-        return (object)['time_sk' => $val->time_sk, $variableName => $val->{$variableName}];
+        return (object)['time_sk' => $value->time_sk, $variableName => $value->{$variableName}];
+    }
+
+    /**
+     * @param array $elements
+     * @param int $time
+     * @return object
+     */
+    private  function validateTheClosest(array $elements, int $time) : object
+    {
+        $val = $elements[0];
+        for ($i = 1; $i < count($elements); $i++) { if ($this->validateTime($time,$val->time_sk,$elements[$i]->time_sk)){$val = $elements[$i];}}
+        return $val;
     }
 
     /**
      * @param string $variableName
-     * @param $valueOne
-     * @param $valueTwo
+     * @param array $objectiveValidate
+     * @return array
+     */
+    private function extractNotNullVariable(string $variableName, array $objectiveValidate) : array
+    {
+       $arr = [];
+       foreach ($objectiveValidate as $value){ if (!is_null($value->{$variableName})){ $arr[] = $value;}}
+       return $arr;
+    }
+
+    /**
+     * @param string $variableName
      * @param int $time
+     * @param object $valLower
+     * @param object $valHigher
      * @param int $decimalPrecision
      * @return float|null
      */
-    public function directionElements(string $variableName, $valueOne, $valueTwo, $time, int $decimalPrecision = 2)
+    private function directionElements(string $variableName, int $time, object $valLower = null,object $valHigher = null,int $decimalPrecision = 2)
     {
-        $value = null;
+        if (is_null($valLower) and is_null($valHigher)){ return null;}
 
-        if (!is_null($valueOne->{$variableName})){
-            if (!is_null($valueTwo->{$variableName})){
-                $value = $this->executeFormula(
-                    (float)$valueOne->{$variableName},
-                    (float)$valueTwo->{$variableName},
-                    $valueOne->time_sk,
-                    $valueTwo->time_sk,
-                    $time,
-                    $decimalPrecision
-                );
-            }else{
-                $value = $valueOne->{$variableName};
-            }
-        }else{
-            if (!is_null($valueTwo->{$variableName})){
-                $value = $valueTwo->{$variableName};
-            }
-        }
+        if (!is_null($valLower) and is_null($valHigher)){ return ($this->validateTimeSpaceOneMissingData($time,$valLower->time_sk)) ? $valLower->{$variableName} : null;}
 
-        return $value;
+        if (is_null($valLower) and !is_null($valHigher)){ return ($this->validateTimeSpaceOneMissingData($time,$valHigher->time_sk)) ? $valHigher->{$variableName} : null;}
+
+        return $this->executeFormula((float)$valLower->{$variableName},(float)$valHigher->{$variableName}, $valLower->time_sk, $valHigher->time_sk, $time, $decimalPrecision);
     }
 
     /**
@@ -462,5 +466,54 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public function setTimeSpace(int $timeSpace)
     {
         $this->timeSpace = $timeSpace;
+    }
+
+    /**
+     * @param int $stationSk
+     * @param int $dateSk
+     * @param int $timeSk
+     * @param string $date
+     * @param string $time
+     * @return array
+     */
+    private function formatActualElement(int $stationSk, int $dateSk, int $timeSk, string $date, string $time) : array
+    {
+        return ['station_sk'=> $stationSk,'date_sk'=> $dateSk,'date'=> $date,'time_sk'=> $timeSk,'time'=> $time];
+    }
+
+    /**
+     * @param array $valInRangeActual
+     * @param int $timeSk
+     * @return array
+     */
+    private function partitionArrayForTime(array $valInRangeActual, int $timeSk) : array
+    {
+        $arrLower = [];
+        $arrHigher = [];
+
+        foreach ($valInRangeActual as $value){array_push(${($value->time_sk <= $timeSk) ? 'arrLower' : 'arrHigher' } , $value);}
+
+        return ['arrLower'=>$arrLower,'arrHigher'=>$arrHigher];
+    }
+
+    /**
+     * @param int $timeBase
+     * @param int $timeObjective
+     * @return bool
+     */
+    private function validateTimeSpaceOneMissingData(int $timeBase, int $timeObjective) : bool
+    {
+        return (abs($timeBase - $timeObjective)<= $this->timeSpaceOneMissingData);
+    }
+
+    /**
+     * @param int $timeObjective
+     * @param int $timeActual
+     * @param int $timeIncoming
+     * @return bool
+     */
+    private function validateTime(int $timeObjective, int $timeActual, int $timeIncoming) : bool
+    {
+        return abs($timeObjective - $timeIncoming) < abs($timeObjective - $timeActual);
     }
 }
