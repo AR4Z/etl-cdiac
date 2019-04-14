@@ -15,8 +15,8 @@ class CreateLevelAlert extends Migration
     {
        Schema::connection('administrator')->create('level_alert', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('alert_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('alert_id');
 
             $table->string('name')->nullable();
             $table->string('code')->unique();

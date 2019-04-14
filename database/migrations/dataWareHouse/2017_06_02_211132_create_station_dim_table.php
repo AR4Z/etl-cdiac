@@ -15,7 +15,7 @@ class CreateStationDimTable extends Migration
     {
         Schema::connection('data_warehouse')->create('station_dim', function (Blueprint $table)
         {    
-            $table->increments('station_sk')->unsigned()->unique();
+            $table->unsignedBigInteger('station_sk')->unique();
             $table->string('code', 255)->nullable();
             $table->string('name', 255);
             $table->string('net_name', 255);

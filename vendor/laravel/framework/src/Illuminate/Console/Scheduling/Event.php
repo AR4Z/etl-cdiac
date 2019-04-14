@@ -7,6 +7,7 @@ use Cron\CronExpression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use GuzzleHttp\Client as HttpClient;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Contracts\Mail\Mailer;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Traits\Macroable;
@@ -143,16 +144,26 @@ class Event
     public $mutex;
 
     /**
+     * The exit status code of the command.
+     *
+     * @var int|null
+     */
+    public $exitCode;
+
+    /**
      * Create a new event instance.
      *
      * @param  \Illuminate\Console\Scheduling\EventMutex  $mutex
      * @param  string  $command
+     * @param  \DateTimeZone|string $timezone
      * @return void
      */
-    public function __construct(EventMutex $mutex, $command)
+    public function __construct(EventMutex $mutex, $command, $timezone = null)
     {
         $this->mutex = $mutex;
         $this->command = $command;
+        $this->timezone = $timezone;
+
         $this->output = $this->getDefaultOutput();
     }
 
@@ -204,9 +215,7 @@ class Event
     {
         $this->callBeforeCallbacks($container);
 
-        (new Process(
-            $this->buildCommand(), base_path(), null, null, null
-        ))->run();
+        $this->exitCode = Process::fromShellCommandline($this->buildCommand(), base_path(), null, null, null)->run();
 
         $this->callAfterCallbacks($container);
     }
@@ -221,9 +230,7 @@ class Event
     {
         $this->callBeforeCallbacks($container);
 
-        (new Process(
-            $this->buildCommand(), base_path(), null, null, null
-        ))->run();
+        Process::fromShellCommandline($this->buildCommand(), base_path(), null, null, null)->run();
     }
 
     /**
@@ -388,7 +395,7 @@ class Event
      */
     public function emailOutputTo($addresses, $onlyIfOutputExists = false)
     {
-        $this->ensureOutputIsBeingCapturedForEmail();
+        $this->ensureOutputIsBeingCaptured();
 
         $addresses = Arr::wrap($addresses);
 
@@ -408,18 +415,6 @@ class Event
     public function emailWrittenOutputTo($addresses)
     {
         return $this->emailOutputTo($addresses, true);
-    }
-
-    /**
-     * Ensure that output is being captured for email.
-     *
-     * @return void
-     *
-     * @deprecated See ensureOutputIsBeingCaptured.
-     */
-    protected function ensureOutputIsBeingCapturedForEmail()
-    {
-        $this->ensureOutputIsBeingCaptured();
     }
 
     /**
@@ -708,14 +703,14 @@ class Event
     /**
      * Determine the next due date for an event.
      *
-     * @param  \DateTime|string  $currentTime
+     * @param  \DateTimeInterface|string  $currentTime
      * @param  int  $nth
      * @param  bool  $allowCurrentDate
      * @return \Illuminate\Support\Carbon
      */
     public function nextRunDate($currentTime = 'now', $nth = 0, $allowCurrentDate = false)
     {
-        return Carbon::instance(CronExpression::factory(
+        return Date::instance(CronExpression::factory(
             $this->getExpression()
         )->getNextRunDate($currentTime, $nth, $allowCurrentDate, $this->timezone));
     }

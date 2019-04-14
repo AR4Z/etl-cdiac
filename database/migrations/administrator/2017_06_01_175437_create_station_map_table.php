@@ -15,7 +15,7 @@ class CreateStationMapTable extends Migration
     {
         Schema::connection('administrator')->create('map', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('description',500)->nullable();
             $table->integer('initial_zoom')->default(0);

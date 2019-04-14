@@ -15,7 +15,7 @@ class CreateOwnerTable extends Migration
     {
         Schema::connection('administrator')->create('owner', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
             $table->string('name');
             $table->string('code')->unique();

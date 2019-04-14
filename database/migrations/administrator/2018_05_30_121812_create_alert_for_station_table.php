@@ -15,10 +15,10 @@ class CreateAlertForStationTable extends Migration
     {
         Schema::connection('administrator')->create('alert_station', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
-            $table->unsignedInteger('station_id');
-            $table->unsignedInteger('alert_id');
+            $table->unsignedBigInteger('station_id');
+            $table->unsignedBigInteger('alert_id');
 
             $table->decimal('flag_level_one')->nullable();
             $table->decimal('flag_level_two')->nullable();

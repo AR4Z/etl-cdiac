@@ -15,9 +15,9 @@ class CreateNetMapTable extends Migration
     {
         Schema::connection('administrator')->create('net_map', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('net_id');
-            $table->unsignedInteger('map_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('net_id');
+            $table->unsignedBigInteger('map_id');
             $table->boolean('rt_active')->default(false);
             $table->boolean('rt_default_active')->default(false);
 

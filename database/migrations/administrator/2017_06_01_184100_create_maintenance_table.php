@@ -15,8 +15,8 @@ class CreateMaintenanceTable extends Migration
     {
         Schema::connection('administrator')->create('maintenance', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('station_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('station_id');
             $table->date('scheduled_date')->nullable();
             $table->date('maintenance_date')->nullable();
             $table->string('state')->nullable();

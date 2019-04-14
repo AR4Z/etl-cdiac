@@ -14,8 +14,8 @@ class CreateInventoryFactTable extends Migration
     public function up()
     {
         Schema::connection('data_warehouse')->create('inventory_fact', function (Blueprint $table) {
-            $table->bigInteger('source_sk')->unsigned();
-            $table->bigInteger('date_sk')->unsigned();
+            $table->unsignedBigInteger('source_sk');
+            $table->unsignedBigInteger('date_sk');
 
             $table->decimal('co', 10, 4)->nullable();
             $table->decimal('nox', 10, 4)->nullable();

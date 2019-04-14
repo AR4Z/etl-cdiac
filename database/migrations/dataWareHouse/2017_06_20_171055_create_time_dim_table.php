@@ -14,13 +14,12 @@ class CreateTimeDimTable extends Migration
     public function up()
     {
         Schema::connection('data_warehouse')->create('time_dim', function (Blueprint $table) {
-            $table->increments('time_sk')->unsigned()->unique();
+            $table->unsignedBigInteger('time_sk')->unique();
             $table->time('time')->nullable();
             $table->integer('hours');
             $table->integer('minutes');
             $table->integer('seconds');
             $table->enum('part_day', ['madrugada', 'mañana', 'tarde', 'noche'])->nullable();
-
         });
     }
 

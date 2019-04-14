@@ -14,7 +14,7 @@ class CreateDateDimTable extends Migration
     public function up()
     {
         Schema::connection('data_warehouse')->create('date_dim', function (Blueprint $table) {
-            $table->increments('date_sk')->unsigned()->unique();
+            $table->unsignedBigInteger('date_sk')->unique();
             $table->date('date');
             $table->integer('year');
             $table->integer('month');

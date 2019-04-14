@@ -15,8 +15,8 @@ class CreateStationConfig extends Migration
     {
       Schema::connection('config')->create('station', function (Blueprint $table) {
 
-          $table->increments('id');
-          $table->integer('connection_id');
+          $table->bigIncrements('id');
+          $table->unsignedBigInteger('connection_id');
           $table->string('name');
           $table->string('name_table')->nullable();
           $table->boolean('active')->default(true);

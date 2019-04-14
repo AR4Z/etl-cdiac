@@ -15,11 +15,10 @@ class CreateGraphStationTable extends Migration
     {
         Schema::connection('administrator')->create('graph_station', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('station_id');
-            $table->unsignedInteger('graph_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('station_id');
+            $table->unsignedBigInteger('graph_id');
             $table->boolean('rt_active')->default(false);
-
 
             $table->timestamps();
 

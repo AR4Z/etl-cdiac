@@ -32,7 +32,7 @@ class FilterExecute extends ExecuteStrategy
      * @param array $executionParams
      * @return array
      */
-    public function execute(array $executionParams = []): array
+    public function execute(array $executionParams = []) : array
     {
        $executionParams['trustProcess'] = $this->trustProcess;
        return $this->filterObject->runConfig('Filter',$executionParams);
@@ -41,7 +41,7 @@ class FilterExecute extends ExecuteStrategy
     /**
      * @return bool
      */
-    public function isTrustProcess(): bool
+    public function isTrustProcess() : bool
     {
         return $this->trustProcess;
     }
@@ -49,7 +49,7 @@ class FilterExecute extends ExecuteStrategy
     /**
      * @param bool $trustProcess
      */
-    public function setTrustProcess(bool $trustProcess)
+    public function setTrustProcess(bool $trustProcess) : void
     {
         $this->trustProcess = $trustProcess;
     }

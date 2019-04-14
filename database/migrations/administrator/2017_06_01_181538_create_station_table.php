@@ -15,9 +15,9 @@ class CreateStationTable extends Migration
     {
         Schema::connection('administrator')->create('station', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('station_type_id');
-            $table->unsignedInteger('net_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('station_type_id');
+            $table->unsignedBigInteger('net_id');
 
             # Representa el codigo de la estacion proporcionado por el personal del idea
             $table->string('code')->nullable();

@@ -15,7 +15,7 @@ class CreateConnectionConfig extends Migration
     {
       Schema::connection('config')->create('external_connection', function (Blueprint $table) {
 
-          $table->increments('id');
+          $table->bigIncrements('id');
           $table->string('name');
           $table->string('net')->nullable();
           $table->enum('driver',['pgsql','mysql'])->nullable()->default(null);

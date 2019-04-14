@@ -15,9 +15,9 @@ class CreateExistGroundwaterFactTable extends Migration
     {
         Schema::connection('temporary_work')->create('exist_fact_groundwater', function (Blueprint $table) {
 
-            $table->bigInteger('station_sk')->unsigned();
-            $table->bigInteger('date_sk')->unsigned();
-            $table->bigInteger('time_sk')->unsigned();
+            $table->unsignedBigInteger('station_sk');
+            $table->unsignedBigInteger('date_sk');
+            $table->unsignedBigInteger('time_sk');
 
             $table->string('date_time')->nullable();
 

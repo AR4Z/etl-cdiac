@@ -16,8 +16,8 @@ class CreateAirReliabilityTable extends Migration
         Schema::connection('data_warehouse')->create('air_reliability', function (Blueprint $table) {
 
             $table->bigIncrements('id');
-            $table->bigInteger('station_sk')->unsigned();
-            $table->bigInteger('date_sk')->unsigned();
+            $table->unsignedBigInteger('station_sk');
+            $table->unsignedBigInteger('date_sk');
 
             $table->bigInteger('so2_total_records')->nullable();
             $table->bigInteger('so2_correct_records')->nullable();

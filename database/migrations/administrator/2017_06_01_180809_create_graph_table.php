@@ -15,7 +15,7 @@ class CreateGraphTable extends Migration
     {
         Schema::connection('administrator')->create('graph', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('description',500)->nullable();
             $table->string('graph_file_name')->nullable();

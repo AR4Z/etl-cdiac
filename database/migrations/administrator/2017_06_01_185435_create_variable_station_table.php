@@ -15,9 +15,9 @@ class CreateVariableStationTable extends Migration
     {
         Schema::connection('administrator')->create('variable_station', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('station_id');
-            $table->unsignedInteger('variable_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('station_id');
+            $table->unsignedBigInteger('variable_id');
             $table->double('maximum')->nullable();
             $table->double('minimum')->nullable();
             $table->double('previous_deference')->nullable();

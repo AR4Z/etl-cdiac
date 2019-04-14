@@ -15,8 +15,8 @@ class CreateOriginStateConfig extends Migration
     {
       Schema::connection('config')->create('original_state', function (Blueprint $table) {
 
-          $table->increments('id');
-          $table->integer('station_id');
+          $table->bigIncrements('id');
+          $table->unsignedBigInteger('station_id');
           $table->string('current_date')->default('1000-01-01');
           $table->string('current_time')->default('00:00:00');
           $table->boolean('it_update')->default(false);

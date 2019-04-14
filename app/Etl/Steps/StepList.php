@@ -14,9 +14,9 @@ class StepList
     /**
      * @param Step $step
      */
-    public function addStep(Step $step)
+    public function addStep(Step $step) : void
     {
-        array_push($this->steps, $step);
+        $this->steps[] =  $step;
     }
 
     /**
@@ -40,7 +40,7 @@ class StepList
      * @param EtlState $etlState
      * @param $process
      */
-    public function runStartList(EtlState $etlState, $process)
+    public function runStartList(EtlState $etlState, $process) : void
     {
         foreach ( $this->steps as $step){ $step->start($etlState,$process); }
     }

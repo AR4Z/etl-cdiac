@@ -15,9 +15,9 @@ class CreateEventTracking extends Migration
     {
         Schema::connection('data_warehouse')->create('event_rainfall_tracking', function (Blueprint $table)
         {
-            $table->bigInteger('station_sk')->unsigned();
-            $table->bigInteger('date_sk')->unsigned();
-            $table->bigInteger('time_sk')->unsigned();
+            $table->unsignedBigInteger('station_sk');
+            $table->unsignedBigInteger('date_sk');
+            $table->unsignedBigInteger('time_sk');
 
             $table->integer('time_tracking')->nullable();
             $table->double('value')->nullable();

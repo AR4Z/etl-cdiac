@@ -15,7 +15,7 @@ class CreateStationTypeTable extends Migration
     {
         Schema::connection('administrator')->create('station_type', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('code',25);
             $table->string('etl_method')->nullable();

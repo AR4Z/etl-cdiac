@@ -15,10 +15,12 @@ class CreateCorrectionHistoryTable extends Migration
     {
         Schema::connection('data_warehouse')->create('correction_history', function (Blueprint $table)
         {
-            $table->increments('id');
-            $table->bigInteger('station_sk')->unsigned();
-            $table->bigInteger('date_sk')->unsigned();
-            $table->bigInteger('time_sk')->unsigned();
+            $table->bigIncrements('id');
+
+            $table->unsignedBigInteger('station_sk');
+            $table->unsignedBigInteger('date_sk');
+            $table->unsignedBigInteger('time_sk');
+
             $table->string('variable')->nullable();
             $table->string('error_value')->nullable();
             $table->string('observation')->nullable();

@@ -61,7 +61,7 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     /**
      *
      */
-    public function run()
+    public function run() : void
     {
         # Se crean los pasos que se requieren para Database
         $this->stepsList = $this->startSteps(new StepList());
@@ -88,7 +88,7 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
      *
      * @return array
      */
-    public function stepConfigureArrayTime()
+    public function stepConfigureArrayTime() : array
     {
         try {
 
@@ -102,23 +102,23 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     /**
      * @param array $paramSearch
      */
-    public function setParamSearch(array $paramSearch = [])
+    public function setParamSearch(array $paramSearch = []) : void
     {
-        foreach ($paramSearch as $param){ array_push($this->paramSearch,$param); }
+        foreach ($paramSearch as $param){ $this->paramSearch[] = $param; }
     }
 
     /**
      * @param array $deleteLastHour
      */
-    public function setDeleteLastHour(array $deleteLastHour = [])
+    public function setDeleteLastHour(array $deleteLastHour = []) : void
     {
-        foreach ($deleteLastHour as $param){ array_push($this->deleteLastHour,$param); }
+        foreach ($deleteLastHour as $param){ $this->deleteLastHour[] = $param; }
     }
 
     /**
      * @param int $spaceTimeDelete
      */
-    public function setSpaceTimeDelete(int $spaceTimeDelete = 3600)
+    public function setSpaceTimeDelete(int $spaceTimeDelete = 3600) : void
     {
         $this->spaceTimeDelete = $spaceTimeDelete;
     }
@@ -126,7 +126,7 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     /**
      * @param int $changeOverflowLower
      */
-    public function setChangeOverflowLower(int $changeOverflowLower = null)
+    public function setChangeOverflowLower(int $changeOverflowLower = null) : void
     {
         $this->changeOverflowLower = $changeOverflowLower;
     }
@@ -134,7 +134,7 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     /**
      * @param int $changeOverflowPreviousDeference
      */
-    public function setChangeOverflowPreviousDeference(int $changeOverflowPreviousDeference = null)
+    public function setChangeOverflowPreviousDeference(int $changeOverflowPreviousDeference = null) : void
     {
         $this->changeOverflowPreviousDeference = $changeOverflowPreviousDeference;
     }
@@ -142,9 +142,9 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
     /**
      * @param array $variablesCalculated
      */
-    public function setVariablesCalculated(array $variablesCalculated = [])
+    public function setVariablesCalculated(array $variablesCalculated = []) : void
     {
-        foreach ($variablesCalculated as $key => $value){ array_push($this->variablesCalculated,[$key => $value]); }
+        foreach ($variablesCalculated as $key => $value){ $this->variablesCalculated[] = [$key => $value]; }
     }
 
 
@@ -152,7 +152,7 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
      * @param string $localName
      * @param array $variablesCalculatedName
      */
-    private function insertCalculateData(string $localName, array $variablesCalculatedName)
+    private function insertCalculateData(string $localName, array $variablesCalculatedName) : void
     {
         if (in_array($localName,$variablesCalculatedName)){
             $this->generateVariableCalculatedWDT($this->etlConfig->repositorySpaceWork, $localName, $this->variablesCalculated[$localName]);
@@ -161,15 +161,13 @@ class FilterAir extends TransformBase implements TransformInterface, StepContrac
 
     /**
      *
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    private function goFilters()
+    private function goFilters() : void
     {
         $varFilter = $this->etlConfig->varForFilter;
         $variablesCalculatedName = array_keys($this->variablesCalculated);
 
-        foreach ($varFilter as $value)
-        {
+        foreach ($varFilter as $value) {
             # Convertir valores extraños a null
             $this->updateForNull($value->local_name,$this->paramSearch);
 

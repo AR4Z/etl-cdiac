@@ -235,7 +235,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public function pushAllInserts($date)
     {
         foreach ($this->arrayTime as $time) {
-            array_push($this->inserts,['station_sk' => $this->etlConfig->station->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time]);
+            $this->inserts[] = ['station_sk' => $this->etlConfig->station->id,'date_sk' => $date->date_sk,'date' => $date->date, 'time_sk' => $time->time_sk,'time' => $time->time];
         }
     }
 
@@ -261,10 +261,10 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
                 $temporalValInRange = [];
 
                 # se inserta el ultimo valor de la fecha anterior al array temporal
-                array_push($temporalValInRange,$this->previousData);
+                $temporalValInRange[] = $this->previousData;
 
                 # se recorren los valores en el array de valores de la fecha actual en el rango inicial y se insertan al array temporal
-                foreach ($valInRangeActual as $value){ array_push($temporalValInRange,$value); }
+                foreach ($valInRangeActual as $value){ $temporalValInRange[] = $value; }
 
                 # se asigna el array temporal al array al array public para enviarlo en las funciones de homogenizacion
                 $valInRangeActual = $temporalValInRange;
@@ -488,12 +488,9 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
      */
     private function partitionArrayForTime(array $valInRangeActual, int $timeSk) : array
     {
-        $arrLower = [];
-        $arrHigher = [];
-
-        foreach ($valInRangeActual as $value){array_push(${($value->time_sk <= $timeSk) ? 'arrLower' : 'arrHigher' } , $value);}
-
-        return ['arrLower'=>$arrLower,'arrHigher'=>$arrHigher];
+        $arr = ['arrLower' => [],'arrHigher' => []];
+        foreach ($valInRangeActual as $value){ $arr[($value->time_sk <= $timeSk) ? 'arrLower' : 'arrHigher'][] = $value;}
+        return $arr;
     }
 
     /**

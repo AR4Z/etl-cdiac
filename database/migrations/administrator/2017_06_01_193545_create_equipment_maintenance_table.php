@@ -15,9 +15,9 @@ class CreateEquipmentMaintenanceTable extends Migration
     {
         Schema::connection('administrator')->create('equipment_maintenance', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('maintenance_id');
-            $table->unsignedInteger('equipment_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('maintenance_id');
+            $table->unsignedBigInteger('equipment_id');
 
             $table->timestamps();
 

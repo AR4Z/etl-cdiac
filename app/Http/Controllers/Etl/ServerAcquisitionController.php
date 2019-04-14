@@ -31,6 +31,10 @@ class ServerAcquisitionController extends Controller
         return view('serverAcquisition.index',compact('stations','listStation'));
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function searchData(Request $request)
     {
         $data = $request->all();
@@ -40,12 +44,13 @@ class ServerAcquisitionController extends Controller
             dd('No fue posible establecer la coneccion');
         }
         $keys = ['fecha','hora'];
-        foreach ($station->variables as $variable){array_push($keys,$variable->database_field_name );}
+        foreach ($station->variables as $variable){$keys[] = $variable->database_field_name;}
 
         $externalData= $this->queryBuilderDefault($station->table_db_name)
                             ->select($keys)
                             ->whereBetween('fecha',[$data['start'],$data['end']])
                             ->get();
+
         return view('serverAcquisition.result')->with(['externalData' => $externalData, 'search' => $data , 'station' => $station, 'keys'=> $keys]);
     }
 
@@ -63,7 +68,7 @@ class ServerAcquisitionController extends Controller
                 $data = ['connection'=> $connection->name,'host'=> $connection->host,'port'=> $connection->port,'database'=> $connection->database, 'username'=> $connection->username];
                 foreach ($tables as $table){
                     $tab = $table->{'Tables_in_'.$connection->database};
-                    if (!($tab == 'variables' or $tab == 'usuario' or $tab == 'estaciones' or $tab == 'confiestaciones')){ $data['station'] = $tab; array_push($arr,$data);}
+                    if (!($tab == 'variables' or $tab == 'usuario' or $tab == 'estaciones' or $tab == 'confiestaciones')){ $data['station'] = $tab; $arr[] = $data;}
                 }
             }
         }

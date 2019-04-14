@@ -42,14 +42,14 @@ class EtlExecute
     /**
      * @return bool
      */
-    public function isSequence(): bool
+    public function isSequence() : bool
     {
         return $this->sequence;
     }
     /**
      * @param bool $sequence
      */
-    public function setSequence(bool $sequence)
+    public function setSequence(bool $sequence) : void
     {
         $this->sequence = $sequence;
     }
@@ -57,7 +57,7 @@ class EtlExecute
     /**
      * @return bool
      */
-    public function isDebug(): bool
+    public function isDebug() : bool
     {
         return $this->debug;
     }
@@ -65,7 +65,7 @@ class EtlExecute
     /**
      * @param bool $debug
      */
-    public function setDebug(bool $debug)
+    public function setDebug(bool $debug) : void
     {
         $this->debug = $debug;
     }

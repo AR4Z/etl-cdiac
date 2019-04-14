@@ -12,3 +12,5 @@ _ide_helper.php
 .phpstorm.meta.php
 git
 !.gitignore
+*.sqlite
+*.sqlite-journal

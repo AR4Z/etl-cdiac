@@ -20,7 +20,7 @@ class Csv extends ExtensionLoadBase implements ExtensionLoadContract
      * @param string $fileName
      * @return bool
      */
-    public function loadFormatData(TemporalRepositoryContract $repository, string $method, Collection $variables, string $fileName): bool
+    public function loadFormatData(TemporalRepositoryContract $repository, string $method, Collection $variables, string $fileName) : bool
     {
         $planeImport = new PlaneImport();
         $planeImport->import(storage_path().'/app/public/'. $fileName,null,\Maatwebsite\Excel\Excel::CSV);
@@ -53,7 +53,7 @@ class Csv extends ExtensionLoadBase implements ExtensionLoadContract
     /**
      * @return bool
      */
-    public function isDateTime(): bool
+    public function isDateTime() : bool
     {
         return $this->dateTime;
     }
@@ -61,7 +61,7 @@ class Csv extends ExtensionLoadBase implements ExtensionLoadContract
     /**
      * @param bool $dateTime
      */
-    public function setDateTime(bool $dateTime): void
+    public function setDateTime(bool $dateTime) : void
     {
         $this->dateTime = $dateTime;
     }

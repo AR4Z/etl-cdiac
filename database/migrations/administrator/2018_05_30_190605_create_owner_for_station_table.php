@@ -15,10 +15,10 @@ class CreateOwnerForStationTable extends Migration
     {
         Schema::connection('administrator')->create('owner_station', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
-            $table->unsignedInteger('station_id');
-            $table->unsignedInteger('owner_id');
+            $table->unsignedBigInteger('station_id');
+            $table->unsignedBigInteger('owner_id');
 
             $table->timestamps();
 

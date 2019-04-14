@@ -34,7 +34,7 @@ abstract class LoadBase extends EtlBase
                     $this->insertExistTableWDT($this->etlConfig->repositoryExist,$exist);
 
                     # Documentar los valores existentes en el array de control
-                    array_push($this->redirectExist, $exist);
+                    $this->redirectExist = $exist;
                 }
                 #Eliminar los valores existentes de la tabla tenporal de trabajo
                 $this->etlConfig->repositorySpaceWork->deleteFromDateAndTime($value->date_sk,$value->time_sk);

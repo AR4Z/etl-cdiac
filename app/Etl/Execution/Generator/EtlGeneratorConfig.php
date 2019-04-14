@@ -75,7 +75,7 @@ class EtlGeneratorConfig
      * @param array $stations
      * @return array
      */
-    private function configStations(array $stations) :array
+    private function configStations(array $stations) : array
     {
         foreach ($stations as $station) { $this->configStation($station);}
         return $this->etl;
@@ -85,7 +85,7 @@ class EtlGeneratorConfig
      * @param int $station
      * @return array
      */
-    private function configStation(int $station) :array
+    private function configStation(int $station) : array
     {
         $initialDate = (array_key_exists('initialDate',$this->extractorConfig)) ?  Carbon::parse($this->extractorConfig['initialDate']) : null;
         $finalDate = (array_key_exists('finalDate',$this->extractorConfig)) ?  Carbon::parse($this->extractorConfig['finalDate']) : null;
@@ -104,7 +104,7 @@ class EtlGeneratorConfig
      * @param Carbon $initialDate
      * @param Carbon $finalDate
      */
-    private function partitionExecute(Etl $etl,Carbon $initialDate,Carbon $finalDate)
+    private function partitionExecute(Etl $etl,Carbon $initialDate,Carbon $finalDate) : void
     {
         $spaceDays = $this->spaceDayExecution;
         $interval = $initialDate->diffInDays($finalDate);
@@ -127,7 +127,7 @@ class EtlGeneratorConfig
      * @param Carbon $initialDate
      * @param Carbon $finalDate
      */
-    private function execute(Etl $etl,Carbon $initialDate = null,Carbon $finalDate = null)
+    private function execute(Etl $etl,Carbon $initialDate = null,Carbon $finalDate = null) : void
     {
 
         if (!is_null($initialDate)){ $this->extractorConfig['initialDate'] = $initialDate->toDateString();}
@@ -142,7 +142,7 @@ class EtlGeneratorConfig
         $etl->load($this->load,$this->loadConfig);
         $etl->run($this->runType,$this->runTypeConfig);
 
-        array_push($this->etl,$etl);
+        $this->etl[] = $etl;
     }
 
     /**

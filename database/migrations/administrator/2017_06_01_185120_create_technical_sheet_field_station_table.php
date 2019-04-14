@@ -15,9 +15,9 @@ class CreateTechnicalSheetFieldStationTable extends Migration
     {
         Schema::connection('administrator')->create('technical_sheet_field_station', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('station_id');
-            $table->unsignedInteger('technical_sheet_field_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('station_id');
+            $table->unsignedBigInteger('technical_sheet_field_id');
             $table->boolean('rt_active')->default(false);
             $table->longText('value')->nullable();
 

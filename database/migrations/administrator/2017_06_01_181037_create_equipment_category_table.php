@@ -15,7 +15,7 @@ class CreateEquipmentCategoryTable extends Migration
     {
         Schema::connection('administrator')->create('equipment_category', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('description',500)->nullable();
 

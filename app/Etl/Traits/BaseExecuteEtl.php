@@ -72,7 +72,7 @@ trait BaseExecuteEtl
 
         foreach ($stationForNet as $station){
             $res = $this->executeOneStation($method, $station->net_id,  $station->id,$sequence,$serialization,$extract,$transform,$load,$jobs);
-            array_push($response,$res);
+            $response[] = $res;
         }
         return $response;
     }
@@ -88,6 +88,7 @@ trait BaseExecuteEtl
      * @param array $load
      * @param bool $jobs
      * @return array
+     * @throws \ReflectionException
      */
     public function executeOneStation(
         string $method,
@@ -125,7 +126,7 @@ trait BaseExecuteEtl
                 $extract['optionExtract']['finalDate'] = $dateFin->format('Y-m-d');
 
                 $res = $this->dispatchJob($method, $net, $station,$sequence,$serialization,$extract,$transform,$load);
-                array_push($arr,$res);
+                $arr[] = $res;
                 $i++;
             }
             $response = $arr;
@@ -190,6 +191,7 @@ trait BaseExecuteEtl
      * @param array $load
      * @param bool $jobs --- true determina que se ejecuta en una pila asincrona, false para ejecusion en  formato sincrono
      * @return array
+     * @throws \ReflectionException
      */
 
     public function executeAllStations(string $method, bool $sequence, bool $serialization,array $extract = [], array $transform = [], array $load = [],bool $jobs)
@@ -198,7 +200,7 @@ trait BaseExecuteEtl
         $arr= []; $response = null;
         foreach ($stationEtlTrue as $station){
             $response = $this->executeOneStation($method, $station->net_id,  $station->id, $sequence,$serialization,$extract,$transform,$load,$jobs);
-            array_push($arr,$response);
+            $arr[] = $response;
         }
 
         return $arr;

@@ -15,7 +15,7 @@ class CreateStationTechnicalSheetFieldTable extends Migration
     {
         Schema::connection('administrator')->create('technical_sheet_field', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('description',500)->nullable();
 

@@ -44,13 +44,13 @@ class Txt extends ExtensionLoadBase implements ExtensionLoadContract
         # Se buscan los encabezados entrantes y se obtiene el nombre en la tabla temporal
         $headers = [];
         foreach ($inputVariables as $inputVariable){
-            if (array_key_exists($inputVariable,$variablesName)){array_push($headers,$variablesName[$inputVariable]);}
+            if (array_key_exists($inputVariable,$variablesName)){$headers[] = $variablesName[$inputVariable];}
         }
 
         # Se genera el array para insertar en la tabla temporal
         $data = [];
         foreach ($file as $row) {
-            array_push($data,array_combine($headers,explode(",",$row)));
+            $data[] = array_combine($headers,explode(",",$row));
         }
 
         return $repository->queryBuilder()->insert($data);

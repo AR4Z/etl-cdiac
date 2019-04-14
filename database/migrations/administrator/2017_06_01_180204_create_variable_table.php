@@ -15,7 +15,7 @@ class CreateVariableTable extends Migration
     {
         Schema::connection('administrator')->create('variable', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('description',500)->nullable();
             $table->string('excel_name')->nullable();

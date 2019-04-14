@@ -168,7 +168,7 @@ class PlaneEtlController extends Controller
     {
         $arr = [];
         $var = $this->stationRepository->findVarForFilter($stationId);
-        foreach ($var as $index => $value){array_push($arr,['excel_name' =>$value->excel_name,'description'=>$value->description]);}
+        foreach ($var as $index => $value){$arr[] = ['excel_name' =>$value->excel_name,'description'=>$value->description];}
         return $arr;
     }
 
@@ -192,7 +192,7 @@ class PlaneEtlController extends Controller
                 unset($variablesLoad[$val]);
             }else{
                 if ($value['required']){
-                    array_push($notExist,$value['incoming_name'].' : '.$value['description']);
+                    $notExist[] = $value['incoming_name'].' : '.$value['description'];
                 }
             }
         }
@@ -202,7 +202,7 @@ class PlaneEtlController extends Controller
             $val = array_search($value['excel_name'],$variablesLoad);
             if ($val === false){
                 $flag = false;
-                array_push($notExist,$value['excel_name'].' : '.$value['description']);
+                $notExist[] = $value['excel_name'].' : '.$value['description'];
             }
         }
 
@@ -213,7 +213,7 @@ class PlaneEtlController extends Controller
 
             if ($val === false){
                 $flag = false;
-                array_push($notFind,$value);
+                $notFind[] = $value;
             }
         }
 

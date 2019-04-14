@@ -15,7 +15,7 @@ class CreateInformationRequestTable extends Migration
     {
         Schema::connection('administrator')->create('information_request', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('comment',500)->nullable();
             $table->string('subject')->nullable();
             $table->string('information_use')->nullable();

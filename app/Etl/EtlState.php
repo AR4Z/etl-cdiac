@@ -39,39 +39,39 @@ class EtlState
     /**
      * @param array $newError
      */
-    public function addErrorsState(array $newError)
+    public function addErrorsState(array $newError) : void
     {
-        array_push($this->errorsState, $newError);
+        $this->errorsState[] = $newError;
     }
 
     /**
      * @param array $newWarning
      */
-    public function addWarningsState(array $newWarning)
+    public function addWarningsState(array $newWarning) : void
     {
-        array_push($this->warningsState, $newWarning);
+       $this->warningsState[] = $newWarning;
     }
 
     /**
      * @param array $newInfo
      */
-    public function addInfoState(array $newInfo)
+    public function addInfoState(array $newInfo) : void
     {
-        array_push($this->infoState, $newInfo);
+        $this->infoState[] =  $newInfo;
     }
 
     /**
      * @param array $newSuccess
      */
-    public function addSuccessState(array $newSuccess)
+    public function addSuccessState(array $newSuccess) : void
     {
-        array_push($this->successState, $newSuccess);
+        $this->successState[] = $newSuccess;
     }
 
     /**
      * @throws Exception
      */
-    public function terminateProcessState()
+    public function terminateProcessState() : void
     {
         $this->stopProcessState = true;
 

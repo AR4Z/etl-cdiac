@@ -17,8 +17,8 @@ class CreateNetTable extends Migration
     {
         Schema::connection('administrator')->create('net', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('connection_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('connection_id');
             $table->string('name')->unique();
             $table->string('description',500)->nullable();
             $table->string('administrator_name')->nullable();
@@ -37,6 +37,7 @@ class CreateNetTable extends Migration
             $table->boolean('filtered_updated')->default(false);
 
             $table->timestamps();
+
             $table->foreign('connection_id')->references('id')->on('connection')->onDelete('cascade');
 
         });

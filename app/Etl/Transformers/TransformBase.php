@@ -200,7 +200,7 @@ abstract class TransformBase extends EtlBase
      */
     public function setParamSearch(array $params)
     {
-        foreach ($params as $param){ array_push($this->paramSearch, $param);}
+        foreach ($params as $param){ $this->paramSearch[] = $param;}
     }
 
     public function filterWindSpeedZero()
@@ -215,7 +215,6 @@ abstract class TransformBase extends EtlBase
     /**
      * @param $variables
      * @return bool
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
     public function filterCappedRainGauge($variables)
     {

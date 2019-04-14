@@ -129,7 +129,7 @@ class PrimaryKeys
      * @param string $extractMethod
      * @param string $extractType
      */
-    public function config(string $typeProcess, string $etlMethod = null, string $extractMethod, string $extractType = null)
+    public function config(string $typeProcess, string $etlMethod = null, string $extractMethod, string $extractType = null) : void
     {
         #dd($typeProcess,$etlMethod,$extractMethod,$extractType);
         $temporalSelect = ' ';
@@ -142,34 +142,34 @@ class PrimaryKeys
         {
             $this->globalCastKey .= 'CAST('.$key.' AS '.$value['type_data'].') ,';
 
-            if (!is_null($value['cast_name'])){ array_push($this->castKeys,$value['cast_name']); }
+            if (!is_null($value['cast_name'])){ $this->castKeys[] = $value['cast_name']; }
 
-            if ($value['key']){ array_push($this->keys,$key); }
+            if ($value['key']){ $this->keys[] = $key; }
 
             if (!is_null($value['calculated'])){
                 if (!$value['calculated']){
-                    array_push($this->notCalculatedColumns,$key);
+                    $this->notCalculatedColumns[] = $key;
                 }
             }
 
             if ($value['local_incoming']){
-                array_push($this->localCalculatedKeys,$key);
+                $this->localCalculatedKeys[] = $key;
                 $temporalSelect .= $key.' ,';
                 if ($value['key']){
                     $temporalLocalMerge .= $key.' ,';
                 }
             }else{
-                array_push($this->notLocalIncomingKeys,$key);
+                $this->notLocalIncomingKeys[] = $key;
             }
 
             if ($value['external_incoming']){
-                array_push($this->externalCalculatedKeys,$key);
+                $this->externalCalculatedKeys[] = $key;
                 $temporalCastSelect .= $value['external_name']. ' as '. $value['cast_name'].' ,';
                 if ($value['key']){
                     $temporalExternalMerge .= $value['external_name'].' ,';
                 }
             }else{
-                array_push($this->notExternalIncomingKeys,$key);
+                $this->notExternalIncomingKeys[] = $key;
             }
 
             if ($value['type'] == 'all' or $value['type'] == $etlMethod)
@@ -177,23 +177,23 @@ class PrimaryKeys
                 if ($typeProcess == 'Original' and $value['load_original'])
                 {
                     $this->loadCastKey  .= ' '.$value['local_name'].' ,';
-                    array_push($this->load,$value['local_name']);
+                    $this->load[] = $value['local_name'];
                 }
 
                 if ( $typeProcess == 'Filter' and $value['load_filter'] ){
                     $this->loadCastKey .= ' CAST('.$value['local_name'].' AS '.$value['type_data'].') ,';
-                    array_push($this->load,$value['local_name']);
+                    $this->load[] = $value['local_name'];
                 }
             }
 
             if ($extractMethod == 'Database' and  $extractType == 'External' and $value['external_incoming'] and !is_null($value['cast_name'])){
                 $this->extractConsult .= $value['external_name']. ' as '. $value['cast_name'].' ,';
-                array_push($this->extractColumns,$value['cast_name']);
+                $this->extractColumns[] = $value['cast_name'];
             }
 
             if ($extractMethod == 'Database' and  $extractType == 'Local' and $value['local_incoming']){
                 $this->extractConsult .= $value['local_name'].' ,';
-                array_push($this->extractColumns,$value['local_name']);
+                $this->extractColumns[] = $value['local_name'];
             }
         }
 
@@ -201,7 +201,6 @@ class PrimaryKeys
         $this->selectCastKey = $temporalCastSelect;
         $this->mergeLocalIncomingKeys = substr($temporalLocalMerge, 0, -1);
         $this->mergeExternalIncomingKeys = substr($temporalExternalMerge, 0, -1);
-
     }
 
 }

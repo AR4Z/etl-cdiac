@@ -15,11 +15,13 @@ class CreateTemporaryCorrectionTable extends Migration
     {
         Schema::connection('temporary_work')->create('temporary_correction', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->integer('temporary_id');
-            $table->integer('station_sk');
-            $table->integer('date_sk');
-            $table->integer('time_sk');
+            $table->bigIncrements('id');
+            $table->bigInteger('temporary_id');
+
+            $table->unsignedBigInteger('station_sk');
+            $table->unsignedBigInteger('date_sk');
+            $table->unsignedBigInteger('time_sk');
+
             $table->string('variable');
             $table->string('error_value')->nullable();
             $table->string('observation')->nullable();

@@ -15,9 +15,9 @@ class CreateStationNetTable extends Migration
     {
         Schema::connection('administrator')->create('station_net', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('net_id');
-            $table->unsignedInteger('station_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('net_id');
+            $table->unsignedBigInteger('station_id');
             $table->boolean('rt_active')->default(false);
 
             $table->timestamps();

@@ -248,12 +248,12 @@ class Load extends LoadBase implements LoadInterface,StepContract
         if ($this->etlConfig->typeProcess !== "Original"){
             foreach ($variables as $variable){
                 $temporalSelect .= 'CAST('.$variable->$colOrigin.' AS float) AS '. $variable->$colDestination.', ';
-                array_push($this->columns,$variable->$colDestination);
+                $this->columns[] = $variable->$colDestination;
             }
         }else{
             foreach ($variables as $variable){
                 $temporalSelect .= $variable->$colOrigin.' AS '. $variable->$colDestination.', ';
-                array_push($this->columns,$variable->$colDestination);
+                $this->columns[] = $variable->$colDestination;
             }
         }
 

@@ -15,7 +15,7 @@ class CreateConnectionTable extends Migration
     {
         Schema::connection('administrator')->create('connection', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('host')->nullable();
             $table->string('port',50)->nullable();

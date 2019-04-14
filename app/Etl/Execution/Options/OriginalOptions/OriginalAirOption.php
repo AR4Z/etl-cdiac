@@ -37,7 +37,7 @@ class OriginalAirOption extends EtlGeneratorConfig implements OriginalOptionCont
      * @param array $executionParams
      * @return array
      */
-    public function runConfig(string $typeProcess, array $executionParams): array
+    public function runConfig(string $typeProcess, array $executionParams) : array
     {
         return $this->setTypeProcess($typeProcess)
             ->setGeneralOptions($executionParams)

@@ -18,7 +18,7 @@ trait DatabaseConfig
      * @param string $defaultConnection
      * @return bool
      */
-    public function searchExternalConnection($connection = null, $extractTable = null,$defaultConnection = 'external_connection')
+    public function searchExternalConnection($connection = null, $extractTable = null,$defaultConnection = 'external_connection') : bool
     {
         $var = $this->configExternalConnection($connection,$defaultConnection);
 
@@ -38,7 +38,7 @@ trait DatabaseConfig
      * @param $defaultConnection
      * @return bool
      */
-    private function loopForConnection($connectionId, $extractTable,$defaultConnection)
+    private function loopForConnection($connectionId, $extractTable,$defaultConnection) : bool
     {
         $connections = ConnectionRepository::getStationsNotIn([$connectionId,1]);
         $i = 0;
@@ -59,11 +59,11 @@ trait DatabaseConfig
      * @param $defaultConnection
      * @return bool
      */
-    private function validateExistenceExternalTable(string $extractTable,$defaultConnection)
+    private function validateExistenceExternalTable(string $extractTable,$defaultConnection) : bool
     {
         $tables = DB::connection($defaultConnection)->select('SHOW TABLES');
         $arr= [];
-        foreach ($tables as $table){array_push($arr,array_values((array)$table)[0]);}
+        foreach ($tables as $table){$arr[] = array_values((array)$table)[0];}
         return (!(array_search($extractTable,$arr) == false));
     }
 
@@ -75,7 +75,7 @@ trait DatabaseConfig
      * @return bool
      */
 
-      private function configExternalConnection($connection,$defaultConnection)
+      private function configExternalConnection($connection,$defaultConnection) : bool
       {
           DB::disconnect($defaultConnection);
 

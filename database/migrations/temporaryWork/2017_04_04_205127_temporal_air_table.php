@@ -15,11 +15,11 @@ class TemporalAirTable extends Migration
     {
         Schema::connection('temporary_work')->create('temporal_air', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
-            $table->integer('station_sk')->nullable();
-            $table->integer('date_sk')->nullable();
-            $table->integer('time_sk')->nullable();
+            $table->unsignedBigInteger('station_sk')->nullable();
+            $table->unsignedBigInteger('date_sk')->nullable();
+            $table->unsignedBigInteger('time_sk')->nullable();
 
             $table->string('date_time')->nullable();
 

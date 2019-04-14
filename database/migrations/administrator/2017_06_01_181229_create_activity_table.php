@@ -15,7 +15,7 @@ class CreateActivityTable extends Migration
     {
         Schema::connection('administrator')->create('activity', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')->unique();
             $table->string('description',500)->nullable();
 

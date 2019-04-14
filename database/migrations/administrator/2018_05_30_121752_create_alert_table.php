@@ -15,7 +15,7 @@ class CreateAlertTable extends Migration
     {
         Schema::connection('administrator')->create('alert', function (Blueprint $table) {
 
-            $table->increments('id');
+            $table->bigIncrements('id');
 
             $table->string('name');
             $table->string('code')->unique();
@@ -23,7 +23,7 @@ class CreateAlertTable extends Migration
             $table->string('table')->nullable();
             $table->string('description',500)->nullable();
 
-            $table->boolean('active')->deaut(false);
+            $table->boolean('active')->default(false);
 
             $table->timestamps();
 

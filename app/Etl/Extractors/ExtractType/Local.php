@@ -85,7 +85,7 @@ class Local extends ExtractTypeBase implements ExtractTypeInterface
 
         foreach ($variables as $variable){
             $temporalSelect .= $variable->{$this->colDestination}.', ';
-            array_push($this->columns,$variable->{$this->colDestination});
+            $this->columns[] = $variable->{$this->colDestination};
         }
         $temporalSelect[strlen($temporalSelect)-2] = ' ';
         $this->select .= $temporalSelect;

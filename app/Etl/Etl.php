@@ -80,7 +80,7 @@ class Etl
         }
 
         # Se ingrega el metodo de extracción en el array de ejecusión.
-        array_push($this->etlObject,$this->factory($method,'Extractors',true,$options));
+        $this->etlObject[] = $this->factory($method,'Extractors',true,$options);
 
         # Se aumenta el contados de procesos a ejecutar.
         $this->flagEtl++;
@@ -101,7 +101,7 @@ class Etl
         }
 
         # Se ingrega el metodo de extracción en el array de ejecusión.
-        array_push($this->etlObject,$this->factory($method,'Transformers',true,$options));
+        $this->etlObject[] = $this->factory($method,'Transformers',true,$options);
 
         # Se aumenta el contados de procesos a ejecutar.
         $this->flagEtl++;
@@ -123,7 +123,7 @@ class Etl
         }
 
         # Se ingrega el metodo de extracción en el array de ejecusión.
-        array_push($this->etlObject,$this->factory($method, 'Loaders',true,$options));
+        $this->etlObject[] = $this->factory($method, 'Loaders',true,$options);
 
         # Se aumenta el contados de procesos a ejecutar.
         $this->flagEtl++;

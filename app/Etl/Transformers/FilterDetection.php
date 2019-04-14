@@ -47,7 +47,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     /**
      * Punto de acceso para ejecutar funcionalidad
      */
-    public function run()
+    public function run() : void
     {
         $this->stepsList = $this->startSteps(new StepList());
 
@@ -71,9 +71,8 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
 
     /**
      * @param $varFilter
-     * @throws \Rinvex\Repository\Exceptions\RepositoryException
      */
-    public function ExecuteFilterCappedRainGauge($varFilter)
+    public function ExecuteFilterCappedRainGauge($varFilter) : void
     {
         if (is_numeric (array_search('rainfall', array_column($varFilter,'local_name')))){
             $this->filterCappedRainGauge(['rainfall' => null,'accumulated_rainfall' => null]);
@@ -85,7 +84,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
      *  Ejecutar los filtros definidos para el campo de comentarios
      *  @return array
      */
-    public function stepExecuteCommentFilters()
+    public function stepExecuteCommentFilters() : array
     {
         try {
             # Se extraen las variables a evaluar
@@ -106,7 +105,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
      *  insertar los valores correctos deben ir a trust
      *  @return array
      */
-    public function stepTraverseDynamicVariablesToFilter()
+    public function stepTraverseDynamicVariablesToFilter() : array
     {
         try {
 
@@ -140,7 +139,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
      *
      * @return array
      */
-    public function stepTraverseStaticVariablesToFilter()
+    public function stepTraverseStaticVariablesToFilter() : array
     {
         try {
             # se extraen las variables estaticas
@@ -156,23 +155,23 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     /**
      * @param array $paramSearch
      */
-    public function setParamSearch(array $paramSearch = [])
+    public function setParamSearch(array $paramSearch = []) : void
     {
-        foreach ($paramSearch as $value){ array_push($this->paramSearch,$value);}
+        foreach ($paramSearch as $value){ $this->paramSearch[] = $value;}
     }
 
     /**
      * @param array $commentFilters
      */
-    public function setCommentFilters(array $commentFilters = [])
+    public function setCommentFilters(array $commentFilters = []) : void
     {
-        foreach ($commentFilters as $value){ array_push($this->commentFilters,$value);}
+        foreach ($commentFilters as $value){ $this->commentFilters[] = $value;}
     }
 
     /**
      * @param int $changeOverflowLower
      */
-    public function setChangeOverflowLower(int $changeOverflowLower)
+    public function setChangeOverflowLower(int $changeOverflowLower) : void
     {
         $this->changeOverflowLower = $changeOverflowLower;
     }
@@ -180,7 +179,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     /**
      * @param int $changeOverflowHigher
      */
-    public function setChangeOverflowHigher(int $changeOverflowHigher)
+    public function setChangeOverflowHigher(int $changeOverflowHigher) : void
     {
         $this->changeOverflowHigher = $changeOverflowHigher;
     }
@@ -188,7 +187,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     /**
      * @param int $changeOverflowPreviousDeference
      */
-    public function setChangeOverflowPreviousDeference(int $changeOverflowPreviousDeference)
+    public function setChangeOverflowPreviousDeference(int $changeOverflowPreviousDeference) : void
     {
         $this->changeOverflowPreviousDeference = $changeOverflowPreviousDeference;
     }

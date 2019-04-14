@@ -14,7 +14,7 @@ class CreateVariableTableConfig extends Migration
     public function up()
     {
       Schema::connection('config')->create('variable', function (Blueprint $table) {
-          $table->increments('id');
+          $table->bigIncrements('id');
           $table->string('name');
           $table->string('name_excel')->nullable();
           $table->string('name_database')->nullable();

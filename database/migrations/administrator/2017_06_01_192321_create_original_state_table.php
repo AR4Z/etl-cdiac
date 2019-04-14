@@ -15,8 +15,8 @@ class CreateOriginalStateTable extends Migration
     {
         Schema::connection('administrator')->create('original_state', function (Blueprint $table) {
 
-            $table->increments('id');
-            $table->unsignedInteger('station_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('station_id');
             $table->string('current_date')->default('1800-01-01');
             $table->string('current_time')->default('0:00:00');
             $table->boolean('updated')->default(false);
