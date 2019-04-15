@@ -5,7 +5,10 @@ namespace App\Etl\Loaders;
 
 use App\Etl\EtlConfig;
 use App\Etl\Steps\{StepList,Step,StepContract};
+use App\Repositories\RepositoriesContract;
+use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 use Exception;
+use Illuminate\Support\Arr;
 
 class Load extends LoadBase implements LoadInterface,StepContract
 {
@@ -135,7 +138,7 @@ class Load extends LoadBase implements LoadInterface,StepContract
     public function stepDeleteDuplicates()
     {
         try {
-            $this->deleteDuplicates();
+            $this->deleteDuplicates($this->etlConfig->repositorySpaceWork);
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -340,16 +343,22 @@ class Load extends LoadBase implements LoadInterface,StepContract
 
     /**
      * Se el ultimo dato entrante cuando se ingresan datos duplicados
+     * @param TemporalRepositoryContract $repository
+     * @return bool
      */
-    public function deleteDuplicates()
+    public function deleteDuplicates(TemporalRepositoryContract $repository) : bool
     {
-        if ($this->deleteDuplicates) {
-            # se extrae el maximo id cuando existen datos duplicados
-            $result = $this->etlConfig->repositorySpaceWork->getDuplicates($this->etlConfig->station->id);
+        if (!$this->deleteDuplicates){ return false;}
 
-            # se eliminan los id's duplicados
-            if (count($result) > 0){ $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork,'id', array_column($result,'max')); }
-        }
+        # se extrae el maximo id cuando existen datos duplicados
+        $result = $repository->getDuplicates($this->etlConfig->station->id);
+
+        if (count($result) == 0){return false;}
+
+        # se eliminan los id's duplicados
+        $this->deleteWhereInVariableWDT($this->etlConfig->repositorySpaceWork, 'id', Arr::pluck($result,'max'));
+
+        return true;
     }
 
     /**

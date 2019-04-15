@@ -3,6 +3,8 @@
 namespace App\Etl;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use App\Etl\Traits\RemoveAccents;
 use App\Repositories\RepositoryFactoryTrait;
 use App\Entities\Administrator\{Connection, Net, Station };
@@ -11,6 +13,8 @@ use App\Repositories\TemporaryWork\{ExistRepositoryContract, TemporalRepositoryC
 use Facades\App\Repositories\Administrator\{NetRepository, ConnectionRepository, StationRepository};
 use App\Etl\Config\PrimaryKeys;
 use Config;
+use phpDocumentor\Reflection\Types\Null_;
+use PhpParser\Node\Expr\Cast\Object_;
 
 class EtlConfig
 {
@@ -178,36 +182,33 @@ class EtlConfig
     /**
      *
      */
-    public function config()
+    public function config() : void
     {
-        $config = (object)Config::get('etl');
+        $this->config = Config::get('etl');
+        $this->setKeys(Arr::get($this->config,'extraColumns',false));
 
-        $this->config = $config;
-
-        $this->setKeys((array_key_exists('extraColumns',$config)) ? $config->extraColumns : false);
-
-        if (!array_key_exists($this->typeProcess,$config)){
+        if (!Arr::has($this->config,$this->typeProcess)){
             //TODO exepcion por no existir el metodo buscado inserte el correcto
             dd('exepcion por no existir el metodo buscado inserte el correcto');
         }
-        $config = (object)$config->{$this->typeProcess};
 
-        if (!array_key_exists(str_replace (' ','_',$this->removeAccents($this->station->typeStation->etl_method)),$config)){
+        $typeProcessConfig = Arr::get($this->config,$this->typeProcess);
+        $methodConfig = str_replace(' ','_',$this->removeAccents($this->station->typeStation->etl_method));
+
+        if (!Arr::has($typeProcessConfig,$methodConfig)){
             //TODO exepcion por no existir el tipo de estacion buscado inserte el correcto
             dd('exepcion por no existir el tipo de estacion buscado inserte el correcto');
         }
-        $config = (object)$config->{str_replace (' ','_',$this->removeAccents($this->station->typeStation->etl_method))};
 
-        $this->setTableSpaceWork((array_key_exists('tableSpaceWork',$config)) ? $config->tableSpaceWork : false);
-        $this->setTableDestination((array_key_exists('tableDestination',$config)) ? $config->tableDestination : false);
-        $this->setRepositorySpaceWork((array_key_exists('repositorySpaceWork',$config)) ? $config->repositorySpaceWork : false);
-        $this->setStateTable((array_key_exists('stateTable',$config)) ? $config->stateTable : false);
-        $this->setRepositoryDestination((array_key_exists('repositoryDestination',$config)) ? $config->repositoryDestination : false);
-        $this->setRepositoryExist((array_key_exists('repositoryExist',$config)) ? $config->repositoryExist : false);
-        $this->setTableExist((array_key_exists('tableExist',$config)) ? $config->tableExist : false);
-        $this->setTableTrust((array_key_exists('tableTrust',$config)) ? $config->tableTrust : false);
-        $this->setTrustRepository((array_key_exists('trustRepository',$config)) ? $config->trustRepository : false);
-
+        $this->setTableSpaceWork(Arr::get($typeProcessConfig,"$methodConfig.tableSpaceWork"));
+        $this->setTableDestination(Arr::get($typeProcessConfig,"$methodConfig.tableDestination"));
+        $this->setRepositorySpaceWork(Arr::get($typeProcessConfig,"$methodConfig.repositorySpaceWork"));
+        $this->setStateTable(Arr::get($typeProcessConfig,"$methodConfig.stateTable"));
+        $this->setRepositoryDestination(Arr::get($typeProcessConfig,"$methodConfig.repositoryDestination"));
+        $this->setRepositoryExist(Arr::get($typeProcessConfig,"$methodConfig.repositoryExist"));
+        $this->setTableExist(Arr::get($typeProcessConfig,"$methodConfig.tableExist"));
+        $this->setTableTrust(Arr::get($typeProcessConfig,"$methodConfig.tableTrust"));
+        $this->setTrustRepository(Arr::get($typeProcessConfig,"$methodConfig.trustRepository"));
     }
 
 
@@ -223,16 +224,26 @@ class EtlConfig
      * @param $spaceWorkTable
      */
 
-    public function setTableSpaceWork($spaceWorkTable)
+    public function setTableSpaceWork(string $spaceWorkTable = null) : void
     {
+        if (is_null($spaceWorkTable)){
+            # TODO
+            dd('Error: no se puede pasar un $spaceWorkTable en null');
+        }
+
         $this->tableSpaceWork = $spaceWorkTable;
     }
 
     /**
      * @param $destinationTable
      */
-    public function setTableDestination($destinationTable)
+    public function setTableDestination(string $destinationTable = null) : void
     {
+        if (is_null($destinationTable)){
+            # TODO
+            dd('Error: no se puede pasar un $destinationTable en null');
+        }
+
         $this->tableDestination = $destinationTable;
     }
 
@@ -260,8 +271,13 @@ class EtlConfig
     /**
      * @param string $repositorySpaceWork
      */
-    public function setRepositorySpaceWork(string $repositorySpaceWork)
+    public function setRepositorySpaceWork(string $repositorySpaceWork = null) : void
     {
+        if (is_null($repositorySpaceWork)){
+            # TODO
+            dd('Error: no se puede pasar un $repositorySpaceWork en null');
+        }
+
         $this->repositorySpaceWork = $this->factoryRepositories("App\\Repositories\\TemporaryWork\\".$repositorySpaceWork);
     }
 
@@ -274,10 +290,15 @@ class EtlConfig
     }
 
     /**
-     * @param null $stateTable
+     * @param string $stateTable
      */
-    public function setStateTable($stateTable)
+    public function setStateTable(string $stateTable = null) : void
     {
+        if (is_null($stateTable)){
+            # TODO
+            dd('Error: no se puede pasar un $stateTable en null');
+        }
+
         $this->stateTable = $stateTable;
     }
 
@@ -327,60 +348,85 @@ class EtlConfig
     /**
      * @param string $repositoryDestination
      */
-    public function setRepositoryDestination(string $repositoryDestination)
+    public function setRepositoryDestination(string $repositoryDestination = null) : void
     {
+        if (is_null($repositoryDestination)){
+            # TODO
+            dd('Error: no se puede pasar un $repositoryDestination en null');
+        }
+
         $this->repositoryDestination = $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$repositoryDestination);
     }
 
     /**
      * @param string $repositoryExist
      */
-    public function setRepositoryExist(string $repositoryExist)
+    public function setRepositoryExist(string $repositoryExist = null) : void
     {
+        if (is_null($repositoryExist)){
+            # TODO
+            dd('Error: no se puede pasar un $repositoryExist en null');
+        }
+
         $this->repositoryExist = $this->factoryRepositories("App\\Repositories\\TemporaryWork\\".$repositoryExist);
     }
 
     /**
-     * @param null $tableExist
+     * @param string $tableExist
      */
-    public function setTableExist($tableExist)
+    public function setTableExist(string $tableExist = null) : void
     {
+        if (is_null($tableExist)){
+            # TODO
+            dd('Error: no se puede pasar un $tableExist en null');
+        }
+
         $this->tableExist = $tableExist;
     }
 
     /**
      * @param mixed $tableTrust
      */
-    public function setTableTrust($tableTrust)
+    public function setTableTrust(string $tableTrust = null) : void
     {
-        #$this->tableTrust = $tableTrust;
-        $this->trustObject->table = $tableTrust;
+        if (is_null($tableTrust)){
+            # TODO
+            dd('Error: no se puede pasar un $tableTrust en null');
+        }
+
+        $this->trustObject->setTable($tableTrust);
     }
 
     /**
      * @param string $trustRepository
      * @return void
      */
-    public function setTrustRepository(string $trustRepository)
+    public function setTrustRepository(string $trustRepository = null) : void
     {
-        #$this->trustRepository = ($trustRepository) ? $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository) : $trustRepository;
-        $this->trustObject->repository = ($trustRepository) ? $this->factoryRepositories("App\\Repositories\\DataWareHouse\\".$trustRepository) : $trustRepository;
+        if (is_null($trustRepository)){
+            # TODO
+            dd('Error: no se puede pasar un $trustRepository en null');
+        }
+
+        $this->trustObject->setRepository(
+            $this->factoryRepositories(
+                "App\\Repositories\\DataWareHouse\\".$trustRepository
+            )
+        );
     }
 
     /**
-     * @param null $connection
+     * @param int $connection
      */
-    public function setConnection($connection)
+    public function setConnection(int $connection = null) : void
     {
-        $connectionId = (is_null($connection)) ?  $this->net->connection_id : $connection;
-        $this->connection = ConnectionRepository::find($connectionId);
+        $this->connection = ConnectionRepository::find((is_null($connection)) ?  $this->net->connection_id : $connection);
     }
 
     /**
      * @param $stationId
-     * @internal param null $varForFilter
      */
-    public function setVarForFilter($stationId)
+    public function setVarForFilter(int $stationId) : void
     {
         $this->varForFilter = StationRepository::findVarForFilter($stationId);
     }
@@ -388,20 +434,20 @@ class EtlConfig
     /**
      * @param bool $trustProcess
      */
-    public function setTrustProcess(bool $trustProcess)
+    public function setTrustProcess(bool $trustProcess) : void
     {
-        $this->trustObject->active = $trustProcess;
+        $this->trustObject->setActive($trustProcess);
     }
 
     /**
      * @param $keys
      */
-    public function setKeys($keys)
+    public function setKeys($keys) : void
     {
-        $this->keys = new PrimaryKeys($this->typeProcess,$this->station->typeStation->etl_method,$keys) ;
+        $this->keys = new PrimaryKeys($this->typeProcess,$this->station->typeStation->etl_method,$keys);
     }
 
-    public function setConfig($config)
+    public function setConfig($config) : void
     {
         $this->config = $config;
     }

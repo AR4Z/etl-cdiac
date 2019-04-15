@@ -3,6 +3,7 @@
 namespace App\Etl;
 
 use App\Repositories\DataWareHouse\ReliabilityRepositoryContract;
+use App\Repositories\RepositoriesContract;
 use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 use App\Etl\Traits\WorkDatabaseTrait;
 
@@ -209,6 +210,30 @@ class TrustProcess
     public function setIncomingAmount(int $incomingAmount)
     {
         $this->incomingAmount = $incomingAmount;
+    }
+
+    /**
+     * @param string $table
+     */
+    public function setTable(string $table): void
+    {
+        $this->table = $table;
+    }
+
+    /**
+     * @param RepositoriesContract $repository
+     */
+    public function setRepository(RepositoriesContract $repository): void
+    {
+        $this->repository = $repository;
+    }
+
+    /**
+     * @param bool $active
+     */
+    public function setActive(bool $active) : void
+    {
+        $this->active = $active;
     }
 
 }

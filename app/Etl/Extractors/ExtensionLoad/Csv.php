@@ -3,6 +3,7 @@
 namespace App\Etl\Extractors\ExtensionLoad;
 
 use App\Etl\Extractors\ExtensionLoad\Imports\PlaneImport;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 
@@ -26,7 +27,6 @@ class Csv extends ExtensionLoadBase implements ExtensionLoadContract
         $planeImport->import(storage_path().'/app/public/'. $fileName,null,\Maatwebsite\Excel\Excel::CSV);
 
         $variablesName = $this->getVariablesName($method, $planeImport->headers, $variables);
-
         $variablesNameExcel = array_keys($variablesName);
 
         $this->dateTime = in_array('date_time',$planeImport->headers);

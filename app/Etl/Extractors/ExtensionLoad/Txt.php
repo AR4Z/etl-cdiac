@@ -2,6 +2,7 @@
 
 namespace App\Etl\Extractors\ExtensionLoad;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use App\Repositories\TemporaryWork\TemporalRepositoryContract;
 
@@ -39,12 +40,10 @@ class Txt extends ExtensionLoadBase implements ExtensionLoadContract
         # Se edita la propiedad data time
         $this->dateTime = in_array('date_time',$inputVariables);
 
-
-
         # Se buscan los encabezados entrantes y se obtiene el nombre en la tabla temporal
         $headers = [];
         foreach ($inputVariables as $inputVariable){
-            if (array_key_exists($inputVariable,$variablesName)){$headers[] = $variablesName[$inputVariable];}
+            if (Arr::has($variablesName,$inputVariables)){$headers[] = $variablesName[$inputVariable];}
         }
 
         # Se genera el array para insertar en la tabla temporal

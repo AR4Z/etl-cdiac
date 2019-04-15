@@ -178,6 +178,30 @@ trait WorkDatabaseTrait
 
     /**
      * @param RepositoriesContract $repository
+     * @param int $id
+     * @param string $condition
+     * @param array $variables
+     * @return int
+     */
+    public function deleteOneConditionalVariableWDT(RepositoriesContract $repository, int $id, string $condition, array $variables)
+    {
+        return $repository->queryBuilder()->where('id',$condition,$id)->update($variables);
+    }
+
+    /**
+     * @param RepositoriesContract $repository
+     * @param int $idInit
+     * @param int $idFinal
+     * @param array $variables
+     * @return int
+     */
+    public function deleteTwoConditionalVariableWDT(RepositoriesContract $repository, int $idInit, int $idFinal, array $variables)
+    {
+        return $repository->queryBuilder()->where('id','>=',$idInit)->where('id','<=',$idFinal)->update($variables);
+    }
+
+    /**
+     * @param RepositoriesContract $repository
      * @param int $initialId
      * @param int $finalId
      * @param array $variables

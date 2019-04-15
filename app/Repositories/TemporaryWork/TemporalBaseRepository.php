@@ -164,4 +164,19 @@ class TemporalBaseRepository extends BaseFactRepository
         return $this->queryBuilder()->whereNull($variable)->delete();
     }
 
+    /**
+     * @param string $commentInit
+     * @param string $commentFinal
+     * @return array
+     */
+    public function gerElementsWhereInComments(string $commentInit, string $commentFinal) : array
+    {
+        return $this->queryBuilder()
+            ->where('comment','like',"%$commentInit%")
+            ->orWhere('comment','like',"%$commentFinal%")
+            ->orderBy('id')
+            ->get(['id','comment'])
+            ->toArray();
+    }
+
 }

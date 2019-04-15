@@ -6,6 +6,7 @@ namespace App\Etl\Transformers;
 use App\Etl\EtlConfig;
 use App\Etl\Steps\{StepList,Step,StepContract};
 use Exception;
+use Illuminate\Support\Arr;
 
 class FilterDetection extends TransformBase implements TransformInterface, StepContract
 {
@@ -72,9 +73,9 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
     /**
      * @param $varFilter
      */
-    public function ExecuteFilterCappedRainGauge($varFilter) : void
+    public function executeFilterCappedRainGauge(array $varFilter) : void
     {
-        if (is_numeric (array_search('rainfall', array_column($varFilter,'local_name')))){
+        if (is_numeric(array_search('rainfall',Arr::pluck($varFilter,'local_name')))){
             $this->filterCappedRainGauge(['rainfall' => null,'accumulated_rainfall' => null]);
         }
     }
@@ -91,7 +92,7 @@ class FilterDetection extends TransformBase implements TransformInterface, StepC
             $varFilter = $this->etlConfig->varForFilter->toArray();
 
             # Se evaluan los filtros registrados para el campo de comentarios.
-            foreach ($this->commentFilters as $filter){ $this->{'ExecuteFilter'.$filter}($varFilter); }
+            foreach ($this->commentFilters as $filter){ $this->{'executeFilter'.$filter}($varFilter); }
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 

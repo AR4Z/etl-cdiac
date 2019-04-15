@@ -5,6 +5,7 @@ namespace App\Etl\Transformers;
 use App\Etl\EtlConfig;
 use App\Etl\Steps\{StepList,Step,StepContract};
 use Exception;
+use Illuminate\Support\Arr;
 use Nexmo\Call\Collection;
 
 class Homogenization extends TransformBase implements TransformInterface, StepContract
@@ -192,7 +193,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     {
         try {
 
-            $this->deleteEldestHomogenizationWDT($this->etlConfig->repositorySpaceWork,array_column($this->arrayTime,'time_sk'));
+            $this->deleteEldestHomogenizationWDT($this->etlConfig->repositorySpaceWork,Arr::pluck($this->arrayTime,'time_sk'));
 
             return ['resultExecution' => true , 'data' => null, 'exception' => null];
 
@@ -284,8 +285,7 @@ class Homogenization extends TransformBase implements TransformInterface, StepCo
     public function homogenizationDirection(array $valInRangeActual, object $date,object $time) : void
     {
         # se evalua si el tiempo esta mal posicionado.
-        if (!(in_array((array)$time,array_column( (!is_array($valInRangeActual)) ? $valInRangeActual : $valInRangeActual,'time_sk')))){
-
+        if (!(in_array((array)$time,Arr::pluck($valInRangeActual,'time_sk')))){
             switch (count($valInRangeActual)) {
                 case 0:
                     $this->homogenizationNotElements($this->etlConfig->station->id,$date,$time);

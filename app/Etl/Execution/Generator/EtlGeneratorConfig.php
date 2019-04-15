@@ -4,6 +4,7 @@ namespace App\Etl\Execution\Generator;
 
 use Carbon\Carbon;
 use App\Etl\Etl;
+use Illuminate\Support\Arr;
 
 class EtlGeneratorConfig
 {
@@ -87,8 +88,8 @@ class EtlGeneratorConfig
      */
     private function configStation(int $station) : array
     {
-        $initialDate = (array_key_exists('initialDate',$this->extractorConfig)) ?  Carbon::parse($this->extractorConfig['initialDate']) : null;
-        $finalDate = (array_key_exists('finalDate',$this->extractorConfig)) ?  Carbon::parse($this->extractorConfig['finalDate']) : null;
+        $initialDate = (Arr::has($this->extractorConfig,'initialDate')) ?  Carbon::parse($this->extractorConfig['initialDate']) : null;
+        $finalDate = (Arr::has($this->extractorConfig,'finalDate')) ?  Carbon::parse($this->extractorConfig['finalDate']) : null;
 
         $diff = (!(is_null($initialDate) and is_null($finalDate))) ? $initialDate->diffInDays($finalDate) : 0;
 
@@ -229,9 +230,10 @@ class EtlGeneratorConfig
      */
     public function addTransformVariable(string $transformer, string $variable, $value) : EtlGeneratorConfig
     {
-       if (!array_key_exists($transformer,$this->transformers)){ dd('eroor'); /*TODO*/}
+       if (!Arr::has($this->transformers,$transformer)){ dd('error'); /*TODO*/}
 
        $this->transformers[$transformer][$variable] = $value;
+
        return $this;
     }
 

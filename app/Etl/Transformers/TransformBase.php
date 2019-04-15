@@ -2,10 +2,12 @@
 
 namespace App\Etl\Transformers;
 
+use App\Entities\Bodega\DateDim;
 use App\Etl\EtlBase;
 use App\Etl\EtlConfig;
 use DB;
 use phpDocumentor\Reflection\Types\This;
+use Illuminate\Support\Arr;
 
 abstract class TransformBase extends EtlBase
 {
@@ -216,46 +218,83 @@ abstract class TransformBase extends EtlBase
      * @param $variables
      * @return bool
      */
-    public function filterCappedRainGauge($variables)
+    public function filterCappedRainGauge(array $variables) : bool
     {
-       $result =  DB::connection('temporary_work')
-                    ->table($this->etlConfig->tableSpaceWork)
-                    ->select('id','comment')
-                    ->where('comment','like','% PTI %')
-                    ->orWhere('comment','like','% PTF %')
-                    ->orderBy('id')
-                    ->get()
-                    ->toArray();
+        # Se consultan los valores en el rango de PTI y PTF en los comentarios
+       $result = $this->etlConfig->repositorySpaceWork->gerElementsWhereInComments('PTI','PTF');
 
-       if (count($result) == 0){ return false;}
+       # Se sale si no encuentra valores
+       if ($countData = count($result) == 0){ return false;}
 
-       $flag = 'PTF';
-       foreach ($result as $key => $var){
-           $var->banderCRG = (is_numeric(strpos($var->comment,'PTI'))) ? 'PTI' : 'PTF';
-
-           if ($var->banderCRG === $flag){ unset($result[$key]); }
-
-           if (!empty($var)){ $flag = $var->banderCRG; }
+       # Se ejecuta el proceso de eliminacion cuando es una sola opcion ya sea PTI o PTF
+       if ($countData == 1){
+           return $this->deleteOneConditionalVariableWDT($this->etlConfig->repositorySpaceWork, $result[0]->id, (Arr::get((array)Arr::first($result),'comment',false) == 'PTI') ? '>=' : '<=', $variables);
        }
 
-       $result = array_combine(range(0, count($result)-1), array_values($result));
-       $countData = count($result);
+       # Se valida que no hallan valores de PTI o PTF seguidos es decir (PTI-PTI o PTF-PTF) y se separan por parejas dependiendo de las caracteristicas
+       $result = $this->separatePartnerElements($this->validateConsecutiveElements($result,'PTI','PTF'),'banderCRG','PTI','PTF');
 
-       if ($countData == 1){
-          $this->deleteAfterIdVariableWDT($this->etlConfig->repositorySpaceWork,$result[0]->id,$variables);
-       }else{
-           if ($countData % 2 !== 0){
-               $this->deleteAfterIdVariableWDT($this->etlConfig->repositorySpaceWork,$result[$countData - 1]->id,$variables);
-               unset($result[$countData - 1]);
-               $countData -= 1;
-           }
-
-           for( $i = 0; $i < $countData; $i += 2){
-               $this->deleteInRangeIdVariableWDT($this->etlConfig->repositorySpaceWork,$result[$i]->id,$result[$i + 1]->id,$variables);
+       # Se recorren las parejas y se redirreccional al metodo correspondiente
+       foreach ($result as $key => $value){
+           if (count($value) == 1){
+               $this->deleteOneConditionalVariableWDT($this->etlConfig->repositorySpaceWork, $value[0]->id, (Arr::get((array)Arr::first($value),'comment',false) == 'PTI') ? '>=' : '<=', $variables);
+           }else{
+               $this->deleteTwoConditionalVariableWDT($this->etlConfig->repositorySpaceWork, $value[0]->id, $value[1]->id, $variables);
            }
        }
 
        return true;
+    }
+
+    /**
+     * @param array $elements
+     * @param string $variable
+     * @param string $init
+     * @param string $final
+     * @return array
+     */
+    public function separatePartnerElements(array $elements, string $variable, string $init, string $final) : array
+    {
+        $arrGlo = [];
+        $arrTem = [];
+
+        foreach ($elements as $key => $value) {
+            if (count($arrTem) == 0){
+                if ($value->$variable == $final){$arrGlo[] = [$value];}else{$arrTem[] = $value;}
+            }else{
+                if ($arrTem[0]->$variable == $value->$variable){
+                    $arrGlo[] = $arrTem;
+                    $arrTem = [];
+                    $arrTem[] = $value;
+                }else{
+                    $arrTem[] = $value;
+                    $arrGlo[] = $arrTem;
+                    $arrTem = [];
+                }
+            }
+        }
+
+        if (count($arrTem) !== 0){$arrGlo[] = $arrTem;}
+
+        return $arrGlo;
+    }
+
+    /**
+     * @param array $elements
+     * @param string $init
+     * @param string $final
+     * @return array
+     */
+    public function validateConsecutiveElements(array $elements,string $init,string $final) : array
+    {
+        $flag = '';
+        $arr = [];
+        foreach ($elements as $key => $var){
+            $var->banderCRG = (is_numeric(strpos($var->comment,$init))) ? $init : $final;
+            if ($var->banderCRG == $flag){ if ($flag == $final){ $arr[count($arr)-1] = $var; }}else{$arr[] = $var;}
+            $flag = $var->banderCRG;
+        }
+        return $arr;
     }
 
     /**

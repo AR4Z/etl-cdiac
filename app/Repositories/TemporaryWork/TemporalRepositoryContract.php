@@ -144,4 +144,11 @@ interface TemporalRepositoryContract extends BaseFactStructureContract
      * @return mixed
      */
     public function deleteNullVariable(string $variable);
+
+    /**
+     * @param string $commentInit
+     * @param string $commentFinal
+     * @return array
+     */
+    public function gerElementsWhereInComments(string $commentInit, string $commentFinal) : array;
 }

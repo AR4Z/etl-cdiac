@@ -21,6 +21,7 @@ use App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\Config\ConnectionRequest;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 //use Facades\App\Etl\Database\DatabaseConfig;
 use App\Etl\Etl;
@@ -109,7 +110,8 @@ class ExternalConnectionController extends Controller
     {
         dd(round(16.06+(15.89-16.06)/(700-385)*(601-385),2));
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
-        $stations = array_column($this->stationRepository->getStationToOriginalMethod('weather'),'id');
+
+        $stations = Arr::pluck($this->stationRepository->getStationToOriginalMethod('weather'),'id');
 
         $execute = new EtlExecute(
             $method = new FilterExecute(

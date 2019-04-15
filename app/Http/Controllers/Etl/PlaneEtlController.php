@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Etl;
 
 use Config;
+use Illuminate\Support\Arr;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Readers\LaravelExcelReader;
 use Storage;
@@ -206,7 +207,7 @@ class PlaneEtlController extends Controller
             }
         }
 
-        $excelName = array_column($variablesStation, 'excel_name');
+        $excelName = Arr::pluck($variablesStation,'excel_name');
 
         foreach ($variablesLoad as $item => $value) {
             $val = array_search($value,$excelName);

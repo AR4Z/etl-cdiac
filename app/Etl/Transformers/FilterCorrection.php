@@ -6,6 +6,7 @@ namespace App\Etl\Transformers;
 use App\Etl\EtlConfig;
 use App\Etl\Steps\{StepList,Step,StepContract};
 use Exception;
+use Illuminate\Support\Arr;
 
 class FilterCorrection extends TransformBase implements TransformInterface, StepContract
 {
@@ -76,8 +77,7 @@ class FilterCorrection extends TransformBase implements TransformInterface, Step
     public function stepFilterWindSpeedZero()
     {
         try {
-
-            if (is_numeric (array_search('wind_speed', array_column($this->etlConfig->varForFilter->toArray(),'local_name')))){
+            if (is_numeric(array_search('wind_speed',Arr::pluck($this->etlConfig->varForFilter->toArray(),'local_name') ))){
                 $this->filterWindSpeedZero();
             }
 

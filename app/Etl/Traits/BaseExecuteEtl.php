@@ -6,6 +6,7 @@ use App\Etl\Etl;
 use App\Jobs\{EtlStationJob,EtlYesterdayJob};
 use Facades\App\Repositories\DataWareHouse\StationDimRepository;
 use Facades\App\Repositories\Administrator\{StationRepository,NetRepository};
+use Illuminate\Support\Arr;
 
 trait BaseExecuteEtl
 {
@@ -231,7 +232,7 @@ trait BaseExecuteEtl
     {
         $etl = Etl::start('Filter', $net, $connection,$station,['sequence'=> $sequence]);
 
-         if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Plane'){
+         if (!Arr::has($extract,'optionExtract.extractType') and $extract['method'] != 'Plane'){
              $extract['optionExtract']['extractType'] = 'Local';
          }
 
@@ -282,7 +283,7 @@ trait BaseExecuteEtl
     {
         $etl = Etl::start('Original', $net, $connection,$station,['sequence'=> $sequence]);
 
-        if (!array_key_exists('extractType', $extract['optionExtract']) and $extract['method'] != 'Plane'){
+        if (!Arr::has($extract,'optionExtract.extractType') and $extract['method'] != 'Plane'){
             $extract['optionExtract']['extractType'] = 'External';
         }
 

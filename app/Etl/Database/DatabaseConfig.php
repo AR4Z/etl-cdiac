@@ -6,6 +6,7 @@ use Facades\App\Repositories\Administrator\ConnectionRepository;
 use Config;
 use Exception;
 use DB;
+use Illuminate\Support\Arr;
 use Log;
 /**
  *
@@ -63,7 +64,7 @@ trait DatabaseConfig
     {
         $tables = DB::connection($defaultConnection)->select('SHOW TABLES');
         $arr= [];
-        foreach ($tables as $table){$arr[] = array_values((array)$table)[0];}
+        foreach ($tables as $table){ $arr[] = Arr::flatten((array)$table)[0];}
         return (!(array_search($extractTable,$arr) == false));
     }
 
