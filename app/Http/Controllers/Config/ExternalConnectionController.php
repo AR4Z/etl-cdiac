@@ -11,6 +11,8 @@ use App\Etl\Execution\Options\OriginalOptions\OriginalWeatherDatabaseOption;
 use App\Etl\Execution\OriginalExecute;
 use App\Etl\Execution\OriginalOptions\OriginalGeneralOption;
 use App\Http\Controllers\Controller;
+use App\Jobs\testJob;
+use App\Mail\OrderShippedTest;
 use App\Repositories\Administrator\NetRepository;
 use App\Repositories\Administrator\VariableRepository;
 use App\Repositories\Bodega\StationDimOldRepository;
@@ -18,6 +20,7 @@ use App\Repositories\DataWareHouse\StationDimRepository;
 use App\Repositories\RepositoryFactoryTrait;
 use App\Repositories\TemporaryWork\TemporalAirRepository;
 use App\Repositories\TemporaryWork\TemporalWeatherRepository;
+use App\test\test;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Requests\Config\ConnectionRequest;
@@ -28,6 +31,7 @@ use App\Etl\Etl;
 //use Facades\App\Repositories\Config\StationRepository;
 //use Facades\App\Repositories\TemporaryWork\TemporalWeatherRepository;
 use App\Repositories\Config\ConnectionRepository;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Jobs\EtlStationJob;
 use App\Etl\Traits\BaseExecuteEtl;
@@ -108,6 +112,19 @@ class ExternalConnectionController extends Controller
      */
     public function index()
     {
+        var_dump(url('/'));
+        //$test = new test();
+        //$test->waitTime(30);
+
+        //testJob::dispatch($test);
+
+        //dd('termine');
+
+        //\Mail::to('daespinosag@unal.edu.co')->send(new OrderShippedTest());
+
+        testJob::dispatch('daespinosag@unal.edu.co');
+
+        /**
         dd(round(16.06+(15.89-16.06)/(700-385)*(601-385),2));
         $date = date_add(date_create(date("Y-m-d")), date_interval_create_from_date_string('-1 days'))->format('Y-m-d');
 
@@ -125,13 +142,14 @@ class ExternalConnectionController extends Controller
         $option->setRunType('Synchronous');
 
         $execute->execute();
+         *
 
         //$method->setRunMethod('Syncrone');
         //$method->addExtractConfigVariable('fileName', 'ruta del elemento');
 
         dd($execute,$method,$option);
 
-
+         **/
 
         //$container = $this->stationRepository->getContainer();
         //dd($container);

@@ -34,37 +34,37 @@ return [
             'driver' => 'sync',
         ],
 
-        'database' => [
-            'connection' => 'temporary_work',
-            'driver' => 'database',
-            'table' => 'jobs',
-            'queue' => 'default',
-            'retry_after' => 200,
+        'etl' => [
+            'connection'    => env('ETL_QUEUE_CONNECTION','public'),
+            'driver'        => env('ETL_QUEUE_DRIVER','database'),
+            'table'         => env('ETL_JOB_TABLE','jobs'),
+            'queue'         => 'default',
+            'retry_after'   => 1,
         ],
 
         'beanstalkd' => [
-            'driver' => 'beanstalkd',
-            'host' => 'localhost',
-            'queue' => 'default',
-            'retry_after' => 90,
-            'block_for' => 0,
+            'driver'        => 'beanstalkd',
+            'host'          => 'localhost',
+            'queue'         => 'default',
+            'retry_after'   => 90,
+            'block_for'     => 0,
         ],
 
         'sqs' => [
-            'driver' => 'sqs',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
-            'queue' => env('SQS_QUEUE', 'your-queue-name'),
-            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            'driver'    => 'sqs',
+            'key'       => env('AWS_ACCESS_KEY_ID'),
+            'secret'    => env('AWS_SECRET_ACCESS_KEY'),
+            'prefix'    => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
+            'queue'     => env('SQS_QUEUE', 'your-queue-name'),
+            'region'    => env('AWS_DEFAULT_REGION', 'us-east-1'),
         ],
 
         'redis' => [
-            'driver' => 'redis',
-            'connection' => 'default',
-            'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => 90,
-            'block_for' => null,
+            'driver'        => 'redis',
+            'connection'    => 'etl',
+            'queue'         => env('REDIS_QUEUE', 'default'),
+            'retry_after'   => 90,
+            'block_for'     => null,
         ],
 
     ],
@@ -81,8 +81,8 @@ return [
     */
 
     'failed' => [
-        'database' => env('DB_CONNECTION', 'mysql'),
-        'table' => 'failed_jobs',
+        'database'  => env('ETL_QUEUE_CONNECTION', 'public'),
+        'table'     => env('ETL_TABLE_FAILED_JOBS', 'failed_jobs'),
     ],
 
 ];

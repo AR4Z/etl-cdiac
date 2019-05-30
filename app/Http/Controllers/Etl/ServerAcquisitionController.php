@@ -8,6 +8,7 @@ use Facades\App\Repositories\Administrator\StationRepository;
 use Facades\App\Repositories\Administrator\ConnectionRepository;
 use App\Etl\Database\DatabaseConfig;
 use Config;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
@@ -44,7 +45,13 @@ class ServerAcquisitionController extends Controller
             dd('No fue posible establecer la coneccion');
         }
         $keys = ['fecha','hora'];
-        foreach ($station->variables as $variable){$keys[] = $variable->database_field_name;}
+
+        foreach ($station->variables as $variable){
+            $keys[] = $variable->database_field_name;
+            if ($variable->database_field_name == 'precipitacion_real') {$keys[] = 'precipitacion';}
+        }
+
+        $keys[] = 'observaciones';
 
         $externalData= $this->queryBuilderDefault($station->table_db_name)
                             ->select($keys)

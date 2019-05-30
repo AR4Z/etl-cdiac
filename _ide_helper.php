@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.11 on 2019-04-14 15:54:28.
+ * Generated for Laravel 5.8.19 on 2019-05-29 12:00:18.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -349,6 +349,18 @@ namespace Illuminate\Support\Facades {
         {
                         /** @var \Illuminate\Foundation\Application $instance */
                         return $instance->isLocal();
+        }
+        
+        /**
+         * Determine if application is in production environment.
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function isProduction()
+        {
+                        /** @var \Illuminate\Foundation\Application $instance */
+                        return $instance->isProduction();
         }
         
         /**
@@ -4596,7 +4608,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Determine if the connection in a "dry run".
+         * Determine if the connection is in a "dry run".
          *
          * @return bool 
          * @static 
@@ -5868,6 +5880,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param object|string $class
          * @return mixed 
+         * @throws \Illuminate\Contracts\Container\BindingResolutionException
          * @static 
          */ 
         public static function resolvePolicy($class)
@@ -7889,33 +7902,59 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Release a reserved job back onto the queue.
+         * Get the number of queue jobs that are ready to process.
          *
-         * @param string $queue
-         * @param \Illuminate\Queue\Jobs\DatabaseJobRecord $job
-         * @param int $delay
-         * @return mixed 
+         * @param string|null $queue
+         * @return int 
          * @static 
          */ 
-        public static function release($queue, $job, $delay)
+        public static function readyNow($queue = null)
         {
-                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
-                        return $instance->release($queue, $job, $delay);
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        return $instance->readyNow($queue);
+        }
+        
+        /**
+         * Migrate the delayed jobs that are ready to the regular queue.
+         *
+         * @param string $from
+         * @param string $to
+         * @return void 
+         * @static 
+         */ 
+        public static function migrateExpiredJobs($from, $to)
+        {
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        $instance->migrateExpiredJobs($from, $to);
         }
         
         /**
          * Delete a reserved job from the queue.
          *
          * @param string $queue
-         * @param string $id
+         * @param \Illuminate\Queue\Jobs\RedisJob $job
          * @return void 
-         * @throws \Exception|\Throwable
          * @static 
          */ 
-        public static function deleteReserved($queue, $id)
+        public static function deleteReserved($queue, $job)
         {
-                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
-                        $instance->deleteReserved($queue, $id);
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        $instance->deleteReserved($queue, $job);
+        }
+        
+        /**
+         * Delete a reserved job from the reserved queue and release it.
+         *
+         * @param string $queue
+         * @param \Illuminate\Queue\Jobs\RedisJob $job
+         * @param int $delay
+         * @return void 
+         * @static 
+         */ 
+        public static function deleteAndRelease($queue, $job, $delay)
+        {
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        $instance->deleteAndRelease($queue, $job, $delay);
         }
         
         /**
@@ -7927,20 +7966,36 @@ namespace Illuminate\Support\Facades {
          */ 
         public static function getQueue($queue)
         {
-                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+            //Method inherited from \Illuminate\Queue\RedisQueue            
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
                         return $instance->getQueue($queue);
         }
         
         /**
-         * Get the underlying database instance.
+         * Get the underlying Redis instance.
          *
-         * @return \Illuminate\Database\Connection 
+         * @return \Illuminate\Contracts\Redis\Factory 
          * @static 
          */ 
-        public static function getDatabase()
+        public static function getRedis()
         {
-                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
-                        return $instance->getDatabase();
+            //Method inherited from \Illuminate\Queue\RedisQueue            
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        return $instance->getRedis();
+        }
+        
+        /**
+         * Get the retry delay for an object-based queue handler.
+         *
+         * @param mixed $job
+         * @return mixed 
+         * @static 
+         */ 
+        public static function getJobRetryDelay($job)
+        {
+            //Method inherited from \Illuminate\Queue\Queue            
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
+                        return $instance->getJobRetryDelay($job);
         }
         
         /**
@@ -7953,7 +8008,7 @@ namespace Illuminate\Support\Facades {
         public static function getJobExpiration($job)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
                         return $instance->getJobExpiration($job);
         }
         
@@ -7967,7 +8022,7 @@ namespace Illuminate\Support\Facades {
         public static function createPayloadUsing($callback)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-                        \Illuminate\Queue\DatabaseQueue::createPayloadUsing($callback);
+                        \Laravel\Horizon\RedisQueue::createPayloadUsing($callback);
         }
         
         /**
@@ -7980,7 +8035,7 @@ namespace Illuminate\Support\Facades {
         public static function setContainer($container)
         {
             //Method inherited from \Illuminate\Queue\Queue            
-                        /** @var \Illuminate\Queue\DatabaseQueue $instance */
+                        /** @var \Laravel\Horizon\RedisQueue $instance */
                         $instance->setContainer($container);
         }
          
@@ -8220,6 +8275,79 @@ namespace Illuminate\Support\Facades {
         public static function hasMacro($name)
         {
                         return \Illuminate\Routing\Redirector::hasMacro($name);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     * @see \Illuminate\Redis\RedisManager
+     * @see \Illuminate\Contracts\Redis\Factory
+     */ 
+    class Redis {
+        
+        /**
+         * Get a Redis connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @static 
+         */ 
+        public static function connection($name = null)
+        {
+                        /** @var \Illuminate\Redis\RedisManager $instance */
+                        return $instance->connection($name);
+        }
+        
+        /**
+         * Resolve the given connection by name.
+         *
+         * @param string|null $name
+         * @return \Illuminate\Redis\Connections\Connection 
+         * @throws \InvalidArgumentException
+         * @static 
+         */ 
+        public static function resolve($name = null)
+        {
+                        /** @var \Illuminate\Redis\RedisManager $instance */
+                        return $instance->resolve($name);
+        }
+        
+        /**
+         * Return all of the created connections.
+         *
+         * @return array 
+         * @static 
+         */ 
+        public static function connections()
+        {
+                        /** @var \Illuminate\Redis\RedisManager $instance */
+                        return $instance->connections();
+        }
+        
+        /**
+         * Enable the firing of Redis command events.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function enableEvents()
+        {
+                        /** @var \Illuminate\Redis\RedisManager $instance */
+                        $instance->enableEvents();
+        }
+        
+        /**
+         * Disable the firing of Redis command events.
+         *
+         * @return void 
+         * @static 
+         */ 
+        public static function disableEvents()
+        {
+                        /** @var \Illuminate\Redis\RedisManager $instance */
+                        $instance->disableEvents();
         }
          
     }
@@ -11553,6 +11681,17 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
+         * Drop all types from the database.
+         *
+         * @static 
+         */ 
+        public static function dropAllTypes()
+        {
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        return $instance->dropAllTypes();
+        }
+        
+        /**
          * Get the column listing for a given table.
          *
          * @param string $table
@@ -11720,6 +11859,23 @@ namespace Illuminate\Support\Facades {
             //Method inherited from \Illuminate\Database\Schema\Builder            
                         /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
                         return $instance->disableForeignKeyConstraints();
+        }
+        
+        /**
+         * Register a custom Doctrine mapping type.
+         *
+         * @param string $class
+         * @param string $name
+         * @param string $type
+         * @return void 
+         * @throws \Doctrine\DBAL\DBALException
+         * @static 
+         */ 
+        public static function registerCustomDoctrineType($class, $name, $type)
+        {
+            //Method inherited from \Illuminate\Database\Schema\Builder            
+                        /** @var \Illuminate\Database\Schema\PostgresBuilder $instance */
+                        $instance->registerCustomDoctrineType($class, $name, $type);
         }
         
         /**
@@ -14521,6 +14677,26 @@ namespace Illuminate\Support\Facades {
  
 }
 
+namespace Illuminate\Support { 
+
+    /**
+     * 
+     *
+     */ 
+    class Arr {
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
+    class Str {
+         
+    }
+ 
+}
+
 namespace Barryvdh\Debugbar { 
 
     /**
@@ -16341,15 +16517,16 @@ namespace Maatwebsite\Excel\Facades {
          * @param object $export
          * @param string|null $fileName
          * @param string $writerType
+         * @param array $headers
          * @throws \PhpOffice\PhpSpreadsheet\Exception
          * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
          * @return \Maatwebsite\Excel\BinaryFileResponse 
          * @static 
          */ 
-        public static function download($export, $fileName, $writerType = null)
+        public static function download($export, $fileName, $writerType = null, $headers = array())
         {
                         /** @var \Maatwebsite\Excel\Excel $instance */
-                        return $instance->download($export, $fileName, $writerType);
+                        return $instance->download($export, $fileName, $writerType, $headers);
         }
         
         /**
@@ -17376,10 +17553,24 @@ namespace Facades\App\Repositories\Config {
  
 }
 
+namespace Laravel\Horizon { 
+
+    /**
+     * 
+     *
+     */ 
+    class Horizon {
+         
+    }
+ 
+}
+
 
 namespace  { 
 
     class App extends \Illuminate\Support\Facades\App {}
+
+    class Arr extends \Illuminate\Support\Arr {}
 
     class Artisan extends \Illuminate\Support\Facades\Artisan {}
 
@@ -19907,6 +20098,30 @@ namespace  {
             }
          
             /**
+             * Dump the current SQL and bindings.
+             *
+             * @return void 
+             * @static 
+             */ 
+            public static function dump()
+            {
+                                /** @var \Illuminate\Database\Query\Builder $instance */
+                                $instance->dump();
+            }
+         
+            /**
+             * Die and dump the current SQL and bindings.
+             *
+             * @return void 
+             * @static 
+             */ 
+            public static function dd()
+            {
+                                /** @var \Illuminate\Database\Query\Builder $instance */
+                                $instance->dd();
+            }
+         
+            /**
              * Register a custom macro.
              *
              * @param string $name
@@ -19983,6 +20198,8 @@ namespace  {
 
     class Redirect extends \Illuminate\Support\Facades\Redirect {}
 
+    class Redis extends \Illuminate\Support\Facades\Redis {}
+
     class Request extends \Illuminate\Support\Facades\Request {}
 
     class Response extends \Illuminate\Support\Facades\Response {}
@@ -19994,6 +20211,8 @@ namespace  {
     class Session extends \Illuminate\Support\Facades\Session {}
 
     class Storage extends \Illuminate\Support\Facades\Storage {}
+
+    class Str extends \Illuminate\Support\Str {}
 
     class URL extends \Illuminate\Support\Facades\URL {}
 
@@ -20012,6 +20231,8 @@ namespace  {
     class Excel extends \Maatwebsite\Excel\Facades\Excel {}
 
     class ConnectionRepository extends \Facades\App\Repositories\Config\ConnectionRepository {}
+
+    class Horizon extends \Laravel\Horizon\Horizon {}
  
 }
 

@@ -25,8 +25,6 @@
     <meta name="expires" content="1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="all">
-
-
     <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
