@@ -48,7 +48,7 @@ class Net extends Model
 
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function maps() : BelongsToMany
     {
@@ -58,7 +58,7 @@ class Net extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function stations() : BelongsToMany
     {
@@ -68,7 +68,7 @@ class Net extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function connection() : BelongsTo
     {

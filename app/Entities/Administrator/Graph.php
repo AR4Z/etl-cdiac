@@ -44,7 +44,7 @@ class Graph extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function graphs() : BelongsToMany
     {

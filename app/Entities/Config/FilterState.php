@@ -35,12 +35,21 @@ class FilterState extends Model
         'id','station_id', 'current_date', 'current_time','it_update'
     ];
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
+    /**
+     * @var string
+     */
     protected $foreignStation = 'station_id';
 
+    /**
+     * @var array
+     */
     protected $dates = [
-
+        'created_at', 'updated_at'
     ];
 
     /**
@@ -51,17 +60,12 @@ class FilterState extends Model
         return Carbon::parse($this->current_date. ' '. $this->current_time);
     }
 
-
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\hasOne
+     * @return HasOne
      */
     public function station() : HasOne
     {
-        return $this->hasOne(
-            'App\Entities\Config\Station',
-            $this->primaryKey,
-            $this->foreignStation
-        );
+        return $this->hasOne(Station::class, $this->primaryKey, $this->foreignStation);
     }
 
 }

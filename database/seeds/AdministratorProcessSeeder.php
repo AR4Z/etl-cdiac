@@ -33,6 +33,13 @@ class AdministratorProcessSeeder extends seeder
         $this->call(OwnerSeeder::class);
         $this->call(OwnerStationSeeder::class);
 
+        $this->call(NeighborhoodSeeder::class);
+        $this->call(ZoneSeeder::class);
+        $this->call(BasinSeeder::class);
+        $this->call(AlertFloodSeeder::class);
+        $this->call(AlertLandslideSeeder::class);
+        $this->call(StationAlertFloodSeeder::class);
+        $this->call(StationAlertLandslideSeeder::class);
     }
 
     /**

@@ -44,7 +44,7 @@ class StationType extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function stations() : HasMany
     {

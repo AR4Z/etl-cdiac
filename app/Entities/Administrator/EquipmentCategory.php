@@ -44,7 +44,7 @@ class EquipmentCategory extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function equipments() : HasMany
     {

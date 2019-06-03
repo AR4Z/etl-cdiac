@@ -40,15 +40,11 @@ class Variable extends Model
         'id','name', 'name_excel', 'name_database','name_locale'
     ];
 
-
     /**
      * @return HasMany
      */
     public function varForStation() : HasMany
     {
-        return $this->hasMany(
-            'App\Entities\Config\VarForStation',
-            $this->primaryKey
-        );
+        return $this->hasMany(VarForStation::class, $this->primaryKey);
     }
 }

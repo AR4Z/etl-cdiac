@@ -23,6 +23,21 @@ class OriginalState extends Model
     protected $table= 'original_state';
 
     /**
+     * @var string
+     */
+    protected $primaryKey = 'id';
+
+    /**
+     * @var string
+     */
+    protected $foreignStation = 'station_id';
+
+    /**
+     * @var
+     */
+    public $completeDate;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -32,35 +47,22 @@ class OriginalState extends Model
     ];
 
     protected $dates = [
-
+        'created_at', 'updated_at'
     ];
-
-    protected $primaryKey = 'id';
-
-    protected $foreignStation = 'station_id';
-
-    public $completeDate;
 
     /**
      * @return Carbon
      */
     public function getFullDateAttribute() : Carbon
     {
-
         return Carbon::parse($this->current_date. ' '. $this->current_time);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return HasOne
      */
-
     public function station() : HasOne
     {
-        return $this->hasOne(
-            'App\Entities\Config\Station',
-            $this->primaryKey,
-            $this->foreignStation
-        );
+        return $this->hasOne(Station::class, $this->primaryKey, $this->foreignStation);
     }
-
 }

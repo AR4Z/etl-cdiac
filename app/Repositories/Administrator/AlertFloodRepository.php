@@ -1,13 +1,14 @@
 <?php
 
+
 namespace App\Repositories\Administrator;
 
+use App\Entities\Administrator\AlertFlood;
 use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
-use App\Entities\Administrator\Alert;
 
-class AlertRepository extends AppBaseRepository implements RepositoriesContract
+class AlertFloodRepository extends AppBaseRepository implements RepositoriesContract
 {
     /**
      * RepositoriesContract constructor.
@@ -15,6 +16,6 @@ class AlertRepository extends AppBaseRepository implements RepositoriesContract
      */
     public function __construct(Container $container)
     {
-        $this->setContainer($container)->setModel(Alert::class)->setRepositoryId('rinvex.repository.uniqueid');
+        $this->setContainer($container)->setModel(AlertFlood::class)->setRepositoryId('rinvex.repository.uniqueid');
     }
 }

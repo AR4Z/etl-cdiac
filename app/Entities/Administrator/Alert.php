@@ -24,6 +24,11 @@ class Alert extends Model
     protected $primaryKey = 'id';
 
     /**
+     * @var string
+     */
+    protected $foreignKey = 'alert_id';
+
+    /**
      * @var array
      */
     protected $fillable = [
@@ -45,20 +50,29 @@ class Alert extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @var array
+     */
+    protected $pivotStation = [
+        'table'         => 'station',
+        'pivotTable'    => 'alert_station',
+        'foreignKey'    => 'station_id',
+        'variables'     => ['id','active','flag_level_one','flag_level_two','flag_level_three']
+    ];
+
+    /**
+     * @return BelongsToMany
      */
     public function stations() : BelongsToMany
     {
-        return $this->belongsToMany(Station::class,'alert_station','alert_id','station_id')
-            ->withPivot(['id','active','flag_level_one','flag_level_two','flag_level_three'])
-            ->withTimestamps();
+        return $this->belongsToMany(Station::class,$this->pivotStation['pivotTable'],$this->foreignKey,$this->pivotStation['foreignKey'])->withPivot($this->pivotStation['variables'])->withTimestamps();
     }
+
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return HasOne
      */
     public function originalState() : HasOne
     {
-        return $this->hasOne(LevelAlert::class,'alert_id','id');
+        return $this->hasOne(LevelAlert::class,$this->foreignKey,$this->primaryKey);
     }
 
 

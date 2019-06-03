@@ -5,9 +5,8 @@ namespace App\Entities\Administrator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Equipment extends Model
+class Neighborhood extends Model
 {
     /**
      * @var string
@@ -17,7 +16,7 @@ class Equipment extends Model
     /**
      * @var string
      */
-    protected $table = 'equipment';
+    protected $table = 'neighborhood';
 
     /**
      * @var string
@@ -28,7 +27,7 @@ class Equipment extends Model
      * @var array
      */
     protected $fillable = [
-        'equipment_category_id','name','description'
+        'name','description'
     ];
 
     /**
@@ -48,16 +47,8 @@ class Equipment extends Model
     /**
      * @return BelongsTo
      */
-    public function equipmentCategory() : BelongsTo
+    public function basins() : BelongsTo
     {
-        return $this->belongsTo(EquipmentCategory::class,'equipment_category_id');
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function maintenances() : HasMany
-    {
-        return $this->hasMany(EquipmentMaintenance::class,'equipment_id','id');
+        return $this->belongsTo(Zone::class,'zone_id');
     }
 }

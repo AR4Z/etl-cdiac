@@ -23,6 +23,11 @@ class Activity extends Model
     protected $primaryKey = 'id';
 
     /**
+     * @var string
+     */
+    protected $foreignKey = 'activity_id';
+
+    /**
      * @var array
      */
     protected $fillable = [
@@ -44,11 +49,20 @@ class Activity extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @var array
+     */
+    protected $pivotEquipmentMaintenance = [
+        'table'         => 'equipment_maintenance',
+        'pivotTable'    => 'activity_equipment_maintenance',
+        'foreignKey'    => 'equipment_maintenance_id',
+        'variables'     => []
+    ];
+
+    /**
+     * @return BelongsToMany
      */
     public function activityEquipmentMaintenances() : BelongsToMany
     {
-        return $this->belongsToMany(EquipmentMaintenance::class,'activity_equipment_maintenance','equipment_maintenance_id','activity_id')
-                    ->withTimestamps();
+        return $this->belongsToMany(EquipmentMaintenance::class,$this->pivotEquipmentMaintenance['pivotTable'],$this->foreignKey,$this->pivotEquipmentMaintenance['foreignKey'])->withTimestamps();
     }
 }

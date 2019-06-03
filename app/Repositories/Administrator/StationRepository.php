@@ -57,10 +57,6 @@ class StationRepository extends AppBaseRepository implements RepositoriesContrac
      */
     public function getTypeStation(int $id) : Station
     {
-        dd($this->queryBuilder()
-            ->select('station_type.*')
-            ->join('station_type','station.station_type_id','=', 'station_type.id')
-            ->where('station.id',$id)->get());
         return $this->queryBuilder()
                     ->select('station_type.*')
                     ->join('station_type','station.station_type_id','=', 'station_type.id')

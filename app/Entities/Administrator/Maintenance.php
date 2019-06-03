@@ -45,7 +45,7 @@ class Maintenance extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function station() : BelongsTo
     {
@@ -53,7 +53,7 @@ class Maintenance extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function equipments() : HasMany
     {

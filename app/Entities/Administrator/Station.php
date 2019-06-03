@@ -50,7 +50,7 @@ class Station extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function nets() : BelongsToMany
     {
@@ -60,7 +60,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function net() : BelongsTo
     {
@@ -68,7 +68,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function typeStation() : BelongsTo
     {
@@ -76,7 +76,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function technicalSheetFields() : BelongsToMany
     {
@@ -86,7 +86,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function variables() : BelongsToMany
     {
@@ -96,7 +96,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function graphs() : BelongsToMany
     {
@@ -106,7 +106,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function maintenances() : HasMany
     {
@@ -114,7 +114,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return HasOne
      */
     public function originalState() : HasOne
     {
@@ -122,7 +122,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return HasOne
      */
     public function filterState() : HasOne
     {
@@ -130,7 +130,7 @@ class Station extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function alerts() : BelongsToMany
     {
@@ -140,12 +140,32 @@ class Station extends Model
 
     }
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function owners() : BelongsToMany
     {
         return $this->belongsToMany(Owner::class,'owner_station','station_id','owner_id')
             ->withPivot(['id'])
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function alertLandslides() : BelongsToMany
+    {
+        return $this->belongsToMany(AlertLandslide::class,'station_landslide_alert','station_id','landslide_alert_id')
+            ->withPivot(['id','primary','active','distance'])
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function alertFloods() : BelongsToMany
+    {
+        return $this->belongsToMany(AlertFlood::class,'station_flood_alert','station_id','flood_alert_id')
+            ->withPivot(['id','primary','active','distance'])
             ->withTimestamps();
     }
 }

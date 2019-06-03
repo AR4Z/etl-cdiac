@@ -5,9 +5,8 @@ namespace App\Entities\Administrator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Equipment extends Model
+class AlertLandslide extends Model
 {
     /**
      * @var string
@@ -17,7 +16,7 @@ class Equipment extends Model
     /**
      * @var string
      */
-    protected $table = 'equipment';
+    protected $table = 'alert_landslide';
 
     /**
      * @var string
@@ -28,7 +27,7 @@ class Equipment extends Model
      * @var array
      */
     protected $fillable = [
-        'equipment_category_id','name','description'
+        'name','code','active','limit_red','icon'
     ];
 
     /**
@@ -48,16 +47,18 @@ class Equipment extends Model
     /**
      * @return BelongsTo
      */
-    public function equipmentCategory() : BelongsTo
+    public function basins() : BelongsTo
     {
-        return $this->belongsTo(EquipmentCategory::class,'equipment_category_id');
+        return $this->belongsTo(Zone::class,'zone_id');
     }
 
     /**
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function maintenances() : HasMany
+    public function stations() : BelongsToMany
     {
-        return $this->hasMany(EquipmentMaintenance::class,'equipment_id','id');
+        return $this->belongsToMany(Station::class,'station_landslide_alert','landslide_alert_id','station_id')
+            ->withPivot(['id','primary','active','distance'])
+            ->withTimestamps();
     }
 }

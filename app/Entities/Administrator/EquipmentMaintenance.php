@@ -45,7 +45,7 @@ class EquipmentMaintenance extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function maintenance() : BelongsTo
     {
@@ -53,7 +53,7 @@ class EquipmentMaintenance extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function equipment() : BelongsTo
     {
@@ -61,7 +61,7 @@ class EquipmentMaintenance extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function activities() : BelongsToMany
     {

@@ -57,7 +57,7 @@ class OriginalWeatherFact extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function station() : BelongsTo
     {
@@ -65,7 +65,7 @@ class OriginalWeatherFact extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function date() : BelongsTo
     {
@@ -73,7 +73,7 @@ class OriginalWeatherFact extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function time() : BelongsTo
     {

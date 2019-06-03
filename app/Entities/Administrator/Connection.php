@@ -44,7 +44,7 @@ class Connection extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function net() : HasMany
     {

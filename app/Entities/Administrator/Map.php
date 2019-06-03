@@ -46,7 +46,7 @@ class Map extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function maps() : BelongsToMany
     {

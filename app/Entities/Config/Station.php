@@ -41,53 +41,37 @@ class Station extends Model
      */
     protected $foreignConnection = 'connection_id';
 
-
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-
     public function connection() : HasMany
     {
-        return $this->hasMany(
-            'App\Entities\Config\Connection',
-            $this->primaryKey,
-            $this->foreignConnection
-        );
+        return $this->hasMany(Connection::class, $this->primaryKey, $this->foreignConnection);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
 
     public function varForStation() : HasMany
     {
-        return $this->hasMany(
-            'App\Entities\Config\VarForStation',
-            $this->primaryKey
-        );
+        return $this->hasMany(VarForStation::class, $this->primaryKey);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-
     public function originalState() : BelongsTo
     {
-        return $this->belongsTo(
-            'App\Entities\Config\OriginalState',
-            $this->primaryKey
-        );
+        return $this->belongsTo(OriginalState::class, $this->primaryKey);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
 
     public function filterState() : BelongsTo
     {
-        return $this->belongsTo(
-            'App\Entities\Config\FilterState',
-            $this->primaryKey
-        );
+        return $this->belongsTo(FilterState::class, $this->primaryKey);
     }
 }

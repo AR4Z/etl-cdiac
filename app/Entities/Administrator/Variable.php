@@ -44,7 +44,7 @@ class Variable extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function stations() : BelongsToMany
     {
