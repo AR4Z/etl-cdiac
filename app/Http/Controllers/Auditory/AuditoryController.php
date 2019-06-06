@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auditory;
 
+
 use App\Http\Controllers\Controller;
 use App\Repositories\Administrator\StationRepository;
 use App\Repositories\Administrator\VariableRepository;
@@ -13,11 +14,13 @@ use App\Repositories\Bodega\TablesOldWareHouseRepository;
 use App\Repositories\Bodega\CorrectionHistoricalRepository;
 use App\Repositories\Bodega\StationOldRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 use App\Repositories\Administrator\NetRepository;
 
 use Carbon\Carbon;
 //use App\Repositories\Auditory\RiskRepository;
+use Mockery\Matcher\Not;
 use phpDocumentor\Reflection\Types\Null_;
 
 //use App\Repositories\DataWareHouse\WeatherFactRepository;
@@ -197,10 +200,10 @@ class AuditoryController extends Controller
         $date_end = $this->dateDimOldRepository->getDate($data['end']);
 
 
-        if (array_key_exists("station_id",$data)){
+        if (Arr::exists($data,'station_id')){
 
             $station = $this->stationDimOldRepository->getStationNameById($data['station_id']);
-            if (array_key_exists("variable_id",$data)){
+            if (Arr::exists($data,"variable_id")){
 
                 $variables = $this->variableOldRepository->getVariableNameById($data['variable_id']);
 
@@ -210,7 +213,7 @@ class AuditoryController extends Controller
 
             }
         }
-        elseif (array_key_exists("net_id",$data)){
+        elseif (Arr::exists($data,"net_id")){
             $stationNet=$this->stationRepository->getStationForNetAuditoryActive($data['net_id']);
             $station=array();
 
@@ -223,7 +226,7 @@ class AuditoryController extends Controller
           //dd($stationNet,$station);
 
 
-            if (array_key_exists("variable_id",$data)){
+            if (Arr::exists($data,"variable_id")){
                 $variables = $this->variableOldRepository->getVariableNameById($data['variable_id']);
             }
             else{
@@ -234,7 +237,7 @@ class AuditoryController extends Controller
             $station= $this->stationDimOldRepository->getAllStations();
 
             //dd($station);
-            if (array_key_exists("variable_id",$data)){
+            if (Arr::exists($data,"variable_id")){
 
                 $variables = $this->variableOldRepository->getVariableNameById($data['variable_id']);
             }
@@ -242,7 +245,7 @@ class AuditoryController extends Controller
                 $variables=0;
             }
         }
-        if (array_key_exists("start_data",$data)){
+        if (Arr::exists($data,"start_data")){
             $data_start=$data['start_data'];
             $data_end=$data['end_data'];
         }
@@ -262,7 +265,7 @@ class AuditoryController extends Controller
                     return view('auditory.result_Station')->with(['data_risk' => $result_accurancy_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
-                elseif (array_key_exists("net_id",$data)) {
+                elseif (Arr::exists($data,"net_id")) {
                     $net=$this->netRepository->getNetById($data['net_id']);
                     return view('auditory.result_Net')->with(['data_risk' => $result_accurancy_array,'net'=> array_column($net,'name')[0], 'search' => $data]);
 
@@ -284,7 +287,7 @@ class AuditoryController extends Controller
                     return view('auditory.result_Station')->with(['data_risk' => $result_integrity, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
-                elseif (array_key_exists("net_id",$data)) {
+                elseif (Arr::exists($data,"net_id")) {
                     $net=$this->netRepository->getNetById($data['net_id']);
                     return view('auditory.result_Net')->with(['data_risk' => $result_integrity,'net'=> array_column($net,'name')[0], 'search' => $data]);
 
@@ -307,7 +310,7 @@ class AuditoryController extends Controller
                     return view('auditory.result_Station')->with(['data_risk' => $result_completeness_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
-                elseif (array_key_exists("net_id",$data)) {
+                elseif (Arr::exists($data,"net_id")) {
                     $net=$this->netRepository->getNetById($data['net_id']);
                     return view('auditory.result_Net')->with(['data_risk' => $result_completeness_array,'net'=> array_column($net,'name')[0], 'search' => $data]);
 
@@ -327,7 +330,7 @@ class AuditoryController extends Controller
 
 
                 $result_consistence_array = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
-          
+
               (array_column($result_consistence_array,'outlier')[0]);
 
                 if (sizeof($station)==1 && sizeof($variables)==1){
@@ -336,7 +339,7 @@ class AuditoryController extends Controller
                     return view('auditory.result_Station_consistence')->with(['outlier'=>(array_column($result_consistence_array,'outlier')[0]),'data_risk' => $result_consistence_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
 
                 }
-                elseif (array_key_exists("net_id",$data)) {
+                elseif (Arr::exists($data,"net_id")) {
 
                     $net=$this->netRepository->getNetById($data['net_id']);
                     return view('auditory.result_Net_consistence')->with(['data_risk' => $result_consistence_array,'net'=> array_column($net,'name')[0], 'var'=>array_column($variables,'nombre')[0],'search' => $data]);
@@ -358,7 +361,7 @@ class AuditoryController extends Controller
 
                 $result_coherence_array = $this->coherence($station,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
 
-                if (array_key_exists("net_id",$data)) {
+                if (Arr::exists($data,"net_id")) {
 
                     $net=$this->netRepository->getNetById($data['net_id']);
                     return view('auditory.result_Net')->with(['data_risk' => $result_coherence_array,'net'=> $net[0]->name, 'search' => $data]);
@@ -380,6 +383,7 @@ class AuditoryController extends Controller
             $result_exactitud_array = $this->accuracy($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk,$data_start,$data_end);
             $result_integrity = $this->averageRisk($station, $variables, $date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
             $result_completeness_array = $this->completeness($station,$variables,$data['start'],$data['end']);
+            //$result_consistence_array_1 = $this->numericRisk($station,$variables,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
             $result = array_merge($result_integrity, $result_completeness_array, $result_exactitud_array);
 
             if (sizeof($station)==1 && sizeof($variables)==1) {
@@ -388,33 +392,33 @@ class AuditoryController extends Controller
 
                     $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
 
-                    $result_consistence_array = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
+                    $result_consistence_array_2 = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
 
-                    $result_array=array_merge($result,$result_consistence_array,$result_coherence_array);
+                    $result_array=array_merge($result,$result_consistence_array_2,$result_coherence_array);
                 }
                 else{
 
-                $result_consistence_array = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
+                    $result_consistence_array_2 = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
 
-                $result_array=array_merge($result,$result_consistence_array);}
+                $result_array=array_merge($result,$result_consistence_array_2);}
 
                 return view('auditory.result_Station')->with(['data_risk' => $result_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
             }
-            elseif (array_key_exists("net_id",$data)) {
+            elseif (Arr::exists($data,"net_id")) {
                 $net=$this->netRepository->getNetById($data['net_id']);
-                if (array_key_exists('variable_id',$data)){
+                if (Arr::exists($data,'variable_id')){
                     if ($data['variable_id']=='evapotranspiracion'){
                         $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
 
-                        $result_consistence_array = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
+                        $result_consistence_array_2 = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
 
-                        $result_array=array_merge($result,$result_consistence_array,$result_coherence_array);
+                        $result_array=array_merge($result,$result_consistence_array_2,$result_coherence_array);
 
                     }
                     else{
 
-                        $result_consistence_array = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
-                        $result_array=array_merge($result,$result_consistence_array);}
+                        $result_consistence_array_2 = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
+                        $result_array=array_merge($result,$result_consistence_array_2);}
                 }
                 else{
 
@@ -426,27 +430,44 @@ class AuditoryController extends Controller
 
             }
             elseif (sizeof($station)==1 && sizeof($variables)>1){
-                $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
 
+                $variable=$this->variableOldRepository->getVariableByStation(array_column($station,'estacion_sk')[0]);
+                $coherence_1=0;
+                $coherence_2=0;
+                for ($x=0;$x<sizeof($variable)-1;$x++){
+                    if (array_column($variable,'nombre')[$x]='evapotranspiracion'){
+                        $coherence_1++;
+                    }
+                    if(array_column($variable,'nombre')[$x]='caudal' Or array_column($variable,'nombre')[$x]='nivel'){
+                        $coherence_2++;
+                    }
+                }
+                if ($coherence_1>0 or $coherence_2>0){
+                $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
                 $result_array=array_merge($result,$result_coherence_array);
                 return view('auditory.result_Station')->with(['data_risk' => $result_array, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                }
+                else{
+                    return view('auditory.result_Station')->with(['data_risk' => $result, 'station'=> array_column($station,'estacion')[0],'var'=>array_column($variables,'nombre')[0],'search' => $data]);
+                }
+
 
             }
             else {
-                if (array_key_exists('variable_id',$data)){
+                if (Arr::exists($data,'variable_id')){
 
                     if ($data['variable_id']=='evapotranspiracion'){
                         $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
 
-                        $result_consistence_array = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
+                        $result_consistence_array_2 = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
 
-                        $result_array=array_merge($result,$result_consistence_array,$result_coherence_array);
+                        $result_array=array_merge($result,$result_consistence_array_2,$result_coherence_array);
 
                     }
                     else{
 
-                    $result_consistence_array = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
-                    $result_array=array_merge($result,$result_consistence_array);}
+                        $result_consistence_array_2 = $this->outliers($station,$variables,$date_start[0]->fecha_sk, $date_end[0]->fecha_sk);
+                    $result_array=array_merge($result,$result_consistence_array_2);}
                 }
                 else{
                     $result_coherence_array=$this->coherence($station,$date_start[0]->fecha_sk,$date_end[0]->fecha_sk);
@@ -563,14 +584,44 @@ class AuditoryController extends Controller
 
 
     public function coherence($station,$date1,$date2){
+        $variable=$this->variableOldRepository->getVariableByStation(array_column($station,'estacion_sk')[0]);
+        $coherence_1=0;
+        $coherence_2=0;
+        for ($x=0;$x<sizeof($variable)-1;$x++){
+        if (array_column($variable,'nombre')[$x]='evapotranspiracion'){
+            $coherence_1++;
+        }
+        elseif (array_column($variable,'nombre')[$x]='caudal' Or array_column($variable,'nombre')[$x]='nivel'){
+            $coherence_2++;
+        }
+        }
 
+        if ($coherence_1 >0 and $coherence_2>0){
+            $coherenceNullRisk=$this->calculateEvapotranspirationNullRisk($station,$date1,$date2);
 
-        $coherenceNullRisk=$this->calculateEvapotranspirationNullRisk($station,$date1,$date2);
+            $evapotranspiratioCoherence = $this->calculateEvapotranspirationRisk($station,$date1,$date2);
 
-        $evapotranspiratioCoherence = $this->calculateEvapotranspirationRisk($station,$date1,$date2);
+            $levelCoherence= $this->calculateLevelRisk($station,$date1,$date2);
 
+            $flowCoherence= $this->calculateFlowRisk($station,$date1,$date2);
 
-        $result=array_merge($coherenceNullRisk,$evapotranspiratioCoherence);
+            $result=array_merge($coherenceNullRisk,$evapotranspiratioCoherence,$levelCoherence,$flowCoherence);
+
+        }
+        elseif ($coherence_1>0){
+
+            $coherenceNullRisk=$this->calculateEvapotranspirationNullRisk($station,$date1,$date2);
+
+            $evapotranspiratioCoherence = $this->calculateEvapotranspirationRisk($station,$date1,$date2);
+            $result=array_merge($coherenceNullRisk,$evapotranspiratioCoherence);
+
+        }
+        else{
+            $levelCoherence= $this->calculateLevelRisk($station,$date1,$date2);
+
+            $flowCoherence= $this->calculateFlowRisk($station,$date1,$date2);
+            $result=array_merge($levelCoherence,$flowCoherence);
+        }
 
         $result_coherence_array = array();
         if (sizeof($station)==1) {
@@ -650,7 +701,7 @@ class AuditoryController extends Controller
             for ($j=0;$j<=sizeof($station)-1;$j++) {
                 if ($variable==0){
                     $variable=$this->variableOldRepository->getVariableByStation(array_column($station,'estacion_sk')[$j]);}
-                for ($i = 0; $i <= sizeof($variable) - 1; $i++) {
+                for ($i=0;$i <=sizeof($variable)-1; $i++) {
                     $nulls = $this->factTableRepository->CountNullData(array_column($station,'estacion_sk')[$j], array_column($variable,'nombre')[$i], $date_start, $date_end);
                     $total_data = $this->factTableRepository->receiveDataWithNullData(array_column($station,'estacion_sk')[$j], array_column($variable,'nombre')[$i], $date_start, $date_end);
                     $vulnerabillity = $this->calculateVulnerabillity(array_column($station,'estacion')[$j], array_column($total_data,'count')[0],array_column($nulls,'count')[0]);
@@ -661,6 +712,25 @@ class AuditoryController extends Controller
         }
 
 
+    public function numericRisk($station_id,$var,$date1,$date2){
+
+        $result_array= array();
+        $risk=0;
+        for ($j=0;$j<=sizeof($station_id)-1;$j++) {
+            if ($var==0){
+                $var=$this->variableOldRepository->getVariableByStation(array_column($station_id,'estacion_sk')[$j]);}
+            for ($i = 0; $i <= sizeof($var) - 1; $i++) {
+                $total_data = $this->factTableRepository->receiveDataWithNullData(array_column($station_id,'estacion_sk')[$j], array_column($var,'nombre')[$i], $date1, $date2);
+                $data= $this->factTableRepository->getNotNumeric(array_column($station_id,'estacion_sk')[$j], array_column($var,'nombre')[$i], $date1, $date2);
+                $risk=array_column($total_data,'count')[0]-array_column($data,'count')[0];
+                $vulnerabillity = $this->calculateVulnerabillity(array_column($station_id,'estacion')[$j], array_column($total_data,'count')[0],$risk);
+                array_push($result_array,['risk'=>'Cantidad de datos no númericos','station'=>array_column($station_id,'estacion')[$j],'criterio' => 'Consistencia','vulnerabillity'=>$vulnerabillity, 'riskQuantity'=>$risk, 'total_data'=> array_column($total_data,'count')[0], 'variable'=>array_column($var,'nombre')[$i]]);
+            }
+        }
+        return $result_array;
+
+    }
+
     public function outliers($station,$variable,$date_start, $date_end){
         $result_array= array();
         for ($j=0;$j<=sizeof($station)-1;$j++) {
@@ -669,21 +739,27 @@ class AuditoryController extends Controller
                 $variable=$this->factTableRepository->getVariableByStation(array_column($station,'estacion_sk')[$j]);}
 
                 for ($i = 0; $i <= sizeof($variable)-1; $i++) {
-                   // dd($variable,$i);
-                    $average=$this->factTableRepository->getAverage(array_column($station,'estacion_sk')[$j],array_column($variable,'nombre')[$i],$date_start,$date_end);
+                $average=$this->factTableRepository->getAverage(array_column($station,'estacion_sk')[$j],array_column($variable,'nombre')[$i],$date_start,$date_end);
                 $deviation=$this->factTableRepository->getDeviation(array_column($station,'estacion_sk')[$j],array_column($variable,'nombre')[$i],$date_start,$date_end);
                 $data1=array_column($average,'avg')[$i]-(array_column($deviation,'stddev')[$i] * 2);
                 $data2=array_column($average,'avg')[$i]+(array_column($deviation,'stddev')[$i] * 2);
 
-                $outlier= $this->factTableRepository->getOutlier(array_column($station,'estacion_sk')[$j],array_column($variable,'nombre')[$i],$data1,$data2,$date_start,$date_end);
-                //dd($data1,$data2,sizeof($outlier),$date_start,$date_end,$variable[$i],$station[$j]);
-                $total_data = $this->factTableRepository->receiveDataWithNullData(array_column($station,'estacion_sk')[$j], array_column($variable,'nombre')[$i], $date_start, $date_end);
+                if (array_column($variable,'nombre')[$i]='direccion_viento'){
+
+                    $outlier= $this->factTableRepository->getOutlier(array_column($station,'estacion_sk')[$j],array_column($variable,'nombre')[$i],(integer)$data1,(integer)$data2,$date_start,$date_end);
+
+                }
+                else{
+                    $outlier= $this->factTableRepository->getOutlier(array_column($station,'estacion_sk')[$j],array_column($variable,'nombre')[$i],$data1,$data2,$date_start,$date_end);
+                }
+                    //dd($data1,$data2,$date_start,$date_end,$variable[$i],$station[$j]);
+
+                    $total_data = $this->factTableRepository->receiveDataWithNullData(array_column($station,'estacion_sk')[$j], array_column($variable,'nombre')[$i], $date_start, $date_end);
                 $vulnerabillity = $this->calculateVulnerabillity(array_column($station,'estacion_sk')[$j], array_column($total_data,'count')[0], sizeof($outlier));
                 array_push($result_array,['outlier'=>$outlier,'deviation'=>round(array_column($deviation,'stddev')[$i],2),'average'=>round(array_column($average,'avg')[$i],2),'start_limit'=>round($data1,2),'end_limit'=>round($data2,2),'risk'=>'Cantidad Outliers','station'=>array_column($station,'estacion')[$j],'criterio' => 'Consistencia','vulnerabillity'=>round($vulnerabillity,2), 'riskQuantity'=>sizeof($outlier), 'total_data'=>array_column($total_data,'count')[0], 'variable'=>array_column($variable,'nombre')[$i]]);
             }
         }
 
-       // dd($result_array);
 
         return $result_array;
 
@@ -751,8 +827,8 @@ class AuditoryController extends Controller
                    }
 
                   else {
-                       $range_uno = array_column($ranges,'maximum')[0];
-                       $range_dos = array_column($ranges,'minimum')[0];
+                       $range_dos = array_column($ranges,'maximum')[0];
+                       $range_uno = array_column($ranges,'minimum')[0];
                        $receives = $this->factTableRepository->receiveData(array_column($station_id,'estacion_sk')[$j], array_column($var_array,'nombre')[$i], $date1, $date2);
                        $receive = array_column($receives,'count')[0];
                        $range = $this->factTableRepository->countFactOutOfRange(array_column($station_id,'estacion_sk')[$j], array_column($var_array,'nombre')[$i], $range_uno, $range_dos, $date1, $date2);
@@ -780,6 +856,9 @@ class AuditoryController extends Controller
            return $result_array_out;
 
    }
+
+
+
     public function countFactInOfRangeForVar($station_id,$var_array,$range1,$range2,$date1,$date2)
     {
         $result_array_in = array();
@@ -839,18 +918,68 @@ class AuditoryController extends Controller
                     $receive = $this->factTableRepository->receiveData(array_column($station_id,'estacion_sk')[$j], $var, $date1, $date2);
                     $vulnerabillity=$this->calculateVulnerabillity(array_column($station_id,'estacion')[$j],array_column($receive,'count')[0],array_column($risk,'count')[0]);
 
-
                     array_push($result_array_in, ['risk' => 'Evapotranspiración existe y las variables con las que se calcula no existen', 'station' => array_column($station_id,'estacion')[$j], 'vulnerabillity' => $vulnerabillity, 'riskQuantity' => array_column($risk,'count')[0], 'total_data' => array_column($receive,'count')[0], 'variable' => $var]);
-
-
             }
 
            // dd($result_array_in);
+        return $result_array_in;
+    }
+
+
+    public function calculateLevelRisk($station_id,$date1,$date2)
+{
+    $var='nivel';
+
+    $result_array_in = array();
+    for ($j = 0; $j <= sizeof($station_id)-1; $j++) {
+        $stationData=$this->stationDimOldRepository->getStationData(array_column($station_id,'estacion_sk')[$j]);
+
+        if (array_column($stationData,'tipologia')[$j]=='H'){
+
+            $risk=$this->factTableRepository->levelRisk(array_column($station_id,'estacion_sk')[$j],$date1,$date2);
+            $receive = $this->factTableRepository->receiveData(array_column($station_id,'estacion_sk')[$j], $var, $date1, $date2);
+            $vulnerabillity=$this->calculateVulnerabillity(array_column($station_id,'estacion')[$j],array_column($receive,'count')[0],array_column($risk,'count')[0]);
+
+            array_push($result_array_in, ['risk' => 'No existe nivel pero si existe caudal ', 'station' => array_column($station_id,'estacion')[$j], 'vulnerabillity' => $vulnerabillity, 'riskQuantity' => array_column($risk,'count')[0], 'total_data' => array_column($receive,'count')[0], 'variable' => $var]);
+        }
+
+    }
+
+    // dd($result_array_in);
+
+
+    return $result_array_in;
+
+}
+
+
+    public function calculateFlowRisk($station_id,$date1,$date2)
+    {
+        $var='caudal';
+
+        $result_array_in = array();
+        for ($j = 0; $j <= sizeof($station_id)-1; $j++) {
+
+            $stationData=$this->stationDimOldRepository->getStationData(array_column($station_id,'estacion_sk')[$j]);
+
+            if (array_column($stationData,'tipologia')[$j]=='H'){
+
+                $risk=$this->factTableRepository->flowRisk(array_column($station_id,'estacion_sk')[$j],$date1,$date2);
+                $receive = $this->factTableRepository->receiveData(array_column($station_id,'estacion_sk')[$j], $var, $date1, $date2);
+                $vulnerabillity=$this->calculateVulnerabillity(array_column($station_id,'estacion')[$j],array_column($receive,'count')[0],array_column($risk,'count')[0]);
+
+                array_push($result_array_in, ['risk' => 'Existe nivel pero no existe caudal ', 'station' => array_column($station_id,'estacion')[$j], 'vulnerabillity' => $vulnerabillity, 'riskQuantity' => array_column($risk,'count')[0], 'total_data' => array_column($receive,'count')[0], 'variable' => $var]);
+            }
+
+        }
+
+        // dd($result_array_in);
 
 
         return $result_array_in;
 
     }
+
     public function calculateEvapotranspirationNullRisk($station_id,$date1,$date2)
     {
         $var='evapotranspiracion';
