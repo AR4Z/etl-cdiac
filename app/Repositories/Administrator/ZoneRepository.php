@@ -4,12 +4,12 @@
 namespace App\Repositories\Administrator;
 
 
-use App\Repositories\DataWareHouse\BaseFactRepository;
+use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use App\Entities\Administrator\Zone;
 
-class ZoneRepository extends BaseFactRepository implements RepositoriesContract
+class ZoneRepository extends AppBaseRepository implements RepositoriesContract
 {
     /**
      * RepositoriesContract constructor.
