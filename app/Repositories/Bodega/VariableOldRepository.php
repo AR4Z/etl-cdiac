@@ -32,7 +32,7 @@ class VariableOldRepository extends AppBaseRepository implements RepositoriesCon
      * @param int $var
      * @return Collection
      */
-    public function getVariableNameById($var) : Collection
+    public function getVariableNameById($var) : array
     {
         return $this->select('id_variable','nombre')->where('id_variable','=',$var)->get()->toArray();
     }
