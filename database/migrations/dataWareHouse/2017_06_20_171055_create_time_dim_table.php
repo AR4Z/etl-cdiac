@@ -14,7 +14,7 @@ class CreateTimeDimTable extends Migration
     public function up()
     {
         Schema::connection('data_warehouse')->create('time_dim', function (Blueprint $table) {
-            $table->unsignedBigInteger('time_sk')->unique();
+            $table->bigIncrements('time_sk')->unique();
             $table->time('time')->nullable();
             $table->integer('hours');
             $table->integer('minutes');

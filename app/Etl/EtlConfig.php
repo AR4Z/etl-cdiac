@@ -93,6 +93,16 @@ class EtlConfig
     /**
      * @var string
      */
+    public $incomingFormatDate = 'Y-m-d'; # d-m-Y d/m/Y
+
+    /**
+     * @var string
+     */
+    public  $objectiveFormatDate = 'Y-m-d';
+
+    /**
+     * @var string
+     */
     public $initialDate = null;
 
     /**
@@ -394,7 +404,9 @@ class EtlConfig
             dd('Error: no se puede pasar un $tableTrust en null');
         }
 
-        $this->trustObject->setTable($tableTrust);
+        if ($this->trustObject->active){
+            $this->trustObject->setTable($tableTrust);
+        }
     }
 
     /**
@@ -408,11 +420,13 @@ class EtlConfig
             dd('Error: no se puede pasar un $trustRepository en null');
         }
 
-        $this->trustObject->setRepository(
-            $this->factoryRepositories(
-                "App\\Repositories\\DataWareHouse\\".$trustRepository
-            )
-        );
+        if ($this->trustObject->active){
+            $this->trustObject->setRepository(
+                $this->factoryRepositories(
+                    "App\\Repositories\\DataWareHouse\\".$trustRepository
+                )
+            );
+        }
     }
 
     /**

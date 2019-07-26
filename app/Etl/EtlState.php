@@ -77,7 +77,10 @@ class EtlState
 
         if ($this->debug){
             $exception = $this->warningsState[count($this->warningsState) -1 ]['exception'];
-            if (!is_null($exception)){ throw new Exception($exception);}
+            if (!is_null($exception)){
+                //throw new Exception($exception);
+                dd($this);
+            }
         }
 
         // TODO : metodo para terminar el proceso una vez que se a encontrado un error fatal

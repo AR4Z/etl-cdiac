@@ -174,7 +174,7 @@
             if ( id === ''){
                 $('#station_id').empty();
             }else{
-                $.post('/etl-cdiac/execute-etl/getStationsForNet',{ id: id },function (values) {
+                $.post('/execute-etl/getStationsForNet',{ id: id },function (values) {
                     $('#station_id').populateSelect(values);
                 },'json');
             }

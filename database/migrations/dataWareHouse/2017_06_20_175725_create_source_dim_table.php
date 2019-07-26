@@ -14,7 +14,7 @@ class CreateSourceDimTable extends Migration
     public function up()
     {
         Schema::connection('data_warehouse')->create('source_dim', function (Blueprint $table) {
-            $table->unsignedBigInteger('source_sk')->unique();
+            $table->bigIncrements('source_sk')->unique();
             $table->enum('source_type', ['fija', 'móvil']);
             $table->string('name', 255);
         });

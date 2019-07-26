@@ -70,7 +70,7 @@
                     $('#station_id').empty();
                 } else {
                     changeTypeStation(fact_table);
-                    $.post('/etl-cdiac/search-missing/stationsForFactTable', {type_station: $('#type_station').val()}, function (values) {
+                    $.post('/search-missing/stationsForFactTable', {type_station: $('#type_station').val()}, function (values) {
                         //console.log(values);
                         $('#station_id').populateSelect(values);
                     }, 'json');

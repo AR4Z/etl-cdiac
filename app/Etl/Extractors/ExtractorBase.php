@@ -23,7 +23,11 @@ abstract class ExtractorBase extends EtlBase
         $dates = $this->etlConfig->repositorySpaceWork->getDatesDistinct();
 
         foreach ($dates as $date){
-            $this->etlConfig->repositorySpaceWork->updateDateSk($this->calculateDateSk(Carbon::parse($date->date)),$date->date);
+            $this->etlConfig->repositorySpaceWork->updateDateSk(
+                $this->calculateDateSk(
+                    Carbon::parse(Carbon::createFromFormat($this->etlConfig->incomingFormatDate,$date->date)->format($this->etlConfig->objectiveFormatDate))
+                ), $date->date
+            );
         }
 
         return true;

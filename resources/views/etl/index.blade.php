@@ -95,8 +95,6 @@
             {!! Form::close() !!}
         </div>
 
-
-
         </div>
 
     </div>
@@ -111,7 +109,7 @@
             if ( net_name === ''){
                 $('#station_id').empty();
             }else{
-                $.post('/etl-cdiac/plane-etl/getStationsForNet',{ net_name: net_name },function (values) {
+                $.post('/plane-etl/getStationsForNet',{ net_name: net_name },function (values) {
                     console.log(values);
                     $('#station_id').populateSelect(values);
                 },'json');
