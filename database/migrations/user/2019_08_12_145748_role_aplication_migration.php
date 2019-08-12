@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UserPermission extends Migration
+class RoleAplicationMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class UserPermission extends Migration
      */
     public function up()
     {
-        Schema::connection('public')->create('user_permission', function (Blueprint $table) {
+        Schema::connection('public')->create('role_application', function (Blueprint $table) {
 
             $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('permission_id');
-            $table->boolean('active');
+            $table->integer('role_id');
+            $table->integer('application_id');
+
+            $table->foreign('role_id')->references('id')->on('role')->onDelete('cascade');
+            $table->foreign('application_id')->references('id')->on('application')->onDelete('cascade');
         });
     }
 

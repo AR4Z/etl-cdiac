@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AdministratorProcessSeeder::class);
         $this->call(DataWareHouseProcessSeeder::class);
+        $this->call(UsersSeeder::class);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Permissions extends Migration
+class ApplicationMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class Permissions extends Migration
      */
     public function up()
     {
-        Schema::connection('public')->create('permissions', function (Blueprint $table) {
+        Schema::connection('public')->create('application', function (Blueprint $table) {
 
             $table->increments('id');
-            $table->integer('code')->unique();
             $table->string('name');
+            $table->string('app_url')->unique();
             $table->string('description',250);
-            $table->integer('application_id');
-
         });
     }
 
@@ -31,6 +29,6 @@ class Permissions extends Migration
      */
     public function down()
     {
-        Schema::connection('public')->dropIfExists('permissions');
+        Schema::connection('public')->dropIfExists('application');
     }
 }

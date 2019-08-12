@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Application extends Migration
+class CreateDataQualityTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class Application extends Migration
      */
     public function up()
     {
-        Schema::connection('public')->create('application', function (Blueprint $table) {
-
+        Schema::connection('audit')->create('data_quality', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('app_url')->unique();
-            $table->string('description',250);
+            $table->string('description');
+            $table->timestamps();
         });
     }
 
@@ -29,6 +28,6 @@ class Application extends Migration
      */
     public function down()
     {
-        Schema::connection('public')->dropIfExists('application');
+        DB::connection('audit')->table('data_quality')->delete();
     }
 }

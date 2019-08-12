@@ -79,8 +79,8 @@ return [
             'host'      => env('DB_HOST', '127.0.0.1'),
             'port'      => env('DB_PORT', '5432'),
             'database'  => env('DB_DATAWAREHOUSE', 'forge'),
-            'username'  => env('DB_USERNAME', 'forge'),
-            'password'  => env('DB_PASSWORD', ''),
+            'username'  => env('DB_DATAWAREHOUSE_USER', 'forge'),
+            'password'  => env('DB_DATAWAREHOUSE_PASSWORD', ''),
             'charset'   => 'utf8',
             'prefix'    => '',
             'schema'    => 'public',
@@ -119,11 +119,11 @@ return [
             'engine'    => null,
         ],
 
-        'auditory' => [
+        'audit' => [
             'driver'    => env('DB_DRIVER_AUDITORY', 'pgsql'),
             'host'      => env('DB_HOST_AUDITORY', '127.0.0.1'),
             'port'      => env('DB_PORT_AUDITORY', '5432'),
-            'database'  => env('DB_AUDITORY', 'forge'),
+            'database'  => env('DB_AUDIT', 'forge'),
             'username'  => env('DB_USERNAME_AUDITORY', 'forge'),
             'password'  => env('DB_PASSWORD_AUDITORY', 'e3ccae410a'),
             'charset'   => 'utf8',

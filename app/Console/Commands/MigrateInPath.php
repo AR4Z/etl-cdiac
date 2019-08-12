@@ -33,7 +33,7 @@ class MigrateInPath extends Command
     /**
      * @var array
      */
-    protected $optionPaths = ['public','administrator', 'dataWareHouse','temporaryWork','auditory','user'];
+    protected $optionPaths = ['public','administrator', 'dataWareHouse','temporaryWork','audit','user'];
 
     /**
      * @var array
@@ -51,6 +51,7 @@ class MigrateInPath extends Command
     protected $seedOptions = [
         'administrator' => 'AdministratorProcessSeeder',
         'dataWareHouse' => 'DataWareHouseProcessSeeder',
+        'user'          => 'UserSeeder'
     ];
 
     /**
