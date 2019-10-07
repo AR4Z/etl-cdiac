@@ -40,10 +40,8 @@ class Csv extends ExtensionLoadBase implements ExtensionLoadContract
                     $val[$variablesName[$variableName]] = $values[$key];
                 }
             }
-
             $repository->create($val);
         }
-
         # cambiar de comas a puntos los datos de las variables
         $this->changeCommaForPointAllVariables($repository,$variables);
 

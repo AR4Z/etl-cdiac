@@ -174,9 +174,11 @@
             if ( id === ''){
                 $('#station_id').empty();
             }else{
-                $.post('/execute-etl/getStationsForNet',{ id: id },function (values) {
-                    $('#station_id').populateSelect(values);
-                },'json');
+                axios.post('execute-etl/getStationsForNet', {id: id}).then(function (response) {
+                    $('#station_id').populateSelect(response.data);
+                }).catch(function (error) {
+                    console.log('error',error);
+                });
             }
         })
     </script>

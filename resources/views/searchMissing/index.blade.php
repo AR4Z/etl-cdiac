@@ -70,18 +70,19 @@
                     $('#station_id').empty();
                 } else {
                     changeTypeStation(fact_table);
-                    $.post('/search-missing/stationsForFactTable', {type_station: $('#type_station').val()}, function (values) {
-                        //console.log(values);
-                        $('#station_id').populateSelect(values);
-                    }, 'json');
+
+                    axios.post('search-missing/stationsForFactTable', {type_station: $('#type_station').val()}).then(function (response) {
+                        $('#station_id').populateSelect(response.data);
+                    }).catch(function (error) {
+                        console.log('error',error);
+                    });
                 }
             });
         });
 
-        function changeTypeStation(fact_table)
-        {
-            var typeStation = $('#type_station');
+        function changeTypeStation(fact_table) {
 
+            var typeStation = $('#type_station');
             if (fact_table == "groundwater_fact"){
                typeStation.val("groundwater");
             }else{

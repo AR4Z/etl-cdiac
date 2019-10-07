@@ -358,6 +358,21 @@ class VariableSeeder extends Seeder
                     'report_name'           => null,
                     'created_at'            => Carbon::now(),
                     'updated_at'            => Carbon::now(),
+                ],
+                [
+                    # id => 24
+                    'name'                  => 'groundwater_level',
+                    'description'           => null,
+                    'excel_name'            => 'groundwater_level',
+                    'database_field_name'   => null,
+                    'local_name'            => 'groundwater_level',
+                    'reliability_name'      => null,
+                    'decimal_precision'     => 4,
+                    'unit'                  => null,
+                    'correct_serialization' => 'average',
+                    'report_name'           => null,
+                    'created_at'            => Carbon::now(),
+                    'updated_at'            => Carbon::now(),
                 ]
             ]
         );

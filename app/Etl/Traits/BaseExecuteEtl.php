@@ -190,7 +190,7 @@ trait BaseExecuteEtl
      * @param array $extract
      * @param array $transform
      * @param array $load
-     * @param bool $jobs --- true determina que se ejecuta en una pila asincrona, false para ejecusion en  formato sincrono
+     * @param bool $jobs --- true determina que se ejecuta en una pila asincrona, false para ejecución en  formato sincrono
      * @return array
      * @throws \ReflectionException
      */

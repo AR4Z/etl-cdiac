@@ -10,13 +10,13 @@ use Request;
 class ApiMapController extends Controller
 {
     /**
-     * @var \App\Repositories\Administrator\StationRepository
+     * @var StationRepository
      */
     private $stationRepository;
 
     /**
      * ApiMapController constructor.
-     * @param \App\Repositories\Administrator\StationRepository $stationRepository
+     * @param StationRepository $stationRepository
      */
     public function __construct(StationRepository $stationRepository)
     {

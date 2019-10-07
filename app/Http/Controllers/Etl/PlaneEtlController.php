@@ -69,7 +69,7 @@ class PlaneEtlController extends Controller
      */
     public function getStationsForNet(Request $request)
     {
-        return $this->stationRepository->getAllStationForNet($request->get('net_name'));
+        return $this->stationRepository->getAllStationForNet((int)$request->get('net_name'));
     }
 
     /**

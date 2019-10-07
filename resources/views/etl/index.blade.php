@@ -109,10 +109,11 @@
             if ( net_name === ''){
                 $('#station_id').empty();
             }else{
-                $.post('/plane-etl/getStationsForNet',{ net_name: net_name },function (values) {
-                    console.log(values);
-                    $('#station_id').populateSelect(values);
-                },'json');
+                axios.post('plane-etl/getStationsForNet', {net_name: net_name}).then(function (response) {
+                    $('#station_id').populateSelect(response.data);
+                }).catch(function (error) {
+                    console.log('error',error);
+                });
             }
         });
 

@@ -179,7 +179,7 @@ class Step
 
                 $etlState->addWarningsState([
                     'localization' => 'App\Etl\Steps@validateResultExecution',
-                    'description'  => 'Hubo un error en la ejecusion de '.$this->method,
+                    'description'  => 'Hubo un error en la ejecución de '.$this->method,
                     'exception'    => $temporalReturn['exception']
                 ]);
             }

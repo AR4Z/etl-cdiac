@@ -14,11 +14,8 @@
   === PLANTILLA DESARROLLADA POR LA OFICINA DE MEDIOS DIGITALES - UNIMEDIOS ===
   =============================================================================
 -->
-
     <!-- base href="http://subdominio.unal.edu.co/" -->
     <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">
-
-
     <meta name="revisit-after" content="1 hour">
     <meta name="distribution" content="all">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.5, user-scalable=yes">
@@ -133,19 +130,17 @@
     <script src="{{asset('libraries/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js')}}"></script>
 
     <script>
+
+        this.axios = axios.create({ baseURL: 'http://cdiac.manizales.unal.edu.co/etl-cdiac/'});
+
         $(document).ready(function () {
-            $('select').select2({
-                allowClear: true,
-                placeholder: {
-                    id: -1,
-                    text: "Seleccione un valor"
-                }
-            }).val('').change();
+            /* Se inicializan los select de la pagina con select2*/
+            $('select').select2({allowClear: true, placeholder: {id: -1, text: "Seleccione un valor"}}).val('').change();
+
+            /* Se crea la funcion para incluir las respuestas por api en los select*/
             $.fn.populateSelect = function (values) {
                 var options = '';
-                $.each(values, function (key, row) {
-                    options += '<option value="' + row.id + '">' + row.name + '</option>';
-                });
+                $.each(values, function (key, row) { options += '<option value="' + row.id + '">' + row.name + '</option>'; });
                 $(this).html(options);
             }
         });
