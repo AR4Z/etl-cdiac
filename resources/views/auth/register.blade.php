@@ -101,20 +101,12 @@
                             </div>
                         </div>
                     </div>
-
+                    {{ $roles }}
                     <div class="col-lg-8 col-lg-offset-2">
                     <div class="form-group {{ $errors->has('rol') ? ' has-error' : '' }}">
-
                         {{ Form::label('rol', 'Rol: ', ['class' => 'col-lg-3 control-label']) }}
                         <div class="col-lg-8">
-                            {!!  Form::select('rol',
-                                 [
-                                    'Rol1'=>'Rol-1',
-                                    'Rol2'=>'Rol-2 ',
-                                    'Rol3'=>'Rol-3',
-                                    'Rol4'=>'Rol-4',
-                                    'Todos'=>'Todos'
-                                 ],null,['class' => 'form-control', 'id'=> 'rol', 'required']) !!}
+                            {!!  Form::select('rol', array_pluck($roles, 'name', 'id'), null, ['class' => 'form-control', 'id'=> 'rol', 'required']) !!}
                             @if ($errors->has('rol'))
                                 <span class="help-block"><strong>{{ $errors->first('rol') }}</strong></span>
                             @endif

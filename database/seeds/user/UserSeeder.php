@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
 
                 [
                     # id => 1
-                    'role_id'                   => 1,
                     'name'                      => 'pruebas',
                     'lastname'                  => 'pruebas',
                     'email'                     => 'lflondonor@gmail.com',

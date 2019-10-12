@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Repositories\General\UserRepository;
+use App\Repositories\Users\RoleRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -12,6 +13,7 @@ class RegisterController extends Controller
 {
 
     protected $userRepository;
+    protected $roleRepository;
 
     /*
     |--------------------------------------------------------------------------
@@ -38,11 +40,12 @@ class RegisterController extends Controller
      *
      * @return void
      */
-     public function __construct(UserRepository $userRepository)
-     {
-       $this->middleware('admin');
-       $this->userRepository = $userRepository;
-     }
+    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository)
+    {
+        $this->middleware('admin');
+        $this->userRepository = $userRepository;
+        $this->roleRepository = $roleRepository;
+    }
 
     /**
      * Get a validator for an incoming registration request.
@@ -85,16 +88,23 @@ class RegisterController extends Controller
      */
     public function validation(Request $request)
     {
-        $this->validate($request,[
+        $this->validate($request, [
             'name' => 'required',
             'lastname' => 'required',
-            'email'=>'required',
-            'password'=>'required',
-            'institution'=>'required',
+            'email' => 'required',
+            'password' => 'required',
+            'institution' => 'required',
             'rol' => 'required'
 
         ]);
 
         return view('auth.test');
+    }
+
+    public function showRegistrationForm()
+    {
+
+
+        return view('auth.register')->with(['roles' => $this->roleRepository->getAll()]);
     }
 }
