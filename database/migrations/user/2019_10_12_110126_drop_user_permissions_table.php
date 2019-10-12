@@ -13,7 +13,7 @@ class DropUserPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('user_permissions');
+        Schema::dropIfExists('user_permission');
     }
 
     /**

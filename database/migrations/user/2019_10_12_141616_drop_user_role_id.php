@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DropPermissionsTable extends Migration
+class DropUserRoleId extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class DropPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('permissions');
-        Schema::enableForeignKeyConstraints();
+        Schema::table('user', function($table) {
+            $table->dropColumn('role_id');
+        });
     }
 
     /**
