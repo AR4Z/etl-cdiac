@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
                     'lastname'                  => 'pruebas',
                     'email'                     => 'lflondonor@gmail.com',
                     'identification_document'   => '1053836141',
-                    'password'                  => '123',
+                    'password'                  =>  bcrypt('123'),
                     'institution'               => 'unal',
                     'active'                    => TRUE,
                     'confirm'                   => TRUE,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entities\General;
+namespace App\Entities\Users;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,13 +9,13 @@ class User extends Authenticatable
 {
     use Notifiable;
     /**
-    * The database connection used by the model.
-    *
-    * @var string
-    */
+     * The database connection used by the model.
+     *
+     * @var string
+     */
     protected $connection = 'public';
 
-    protected $table = 'user ';
+    protected $table = 'user';
 
 
     /**
@@ -34,6 +34,11 @@ class User extends Authenticatable
      */
 
     protected $hidden = [
-         'remember_token',
+        'remember_token',
     ];
+
+    public function role_applications()
+    {
+        return $this->hasMany(RoleApplication::class);
+    }
 }

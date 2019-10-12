@@ -12,7 +12,7 @@ class RoleApplicationSeeder extends Seeder
      */
     public function run()
     {
-        DB::connection('public')->table('role_application')->insert(
+        /*DB::connection('public')->table('role_application')->insert(
             [
 
                 [
@@ -40,7 +40,7 @@ class RoleApplicationSeeder extends Seeder
 
                 ]
             ]
-        );
+        );*/
     }
     /**
      * down the database seeds.

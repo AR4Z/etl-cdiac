@@ -16,8 +16,5 @@ class UsersSeeder extends Seeder
         $this->call(ApplicationSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(RoleApplicationSeeder::class);
-        $this->call(PermissionSeeder::class);
-        $this->call(UserPermissionSeeder::class);
-
     }
 }

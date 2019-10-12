@@ -25,8 +25,11 @@
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Usuarios<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
+
                     <li><a href="{{url('/login')}}">Login</a></li>
-                    <li><a href="{{url('/register')}}">Registrar usuario</a></li>
+                    @if (Auth::check() &&  Auth::user()->role_id == 1)
+                        <li><a href="{{url('/register')}}">Crear usuario</a></li>
+                    @endif
                 </ul>
             </li>
             <li>

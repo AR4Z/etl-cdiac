@@ -6,7 +6,7 @@ use App\Repositories\AppBaseRepository;
 use App\Repositories\RepositoriesContract;
 use Illuminate\Container\Container;
 use Rinvex\Repository\Exceptions\RepositoryException;
-use App\Entities\General\User;
+use App\Entities\Users\User;
 
 class UserRepository extends AppBaseRepository implements RepositoriesContract
 {

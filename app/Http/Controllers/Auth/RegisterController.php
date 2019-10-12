@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 
-
 class RegisterController extends Controller
 {
 
@@ -32,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '';
 
     /**
      * Create a new controller instance.
@@ -41,7 +40,7 @@ class RegisterController extends Controller
      */
      public function __construct(UserRepository $userRepository)
      {
-       $this->middleware('guest');
+       $this->middleware('admin');
        $this->userRepository = $userRepository;
      }
 
