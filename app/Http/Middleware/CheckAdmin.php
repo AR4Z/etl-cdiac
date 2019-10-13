@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Auth;
-
+use Session;
 class CheckAdmin
 {
     /**
@@ -16,7 +16,7 @@ class CheckAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::user() && Auth::user()->role_id == 1) {
+        if (Auth::user() && Session::get('is_admin')) {
             return $next($request);
         } else {
             return redirect('')->with('error','You have not permissions');

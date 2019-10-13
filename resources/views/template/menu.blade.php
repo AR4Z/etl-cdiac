@@ -25,9 +25,11 @@
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Usuarios<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-
-                    <li><a href="{{url('/login')}}">Login</a></li>
-                    @if (Auth::check() &&  Auth::user()->role_id == 1)
+                    @if (!Auth::check())
+                        <li><a href="{{url('/login')}}">Login</a></li>
+                    @endif
+                    
+                    @if (Auth::check() && Session::get('is_admin'))
                         <li><a href="{{url('/register')}}">Crear usuario</a></li>
                     @endif
                 </ul>

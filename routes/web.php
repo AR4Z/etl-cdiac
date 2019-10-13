@@ -72,7 +72,5 @@ Route::group(['prefix' => 'users','name' => 'users'], function()
 {
     Route::get('/', [ 'as'=>'login','uses'=>'Auth\LoginController@index']);
     Route::get('/', [ 'as'=>'register','uses'=>'Auth\RegisterController@index']);
-    Route::post('create_user', [ 'as'=>'users.create_user','uses'=>'Auth\RegisterController@validation']);
-
-
+    Route::post('create_user', [ 'as'=>'users.create_user','uses'=>'Auth\RegisterController@create']);
 });

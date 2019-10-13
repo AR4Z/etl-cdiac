@@ -20,13 +20,15 @@ class UserRepository extends AppBaseRepository implements RepositoriesContract
     }
 
     /**
-     * @param User $user
+     * @param array $user_data
      * @return User
      */
-    public function createUser(User $user) : User
+    public function createUser(array $user_data): User
     {
-        try { $user = $this->createModel()->fill($user); } catch (RepositoryException $e) { /*TODO*/}
+        $user = $this->createModel();
+        $user->fill($user_data + ['confirmed_code' => str_random(30)]);
         $user->password = bcrypt($user->password);
+
         return $this->create($user->toArray());
     }
 }

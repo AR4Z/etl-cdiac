@@ -16,7 +16,7 @@ class User extends Authenticatable
     protected $connection = 'public';
 
     protected $table = 'user';
-
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +24,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'lastname', 'email', 'password', 'institution', 'identification_document', 'confirmed_code'
     ];
 
     /**
@@ -37,8 +37,13 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function role_applications()
+    public function roleApplications()
     {
         return $this->hasMany(RoleApplication::class);
+    }
+
+    public function isAdministrator()
+    {
+        return $this->roleApplications()->where('role_id', 1)->whereNull('until')->exists();
     }
 }

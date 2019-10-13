@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Repositories\General\UserRepository;
 use App\Repositories\Users\RoleRepository;
+use App\Repositories\Users\ApplicationRepository;
+use App\Repositories\Users\RoleApplicationRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -14,6 +16,8 @@ class RegisterController extends Controller
 
     protected $userRepository;
     protected $roleRepository;
+    protected $applicationRepository;
+    protected $roleApplicationRepository;
 
     /*
     |--------------------------------------------------------------------------
@@ -40,11 +44,17 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        RoleRepository $roleRepository,
+        ApplicationRepository $applicationRepository,
+        RoleApplicationRepository $roleApplicationRepository
+    ) {
         $this->middleware('admin');
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
+        $this->applicationRepository = $applicationRepository;
+        $this->roleApplicationRepository = $roleApplicationRepository;
     }
 
     /**
@@ -57,7 +67,10 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'identification_document' => ['required', 'unique:user'],
+            'institution' => ['required'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:user'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -65,12 +78,29 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array $data
-     * @return \App\Entities\General\User
+     * @param  Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    protected function create(array $data)
+    protected function create(Request $request)
     {
-        return $this->userRepository->createUser($data);
+        $validator = $this->validator($request->all());
+        if ($validator->fails()) {
+            return redirect('register')
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $user = $this->userRepository->createUser($request->all());
+
+        if ($request->application == 'all') {
+            $all_apps = $this->applicationRepository->getAll();
+            foreach ($all_apps as $app) {
+                $this->roleApplicationRepository->createRoleApp(['role_id' => $request->rol, 'application_id' => $app->id, 'user_id' => $user->id]);
+            }
+        } else {
+            $this->roleApplicationRepository->createRoleApp(['role_id' => $request->rol, 'application_id' => $request->application, 'user_id' => $user->id]);
+        }
+
+        return redirect('register');
     }
 
     /**
@@ -95,7 +125,6 @@ class RegisterController extends Controller
             'password' => 'required',
             'institution' => 'required',
             'rol' => 'required'
-
         ]);
 
         return view('auth.test');
@@ -103,8 +132,9 @@ class RegisterController extends Controller
 
     public function showRegistrationForm()
     {
-
-
-        return view('auth.register')->with(['roles' => $this->roleRepository->getAll()]);
+        return view('auth.register')->with([
+            'roles' => $this->roleRepository->getAll(),
+            'applications' => $this->applicationRepository->getAll()
+        ]);
     }
 }

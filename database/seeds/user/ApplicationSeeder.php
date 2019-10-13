@@ -17,27 +17,27 @@ class ApplicationSeeder extends Seeder
 
                 [
                     # id => 1
-                    'name'                      => 'cdiac',
+                    'name'                      => 'CDIAC',
                     'app_url'                   => '',
                     'description'               => 'aplicación xxxxx para xxxxx',
 
                 ],
                 [
                     # id => 2
-                    'name'                      => 'riesgos',
+                    'name'                      => 'Sistema de Gestión del Riesgo',
                     'app_url'                   => 'risks',
                     'description'               => 'aplicación xxxxx para xxxxx',
 
                 ],
                 [
                     # id => 3
-                    'name'                      => 'indicadores',
+                    'name'                      => 'Sistema de Indicadores',
                     'app_url'                   => 'indicadores',
                     'description'               => 'aplicación xxxxx para xxxxx',
                 ],
                 [
                     # id => 4
-                    'name'                      => 'auditoría',
+                    'name'                      => 'Módulo de Auditoría',
                     'app_url'                   => 'auditory',
                     'description'               => 'aplicación xxxxx para xxxxx',
 

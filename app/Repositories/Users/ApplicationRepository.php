@@ -2,23 +2,23 @@
 
 namespace App\Repositories\Users;
 
-use App\Entities\Users\Role;
+use App\Entities\Users\Application;
 use Rinvex\Repository\Repositories\EloquentRepository;
 
 use DB;
 /**
  *
  */
-class RoleRepository extends EloquentRepository
+class ApplicationRepository extends EloquentRepository
 {
 
     protected $repositoryId = 'rinvex.repository.uniqueid';
 
-    protected $model = Role::class;
+    protected $model = Application::class;
 
     protected function queryBuilder()
     {
-        return DB::connection('public')->table('role');
+        return DB::connection('public')->table('application');
     }
 
     public function getAll()

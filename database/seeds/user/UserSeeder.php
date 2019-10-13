@@ -26,7 +26,6 @@ class UserSeeder extends Seeder
                     'active'                    => TRUE,
                     'confirm'                   => TRUE,
                     'confirmed_code'            => '912044',
-                    'encrypt'                   => '1',
                 ]
             ]
         );

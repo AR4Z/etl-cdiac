@@ -9,7 +9,7 @@ class RoleApplication extends Model
     protected $connection = 'public';
     protected $table = 'role_application';
     protected $primaryKey = 'id';
-
+    public $timestamps = false;
     protected $fillable = [
         'role_id', 'application_id', 'user_id'
     ];
