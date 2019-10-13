@@ -187,7 +187,7 @@ return [
         /*
          * Personal Service Providers...
          */
-
+        Yajra\Datatables\DatatablesServiceProvider::class,
     ],
 
     /*
@@ -253,8 +253,8 @@ return [
          * Personal  Aliases...
          */
 
-         'ConnectionRepository' => Facades\App\Repositories\Config\ConnectionRepository::class,
-
+        'ConnectionRepository' => Facades\App\Repositories\Config\ConnectionRepository::class,
+        'Datatables' => Yajra\Datatables\Facades\Datatables::class,
     ],
 
 ];

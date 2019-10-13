@@ -22,18 +22,18 @@
                     <li><a href="{{ url('/auditory') }}">Auditoría Bodega 2.0</a></li>
                 </ul>
             </li>
+            @if (Auth::check() && Session::get('is_admin'))
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>Usuarios<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    @if (!Auth::check())
-                        <li><a href="{{url('/login')}}">Login</a></li>
-                    @endif
-                    
-                    @if (Auth::check() && Session::get('is_admin'))
-                        <li><a href="{{url('/register')}}">Crear usuario</a></li>
-                    @endif
+                    <!--@if (!Auth::check())
+                    <li><a href="{{url('/login')}}">Login</a></li>
+                    @endif-->
+                    <li><a href="{{url('/register')}}">Crear usuario</a></li>
+                    <li><a href="{{url('/users')}}">Ver Usuarios</a></li>
                 </ul>
             </li>
+            @endif
             <li>
                 <a href="http://cdiac.manizales.unal.edu.co/"><i class="fa fa-files-o fa-fw"></i>
                     Página principal

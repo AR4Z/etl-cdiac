@@ -4,7 +4,7 @@ namespace App\Http\Controllers\General;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use DB;
 class UserController extends Controller
 {
     /**
@@ -14,9 +14,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return view('user.index');
     }
 
+    public function usersList() {
+        $users = DB::table('user')->select('*');
+        return datatables()->of($users)->make(true);
+    }
     /**
      * Show the form for creating a new resource.
      *
