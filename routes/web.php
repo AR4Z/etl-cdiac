@@ -11,6 +11,8 @@
 |
 */
 
+use App\Http\Middleware\CheckAdmin;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -64,7 +66,7 @@ Route::group(['prefix' => 'auditory', 'name' => 'auditory'], function () {
 Route::group(['prefix' => 'users', 'name' => 'users'], function () {
     Route::get('/', ['as' => 'login', 'uses' => 'Auth\LoginController@index']);
     Route::get('/', ['as' => 'register', 'uses' => 'Auth\RegisterController@index']);
-    Route::get('users-list', 'General\UserController@usersList');
-    Route::get('/', ['as' => 'users', 'uses' => 'General\UserController@index']);
+    Route::get('users-list', 'General\UserController@usersList')->middleware(CheckAdmin::class);
+    Route::get('/', ['as' => 'users', 'uses' => 'General\UserController@index'])->middleware(CheckAdmin::class);;
     Route::post('create_user', ['as' => 'users.create_user', 'uses' => 'Auth\RegisterController@create']);
 });
