@@ -99,7 +99,7 @@ class RegisterController extends Controller
         } else {
             $this->roleApplicationRepository->createRoleApp(['role_id' => $request->rol, 'application_id' => $request->application, 'user_id' => $user->id]);
         }
-
+        $user->sendEmailVerificationNotification();
         return redirect('register');
     }
 

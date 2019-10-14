@@ -16,7 +16,7 @@
                                 <th>Nombre</th>
                                 <th>Apellido</th>
                                 <th>Email</th>
-                                <th>Activo</th>
+                                <th>Verificado</th>
                             </tr>
                         </thead>
                     </table>
@@ -50,9 +50,10 @@
                 {
                     data: 'email',
                     name: 'email'
-                }, {
-                    data: 'active',
-                    name: 'active'
+                }, 
+                {
+                    data: 'email_verified_at',
+                    name: 'email_verified_at'
                 }
             ]
         });
