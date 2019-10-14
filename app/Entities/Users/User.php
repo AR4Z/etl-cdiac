@@ -2,6 +2,8 @@
 
 namespace App\Entities\Users;
 
+use App\Notifications\VerifyEmail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -46,5 +48,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdministrator()
     {
         return $this->roleApplications()->where('role_id', 1)->whereNull('until')->exists();
+    }
+
+    public function sendVerification(string $email, string $password) {
+        $this->notify(new VerifyEmail($email, $password));
     }
 }
