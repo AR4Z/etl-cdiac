@@ -3,12 +3,12 @@
 namespace App\Entities\Users;
 
 use App\Notifications\VerifyEmail;
-use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
     use Notifiable;
     /**
