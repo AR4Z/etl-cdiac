@@ -71,7 +71,6 @@ class RegisterController extends Controller
             'identification_document' => ['required', 'unique:user'],
             'institution' => ['required'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:user'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
 
@@ -89,6 +88,7 @@ class RegisterController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
+        $request['password'] = str_random(8);
         $user = $this->userRepository->createUser($request->all());
 
         if ($request->application == 'all') {
@@ -122,7 +122,6 @@ class RegisterController extends Controller
             'name' => 'required',
             'lastname' => 'required',
             'email' => 'required',
-            'password' => 'required',
             'institution' => 'required',
             'rol' => 'required'
         ]);
